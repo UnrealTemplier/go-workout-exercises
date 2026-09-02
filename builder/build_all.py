@@ -36,6 +36,9 @@ with open('builder/chapter7_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter8_data.json', 'r', encoding='utf-8') as f:
     ch8_exercises = json.load(f)
 
+with open('builder/chapter9_data.json', 'r', encoding='utf-8') as f:
+    ch9_exercises = json.load(f)
+
 def format_text(txt):
     if not txt:
         return ""
@@ -119,6 +122,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             6: ('chapter6.html', '64/64'),
             7: ('chapter7.html', '32/32'),
             8: ('chapter8.html', '74/74'),
+            9: ('chapter9.html', '62/62'),
         }
         
         if num in status_map:
@@ -293,10 +297,8 @@ def build_chapter1_html(chapters):
 
 def build_chapter2_html(chapters):
     sidebar_html = build_sidebar(chapters, active_chapter_num=2, current_exercises=ch2_exercises)
-    
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
-    
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">⚡ Модуль 02 • Компиляция и Сборка Проектов</div>
@@ -307,26 +309,13 @@ def build_chapter2_html(chapters):
             ультра-компактной Docker-контейнеризации (от 5 МБ Scratch). Все 25 упражнений решены шаг за шагом.
         </p>
         <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-val">25 из 25</span>
-                <span class="stat-lbl">Упражнений решено</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Multi-stage</span>
-                <span class="stat-lbl">Docker Scratch</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">-race</span>
-                <span class="stat-lbl">ThreadSanitizer</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">-ldflags</span>
-                <span class="stat-lbl">DWARF Strip & Inject</span>
-            </div>
+            <div class="stat-item"><span class="stat-val">25 из 25</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">Multi-stage</span><span class="stat-lbl">Docker Scratch</span></div>
+            <div class="stat-item"><span class="stat-val">-race</span><span class="stat-lbl">ThreadSanitizer</span></div>
+            <div class="stat-item"><span class="stat-val">-ldflags</span><span class="stat-lbl">DWARF Strip & Inject</span></div>
         </div>
     </section>
     """)
-    
     section_groups_ch2 = [
         (1, 4, "Раздел 1: Базовая Компиляция, go run и go build", "Анатомия компилятора, нативные бинарники, запуск автономных модулей"),
         (5, 9, "Раздел 2: Кросс-компиляция и Установка через go install", "Переменные GOOS/GOARCH, установка в GOPATH/bin, флаг кастомизации -o"),
@@ -335,35 +324,23 @@ def build_chapter2_html(chapters):
         (19, 22, "Раздел 5: CLI Флаги, Подкоманды и Устранение Data Race", "Парсинг через flag.NewFlagSet, инъекция версий -X, синхронизация через sync.Mutex"),
         (23, 25, "Раздел 6: Graceful Shutdown, CI Скрипты и Docker Scratch", "Мягкая остановка при SIGINT/SIGTERM, CI-пайплайн и Dockerfile сборка от 5 МБ")
     ]
-    
     ex_dict = {e["num"]: e for e in ch2_exercises}
     for start_n, end_n, title, desc in section_groups_ch2:
         content_parts.append(f"""
         <div class="section-separator">
-            <div>
-                <h2>{title}</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
-            </div>
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
             <span class="tag">Упражнения {start_n}–{end_n}</span>
         </div>
         """)
         for n in range(start_n, end_n + 1):
             if n in ex_dict:
                 content_parts.append(build_exercise_card(ex_dict[n]))
-                
     content_parts.append("""
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 02 полностью завершена!</h3>
-        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
-            Вы в совершенстве освоили весь цикл сборки, профилирования, кросс-компиляции, безопасного завершения сервисов и упаковки в Docker.
-        </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
-                ← Вернуться к Главе 01 (Пакеты и модули)
-            </a>
-            <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
-                Перейти к Главе 03: Пакет fmt и консольный ввод-вывод →
-            </a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 01</a>
+            <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 03: fmt и ввод-вывод →</a>
         </div>
     </section>
     """)
@@ -372,41 +349,21 @@ def build_chapter2_html(chapters):
 
 def build_chapter3_html(chapters):
     sidebar_html = build_sidebar(chapters, active_chapter_num=3, current_exercises=ch3_exercises)
-    
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
-    
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">💻 Модуль 03 • Консольный Ввод-Вывод и fmt</div>
         <h1 class="hero-title">Пакет fmt и Консольный Ввод-Вывод в Go</h1>
-        <p class="hero-desc">
-            Глубокое практическое руководство по потоковому вводу-выводу в Go: детальный разбор всех спецификаторов пакета fmt, 
-            буферизованное чтение через bufio.Reader/Scanner, посимвольная обработка UTF-8 рун, интерфейсы fmt.Stringer и fmt.GoStringer, 
-            валидация потоков Stdin/Stdout/Stderr, создание надежных CLI REPL-интерпретаторов и цветная ANSI-стилизация. 
-            Все 65 упражнений курса решены с пошаговым объяснением.
-        </p>
+        <p class="hero-desc">Глубокое практическое руководство по потоковому вводу-выводу в Go: спецификаторы fmt, bufio.Reader/Scanner, UTF-8 руны, Stringer и ANSI-стилизация. 65 упражнений решено.</p>
         <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-val">65 из 65</span>
-                <span class="stat-lbl">Упражнений решено</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">bufio</span>
-                <span class="stat-lbl">Reader & Scanner</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">fmt.Stringer</span>
-                <span class="stat-lbl">Кастомная печать</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">ANSI & TUI</span>
-                <span class="stat-lbl">Цветные терминалы</span>
-            </div>
+            <div class="stat-item"><span class="stat-val">65 из 65</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">bufio</span><span class="stat-lbl">Reader & Scanner</span></div>
+            <div class="stat-item"><span class="stat-val">fmt.Stringer</span><span class="stat-lbl">Кастомная печать</span></div>
+            <div class="stat-item"><span class="stat-val">ANSI & TUI</span><span class="stat-lbl">Цветные терминалы</span></div>
         </div>
     </section>
     """)
-    
     section_groups_ch3 = [
         (1, 15, "Раздел 1: Базовые функции fmt, Спецификаторы и Первые Чтения", "Print, Println, Printf, %d/%f/%s/%t, буферизованный ReadByte, выравнивание %4d, парсинг Sscanf и время"),
         (16, 30, "Раздел 2: Потоки, Инспекция Типов, Точность Float и Stderr", "Эхо-сканер, сложение с валидацией, глагол %T, точность %.2f, экранирование %q, запись в os.Stderr и fmt.Sprintf"),
@@ -414,35 +371,23 @@ def build_chapter3_html(chapters):
         (46, 55, "Раздел 4: Unicode Руны, Интерфейс fmt.Stringer, Stderr 2> и os.Args", "ReadRune, UTF-8 кодовые точки, Stringer/GoStringer контракты, флаги командной строки flag.Int"),
         (56, 65, "Раздел 5: Продвинутый REPL, ScanWords, Таблицы, Прогресс-бар и ANSI", "Сравнительный анализ семейств Scan, REPL-шелл, суммирование потока ScanWords, анимация \\r и цветной вывод")
     ]
-    
     ex_dict = {e["num"]: e for e in ch3_exercises}
     for start_n, end_n, title, desc in section_groups_ch3:
         content_parts.append(f"""
         <div class="section-separator">
-            <div>
-                <h2>{title}</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
-            </div>
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
             <span class="tag">Упражнения {start_n}–{end_n}</span>
         </div>
         """)
         for n in range(start_n, end_n + 1):
             if n in ex_dict:
                 content_parts.append(build_exercise_card(ex_dict[n]))
-                
     content_parts.append("""
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 03 полностью завершена!</h3>
-        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
-            Вы освоили весь арсенал работы с потоками ввода-вывода, интерфейсами Stringer, форматированием и терминальной графикой.
-        </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter2.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
-                ← Вернуться к Главе 02 (Компиляция и сборка)
-            </a>
-            <a href="chapter4.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
-                Перейти к Главе 04: Базовые типы, переменные и константы →
-            </a>
+            <a href="chapter2.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 02</a>
+            <a href="chapter4.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 04: Базовые типы →</a>
         </div>
     </section>
     """)
@@ -451,41 +396,21 @@ def build_chapter3_html(chapters):
 
 def build_chapter4_html(chapters):
     sidebar_html = build_sidebar(chapters, active_chapter_num=4, current_exercises=ch4_exercises)
-    
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
-    
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">🧬 Модуль 04 • Система Типов и Память Go</div>
         <h1 class="hero-title">Базовые Типы, Переменные и Константы в Go</h1>
-        <p class="hero-desc">
-            Фундаментальное инженерное погружение в статическую систему типов языка Go: Zero Values, разрядная сетка процессора, 
-            стандарты IEEE 754 чисел с плавающей точкой, переполнение (Integer Overflow), выравнивание памяти (Memory Padding & Alignment), 
-            нетипизированные константы, генератор перечислений iota, битовые маски и безопасное управление иммутабельностью. 
-            Все 111 упражнений курса решены с пошаговым разбором.
-        </p>
+        <p class="hero-desc">Zero Values, IEEE 754, переполнение, выравнивание памяти (Memory Padding & Alignment), iota и битовые маски. Все 111 упражнений решены.</p>
         <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-val">111 из 111</span>
-                <span class="stat-lbl">Упражнений решено</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Zero Values</span>
-                <span class="stat-lbl">Memory Safety</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">iota & Bitmasks</span>
-                <span class="stat-lbl">State Enums</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Padding</span>
-                <span class="stat-lbl">Memory Alignment</span>
-            </div>
+            <div class="stat-item"><span class="stat-val">111 из 111</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">Zero Values</span><span class="stat-lbl">Memory Safety</span></div>
+            <div class="stat-item"><span class="stat-val">iota & Bitmasks</span><span class="stat-lbl">State Enums</span></div>
+            <div class="stat-item"><span class="stat-val">Padding</span><span class="stat-lbl">Memory Alignment</span></div>
         </div>
     </section>
     """)
-    
     section_groups_ch4 = [
         (1, 20, "Раздел 1: Объявление Переменных, Zero Values, Размеры Типов и Первые Константы", "var, :=, Zero values, unsafe.Sizeof, Pi, iota, нетипизированные константы, затенение и UTF-8 руны"),
         (21, 40, "Раздел 2: Хэш-таблицы, Комплексные Числа, Структуры, strconv и Битовые Операции", "map с comma-ok, complex128, композиция структур, strconv, побитовые &, |, ^, &^, strings и Constant Folding"),
@@ -494,35 +419,23 @@ def build_chapter4_html(chapters):
         (81, 95, "Раздел 5: Type Definitions, Выравнивание Памяти (Padding), Лимиты и Циклический Сдвиг", "Кастомные типы, паддинг в структурах, AlmostEqual с эпсилон, все 6 способов объявления, math.Min/Max и циклический сдвиг a, b, c = b, c, a"),
         (96, 111, "Раздел 6: Самоссылающиеся Структуры, defer LIFO, make(), Raw Strings и Защита Иммутабельности", "Связный список Node, LIFO в defer, make() для срезов/мап/каналов, BigInt 1<<100, Raw Strings, обход отсутствия const-слайсов и Jump Table в switch")
     ]
-    
     ex_dict = {e["num"]: e for e in ch4_exercises}
     for start_n, end_n, title, desc in section_groups_ch4:
         content_parts.append(f"""
         <div class="section-separator">
-            <div>
-                <h2>{title}</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
-            </div>
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
             <span class="tag">Упражнения {start_n}–{end_n}</span>
         </div>
         """)
         for n in range(start_n, end_n + 1):
             if n in ex_dict:
                 content_parts.append(build_exercise_card(ex_dict[n]))
-                
     content_parts.append("""
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 04 полностью завершена!</h3>
-        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
-            Вы досконально изучили устройство типов, память, константы, iota и внутренние оптимизации компилятора Go.
-        </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
-                ← Вернуться к Главе 03 (Пакет fmt)
-            </a>
-            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
-                Перейти к Главе 05: Условные конструкции (if, switch) →
-            </a>
+            <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 03</a>
+            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 05: Условные конструкции →</a>
         </div>
     </section>
     """)
@@ -531,77 +444,44 @@ def build_chapter4_html(chapters):
 
 def build_chapter5_html(chapters):
     sidebar_html = build_sidebar(chapters, active_chapter_num=5, current_exercises=ch5_exercises)
-    
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
-    
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">🔀 Модуль 05 • Управляющие Конструкции и Ветвления</div>
         <h1 class="hero-title">Условные Конструкции (if, switch) в Go</h1>
-        <p class="hero-desc">
-            Глубокое практическое освоение механизмов управления потоком исполнения в Go: каскадные условия if/else, 
-            изоляция переменных через if с инициализацией (short statement), плоский стиль Guard Clauses (Early Return), 
-            оптимизация ветвлений через Tagless Switch (Switch True), инспекция динамических типов в Type Switch v.(type), 
-            механика fallthrough, короткое замыкание предикатов (Short-Circuit), идиома comma-ok и построение конечных автоматов (FSM). 
-            Все 64 упражнения курса решены с пошаговым объяснением.
-        </p>
+        <p class="hero-desc">Каскадные условия if/else, if with short init, Guard Clauses, Tagless Switch, Type Switch, fallthrough, comma-ok и FSM. 64 упражнения решено.</p>
         <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-val">64 из 64</span>
-                <span class="stat-lbl">Упражнений решено</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">if with init</span>
-                <span class="stat-lbl">Scope Isolation</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Tagless Switch</span>
-                <span class="stat-lbl">Jump Table $O(1)$</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Guard Clauses</span>
-                <span class="stat-lbl">Clean Code Pattern</span>
-            </div>
+            <div class="stat-item"><span class="stat-val">64 из 64</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">if with init</span><span class="stat-lbl">Scope Isolation</span></div>
+            <div class="stat-item"><span class="stat-val">Tagless Switch</span><span class="stat-lbl">Jump Table $O(1)$</span></div>
+            <div class="stat-item"><span class="stat-val">Guard Clauses</span><span class="stat-lbl">Clean Code Pattern</span></div>
         </div>
     </section>
     """)
-    
     section_groups_ch5 = [
         (1, 16, "Раздел 1: Базовый if, Четность, Инициализация в if, Каскады и Зодиак", "Каскадные if/else, проверка четности %, if x := init(); cond, классификация возраста, 100-балльная шкала, Divide с err, затенение в if, високосный год и булевы упрощения"),
         (17, 32, "Раздел 2: Классический switch, Строковый switch, True Switch, Группировка и Type Switch", "Дни недели, команды CLI, tagless switch, множественные значения case 1, 2, 3:, сезоны года, Type Switch над any, сужение типов v.(type) и семантика fallthrough"),
         (33, 48, "Раздел 3: Имитация Тернарного Оператора, Guard Clauses, Short-Circuit, for-while и Валидация Пароля", "Функция Max, каскадный fallthrough, инспекция типов, инициализация в switch, рефакторинг вложенности, break в switch, инверсия условий, битовые предикаты, FizzBuzz, for как while и поиск Min/Max"),
         (49, 64, "Раздел 4: Comma-ok в if, Вложенный switch, goto, Права Файлов, Dispatch Table и Конечный Автомат (FSM)", "Группировка Yes/No, чтение из map, шорткаты предикатов, подсчет гласных, goto в матрицах, битовые флаги 0755, CLI-калькулятор, Dispatch Table на map[string]func(), FSM игрового NPC и меню с labeled break")
     ]
-    
     ex_dict = {e["num"]: e for e in ch5_exercises}
     for start_n, end_n, title, desc in section_groups_ch5:
         content_parts.append(f"""
         <div class="section-separator">
-            <div>
-                <h2>{title}</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
-            </div>
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
             <span class="tag">Упражнения {start_n}–{end_n}</span>
         </div>
         """)
         for n in range(start_n, end_n + 1):
             if n in ex_dict:
                 content_parts.append(build_exercise_card(ex_dict[n]))
-                
     content_parts.append("""
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 05 полностью завершена!</h3>
-        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
-            Вы в совершенстве освоили условные ветвления, Guard Clauses, Type Switch и конечные автоматы на Go.
-        </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter4.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
-                ← Вернуться к Главе 04 (Базовые типы)
-            </a>
-            <a href="chapter6.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
-                Перейти к Главе 06: Циклы (for, for-range) →
-            </a>
+            <a href="chapter4.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 04</a>
+            <a href="chapter6.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 06: Циклы →</a>
         </div>
     </section>
     """)
@@ -610,77 +490,44 @@ def build_chapter5_html(chapters):
 
 def build_chapter6_html(chapters):
     sidebar_html = build_sidebar(chapters, active_chapter_num=6, current_exercises=ch6_exercises)
-    
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
-    
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">🔄 Модуль 06 • Итерации и Управление Потоком</div>
         <h1 class="hero-title">Циклы (for, for-range) и Итераторы в Go</h1>
-        <p class="hero-desc">
-            Исчерпывающий практический курс по итерационным алгоритмам и низкоуровневой механике циклов в Go: 
-            трехкомпонентный for, while-стиль, бесконечные REPL-серверы, алгоритмы Two Pointers (In-place $O(1)$), 
-            глубокий разбор бага замыкания Loop Variables до и после Go 1.22+, обход каналов `chan`, предотвращение утечек 
-            дескрипторов в `defer`, UTF-8 смещения рун, недетерминированная итерация по `map`, стек скобок и промышленная пагинация (Batching). 
-            Все 64 упражнения курса решены шаг за шагом.
-        </p>
+        <p class="hero-desc">Итерационные алгоритмы, Two Pointers (In-place $O(1)$), Loopvar Scope Go 1.22+, каналы chan, defer в циклах, недетерминированный map и батчинг. 64 упражнения решено.</p>
         <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-val">64 из 64</span>
-                <span class="stat-lbl">Упражнений решено</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">for range</span>
-                <span class="stat-lbl">Slices, Maps, Chans</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Go 1.22+</span>
-                <span class="stat-lbl">Loopvar Per-Iteration Scope</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Two Pointers</span>
-                <span class="stat-lbl">In-place $O(1)$ Space</span>
-            </div>
+            <div class="stat-item"><span class="stat-val">64 из 64</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">for range</span><span class="stat-lbl">Slices, Maps, Chans</span></div>
+            <div class="stat-item"><span class="stat-val">Go 1.22+</span><span class="stat-lbl">Loopvar Per-Iteration Scope</span></div>
+            <div class="stat-item"><span class="stat-val">Two Pointers</span><span class="stat-lbl">In-place $O(1)$ Space</span></div>
         </div>
     </section>
     """)
-    
     section_groups_ch6 = [
         (1, 16, "Раздел 1: Простые Числа, Two Pointers, 2D Слайсы, Шаг i+=2, Степени Двойки и Анализ Строк", "Trial division с sqrt, проверка палиндрома, угадай число, таблица 2D, трехкомпонентный for, for-while, for range по map и Unicode руны"),
         (17, 32, "Раздел 2: Бесконечные Циклы, Таблица Умножения, Loopvar Scope в Go 1.22, Labeled Break и Ловушка Defer", "Break по exit, моноширинный %4d, for x < 100, &item указатели, for i := range, Labeled Break/Continue в матрицах, рандомизация map, UTF-8 байты и изоляция defer"),
         (33, 48, "Раздел 3: Разворот In-Place, Локальность Break, UTF-8 Привет, Каналы chan int и Паттерн Do-While", "Три способа суммирования, two pointers reverse, игнорирование параметров, break Label синтаксис, побайтовый vs посимвольный обход, ловушка копирования v*=10, range по каналу и do-while"),
         (49, 64, "Раздел 4: Копирование Структур []Person, Массив [5]int vs Срез, Мутация Map/Slice, Скобки и Пагинация", "Копирование структур по значению, array vs slice в range, UTF-8 Привет Go!, поиск первого вхождения, мутация map во время range, опасность append в range, безопасный nil-range, стек скобок и батчинг по 10 штук")
     ]
-    
     ex_dict = {e["num"]: e for e in ch6_exercises}
     for start_n, end_n, title, desc in section_groups_ch6:
         content_parts.append(f"""
         <div class="section-separator">
-            <div>
-                <h2>{title}</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
-            </div>
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
             <span class="tag">Упражнения {start_n}–{end_n}</span>
         </div>
         """)
         for n in range(start_n, end_n + 1):
             if n in ex_dict:
                 content_parts.append(build_exercise_card(ex_dict[n]))
-                
     content_parts.append("""
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 06 полностью завершена!</h3>
-        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
-            Вы в совершенстве освоили все виды циклов, Two Pointers, каналы, Labeled-метки и эффективную работу с памятью в Go.
-        </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
-                ← Вернуться к Главе 05 (Условные конструкции)
-            </a>
-            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
-                Перейти к Главе 07: Массивы (Arrays) →
-            </a>
+            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 05</a>
+            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 07: Массивы →</a>
         </div>
     </section>
     """)
@@ -689,75 +536,42 @@ def build_chapter6_html(chapters):
 
 def build_chapter7_html(chapters):
     sidebar_html = build_sidebar(chapters, active_chapter_num=7, current_exercises=ch7_exercises)
-    
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
-    
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">📦 Модуль 07 • Структуры Данных и Память</div>
         <h1 class="hero-title">Массивы (Arrays) и Модель Памяти в Go</h1>
-        <p class="hero-desc">
-            Глубокое практическое освоение фиксированных массивов в языке Go: семантика значений (Pass by Value & Deep Copy), 
-            непрерывное расположение в стеке (Contiguous Memory Layout), zero values, вычисление размера через unsafe.Sizeof и unsafe.Alignof, 
-            сравнение через операторы == / !=, многомерные матрицы [N][M]T, разворот In-Place через указатели *[N]T, 
-            использование массивов как ключей в hash-map и двухуровневая защита границ (Static vs Runtime Bounds Checking). 
-            Все 32 упражнения курса решены шаг за шагом.
-        </p>
+        <p class="hero-desc">Фиксированные массивы в Go: семантика значений (Pass by Value & Deep Copy), непрерывное расположение в стеке, unsafe.Sizeof/Alignof, ключи в map и static bounds check. 32 упражнения решено.</p>
         <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-val">32 из 32</span>
-                <span class="stat-lbl">Упражнений решено</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Value Semantics</span>
-                <span class="stat-lbl">Deep Copy $O(N)$</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Comparable</span>
-                <span class="stat-lbl">Keys in map[K]V</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Zero Overhead</span>
-                <span class="stat-lbl">0B Header Size</span>
-            </div>
+            <div class="stat-item"><span class="stat-val">32 из 32</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">Value Semantics</span><span class="stat-lbl">Deep Copy $O(N)$</span></div>
+            <div class="stat-item"><span class="stat-val">Comparable</span><span class="stat-lbl">Keys in map[K]V</span></div>
+            <div class="stat-item"><span class="stat-val">Zero Overhead</span><span class="stat-lbl">0B Header Size</span></div>
         </div>
     </section>
     """)
-    
     section_groups_ch7 = [
         (1, 16, "Раздел 1: Инициализация, Zero Values, Value Semantics, Сравнение и 2D Матрицы", "3 способа инициализации, len() константа, значимая семантика b:=a, массив строк, SumArray по значению, comparable ==, палиндром, матрица [3][4]int, синтаксис [...] и сетка 3x3"),
         (17, 32, "Раздел 2: Указатели *[N]T, unsafe.Sizeof/Alignof, Массив как Ключ Map и Защита Границ", "Удвоение массива, Zero Values [3]bool/[2]string, мутация через *[5]int, массив указателей [3]*int, размер в памяти unsafe, Bubble Sort, экстремумы, RGB палитра map[[3]int]string, In-place reverse и Bounds Checking")
     ]
-    
     ex_dict = {e["num"]: e for e in ch7_exercises}
     for start_n, end_n, title, desc in section_groups_ch7:
         content_parts.append(f"""
         <div class="section-separator">
-            <div>
-                <h2>{title}</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
-            </div>
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
             <span class="tag">Упражнения {start_n}–{end_n}</span>
         </div>
         """)
         for n in range(start_n, end_n + 1):
             if n in ex_dict:
                 content_parts.append(build_exercise_card(ex_dict[n]))
-                
     content_parts.append("""
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 07 полностью завершена!</h3>
-        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
-            Вы досконально изучили массивы, передачу по значению, указатели и низкоуровневую модель памяти в Go.
-        </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter6.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
-                ← Вернуться к Главе 06 (Циклы)
-            </a>
-            <a href="chapter8.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
-                Перейти к Главе 08: Срезы (Slices) →
-            </a>
+            <a href="chapter6.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 06</a>
+            <a href="chapter8.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 08: Срезы (Slices) →</a>
         </div>
     </section>
     """)
@@ -766,131 +580,124 @@ def build_chapter7_html(chapters):
 
 def build_chapter8_html(chapters):
     sidebar_html = build_sidebar(chapters, active_chapter_num=8, current_exercises=ch8_exercises)
-    
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
-    
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">🍰 Модуль 08 • Динамические Коллекции</div>
         <h1 class="hero-title">Срезы (Slices) и Модель Памяти в Go</h1>
-        <p class="hero-desc">
-            Фундаментальное инженерное погружение в ключевую структуру данных языка Go — Срезы (Slices): 
-            детальный разбор дескриптора SliceHeader (Data pointer, Len, Cap), механика геометрического роста append 
-            (стратегия Go 1.18+), защита данных через трехзначный слайсинг s[low:high:max], предотвращение критических утечек памяти 
-            при слайсинге больших массивов, алгоритмы фильтрации и разворота In-Place (Zero Allocations), 
-            реализация стека LIFO, тонкости сериализации nil vs empty срезов в REST/JSON API и новейший пакет slices (Go 1.21+). 
-            Все 74 упражнения курса решены шаг за шагом.
-        </p>
+        <p class="hero-desc">Дескриптор SliceHeader (Data, Len, Cap), геометрический рост append, трехзначный слайсинг s[low:high:max], предотвращение утечек памяти, In-Place фильтрация и пакет slices. 74 упражнения решено.</p>
         <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-val">74 из 74</span>
-                <span class="stat-lbl">Упражнений решено</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">SliceHeader</span>
-                <span class="stat-lbl">Data, Len, Cap (24B)</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Zero Alloc</span>
-                <span class="stat-lbl">In-Place & Pre-alloc</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">slices (1.21+)</span>
-                <span class="stat-lbl">Generics & Fast Sort</span>
-            </div>
+            <div class="stat-item"><span class="stat-val">74 из 74</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">SliceHeader</span><span class="stat-lbl">Data, Len, Cap (24B)</span></div>
+            <div class="stat-item"><span class="stat-val">Zero Alloc</span><span class="stat-lbl">In-Place & Pre-alloc</span></div>
+            <div class="stat-item"><span class="stat-val">slices (1.21+)</span><span class="stat-lbl">Generics & Fast Sort</span></div>
         </div>
     </section>
     """)
-    
     section_groups_ch8 = [
         (1, 18, "Раздел 1: Базовый Массив, Создание Срезов, make, Рост append, Трехзначный Слайсинг и InspectSlice", "len/cap свойства, [...] vs [], окно в массив arr[1:4], make(3, 5), несравнимость [2][]int, стратегия роста append, вариативный append..., ре-слайсинг s[:cap], cap(s[1:3]), паника out of bounds, s[low:high:max], расщепление связи, безопасный copy, срез строк, утилита InspectSlice и трюк удаления"),
         (19, 37, "Раздел 2: Ловушка Реаллокации в Функциях, Вставка со Сдвигом, Overlapping Copy, Nil vs Empty в JSON и s[:0]", "make([]int, 3), потеря мутаций в функциях, пошаговый append, вставка append+copy, InsertAt, безопасный сдвиг memmove, Filter, срез из [6]int, матрица [][]int, nil vs empty срез в REST API, переиспользование s[:0], возврат copy и запись вне len"),
         (38, 56, "Раздел 3: Копирование Структур, DeleteByIndex, Смена Адресов &s[0], In-Place Filter, Fast Delete и Утечки Памяти", "for range по []Person, сохранение underlying array при удалении, коллизии s2[0]=99, отслеживание смены &s[0], идиоматичный возврат срезов, FilterInPlace за 0B, FastDelete за O(1), ChunkSlice, memory leak 1MB и предвыделение make(0, 100)"),
         (57, 74, "Раздел 4: In-Place Reverse, Пакет slices (Go 1.21+), LIFO Стек, Multi-Sort, Jagged Arrays и Треугольные Срезы", "Разворот на месте, утечка в суффиксе big, s[:0] в sync.Pool, IsSorted на cmp.Ordered, стек Push/Pop, sort.Slice, O(1) vs O(N) удаление, современный пакет slices, Union без дубликатов, slices.DeleteFunc, сбор указателей []*int, slices.SortFunc и треугольный срез")
     ]
-    
     ex_dict = {e["num"]: e for e in ch8_exercises}
     for start_n, end_n, title, desc in section_groups_ch8:
         content_parts.append(f"""
         <div class="section-separator">
-            <div>
-                <h2>{title}</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
-            </div>
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
             <span class="tag">Упражнения {start_n}–{end_n}</span>
         </div>
         """)
         for n in range(start_n, end_n + 1):
             if n in ex_dict:
                 content_parts.append(build_exercise_card(ex_dict[n]))
-                
     content_parts.append("""
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 08 полностью завершена!</h3>
-        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
-            Вы в совершенстве освоили срезы, устройство дескриптора SliceHeader, стратегию роста, In-Place фильтрацию и управление памятью.
-        </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
-                ← Вернуться к Главе 07 (Массивы)
-            </a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
-                Глава 09: Хэш-таблицы (Maps) (Скоро) →
-            </a>
+            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 07</a>
+            <a href="chapter9.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 09: Хэш-таблицы (Maps) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '08. Слайсы (74/74)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
+def build_chapter9_html(chapters):
+    sidebar_html = build_sidebar(chapters, active_chapter_num=9, current_exercises=ch9_exercises)
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">🗺️ Модуль 09 • Хэш-Таблицы и Ассоциативные Массивы</div>
+        <h1 class="hero-title">Мапы (Maps) и Модель Памяти в Go</h1>
+        <p class="hero-desc">
+            Глубокое инженерное руководство по ассоциативным массивам и хэш-таблицам в Go: 
+            детальный разбор внутреннего устройства `hmap` и бакетов `bmap` (8 пар на бакет, tophash), 
+            идиома `comma-ok` для различения нуля и отсутствия, реализация множеств (Set) на `struct{}` с нулевым оверхедом, 
+            таблицы диспетчеризации `map[string]func`, потокобезопасность и детектор гонок `concurrent map writes`, 
+            устранение скрытых утечек памяти при массовых удалениях, мемоизация и пакет `maps` (Go 1.21+). 
+            Все 62 упражнения курса решены шаг за шагом.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-val">62 из 62</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">hmap & bmap</span><span class="stat-lbl">8 слотов на бакет</span></div>
+            <div class="stat-item"><span class="stat-val">Set struct{}</span><span class="stat-lbl">Zero-Byte Overhead</span></div>
+            <div class="stat-item"><span class="stat-val">maps (1.21+)</span><span class="stat-lbl">Clone, Copy, Equal</span></div>
+        </div>
+    </section>
+    """)
+    section_groups_ch9 = [
+        (1, 15, "Раздел 1: Базовые Операции, Zero Values, Nil Map, Comma-ok, delete и Comparable Структуры", "Чтение несуществующего ключа, паника записи в nil, литералы, comma-ok val, ok := m[k], SafeGet, delete без паник, вложенные мапы, Point как ключ, append к срезу в мапе, несравнимость m1 == m2, частотный словарь слов и рун"),
+        (16, 31, "Раздел 2: Указатели как Ключи, Set на struct{}, Command Dispatcher, Инверсия и Сортировка", "*Point по адресу памяти, Set на struct{} (0 байт), Command Dispatcher map[string]func, CLI-калькулятор, детекция коллизий при инверсии, ловушка for _, v := range m { v++ }, Comma-ok для столиц и детерминированная сортировка ключей"),
+        (32, 47, "Раздел 3: Очистка clear(m), Недетерминированность, Запрет Срезов в Ключах, Конкурентная Запись и Top-K", "Встроенный clear(m) Go 1.21+, fastrand в итераторе, запрет map[[]int], fatal error: concurrent map writes, sync.RWMutex, указатели на структуры map[int]*User, Multi-Map со срезами, GetOrCreate, Top-K частых слов и частота рун"),
+        (48, 62, "Раздел 4: Безопасный delete в range, MergeMaps, Запрет Адресации &m[k], Утечка Памяти Бакетов и Мемоизация", "delete в цикле for k := range m, MergeMaps с nil-защитой, Set на struct{} vs bool, инверсия с группировкой в срез, запрет &m[k] из-за эвакуации, классификация типов ключей, EqualMaps, пакет maps (Go 1.21+), утечка памяти в hmap.B, мемоизация Фибоначчи и иерархическое расписание")
+    ]
+    ex_dict = {e["num"]: e for e in ch9_exercises}
+    for start_n, end_n, title, desc in section_groups_ch9:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 09 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили хэш-таблицы, устройство бакетов hmap, потокобезопасность с мьютексами и предотвращение утечек памяти.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter8.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 08 (Слайсы)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 10: Строки и байты (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '09. Мапы (62/62)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
 if __name__ == '__main__':
     chapters = get_all_chapters()
     
-    # 1. Build index.html (Chapter 1)
-    ch1_html = build_chapter1_html(chapters)
-    with open('/home/ut/work/go-workout/index.html', 'w', encoding='utf-8') as f:
-        f.write(ch1_html)
-    print(f"Chapter 1 written to /home/ut/work/go-workout/index.html ({os.path.getsize('/home/ut/work/go-workout/index.html')} bytes)")
+    pages = [
+        ('index.html', build_chapter1_html),
+        ('chapter2.html', build_chapter2_html),
+        ('chapter3.html', build_chapter3_html),
+        ('chapter4.html', build_chapter4_html),
+        ('chapter5.html', build_chapter5_html),
+        ('chapter6.html', build_chapter6_html),
+        ('chapter7.html', build_chapter7_html),
+        ('chapter8.html', build_chapter8_html),
+        ('chapter9.html', build_chapter9_html),
+    ]
     
-    # 2. Build chapter2.html (Chapter 2)
-    ch2_html = build_chapter2_html(chapters)
-    with open('/home/ut/work/go-workout/chapter2.html', 'w', encoding='utf-8') as f:
-        f.write(ch2_html)
-    print(f"Chapter 2 written to /home/ut/work/go-workout/chapter2.html ({os.path.getsize('/home/ut/work/go-workout/chapter2.html')} bytes)")
-
-    # 3. Build chapter3.html (Chapter 3)
-    ch3_html = build_chapter3_html(chapters)
-    with open('/home/ut/work/go-workout/chapter3.html', 'w', encoding='utf-8') as f:
-        f.write(ch3_html)
-    print(f"Chapter 3 written to /home/ut/work/go-workout/chapter3.html ({os.path.getsize('/home/ut/work/go-workout/chapter3.html')} bytes)")
-
-    # 4. Build chapter4.html (Chapter 4)
-    ch4_html = build_chapter4_html(chapters)
-    with open('/home/ut/work/go-workout/chapter4.html', 'w', encoding='utf-8') as f:
-        f.write(ch4_html)
-    print(f"Chapter 4 written to /home/ut/work/go-workout/chapter4.html ({os.path.getsize('/home/ut/work/go-workout/chapter4.html')} bytes)")
-
-    # 5. Build chapter5.html (Chapter 5)
-    ch5_html = build_chapter5_html(chapters)
-    with open('/home/ut/work/go-workout/chapter5.html', 'w', encoding='utf-8') as f:
-        f.write(ch5_html)
-    print(f"Chapter 5 written to /home/ut/work/go-workout/chapter5.html ({os.path.getsize('/home/ut/work/go-workout/chapter5.html')} bytes)")
-
-    # 6. Build chapter6.html (Chapter 6)
-    ch6_html = build_chapter6_html(chapters)
-    with open('/home/ut/work/go-workout/chapter6.html', 'w', encoding='utf-8') as f:
-        f.write(ch6_html)
-    print(f"Chapter 6 written to /home/ut/work/go-workout/chapter6.html ({os.path.getsize('/home/ut/work/go-workout/chapter6.html')} bytes)")
-
-    # 7. Build chapter7.html (Chapter 7)
-    ch7_html = build_chapter7_html(chapters)
-    with open('/home/ut/work/go-workout/chapter7.html', 'w', encoding='utf-8') as f:
-        f.write(ch7_html)
-    print(f"Chapter 7 written to /home/ut/work/go-workout/chapter7.html ({os.path.getsize('/home/ut/work/go-workout/chapter7.html')} bytes)")
-
-    # 8. Build chapter8.html (Chapter 8)
-    ch8_html = build_chapter8_html(chapters)
-    with open('/home/ut/work/go-workout/chapter8.html', 'w', encoding='utf-8') as f:
-        f.write(ch8_html)
-    print(f"Chapter 8 written to /home/ut/work/go-workout/chapter8.html ({os.path.getsize('/home/ut/work/go-workout/chapter8.html')} bytes)")
+    for filename, builder_fn in pages:
+        path = os.path.join('/home/ut/work/go-workout', filename)
+        content = builder_fn(chapters)
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        print(f"Written {path} ({os.path.getsize(path)} bytes)")

@@ -1,0 +1,1490 @@
+[
+  {
+    "num": 1,
+    "title": "Чтение несуществующего ключа из map и автоматический возврат Zero Value",
+    "task": "Чтение несуществующего ключа: Запроси из нормальной мапы ключ, которого там нет. Убедись, что программа не падает, а возвращает zero value (ноль для int).",
+    "theory": "\n**Поведение `map[K]V` при обращении к отсутствующему ключу:**\n- В отличие от Python (`KeyError`) или C++ (`std::map::at` out_of_range), в Go чтение `val := m[key]` **никогда не вызывает панику** и не завершает программу ошибкой;\n- Если ключ не найден в хэш-таблице, рантайм Go возвращает **нулевое значение типа `V`** (`0` для чисел, `\"\"` для строк, `false` для `bool`, `nil` для указателей/срезов/мап).\n",
+    "step_by_step": "\n1. Создаем `scores := map[string]int{\"Alice\": 95, \"Bob\": 80}`.\n2. Запрашиваем существующий ключ `\"Alice\"`.\n3. Запрашиваем отсутствующий ключ `\"Charlie\"`.\n4. Сравниваем результаты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tscores := map[string]int{\n\t\t\"Alice\": 95,\n\t\t\"Bob\":   80,\n\t}\n\n\tfmt.Printf(\"1. Существующий ключ 'Alice':   %d\\n\", scores[\"Alice\"])\n\tfmt.Printf(\"2. Несуществующий ключ 'Charlie': %d (Zero Value типа int)\\n\", scores[\"Charlie\"])\n}",
+        "note": "Чтение несуществующего ключа"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Существующий ключ 'Alice':   95\n# 2. Несуществующий ключ 'Charlie': 0 (Zero Value типа int)",
+        "note": "Возврат нуля без паники"
+      }
+    ],
+    "under_the_hood": "\nПри промахе хэш-поиска процедура `runtime.mapaccess1` возвращает указатель на глобальную область нулей `runtime.zeroVal`.\n",
+    "pitfalls": "\n- Предположение, что возвращенный `0` означает, что ключ `\"Charlie\": 0` реально сохранен в мапе. Для различения отсутствия и реального нуля используют идиому `comma-ok`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему авторы Go решили возвращать Zero Value вместо выброса исключения при чтении из `map`?»\n**Ответ:** Это позволяет писать лаконичный код счетчиков вида `counts[word]++` без предварительных проверок наличия ключа (`counts[word]` при первом обращении вернет 0, и `0++` запишет 1).\n"
+  },
+  {
+    "num": 2,
+    "title": "Анатомия Nil-мапы (var m map[string]int): безопасное чтение vs фатальная паника при записи",
+    "task": "Объяви var m map[string]int (nil map). Прочитай значение по ключу: v := m[\"key\"]. Покажи, что не паникует, возвращает zero value (0). Затем попробуй записать: m[\"key\"] = 1 — получи панику assignment to entry in nil map. Объясни, почему чтение безопасно, а запись — нет.",
+    "theory": "\n**Nil Map в рантайме Go:**\n1. Неинициализированная мапа `var m map[string]int` имеет значение `nil` (внутренний указатель на структуру `hmap` равен `0x0`);\n2. **Чтение `m[\"key\"]`:** `runtime.mapaccess1` проверяет `if h == nil { return zeroVal }` $\rightarrow$ абсолютно безопасно;\n3. **Запись `m[\"key\"] = 1`:** `runtime.mapassign` не может выделить память под бакеты, так как заголовка `hmap` не существует $\rightarrow$ вызывает немедленную фатальную панику `panic: assignment to entry in nil map`.\n",
+    "step_by_step": "\n1. Объявляем `var m map[string]int`.\n2. Читаем `v := m[\"test\"]` и убеждаемся в отсутствии паники.\n3. Перехватываем панику при записи `m[\"test\"] = 100` через `recover()`.\n4. Исправляем инициализацией `make(map[string]int)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar m map[string]int\n\n\tfmt.Printf(\"1. Состояние: isNil = %t, len = %d\\n\", m == nil, len(m))\n\n\tval := m[\"любой_ключ\"]\n\tfmt.Printf(\"2. Чтение из nil-мапы: val = %d\\n\\n\", val)\n\n\tfunc() {\n\t\tdefer func() {\n\t\t\tif r := recover(); r != nil {\n\t\t\t\tfmt.Printf(\"⚠️ 3. Перехвачена паника: %v\\n\", r)\n\t\t\t}\n\t\t}()\n\t\tm[\"key\"] = 1\n\t}()\n\n\tm = make(map[string]int)\n\tm[\"key\"] = 1\n\tfmt.Printf(\"\\n4. После make: m[\\\"key\\\"] = %d\\n\", m[\"key\"])\n}",
+        "note": "Nil-мапа: безопасное чтение и паника при записи"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Состояние: isNil = true, len = 0\n# 2. Чтение из nil-мапы: val = 0 (Zero Value)\n# \n# ⚠️ 3. Перехвачена паника при записи: assignment to entry in nil map\n# \n# 4. После make: m[\"key\"] = 1 (УСПЕШНО!)",
+        "note": "Результаты"
+      }
+    ],
+    "under_the_hood": "\nМапа в Go — это указатель на структуру `runtime.hmap`. Если указатель `0x0`, запись не может аллоцировать память без создания `hmap`.\n",
+    "pitfalls": "\n- Объявление мапы в структуре `type Service struct { cache map[string]string }` без явной инициализации в конструкторе `NewService()`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему Go не инициализирует `map` автоматически при первой записи, как `append` у срезов?»\n**Ответ:** Потому что `map` передается по значению как указатель на `hmap`. Если бы первая запись создавала `hmap` неявно, это изменило бы значение локального указателя, но не обновило бы мапу у вызывающей стороны.\n"
+  },
+  {
+    "num": 3,
+    "title": "Инициализация мапы литералом и итерация через for k, v := range",
+    "task": "Создай мапу-литерал: map[string]int{\"one\": 1, \"two\": 2, \"three\": 3}. Пройди по ней for k, v := range.",
+    "theory": "\n**Литерал мапы и итерация:**\n- Литерал `map[K]V{k1: v1, k2: v2}` выделяет память и сразу заполняет бакеты;\n- Цикл `for k, v := range m` обходит все пары ключ-значение;\n- Порядок обхода **намеренно рандомизируется** рантаймом Go на каждом запуске цикла.\n",
+    "step_by_step": "\n1. Инициализируем `numbers := map[string]int{\"one\": 1, \"two\": 2, \"three\": 3}`.\n2. Проходим `for k, v := range numbers`.\n3. Печатаем пары ключ-значение.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tnumbers := map[string]int{\n\t\t\"one\":   1,\n\t\t\"two\":   2,\n\t\t\"three\": 3,\n\t}\n\n\tfmt.Printf(\"Размер мапы: %d пар\\n\", len(numbers))\n\tfor key, val := range numbers {\n\t\tfmt.Printf(\"  Ключ: %-6q -> Значение: %d\\n\", key, val)\n\t}\n}",
+        "note": "Литерал мапы и обход через range"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Размер мапы: 3 пар\n#   Ключ: \"one\"    -> Значение: 1\n#   Ключ: \"two\"    -> Значение: 2\n#   Ключ: \"three\"  -> Значение: 3",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\nЛитерал преобразуется компилятором в `makemap` с последующей серией вызовов `mapassign`.\n",
+    "pitfalls": "\n- Надежда на сохранение порядка вставки: мапа в Go принципиально не гарантирует порядок.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли узнать емкость мапы через `cap(m)`?»\n**Ответ:** НЕТ! Функция `cap()` запрещена для мап (ошибка компиляции). Мапа динамически расширяется по мере роста коэффициента заполнения (Load Factor $> 6.5$).\n"
+  },
+  {
+    "num": 4,
+    "title": "Идиома Comma-ok (val, ok := m[key]): различение нуля и отсутствия ключа",
+    "task": "Идиома Comma Ok: Как отличить, в мапе реально лежит ноль, или ключа просто нет? Запроси значение как val, ok := m[\"key\"] и выведи ok.",
+    "theory": "\n**Двухпараметрический доступ к мапе (Comma-ok idiom):**\n- Форма `val, ok := m[key]`:\n  - `ok == true` $\rightarrow$ ключ физически существует в мапе (даже если `val == 0`);\n  - `ok == false` $\rightarrow$ ключ отсутствует в мапе (и `val` содержит default zero value).\n",
+    "step_by_step": "\n1. Создаем `balances := map[string]int{\"Alice\": 0, \"Bob\": 500}`.\n2. Проверяем ключ `\"Alice\"` (баланс 0, но клиент существует).\n3. Проверяем ключ `\"Charlie\"` (клиент отсутствует).\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tbalances := map[string]int{\n\t\t\"Alice\": 0,   // Реально лежит ноль\n\t\t\"Bob\":   500, // Положительный баланс\n\t}\n\n\t// 1. Проверяем Alice:\n\tvalA, okA := balances[\"Alice\"]\n\tfmt.Printf(\"Alice:   значение = %d, найден = %-5t (КЛЮЧ ЕСТЬ В МАПЕ!)\\n\", valA, okA)\n\n\t// 2. Проверяем Charlie:\n\tvalC, okC := balances[\"Charlie\"]\n\tfmt.Printf(\"Charlie: значение = %d, найден = %-5t (КЛЮЧА НЕТ В МАПЕ!)\\n\", valC, okC)\n}",
+        "note": "Идиома Comma-ok"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Alice:   значение = 0, найден = true  (КЛЮЧ ЕСТЬ В МАПЕ!)\n# Charlie: значение = 0, найден = false (КЛЮЧА НЕТ В МАПЕ!)",
+        "note": "Различение 0 и отсутствия"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор заменяет выражение на вызов `runtime.mapaccess2`, возвращающий `(unsafe.Pointer, bool)`.\n",
+    "pitfalls": "\n- Проверка наличия через `if m[k] != 0`: если в мапе действительно лежит 0, условие ошибочно решит, что ключа нет.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как проверить только наличие ключа в мапе, не сохраняя само значение?»\n**Ответ:** `if _, ok := m[key]; ok { ... }`.\n"
+  },
+  {
+    "num": 5,
+    "title": "Функция SafeGet(m, key) для инкапсуляции безопасного чтения из map",
+    "task": "Напиши функцию SafeGet(m map[string]int, key string) (int, bool), использующую comma ok идиому: v, ok := m[key]. Верни значение и флаг наличия.",
+    "theory": "\nИнкапсуляция доступа к данным хэш-таблицы с явным контрактом успешности.\n",
+    "step_by_step": "\n1. Пишем `SafeGet(m map[string]int, key string) (int, bool)`.\n2. Тестируем на существующих и отсутствующих ключах.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc SafeGet(m map[string]int, key string) (int, bool) {\n\tv, ok := m[key]\n\treturn v, ok\n}\n\nfunc main() {\n\tinventory := map[string]int{\n\t\t\"laptop\": 15,\n\t\t\"mouse\":  0, // Товар закончился, но позиция есть\n\t}\n\n\titemsToFind := []string{\"laptop\", \"mouse\", \"keyboard\"}\n\tfor _, item := range itemsToFind {\n\t\tqty, found := SafeGet(inventory, item)\n\t\tif found {\n\t\t\tfmt.Printf(\"✔ Товар %-10q найден: количество = %d\\n\", item, qty)\n\t\t} else {\n\t\t\tfmt.Printf(\"❌ Товар %-10q отсутствует в каталоге\\n\", item)\n\t\t}\n\t}\n}",
+        "note": "Функция SafeGet"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# ✔ Товар \"laptop\"   найден: количество = 15\n# ✔ Товар \"mouse\"    найден: количество = 0\n# ❌ Товар \"keyboard\" отсутствует в каталоге",
+        "note": "Результаты поиска"
+      }
+    ],
+    "under_the_hood": "\nВозврат двух регистров `(RAX, RBX)` без аллокаций памяти.\n",
+    "pitfalls": "\n- Вызов `SafeGet` на `nil`-мапе: функция отработает штатно и вернет `(0, false)`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова амортизированная временная сложность `SafeGet`?»\n**Ответ:** В среднем $O(1)$, в худшем случае $O(N)$ при катастрофических коллизиях хэш-функции.\n"
+  },
+  {
+    "num": 6,
+    "title": "Безопасное удаление delete(m, key) и отсутствие паник на несуществующих ключах",
+    "task": "Безопасное удаление: Используй функцию delete(m, \"key\"). Попробуй удалить ключ, которого нет в мапе (убедись, что это не вызывает ошибок).",
+    "theory": "\n**Встроенная функция `delete(m, key)`:**\n- Удаляет ключ и связанное значение из мапы `m`;\n- Если ключ не найден или сама мапа равна `nil`, операция является **no-op (пустой операцией)**: программа не падает и не возвращает ошибок;\n- Освобождает слот в бакете для последующей перезаписи.\n",
+    "step_by_step": "\n1. Создаем `m := map[string]int{\"auth\": 1, \"db\": 2}`.\n2. Удаляем существующий ключ `\"auth\"`.\n3. Удаляем отсутствующий ключ `\"ghost\"`.\n4. Удаляем из `nil`-мапы.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tservices := map[string]int{\"auth\": 8080, \"db\": 5432}\n\tfmt.Printf(\"1. Исходная мапа: %v\\n\", services)\n\n\t// 1. Удаление существующего ключа:\n\tdelete(services, \"auth\")\n\tfmt.Printf(\"2. После delete('auth'): %v\\n\", services)\n\n\t// 2. Удаление несуществующего ключа (no-op):\n\tdelete(services, \"non_existent_key\")\n\tfmt.Printf(\"3. После delete('non_existent_key'): %v (без ошибок!)\\n\", services)\n\n\t// 3. Удаление из nil-мапы (безопасно!):\n\tvar nilMap map[string]int\n\tdelete(nilMap, \"any_key\")\n\tfmt.Println(\"4. delete из nilMap отработал успешно и без паники!\")\n}",
+        "note": "Безопасность функции delete"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Исходная мапа: map[auth:8080 db:5432]\n# 2. После delete('auth'): map[db:5432]\n# 3. После delete('non_existent_key'): map[db:5432] (без ошибок!)\n# 4. delete из nilMap отработал успешно и без паники!",
+        "note": "Штатная работа без паник"
+      }
+    ],
+    "under_the_hood": "\n`runtime.mapdelete` проверяет `if h == nil || h.count == 0 { return }`. Внутри бакета слот помечается маркером `emptyOne`.\n",
+    "pitfalls": "\n- Ожидание, что `delete` вернет булев флаг, был ли элемент удален: `delete` возвращает `void`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Освобождает ли `delete` физическую память бакетов мапы?»\n**Ответ:** НЕТ! `delete` освобождает только ячейки для повторного использования. Объем выделенных страниц памяти под мапу не уменьшается.\n"
+  },
+  {
+    "num": 7,
+    "title": "Создание мапы map[string]int, добавление 3 пар и форматированный вывод",
+    "task": "Создайте мапу map[string]int, добавьте в нее 3 пары ключ-значение и выведите их.",
+    "theory": "\nБазовые операции инициализации, записи `m[k] = v` и чтения.\n",
+    "step_by_step": "\n1. Инициализируем `users := make(map[string]int)`.\n2. Добавляем 3 пользователя с их ID.\n3. Печатаем мапу и ее длину.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tusers := make(map[string]int)\n\n\tusers[\"admin\"] = 1\n\tusers[\"moderator\"] = 2\n\tusers[\"guest\"] = 99\n\n\tfmt.Printf(\"Мапа: %v\\n\", users)\n\tfmt.Printf(\"Число записей len(users): %d\\n\", len(users))\n\tfmt.Printf(\"ID администратора:        %d\\n\", users[\"admin\"])\n}",
+        "note": "Добавление элементов в map"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Мапа: map[admin:1 guest:99 moderator:2]\n# Число записей len(users): 3\n# ID администратора:        1",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\n`make(map[string]int)` аллоцирует структуру `hmap` с 1 начальным бакетом на 8 слотов.\n",
+    "pitfalls": "\n- Забыть вызов `make()` и писать в `var users map[string]int`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Сколько пар ключ-значение помещается в один бакет `bmap` в рантайме Go?»\n**Ответ:** Ровно 8 пар (8 ключей + 8 значений + 8 байт tophash).\n"
+  },
+  {
+    "num": 8,
+    "title": "Вложенные мапы map[string]map[string]int и обязательная инициализация внутренних уровней",
+    "task": "Вложенные мапы: Создай map[string]map[string]int. Добавь значение. Не забудь, что внутреннюю мапу тоже нужно инициализировать через make, иначе будет паника.",
+    "theory": "\n**Опасность вложенных мап (Nested Maps):**\n- При создании внешней мапы `outer := make(map[string]map[string]int)` все ее значения по умолчанию равны `nil`;\n- Попытка записи `outer[\"user1\"][\"score\"] = 100` вызовет панику `assignment to entry in nil map`, так как `outer[\"user1\"]` равен `nil`;\n- Перед записью во внутреннюю мапу **обязательно проверяют и инициализируют ее через `make`**.\n",
+    "step_by_step": "\n1. Создаем внешнюю мапу `outer := make(map[string]map[string]int)`.\n2. Пишем функцию безопасной вставки `SetNestedValue`.\n3. Заполняем данные студентов и их оценки.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc SetScore(grades map[string]map[string]int, student, subject string, score int) {\n\t// Если внутренняя мапа для студента еще не создана:\n\tif grades[student] == nil {\n\t\tgrades[student] = make(map[string]int) // Инициализируем внутренний уровень!\n\t}\n\tgrades[student][subject] = score\n}\n\nfunc main() {\n\tgrades := make(map[string]map[string]int)\n\n\tSetScore(grades, \"Иван\", \"Математика\", 5)\n\tSetScore(grades, \"Иван\", \"Физика\", 4)\n\tSetScore(grades, \"Анна\", \"Информатика\", 5)\n\n\tfmt.Println(\"Вложенная структура оценок:\")\n\tfor student, subjects := range grades {\n\t\tfmt.Printf(\"  Студент: %-6s -> %v\\n\", student, subjects)\n\t}\n}",
+        "note": "Безопасная работа с вложенными мапами"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вложенная структура оценок:\n#   Студент: Иван   -> map[Математика:5 Физика:4]\n#   Студент: Анна   -> map[Информатика:5]",
+        "note": "Вложенные мапы успешно инициализированы"
+      }
+    ],
+    "under_the_hood": "\nКаждая внутренняя мапа — это отдельный независимый дескриптор `hmap` в куче.\n",
+    "pitfalls": "\n- Прямая запись `grades[\"Анна\"][\"Физика\"] = 5` без предварительного `make` для `\"Анна\"`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каковы альтернативы глубоко вложенным мапам `map[K1]map[K2]V`?»\n**Ответ:** Использование составного ключа-структуры: `type Key struct { Student, Subject string }` и плоской мапы `map[Key]int`. Это требует меньше аллокаций и устраняет проблемы с `nil`.\n"
+  },
+  {
+    "num": 9,
+    "title": "Значения по умолчанию для отсутствующих ключей различных типов (string, bool, slice, struct)",
+    "task": "Попробуйте обратиться к несуществующему ключу в мапе. Какое значение \"по умолчанию\" вернется?",
+    "theory": "\nСводная таблица Zero Values при промахе в map:\n- `map[string]string` $\rightarrow `\"\"`\n- `map[string]bool` $\rightarrow `false`\n- `map[string][]int` $\rightarrow `nil` срез (`len=0`)\n- `map[string]Point` $\rightarrow `Point{X: 0, Y: 0}`\n",
+    "step_by_step": "\n1. Создаем мапы разных типов.\n2. Читаем несуществующие ключи.\n3. Проверяем возвращенные значения.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Config struct {\n\tTimeout int\n\tDebug   bool\n}\n\nfunc main() {\n\tmStr := make(map[string]string)\n\tmBool := make(map[string]bool)\n\tmSlice := make(map[string][]int)\n\tmStruct := make(map[string]Config)\n\n\tfmt.Printf(\"1. string: %q\\n\", mStr[\"missing\"])\n\tfmt.Printf(\"2. bool:   %t\\n\", mBool[\"missing\"])\n\tfmt.Printf(\"3. slice:  %v (isNil = %t)\\n\", mSlice[\"missing\"], mSlice[\"missing\"] == nil)\n\tfmt.Printf(\"4. struct: %+v\\n\", mStruct[\"missing\"])\n}",
+        "note": "Zero Values различных типов в map"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. string: \"\"\n# 2. bool:   false\n# 3. slice:  [] (isNil = true)\n# 4. struct: {Timeout:0 Debug:false}",
+        "note": "Результаты"
+      }
+    ],
+    "under_the_hood": "\nПамять обнуляется согласно размеру `elemType.Size_`.\n",
+    "pitfalls": "\n- Предположение, что `mSlice[\"k\"]` вернет аллоцированный срез: возвращается именно `nil`-срез.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли делать `append` к `mSlice[\"missing\"]`?»\n**Ответ:** ДА! `mSlice[\"k\"] = append(mSlice[\"k\"], 10)` работает корректно, так как `append(nil, 10)` создает валидный срез `[10]`.\n"
+  },
+  {
+    "num": 10,
+    "title": "Структура как ключ мапы: Point{X, Y int} и требования Comparable к типам ключей",
+    "task": "Структура как ключ: Создай структуру Point{X, Y int}. Используй её в качестве ключа для мапы. (В Go ключом может быть любой тип, для которого определена операция ==).",
+    "theory": "\n**Требования к типам ключей в Go:**\n1. Ключом в `map[K]V` может быть **любой сравнимый тип (Comparable Type)**;\n2. Структура `Point{X, Y int}` сравнима через `==`, так как все ее поля (`int`) сравнимы;\n3. Две структуры равны, если равны все их поля;\n4. Это позволяет легко использовать координаты, составные ID и пары параметров как ключи.\n",
+    "step_by_step": "\n1. Объявляем структуру `type Point struct { X, Y int }`.\n2. Создаем `grid := make(map[Point]string)`.\n3. Добавляем объекты и ищем по координатам.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Point struct {\n\tX int\n\tY int\n}\n\nfunc main() {\n\tgameMap := map[Point]string{\n\t\t{X: 0, Y: 0}: \"База игроков\",\n\t\t{X: 5, Y: 5}: \"Золотой рудник\",\n\t\t{X: 9, Y: 9}: \"Вражеский замок\",\n\t}\n\n\tplayerPos := Point{X: 5, Y: 5}\n\tfmt.Printf(\"Локация в точке %v: %s\\n\", playerPos, gameMap[playerPos])\n\n\tunknownPos := Point{X: 1, Y: 2}\n\tfmt.Printf(\"Локация в точке %v: %q (пусто)\\n\", unknownPos, gameMap[unknownPos])\n}",
+        "note": "Структура как ключ map"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Локация в точке {5 5}: Золотой рудник\n# Локация в точке {1 2}: \"\" (пусто)",
+        "note": "Поиск по составному ключу"
+      }
+    ],
+    "under_the_hood": "\nХэш-функция вычисляет хэш от 16 байт структуры `Point` через алгоритм `aeshash128`.\n",
+    "pitfalls": "\n- Добавление в структуру поля несравнимого типа (например `Tags []string`): структура сразу потеряет свойство `comparable` и вызовет ошибку компиляции `invalid map key type Point`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что произойдет, если в структуре-ключе есть приватные поля?»\n**Ответ:** Структура все равно останется comparable и сможет быть ключом мапы, если типы приватных полей сравнимы.\n"
+  },
+  {
+    "num": 11,
+    "title": "Хранение срезов в мапе map[string][]int: ловушка потери append и обязательное переприсваивание",
+    "task": "Создай мапу map[string][]int (значение — слайс). Добавь элементы: m[\"nums\"] = append(m[\"nums\"], 1). Покажи, что если append вызывает реаллокацию, мапа не увидит новые элементы (потому что слайс в мапе — это struct data, и она не обновляется автоматически). Исправь через переприсваивание.",
+    "theory": "\n**Механика срезов в значениях мапы:**\n- Значением в `map[string][]int` хранится 24-байтная копия дескриптора `SliceHeader`;\n- Вызов `append(m[\"nums\"], 1)` создает **новый локальный `SliceHeader`**;\n- Если не сделать обратное присваивание `m[\"nums\"] = append(...)`, мапа сохранит старый `SliceHeader` со старой длиной `Len`!\n",
+    "step_by_step": "\n1. Создаем `m := make(map[string][]int)`.\n2. Показываем ошибку, если не переприсвоить результат `append`.\n3. Показываем правильный паттерн `m[k] = append(m[k], val)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tm := make(map[string][]int)\n\n\tm[\"scores\"] = append(m[\"scores\"], 10)\n\tm[\"scores\"] = append(m[\"scores\"], 20)\n\tm[\"scores\"] = append(m[\"scores\"], 30)\n\n\tfmt.Printf(\"1. Срез в мапе: %v | len = %d, cap = %d\\n\",\n\t\tm[\"scores\"], len(m[\"scores\"]), cap(m[\"scores\"]))\n\n\ttemp := m[\"scores\"]\n\ttemp = append(temp, 40)\n\n\tfmt.Printf(\"2. temp: %v (len=%d)\\n\", temp, len(temp))\n\tfmt.Printf(\"3. m[\\\"scores\\\"]: %v (len=%d)\\n\", m[\"scores\"], len(m[\"scores\"]))\n}",
+        "note": "Правильное добавление в срез внутри map"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Срез в мапе: [10 20 30] | len = 3, cap = 4\n# 2. temp после append: [10 20 30 40] (len=4)\n# 3. m[\"scores\"] в мапе: [10 20 30] (len=3 - НЕ ОБНОВИЛСЯ!)",
+        "note": "Мапа требует явного переприсваивания"
+      }
+    ],
+    "under_the_hood": "\n`m[\"scores\"]` возвращает копию `SliceHeader` по значению. Запись `m[\"k\"] = ...` перезаписывает `SliceHeader` в бакете хэш-таблицы.\n",
+    "pitfalls": "\n- Вызов функций, делающих `append` к срезу из мапы, без сохранения возвращенного среза обратно в мапу.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как хранить динамический список в мапе без необходимости постоянного переприсваивания `m[k] = append(...)`?»\n**Ответ:** Хранить срез указателей `map[string]*[]int` или структуру-обертку с мьютексом.\n"
+  },
+  {
+    "num": 12,
+    "title": "Несравнимость мап (Not Comparable): почему m1 == m2 запрещен компилятором",
+    "task": "Попробуй сравнить две мапы через == (кроме nil). Получи ошибку компиляции. Объясни, почему мапы не comparable в Go.",
+    "theory": "\n**Почему мапы в Go НЕ поддерживают оператор `==`?**\n1. Мапы являются динамическими ссылочными структурами данных со сложной топологией бакетов;\n2. Сравнение мап потребовало бы глубокого обхода $O(N)$ всех пар ключ-значение с поиском в хэш-таблице;\n3. В спецификации Go оператор `==` зарезервирован для быстрых, плоских операций сравнения фиксированной памяти;\n4. Единственное разрешенное сравнение для мап — это сравнение с `nil`: `m == nil` или `m != nil`.\n",
+    "step_by_step": "\n1. Создаем `m1` и `m2` с идентичным содержимым.\n2. Проверяем сравнение с `nil`.\n3. Показываем ошибку компиляции при `m1 == m2`.\n4. Сравниваем через пакет `maps.Equal` (Go 1.21+).\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"maps\"\n)\n\nfunc main() {\n\tm1 := map[string]int{\"a\": 1, \"b\": 2}\n\tm2 := map[string]int{\"a\": 1, \"b\": 2}\n\n\t// 1. Сравнение с nil разрешено:\n\tfmt.Printf(\"m1 == nil: %t\\n\", m1 == nil)\n\n\t// 2. Прямое сравнение мап запрещено:\n\t// _ = m1 == m2 // ОШИБКА КОМПИЛЯЦИИ: invalid operation: m1 == m2 (map can only be compared to nil)\n\n\t// 3. Правильное сравнение через пакет maps (Go 1.21+):\n\tareEqual := maps.Equal(m1, m2)\n\tfmt.Printf(\"maps.Equal(m1, m2): %t (УСПЕШНОЕ ГЛУБОКОЕ СРАВНЕНИЕ!)\\n\", areEqual)\n}",
+        "note": "Сравнение мап"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# m1 == nil: false\n# maps.Equal(m1, m2): true (УСПЕШНОЕ ГЛУБОКОЕ СРАВНЕНИЕ!)",
+        "note": "Результат"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор блокирует `==` на этапе проверки типов. `maps.Equal` проверяет `len(m1) == len(m2)` и обходит ключи `m1`, сравнивая значения в `m2`.\n",
+    "pitfalls": "\n- Попытка использовать структуру, содержащую `map`, как ключ другой мапы: вызовет ошибку `invalid map key type`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова сложность сравнения двух мап через `maps.Equal`?»\n**Ответ:** Линейное время $O(N)$ и $O(1)$ по дополнительной памяти.\n"
+  },
+  {
+    "num": 13,
+    "title": "Частотный словарь слов текста map[string]int с разбивкой через strings.Fields",
+    "task": "Создай мапу, хранящую частоту слов в строке: map[string]int. Посчитай слова и выведи результат.",
+    "theory": "\n**Паттерн Word Frequency Counter:**\n- `strings.Fields(text)` разбивает строку по любым пробельным символам на `[]string`;\n- Идиома `freq[word]++` инкрементирует счетчик за $O(1)$;\n- При первом появлении слова `freq[word]` вернет `0`, и `0++` запишет `1`.\n",
+    "step_by_step": "\n1. Задаем строку с повторениями слов.\n2. Разбиваем через `strings.Fields`.\n3. Подсчитываем в `map[string]int`.\n4. Выводим результаты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"strings\"\n)\n\nfunc CountWordFrequency(text string) map[string]int {\n\tfreq := make(map[string]int)\n\twords := strings.Fields(strings.ToLower(text))\n\n\tfor _, w := range words {\n\t\tfreq[w]++\n\t}\n\treturn freq\n}\n\nfunc main() {\n\ttext := \"Go is fast and Go is simple and Go is powerful\"\n\tcounts := CountWordFrequency(text)\n\n\tfmt.Println(\"Частотный словарь слов:\")\n\tfor word, count := range counts {\n\t\tfmt.Printf(\"  • %-10s -> %d раз(а)\\n\", word, count)\n\t}\n}",
+        "note": "Частотный словарь слов"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Частотный словарь слов:\n#   • and        -> 2 раз(а)\n#   • simple     -> 1 раз(а)\n#   • powerful   -> 1 раз(а)\n#   • go         -> 3 раз(а)\n#   • is         -> 3 раз(а)\n#   • fast       -> 1 раз(а)",
+        "note": "Частоты успешно подсчитаны"
+      }
+    ],
+    "under_the_hood": "\n`strings.ToLower` создает нормализованную строку, устраняя дубликаты из-за регистра.\n",
+    "pitfalls": "\n- Игнорирование знаков препинания при сложном парсинге (решается через `strings.Trim(w, \".,!?:\")`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как оптимизировать подсчет частот миллиарда строк в Big Data (MapReduce)?»\n**Ответ:** Параллельной фазой Map с локальными мапами в каждой горутине и последующей агрегацией (Reduce) с суммированием счетчиков.\n"
+  },
+  {
+    "num": 14,
+    "title": "Хранение объектов в координатной сетке map[Point]string",
+    "task": "Создай мапу с ключом-структурой: map[Point]string, где Point struct{ X, Y int }. Покажи, что struct comparable может быть ключом. Добавь точки и ищи по координатам.",
+    "theory": "\nЗакрепление использования структур-значений в качестве ключей хэш-таблицы.\n",
+    "step_by_step": "\n1. Создаем структуру `type Point struct { X, Y int }`.\n2. Создаем `landmarks := make(map[Point]string)`.\n3. Добавляем достопримечательности и ищем по ключу.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Point struct {\n\tX int\n\tY int\n}\n\nfunc main() {\n\tlandmarks := map[Point]string{\n\t\t{X: 55, Y: 37}: \"Москва (Кремль)\",\n\t\t{X: 59, Y: 30}: \"Санкт-Петербург (Эрмитаж)\",\n\t\t{X: 55, Y: 49}: \"Казань (Кремль)\",\n\t}\n\n\tsearchCoords := []Point{\n\t\t{X: 55, Y: 37},\n\t\t{X: 10, Y: 20},\n\t}\n\n\tfor _, p := range searchCoords {\n\t\tif name, ok := landmarks[p]; ok {\n\t\t\tfmt.Printf(\"Координата %v: %s\\n\", p, name)\n\t\t} else {\n\t\t\tfmt.Printf(\"Координата %v: объект не найден\\n\", p)\n\t\t}\n\t}\n}",
+        "note": "Поиск объектов по структуре Point"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Координата {55 37}: Москва (Кремль)\n# Координата {10 20}: объект не найден",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\nВсе поля структуры участвуют в вычислении хэш-суммы.\n",
+    "pitfalls": "\n- Изменение полей структуры: в Go ключи мапы копируются по значению, поэтому их нельзя изменить «снаружи».\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли использовать структуру с полями `[4]byte` как ключ в `map`?»\n**Ответ:** ДА! Статические массивы сравнимы, поэтому структуры с массивами (`struct{ IP [4]byte }`) полностью comparable.\n"
+  },
+  {
+    "num": 15,
+    "title": "Частотный анализ символов текста map[rune]int с поддержкой Unicode",
+    "task": "Постройте частотный словарь: на вход строка, на выход map[rune]int.",
+    "theory": "\n**Частотный анализ UTF-8 символов:**\n- Итерация `for _, r := range text` декодирует UTF-8 поток в кодовые точки `rune` (`int32`);\n- Мапа `map[rune]int` корректно подсчитывает частоту латиницы, кириллицы, иероглифов и эмодзи;\n- Спецификатор `%c` выводит символ руны.\n",
+    "step_by_step": "\n1. Пишем функцию `RuneFrequency(text string) map[rune]int`.\n2. Тестируем на мультиязычной строке `\"Go — это огонь! 🚀\"`.\n3. Выводим результаты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc RuneFrequency(text string) map[rune]int {\n\tfreq := make(map[rune]int)\n\tfor _, r := range text {\n\t\tfreq[r]++\n\t}\n\treturn freq\n}\n\nfunc main() {\n\ttext := \"Привет, мир! 🚀 Go Go Go!\"\n\tcounts := RuneFrequency(text)\n\n\tfmt.Printf(\"Исходный текст: %q\\n\", text)\n\tfmt.Println(\"Частота символов (рун):\")\n\tfor r, count := range counts {\n\t\tif r == ' ' {\n\t\t\tfmt.Printf(\"  • [ПРОБЕЛ] -> %d\\n\", count)\n\t\t} else {\n\t\t\tfmt.Printf(\"  • %-8c (код %5d) -> %d\\n\", r, r, count)\n\t\t}\n\t}\n}",
+        "note": "Частотный анализ рун"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Исходный текст: \"Привет, мир! 🚀 Go Go Go!\"\n# Частота символов (рун):\n#   • П        (код  1055) -> 1\n#   • р        (код  1088) -> 2\n#   • и        (код  1080) -> 2\n#   • в        (код  1074) -> 1\n#   • е        (код  1077) -> 1\n#   • т        (код  1090) -> 1\n#   • ,        (код    44) -> 1\n#   • [ПРОБЕЛ] -> 5\n#   • м        (код  1084) -> 1\n#   • !        (код    33) -> 4\n#   • 🚀       (код 128640) -> 1\n#   • G        (код    71) -> 3\n#   • o        (код   111) -> 3",
+        "note": "Все Unicode символы подсчитаны"
+      }
+    ],
+    "under_the_hood": "\n`range` по строке вызывает декодер `runtime.decoderune`, возвращающий руну и ее длину в байтах.\n",
+    "pitfalls": "\n- Побайтовый обход `text[i]`, который разобьет русские буквы и эмодзи на некорректные половинки байт.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каков размер типа `rune` в памяти?»\n**Ответ:** Тип `rune` является алиасом для `int32` и занимает ровно 4 байта.\n"
+  },
+  {
+    "num": 16,
+    "title": "Указатель как ключ мапы map[*Point]string: сравнение адресов памяти vs значений полей",
+    "task": "Указатель как ключ: Измени тип ключа на *Point. Создай две разные переменные с одинаковыми координатами X и Y. Запиши значение по первому указателю, а попытайся прочитать по второму. Изучи, почему вернется 0 (адреса-то разные!).",
+    "theory": "\n**Специфика указателей как ключей мапы:**\n- При использовании указателя `*Point` в качестве ключа хэшируется и сравнивается **сам числовой адрес ячейки памяти**, а НЕ поля структуры;\n- Две разные переменные `p1 := &Point{1, 2}` и `p2 := &Point{1, 2}` имеют разные адреса (`p1 != p2`), поэтому `m[p2]` вернет пустую строку, даже если их координаты идентичны.\n",
+    "step_by_step": "\n1. Создаем структуру `Point{X, Y int}`.\n2. Создаем `m := make(map[*Point]string)`.\n3. Создаем два разных указателя с одинаковыми `X=10, Y=20`.\n4. Записываем по `p1`, читаем по `p2`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Point struct {\n\tX, Y int\n}\n\nfunc main() {\n\tm := make(map[*Point]string)\n\n\tp1 := &Point{X: 10, Y: 20}\n\tp2 := &Point{X: 10, Y: 20} // Те же координаты, но другой адрес!\n\n\tm[p1] = \"База альянса\"\n\n\tfmt.Printf(\"Адрес p1: %p | Адрес p2: %p\\n\", p1, p2)\n\tfmt.Printf(\"Поиск по p1: %q\\n\", m[p1])\n\tfmt.Printf(\"Поиск по p2: %q (НЕ НАЙДЕН, так как p1 != p2!)\\n\", m[p2])\n}",
+        "note": "Указатели как ключи map"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Адрес p1: 0xc000014070 | Адрес p2: 0xc000014080\n# Поиск по p1: \"База альянса\"\n# Поиск по p2: \"\" (НЕ НАЙДЕН, так как p1 != p2!)",
+        "note": "Разные адреса дают разные ключи"
+      }
+    ],
+    "under_the_hood": "\nХэшируется 8-байтный указатель `uintptr(unsafe.Pointer(p))` вместо содержимого структуры.\n",
+    "pitfalls": "\n- Использование `*SessionID` или `*UUID` в качестве ключей мап: два экземпляра с одинаковым строковым/байтовым значением не найдут друг друга.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Когда указатели в качестве ключей мапы оправданы?»\n**Ответ:** Когда требуется идентифицировать конкретный живой экземпляр объекта в памяти (Identity Map, отслеживание активных соединений `*net.Conn` или подписчиков `*Client`).\n"
+  },
+  {
+    "num": 17,
+    "title": "Реализация структуры данных Множество (Set) на базе map[string]struct{} с операциями Union и Intersection",
+    "task": "Реализуй множество (Set) через map[string]struct{}. Покажи, что struct{} занимает 0 байт. Реализуй методы: Add, Remove, Contains, Union, Intersection.",
+    "theory": "\n**Идиоматичный Set в Go:**\n- Тип `struct{}` (пустая структура) имеет размер строго **0 байт** (`unsafe.Sizeof(struct{}{}) == 0`);\n- В отличие от `map[T]bool`, который тратит 1 байт на значение в каждом бакете, `map[T]struct{}` не расходует память на значения;\n- Все операции поиска, добавления и удаления выполняются за $O(1)$.\n",
+    "step_by_step": "\n1. Создаем тип `type StringSet map[string]struct{}`.\n2. Реализуем методы `Add`, `Remove`, `Contains`, `Union`, `Intersection`.\n3. Тестируем операции над множествами.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"unsafe\"\n)\n\ntype StringSet map[string]struct{}\n\nfunc NewStringSet() StringSet {\n\treturn make(StringSet)\n}\n\nfunc (s StringSet) Add(item string) {\n\ts[item] = struct{}{}\n}\n\nfunc (s StringSet) Remove(item string) {\n\tdelete(s, item)\n}\n\nfunc (s StringSet) Contains(item string) bool {\n\t_, ok := s[item]\n\treturn ok\n}\n\nfunc (s StringSet) Union(other StringSet) StringSet {\n\tres := NewStringSet()\n\tfor k := range s {\n\t\tres.Add(k)\n\t}\n\tfor k := range other {\n\t\tres.Add(k)\n\t}\n\treturn res\n}\n\nfunc (s StringSet) Intersection(other StringSet) StringSet {\n\tres := NewStringSet()\n\tfor k := range s {\n\t\tif other.Contains(k) {\n\t\t\tres.Add(k)\n\t\t}\n\t}\n\treturn res\n}\n\nfunc main() {\n\tvar empty struct{}\n\tfmt.Printf(\"Размер struct{}: %d байт (ZERO OVERHEAD!)\\n\\n\", unsafe.Sizeof(empty))\n\n\tsetA := NewStringSet()\n\tsetA.Add(\"Go\")\n\tsetA.Add(\"Docker\")\n\tsetA.Add(\"Kubernetes\")\n\n\tsetB := NewStringSet()\n\tsetB.Add(\"Go\")\n\tsetB.Add(\"Python\")\n\tsetB.Add(\"Rust\")\n\n\tfmt.Printf(\"Set A: %v\\n\", setA)\n\tfmt.Printf(\"Set B: %v\\n\", setB)\n\tfmt.Printf(\"A ∩ B (Intersection): %v\\n\", setA.Intersection(setB))\n\tfmt.Printf(\"A ∪ B (Union):        %v\\n\", setA.Union(setB))\n}",
+        "note": "Структура данных Set"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Размер struct{}: 0 байт (ZERO OVERHEAD!)\n# \n# Set A: map[Docker:{} Go:{} Kubernetes:{}]\n# Set B: map[Go:{} Python:{} Rust:{}]\n# A ∩ B (Intersection): map[Go:{}]\n# A ∪ B (Union):        map[Docker:{} Go:{} Kubernetes:{} Python:{} Rust:{}]",
+        "note": "Операции над множествами"
+      }
+    ],
+    "under_the_hood": "\nРантайм оптимизирует бакеты: если размер `elemSize == 0`, массив значений вообще не аллоцируется.\n",
+    "pitfalls": "\n- Использование `map[string]bool` в высоконагруженных кэшах: при 100 млн записей это потратит лишние 100+ МБ памяти.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `struct{}{}` занимает 0 байт?»\n**Ответ:** Потому что пустая структура не содержит полей и служит чисто синтаксическим маркером присутствия.\n"
+  },
+  {
+    "num": 18,
+    "title": "Удаление ключей через delete(m, key) и обработка несуществующих записей",
+    "task": "Удалите элемент из мапы с помощью delete. Что произойдет (упадет ли программа), если попытаться удалить несуществующий ключ?",
+    "theory": "\nЗакрепление контракта встроенной функции `delete`:\n- Попытка удаления несуществующего ключа **гарантированно безопасна** и не приводит к панике;\n- Длина мапы `len(m)` не изменяется.\n",
+    "step_by_step": "\n1. Создаем мапу `currencies := map[string]string{\"USD\": \"Доллар\", \"EUR\": \"Евро\"}`.\n2. Удаляем `\"USD\"`.\n3. Пытаемся удалить `\"GBP\"`.\n4. Проверяем длину.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tcurrencies := map[string]string{\n\t\t\"USD\": \"Доллар США\",\n\t\t\"EUR\": \"Евро\",\n\t}\n\n\tfmt.Printf(\"До удаления:     len = %d | %v\\n\", len(currencies), currencies)\n\n\t// 1. Удаляем существующий ключ\n\tdelete(currencies, \"USD\")\n\tfmt.Printf(\"После 'USD':     len = %d | %v\\n\", len(currencies), currencies)\n\n\t// 2. Удаляем отсутствующий ключ\n\tdelete(currencies, \"GBP\")\n\tfmt.Printf(\"После 'GBP':     len = %d | %v (без ошибок!)\\n\", len(currencies), currencies)\n}",
+        "note": "Поведение функции delete"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До удаления:     len = 2 | map[EUR:Евро USD:Доллар США]\n# После 'USD':     len = 1 | map[EUR:Евро]\n# После 'GBP':     len = 1 | map[EUR:Евро] (без ошибок!)",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\nПри отсутствии совпадения `tophash` функция `mapdelete` завершается без мутаций.\n",
+    "pitfalls": "\n- Проверка `if _, ok := m[k]; ok { delete(m, k) }`: эта проверка избыточна, достаточно просто вызвать `delete(m, k)`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Безопасен ли вызов `delete(m, k)` внутри цикла `for k := range m`?»\n**Ответ:** ДА! Спецификация языка Go прямо гарантирует безопасность удаления текущего или любых других ключей во время итерации `range`.\n"
+  },
+  {
+    "num": 19,
+    "title": "Идемпотентность операции delete(m, key)",
+    "task": "Удали элемент через delete(m, \"key\"). Покажи, что удаление несуществующего ключа не паникует и не возвращает ошибку.",
+    "theory": "\nКонцепция идемпотентности в Go: повторные вызовы `delete` для одного и того же ключа приводят к идентичному результату без побочных эффектов.\n",
+    "step_by_step": "\n1. Создаем `m := map[string]int{\"status\": 200}`.\n2. Вызываем `delete(m, \"status\")` 3 раза подряд.\n3. Убеждаемся в стабильности работы.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tm := map[string]int{\"status\": 200}\n\n\tdelete(m, \"status\")\n\tdelete(m, \"status\") // Повторный вызов\n\tdelete(m, \"status\") // Третий вызов\n\n\tfmt.Printf(\"Мапа после 3 вызовов delete: %v (len=%d)\\n\", m, len(m))\n}",
+        "note": "Идемпотентность delete"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Мапа после 3 вызовов delete: map[] (len=0)",
+        "note": "Стабильная работа"
+      }
+    ],
+    "under_the_hood": "\nНикаких аллокаций или исключений.\n",
+    "pitfalls": "\n- Ожидание возвращаемого значения от `delete`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `delete` сделали процедурой (не возвращающей значения)?»\n**Ответ:** Для исключения накладных расходов на проверки статуса в высокопроизводительном коде.\n"
+  },
+  {
+    "num": 20,
+    "title": "Паттерн Command Dispatcher на базе map[string]func(int, int) int",
+    "task": "Мапа с функциями (Command Dispatcher): Создай map[string]func(int, int) int. Положи туда ключи \"add\", \"sub\", \"mul\" и соответствующие анонимные функции. Вызови нужную функцию по строковому ключу.",
+    "theory": "\n**Паттерн Command Dispatcher / Strategy:**\n- Мапа функций первого класса `map[string]func(A, B) C` заменяет громоздкие каскады `switch/case` или цепочки `if/else`;\n- Позволяет регистрировать новые команды и обработчики динамически во время работы сервиса (Plugin Architecture).\n",
+    "step_by_step": "\n1. Создаем `dispatcher := make(map[string]func(int, int) int)`.\n2. Регистрируем `\"add\"`, `\"sub\"`, `\"mul\"`.\n3. Пишем безопасную функцию выполнения `Execute`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype BinaryOp func(a, b int) int\n\nfunc main() {\n\tdispatcher := map[string]BinaryOp{\n\t\t\"add\": func(a, b int) int { return a + b },\n\t\t\"sub\": func(a, b int) int { return a - b },\n\t\t\"mul\": func(a, b int) int { return a * b },\n\t}\n\n\tcommands := []struct {\n\t\top   string\n\t\ta, b int\n\t}{\n\t\t{\"add\", 10, 5},\n\t\t{\"sub\", 20, 7},\n\t\t{\"mul\", 6, 8},\n\t\t{\"div\", 100, 2}, // Неизвестная команда\n\t}\n\n\tfor _, cmd := range commands {\n\t\tif fn, ok := dispatcher[cmd.op]; ok {\n\t\t\tfmt.Printf(\"Команда %-4s(%d, %d) -> Результат: %d\\n\", cmd.op, cmd.a, cmd.b, fn(cmd.a, cmd.b))\n\t\t} else {\n\t\t\tfmt.Printf(\"⚠️ Команда %-4s неизвестна диспетчеру\\n\", cmd.op)\n\t\t}\n\t}\n}",
+        "note": "Command Dispatcher на map"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Команда add (10, 5) -> Результат: 15\n# Команда sub (20, 7) -> Результат: 13\n# Команда mul (6, 8) -> Результат: 48\n# ⚠️ Команда div  неизвестна диспетчеру",
+        "note": "Динамический вызов функций"
+      }
+    ],
+    "under_the_hood": "\nЗначением мапы является 8-байтный указатель на дескриптор функции. Вызов `fn()` происходит через косвенный переход `CALL RAX`.\n",
+    "pitfalls": "\n- Вызов `dispatcher[cmd](a, b)` без проверки `comma-ok`: если ключ отсутствует, вернется `nil`, и вызов `nil(a, b)` вызовет панику `nil pointer dereference`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Где в стандартной библиотеке Go используется мапа функций?»\n**Ответ:** В роутере `http.ServeMux` (для сопоставления URL-путей с `http.HandlerFunc`) и в пакете `rpc`.\n"
+  },
+  {
+    "num": 21,
+    "title": "Интерактивный CLI-калькулятор на базе таблицы операций map[string]func",
+    "task": "Создай мапу функций: map[string]func(int, int) int. Заполни операциями add, sub, mul, div. Используй как калькулятор: пользователь вводит операцию, программа вызывает соответствующую функцию.",
+    "theory": "\nРасширение Command Dispatcher с валидацией деления на ноль.\n",
+    "step_by_step": "\n1. Реализуем безопасные функции операций.\n2. Обрабатываем деление на ноль.\n3. Тестируем калькулятор.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tcalc := map[string]func(int, int) (int, error){\n\t\t\"add\": func(a, b int) (int, error) { return a + b, nil },\n\t\t\"sub\": func(a, b int) (int, error) { return a - b, nil },\n\t\t\"mul\": func(a, b int) (int, error) { return a * b, nil },\n\t\t\"div\": func(a, b int) (int, error) {\n\t\t\tif b == 0 {\n\t\t\t\treturn 0, fmt.Errorf(\"деление на ноль запрещено\")\n\t\t\t}\n\t\t\treturn a / b, nil\n\t\t},\n\t}\n\n\ttests := []struct {\n\t\top   string\n\t\ta, b int\n\t}{\n\t\t{\"add\", 100, 50},\n\t\t{\"div\", 100, 4},\n\t\t{\"div\", 100, 0},\n\t}\n\n\tfor _, t := range tests {\n\t\tfn, ok := calc[t.op]\n\t\tif !ok {\n\t\t\tfmt.Printf(\"Операция %s не поддерживается\\n\", t.op)\n\t\t\tcontinue\n\t\t}\n\t\tres, err := fn(t.a, t.b)\n\t\tif err != nil {\n\t\t\tfmt.Printf(\"Ошибка при %s(%d, %d): %v\\n\", t.op, t.a, t.b, err)\n\t\t} else {\n\t\t\tfmt.Printf(\"Успех: %s(%d, %d) = %d\\n\", t.op, t.a, t.b, res)\n\t\t}\n\t}\n}",
+        "note": "Калькулятор на map функций"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Успех: add(100, 50) = 150\n# Успех: div(100, 4) = 25\n# Ошибка при div(100, 0): деление на ноль запрещено",
+        "note": "Результаты вычислений"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор оптимизирует сигнатуру функций через единый интерфейсный тип.\n",
+    "pitfalls": "\n- Игнорирование проверки деления на ноль внутри анонимных функций.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каковы преимущества таблицы диспетчеризации перед `switch-case` при добавлении 50 новых операций?»\n**Ответ:** Соответствие принципу Open/Closed (SOLID): добавление новых операций не требует модификации основного кода выполнения, операции можно регистрировать из внешних модулей через `RegisterOp(name, fn)`.\n"
+  },
+  {
+    "num": 22,
+    "title": "Инициализация через make(map[K]V) и исправление паники записи в nil",
+    "task": "Паника при инициализации: Объявите мапу var m map[string]int без инициализации. Попробуйте прочитать ключ — что вернет Go? Теперь попробуйте записать значение m[\"key\"] = 1. Зафиксируйте панику. Инициализируйте мапу с помощью make и исправьте ошибку.",
+    "theory": "\nКомплексный разбор жизненного цикла `hmap`.\n",
+    "step_by_step": "\n1. Объявляем `var m map[string]int`.\n2. Читаем `m[\"test\"]` (возвращает 0).\n3. Перехватываем панику записи.\n4. Исправляем через `make(map[string]int)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar m map[string]int\n\n\tfmt.Printf(\"1. Чтение из nil-мапы: m[\\\"a\\\"] = %d\\n\", m[\"a\"])\n\n\tfunc() {\n\t\tdefer func() {\n\t\t\tif r := recover(); r != nil {\n\t\t\t\tfmt.Printf(\"2. Перехвачена паника: %v\\n\", r)\n\t\t\t}\n\t\t}()\n\t\tm[\"key\"] = 1\n\t}()\n\n\tm = make(map[string]int)\n\tm[\"key\"] = 1\n\tfmt.Printf(\"3. Успешная запись: m[\\\"key\\\"] = %d\\n\", m[\"key\"])\n}",
+        "note": "Исправление неинициализированной map"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Чтение из nil-мапы: m[\"a\"] = 0\n# 2. Перехвачена паника: assignment to entry in nil map\n# 3. Успешная запись после make: m[\"key\"] = 1",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\n`makemap` создает корневой дескриптор `hmap` и выделяет массив бакетов.\n",
+    "pitfalls": "\n- Объявление `var m map[K]V` вместо `m := make(map[K]V)`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли указать начальную емкость мапы в `make`?»\n**Ответ:** ДА! `make(map[K]V, hint)` выделяет достаточное количество бакетов под `hint` элементов, предотвращая дорогостоящие реаллокации (Evacuation) при заполнении.\n"
+  },
+  {
+    "num": 23,
+    "title": "Инвертирование мапы map[string]int в map[int]string с детекцией коллизий",
+    "task": "Инвертируйте map [string]int в [int]string, проверьте на коллизии.",
+    "theory": "\n**Инверсия мапы (Key-Value Inversion):**\n- Исходная мапа сопоставляет `string -> int`;\n- Инвертированная мапа сопоставляет `int -> string`;\n- **Проблема коллизий:** если двум разным ключам соответствовало одно значение (например `\"admin\": 1` и `\"root\": 1`), в инвертированной мапе один ключ затрет другой!\n",
+    "step_by_step": "\n1. Пишем `InvertWithCollisionCheck(m map[string]int) (map[int]string, error)`.\n2. Тестируем на мапе без коллизий.\n3. Тестируем на мапе с дубликатами значений.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc InvertWithCollisionCheck(m map[string]int) (map[int]string, error) {\n\tinverted := make(map[int]string, len(m))\n\tfor k, v := range m {\n\t\tif oldKey, exists := inverted[v]; exists {\n\t\t\treturn nil, fmt.Errorf(\"коллизия для значения %d: ключи %q и %q\", v, oldKey, k)\n\t\t}\n\t\tinverted[v] = k\n\t}\n\treturn inverted, nil\n}\n\nfunc main() {\n\tuniqueMap := map[string]int{\"one\": 1, \"two\": 2, \"three\": 3}\n\tinv1, err1 := InvertWithCollisionCheck(uniqueMap)\n\tfmt.Printf(\"1. Уникальная инверсия: %v (err: %v)\\n\", inv1, err1)\n\n\tduplicateMap := map[string]int{\"admin\": 1, \"root\": 1, \"guest\": 2}\n\tinv2, err2 := InvertWithCollisionCheck(duplicateMap)\n\tfmt.Printf(\"2. Инверсия с дубликатами: %v (err: %v)\\n\", inv2, err2)\n}",
+        "note": "Инверсия мапы с проверкой коллизий"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Уникальная инверсия: map[1:one 2:two 3:three] (err: <nil>)\n# 2. Инверсия с дубликатами: map[] (err: коллизия для значения 1: ключи \"admin\" и \"root\")",
+        "note": "Детекция коллизий сработала"
+      }
+    ],
+    "under_the_hood": "\nСложность $O(N)$ времени и $O(N)$ памяти.\n",
+    "pitfalls": "\n- Неконтролируемая перезапись дубликатов значений без логирования или возврата ошибки.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как инвертировать мапу с сохранением ВСЕХ коллизий без потерь?»\n**Ответ:** Изменить тип возвращаемой мапы на `map[int][]string` (группировка всех ключей в срез).\n"
+  },
+  {
+    "num": 24,
+    "title": "Каверзный кейс: паника записи в nil-мапу и правильная инициализация",
+    "task": "[Каверзный кейс]: Объяви var m map[string]int. Попробуй сделать m[\"a\"] = 1 (поймай панику записи в nil-мапу). Исправь с помощью make.",
+    "theory": "\nЗакрепление паттерна безопасного создания хэш-таблицы.\n",
+    "step_by_step": "\n1. Иллюстрируем типичный баг на собеседовании.\n2. Исправляем на `m := make(map[string]int)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar m map[string]int\n\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tfmt.Printf(\"Поймана ожидаемая паника: %v\\n\", r)\n\n\t\t\tfixedMap := make(map[string]int)\n\t\t\tfixedMap[\"a\"] = 1\n\t\t\tfmt.Printf(\"Исправлено через make: fixedMap[\\\"a\\\"] = %d\\n\", fixedMap[\"a\"])\n\t\t}\n\t}()\n\n\tm[\"a\"] = 1\n}",
+        "note": "Перехват и исправление nil-мапы"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Поймана ожидаемая паника: assignment to entry in nil map\n# Исправлено через make: fixedMap[\"a\"] = 1",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\nВстроенная инструкция компилятора `assertNotNilMap`.\n",
+    "pitfalls": "\n- Объявление `var m map[string]int` внутри структур без инициализации.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go `var s []int` можно использовать с `append`, а `var m map[K]V` нельзя использовать для записи?»\n**Ответ:** Потому что `append` возвращает новый дескриптор `SliceHeader`, обновляя переменную вызывающего кода, а запись `m[k] = v` не возвращает значения и требует уже существующего корневого объекта `hmap`.\n"
+  },
+  {
+    "num": 25,
+    "title": "Идиома Comma-ok для безопасной проверки наличия ключа перед вычислениями",
+    "task": "Используйте идиому value, ok := myMap[key] для безопасной проверки наличия ключа перед его использованием.",
+    "theory": "\nПрименение идиомы `value, ok := m[key]` в Guard Clauses.\n",
+    "step_by_step": "\n1. Создаем мапу пользователей и их балансов.\n2. Проверяем наличие счета перед переводом.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc ProcessPayment(accounts map[string]int, user string, amount int) {\n\tbalance, ok := accounts[user]\n\tif !ok {\n\t\tfmt.Printf(\"❌ Ошибка: пользователь %q не зарегистрирован в системе\\n\", user)\n\t\treturn\n\t}\n\n\tif balance < amount {\n\t\tfmt.Printf(\"⚠️ Недостаточно средств для %q: баланс %d, требуется %d\\n\", user, balance, amount)\n\t\treturn\n\t}\n\n\taccounts[user] -= amount\n\tfmt.Printf(\"✔ Списание %d со счета %q прошло успешно! Новый баланс: %d\\n\", amount, user, accounts[user])\n}\n\nfunc main() {\n\tbank := map[string]int{\n\t\t\"Alice\": 500,\n\t\t\"Bob\":   50,\n\t}\n\n\tProcessPayment(bank, \"Charlie\", 100)\n\tProcessPayment(bank, \"Bob\", 100)\n\tProcessPayment(bank, \"Alice\", 100)\n}",
+        "note": "Проверка наличия счета через comma-ok"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# ❌ Ошибка: пользователь \"Charlie\" не зарегистрирован в системе\n# ⚠️ Недостаточно средств для \"Bob\": баланс 50, требуется 100\n# ✔ Списание 100 со счета \"Alice\" прошло успешно! Новый баланс: 400",
+        "note": "Все ветки обработаны корректно"
+      }
+    ],
+    "under_the_hood": "\n`runtime.mapaccess2` проверяет наличие ключа без аллокаций.\n",
+    "pitfalls": "\n- Прямое чтение `accounts[user]` без проверки: создаст риск ложного нулевого баланса.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова идиома проверки отсутствия ключа?»\n**Ответ:** `if _, ok := m[key]; !ok { /* ключ отсутствует */ }`.\n"
+  },
+  {
+    "num": 26,
+    "title": "Функция InvertMap(m) со стратегией перезаписи Last-Write-Wins",
+    "task": "Напиши функцию InvertMap(m map[string]int) map[int]string, которая меняет ключи и значения местами. Обработай коллизии: если несколько ключей имели одно значение — пусть побеждает последний (или возвращай ошибку).",
+    "theory": "\nРеализация стратегии Last-Write-Wins при инверсии мапы.\n",
+    "step_by_step": "\n1. Пишем `InvertMap(m map[string]int) map[int]string`.\n2. Перебираем пары и сохраняем `inv[v] = k`.\n3. Анализируем результат при дубликатах.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc InvertMap(m map[string]int) map[int]string {\n\tinverted := make(map[int]string, len(m))\n\tfor k, v := range m {\n\t\tinverted[v] = k // При совпадении v побеждает последний k\n\t}\n\treturn inverted\n}\n\nfunc main() {\n\toriginal := map[string]int{\n\t\t\"HTTP\": 80,\n\t\t\"HTTPS\": 443,\n\t\t\"SSH\": 22,\n\t}\n\n\tinverted := InvertMap(original)\n\tfmt.Printf(\"Оригинал:  %v\\n\", original)\n\tfmt.Printf(\"Инверсия:  %v\\n\", inverted)\n\tfmt.Printf(\"Порт 443 -> Протокол: %s\\n\", inverted[443])\n}",
+        "note": "Функция InvertMap"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Оригинал:  map[HTTP:80 HTTPS:443 SSH:22]\n# Инверсия:  map[22:SSH 80:HTTP 443:HTTPS]\n# Порт 443 -> Протокол: HTTPS",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\nПредвыделение `make(map[int]string, len(m))` исключает расширение бакетов.\n",
+    "pitfalls": "\n- Так как обход мапы в Go недетерминирован, при коллизиях победителем может стать случайный ключ на разных запусках!\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему при коллизиях `InvertMap` недетерминирован?»\n**Ответ:** Потому что порядок итерации `for k, v := range m` случаен, и порядок перезаписи дублирующихся значений `inverted[v] = k` непредсказуем.\n"
+  },
+  {
+    "num": 27,
+    "title": "Подсчет частоты слов текста с предварительной токенизацией strings.Fields",
+    "task": "Подсчет частоты слов: Напиши функцию, которая принимает строку текста (с пробелами), разбивает её на слова (пакет strings) и с помощью мапы подсчитывает, сколько раз встретилось каждое слово.",
+    "theory": "\nИзолированная функция подсчета частот слов.\n",
+    "step_by_step": "\n1. Пишем `CountWords(text string) map[string]int`.\n2. Используем `strings.Fields`.\n3. Тестируем на фразе.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"strings\"\n)\n\nfunc CountWords(text string) map[string]int {\n\tcounts := make(map[string]int)\n\tfor _, word := range strings.Fields(text) {\n\t\tcounts[word]++\n\t}\n\treturn counts\n}\n\nfunc main() {\n\ttext := \"яблоко банан яблоко груша банан яблоко\"\n\tres := CountWords(text)\n\n\tfmt.Printf(\"Текст: %q\\n\", text)\n\tfmt.Println(\"Результаты подсчета:\")\n\tfor k, v := range res {\n\t\tfmt.Printf(\"  • %-10s: %d\\n\", k, v)\n\t}\n}",
+        "note": "Подсчет частот слов"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Текст: \"яблоко банан яблоко груша банан яблоко\"\n# Результаты подсчета:\n#   • яблоко    : 3\n#   • банан     : 2\n#   • груша     : 1",
+        "note": "Результаты"
+      }
+    ],
+    "under_the_hood": "\nИдиома `counts[word]++` компилируется в эффективную инструкцию рантайма.\n",
+    "pitfalls": "\n- Передача пустой строки: `strings.Fields(\"\")` вернет пустой срез, функция безопасно вернет пустую мапу.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова временная сложность `CountWords` от длины строки $L$?»\n**Ответ:** $O(L)$ линейное время (разбивка на токены + вставка в хэш-таблицу).\n"
+  },
+  {
+    "num": 28,
+    "title": "Ловушка мутации переменной цикла v++ в range по мапе и правильная модификация m[k]++",
+    "task": "Пройди range по мапе и попробуй изменить значение через переменную цикла: for k, v := range m { v++ }. Покажи, что мапа не изменилась. Сделай правильно: for k := range m { m[k]++ }.",
+    "theory": "\n**Ловушка копирования в цикле по мапе:**\n- В `for k, v := range m` переменная `v` — это **локальная копия значения** из бакета;\n- Выражение `v++` инкрементирует только локальную переменную на стеке;\n- Для реальной мутации данных в мапе необходимо выполнять запись по ключу: `m[k]++`.\n",
+    "step_by_step": "\n1. Создаем `m := map[string]int{\"A\": 10, \"B\": 20}`.\n2. Пробуем наивный цикл `for _, v := range m { v += 100 }`.\n3. Показываем, что мапа не изменилась.\n4. Выполняем правильный цикл `for k := range m { m[k] += 100 }`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tm := map[string]int{\"A\": 10, \"B\": 20}\n\tfmt.Printf(\"1. Исходная мапа: %v\\n\", m)\n\n\t// НЕПРАВИЛЬНО: мутация локальной копии v\n\tfor _, v := range m {\n\t\tv += 100 // Изменяет только копию на стеке!\n\t}\n\tfmt.Printf(\"2. После for _, v (НЕ ИЗМЕНИЛАСЬ!): %v\\n\", m)\n\n\t// ПРАВИЛЬНО: явная запись по ключу в мапу\n\tfor k := range m {\n\t\tm[k] += 100 // Мутирует саму хэш-таблицу!\n\t}\n\tfmt.Printf(\"3. После for k := range m: %v (УСПЕШНО!)\\n\", m)\n}",
+        "note": "Правильная мутация элементов map в цикле"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Исходная мапа: map[A:10 B:20]\n# 2. После for _, v (НЕ ИЗМЕНИЛАСЬ!): map[A:10 B:20]\n# 3. После for k := range m: map[A:110 B:120] (УСПЕШНО!)",
+        "note": "Только m[k] мутирует мапу"
+      }
+    ],
+    "under_the_hood": "\nПри `for _, v` значение `v` копируется в стековый регистр. `m[k] = ...` вызывает `runtime.mapassign`.\n",
+    "pitfalls": "\n- Модификация полей структур `for _, user := range users { user.Age++ }`: возраст в мапе не изменится.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли добавлять новые ключи в мапу внутри цикла `for k := range m`?»\n**Ответ:** Да, язык это разрешает, но гарантии того, попадет ли новый добавленный ключ в текущую итерацию цикла, нет (рантайм может посетить его или пропустить).\n"
+  },
+  {
+    "num": 29,
+    "title": "Мапа столиц стран и демонстрация различий между Zero Value и Comma-ok",
+    "task": "Запятая-ок (Comma-ok idiom): Создайте мапу соответствия стран и их столиц. Напишите код, который проверяет наличие города в мапе. Продемонстрируйте разницу между получением дефолтного значения для несуществующего ключа и реальной проверкой через val, ok := m[key].",
+    "theory": "\nПрактическая демонстрация идиомы `comma-ok` на справочнике столиц.\n",
+    "step_by_step": "\n1. Создаем справочник `capitals := map[string]string{ \"Россия\": \"Москва\", \"Германия\": \"Берлин\" }`.\n2. Ищем существующую страну.\n3. Ищем отсутствующую страну.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc FindCapital(capitals map[string]string, country string) {\n\t// Способ 1: Прямое чтение (дефолтное значение)\n\tval := capitals[country]\n\tfmt.Printf(\"Прямое чтение для %-10s -> %q\\n\", country, val)\n\n\t// Способ 2: Идиома comma-ok (надежная проверка)\n\tif capital, ok := capitals[country]; ok {\n\t\tfmt.Printf(\"  ✔ Найдено: Столица %s — это %s\\n\", country, capital)\n\t} else {\n\t\tfmt.Printf(\"  ❌ Внимание: Страна %s отсутствует в базе данных!\\n\", country)\n\t}\n}\n\nfunc main() {\n\tcapitals := map[string]string{\n\t\t\"Россия\":   \"Москва\",\n\t\t\"Франция\":  \"Париж\",\n\t\t\"Германия\": \"Берлин\",\n\t}\n\n\tFindCapital(capitals, \"Россия\")\n\tFindCapital(capitals, \"Бразилия\")\n}",
+        "note": "Сравнение прямого чтения и comma-ok"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Прямое чтение для Россия     -> \"Москва\"\n#   ✔ Найдено: Столица Россия — это Москва\n# Прямое чтение для Бразилия   -> \"\"\n#   ❌ Внимание: Страна Бразилия отсутствует в базе данных!",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\nПри отсутствии ключа рантайм возвращает пустую строку `\"\"` (длина 0, указатель nil).\n",
+    "pitfalls": "\n- Проверка `if capitals[country] != \"\"` вместо `comma-ok`: если столица пустая строка `\"\"` (город-государство без столицы), проверка выдаст ложный результат.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В чем преимущество `comma-ok` перед возвратом ошибки `error` в методах чтения?»\n**Ответ:** Нулевые накладные расходы по аллокациям памяти, лаконичный синтаксис `if val, ok := m[k]; ok` и инлайнинг рантайма.\n"
+  },
+  {
+    "num": 30,
+    "title": "Чтение несуществующего ключа в числовых и строковых мапах",
+    "task": "Попробуй прочитать значение по несуществующему ключу. Выведи результат (должен быть нулевым значением типа).",
+    "theory": "\nБазовая проверка возврата Zero Value.\n",
+    "step_by_step": "\n1. Создаем числовую мапу `ages := map[string]int{\"Bob\": 25}`.\n2. Читаем `\"Alice\"`.\n3. Печатаем нулевое значение.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tages := map[string]int{\"Bob\": 25}\n\n\tmissingAge := ages[\"Alice\"]\n\tfmt.Printf(\"Значение для отсутствующего ключа 'Alice': %d (Zero Value типа int)\\n\", missingAge)\n}",
+        "note": "Zero Value отсутствующего ключа"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Значение для отсутствующего ключа 'Alice': 0 (Zero Value типа int)",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\n`zeroVal` в `runtime.mapaccess1`.\n",
+    "pitfalls": "\n- Путать `0` (возраст не найден) с реальным возрастом младенца (`0` лет).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как безопасно вернуть указатель `*int` на значение из мапы?»\n**Ответ:** `map[string]*int`: при отсутствии ключа вернется `nil`, что однозначно указывает на отсутствие значения.\n"
+  },
+  {
+    "num": 31,
+    "title": "Детерминированный вывод мапы: сбор и сортировка среза ключей",
+    "task": "Отсортируйте ключи map и выведите значения в отсортированном порядке.",
+    "theory": "\n**Паттерн сортировки мапы (Sorted Map Traversal):**\n1. Мапы в Go не упорядочены;\n2. Для гарантированного детерминированного вывода:\n   - Собирают все ключи в срез `keys := make([]K, 0, len(m))`;\n   - Сортируют срез ключей (`slices.Sort(keys)` или `sort.Strings/Ints`);\n   - Обходят отсортированный срез ключей и читают значения из мапы `m[k]`.\n",
+    "step_by_step": "\n1. Создаем неупорядоченную мапу `scores := map[string]int{\"Dan\": 90, \"Ann\": 95, \"Ben\": 85}`.\n2. Собираем ключи в срез `keys`.\n3. Сортируем срез `slices.Sort(keys)`.\n4. Выводим данные в строгом алфавитном порядке.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"slices\"\n)\n\nfunc main() {\n\tscores := map[string]int{\n\t\t\"Dan\": 90,\n\t\t\"Ann\": 95,\n\t\t\"Ben\": 85,\n\t\t\"Cal\": 92,\n\t}\n\n\t// 1. Собираем ключи с предварительным выделением емкости\n\tkeys := make([]string, 0, len(scores))\n\tfor k := range scores {\n\t\tkeys = append(keys, k)\n\t}\n\n\t// 2. Сортируем срез ключей (Go 1.21+)\n\tslices.Sort(keys)\n\n\t// 3. Детерминированный вывод:\n\tfmt.Println(\"Отсортированный вывод мапы:\")\n\tfor _, k := range keys {\n\t\tfmt.Printf(\"  • %-5s -> %d баллов\\n\", k, scores[k])\n\t}\n}",
+        "note": "Сортировка ключей map"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Отсортированный вывод мапы:\n#   • Ann   -> 95 баллов\n#   • Ben   -> 85 баллов\n#   • Cal   -> 92 баллов\n#   • Dan   -> 90 баллов",
+        "note": "Гарантированный порядок вывода"
+      }
+    ],
+    "under_the_hood": "\n`slices.Sort` выполняет $O(N \\log N)$ сортировку ключей, после чего каждый поиск `scores[k]` занимает $O(1)$.\n",
+    "pitfalls": "\n- Выделение среза через `make([]string, len(scores))` и последующий `append`: создаст срез двойной длины с пустыми строками в начале. Используйте `make([]string, 0, len(scores))`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова асимптотика детерминированного обхода мапы?»\n**Ответ:** $O(N \\log N)$ по времени (доминирует сортировка ключей) и $O(N)$ по памяти под срез ключей.\n"
+  },
+  {
+    "num": 32,
+    "title": "Очистка мапы через встроенную функцию clear(m) в Go 1.21+",
+    "task": "Очистка мапы: Используй встроенную функцию clear(m) (появилась в Go 1.21), чтобы удалить все элементы из мапы.",
+    "theory": "\n**Встроенная функция `clear(m)` (Go 1.21+):**\n- Удаляет все элементы из мапы `m`, сбрасывая ее длину `len(m)` в `0`;\n- Сохраняет выделенные бакеты памяти, что позволяет быстро повторно заполнять мапу без новых аллокаций;\n- Работает быстрее, чем ручной цикл с `delete(m, k)`.\n",
+    "step_by_step": "\n1. Создаем мапу `cache := map[string]int{\"a\": 1, \"b\": 2, \"c\": 3}`.\n2. Проверяем длину `len(cache)`.\n3. Вызываем `clear(cache)`.\n4. Проверяем длину и состояние мапы.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tcache := map[string]int{\n\t\t\"token_1\": 100,\n\t\t\"token_2\": 200,\n\t\t\"token_3\": 300,\n\t}\n\n\tfmt.Printf(\"1. До clear:  len = %d | %v\\n\", len(cache), cache)\n\n\t// Очищаем мапу в Go 1.21+:\n\tclear(cache)\n\n\tfmt.Printf(\"2. После clear: len = %d | %v\\n\", len(cache), cache)\n\n\t// Мапа готова к повторному использованию:\n\tcache[\"token_4\"] = 400\n\tfmt.Printf(\"3. После вставки: len = %d | %v\\n\", len(cache), cache)\n}",
+        "note": "Очистка мапы через clear(m)"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. До clear:  len = 3 | map[token_1:100 token_2:200 token_3:300]\n# 2. После clear: len = 0 | map[]\n# 3. После вставки: len = 1 | map[token_4:400]",
+        "note": "Мапа очищена"
+      }
+    ],
+    "under_the_hood": "\n`runtime.mapclear` зануляет счетчик `hmap.count` и помечает бакеты как пустые без деаллокации структуры.\n",
+    "pitfalls": "\n- Передача `nil`-мапы в `clear(m)`: операция безопасно выполняется как no-op.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В чем разница между `clear(m)` и `m = make(map[K]V)`?»\n**Ответ:** `clear(m)` сохраняет бакеты (устраняя задержки на расширение при повторном заполнении), но НЕ уменьшает объем занимаемой памяти под саму структуру `hmap`. `m = make(...)` выделяет новую чистую мапу, а старая удаляется сборщиком мусора (GC).\n"
+  },
+  {
+    "num": 33,
+    "title": "Сбор ключей MapKeys(m) и доказательство недетерминированности порядка итерации",
+    "task": "Напиши функцию MapKeys(m map[string]int) []string, возвращающую слайс ключей. Запусти несколько раз — покажи, что порядок итерации не детерминирован.",
+    "theory": "\n**Рандомизация итератора мапы в Go:**\n- При создании итератора `range m` рантайм Go генерирует **случайное смещение начального бакета** (`fastrand()`);\n- Это архитектурное решение авторов Go: намеренно предотвратить зависимость клиентского кода от конкретного порядка хэш-таблицы;\n- Последовательные запуски одной и той же программы могут возвращать разный порядок ключей.\n",
+    "step_by_step": "\n1. Пишем `MapKeys(m map[string]int) []string`.\n2. Заполняем мапу 6 элементами.\n3. Запускаем сбор ключей 3 раза и сравниваем порядок.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc MapKeys(m map[string]int) []string {\n\tkeys := make([]string, 0, len(m))\n\tfor k := range m {\n\t\tkeys = append(keys, k)\n\t}\n\treturn keys\n}\n\nfunc main() {\n\tdata := map[string]int{\n\t\t\"alpha\": 1, \"beta\": 2, \"gamma\": 3,\n\t\t\"delta\": 4, \"epsilon\": 5, \"zeta\": 6,\n\t}\n\n\tfmt.Println(\"Демонстрация недетерминированного порядка итерации:\")\n\tfor run := 1; run <= 3; run++ {\n\t\tkeys := MapKeys(data)\n\t\tfmt.Printf(\"  Запуск #%d: %v\\n\", run, keys)\n\t}\n}",
+        "note": "Сбор ключей map"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Демонстрация недетерминированного порядка итерации:\n#   Запуск #1: [alpha beta gamma delta epsilon zeta]\n#   Запуск #2: [gamma delta epsilon zeta alpha beta]\n#   Запуск #3: [delta epsilon zeta alpha beta gamma]",
+        "note": "Порядок ключей меняется от запуска к запуску"
+      }
+    ],
+    "under_the_hood": "\nВ `runtime.mapiterinit` поле `it.startBucket = fastrand() & (1<<h.B - 1)`.\n",
+    "pitfalls": "\n- Написание юнит-тестов, сравнивающих строки вывода мапы напрямую (`fmt.Sprint(m)`): тесты будут периодически флапать (Flaky Tests).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какая функция в пакете `maps` (Go 1.23+) или `golang.org/x/exp/maps` возвращает ключи?»\n**Ответ:** `maps.Keys(m)` возвращает итератор `iter.Seq[K]`, а в слайс собирается через `slices.Collect(maps.Keys(m))`.\n"
+  },
+  {
+    "num": 34,
+    "title": "Запрет несравнимых типов (slices, maps, funcs) в качестве ключей мапы",
+    "task": "Попробуйте использовать слайс или мапу в качестве ключа другой мапы и изучите ошибку компиляции. Почему ключами могут быть только сравниваемые (comparable) типы?",
+    "theory": "\n**Математические требования к ключам хэш-таблицы:**\n1. Для ключа $K$ обязаны быть строго определены:\n   - **Хэш-функция:** $H(k_1) == H(k_2)$, если $k_1 == k_2$;\n   - **Операция эквивалентности:** $k_1 == k_2$ для разрешения коллизий в бакете;\n2. Срезы `[]int`, мапы `map[K]V` и функции `func()` в Go мутабельны и не поддерживают оператор `==`;\n3. Попытка создать `map[[]int]string` вызывает ошибку компиляции: `invalid map key type []int`.\n",
+    "step_by_step": "\n1. Показываем список разрешенных типов ключей.\n2. Показываем список запрещенных типов ключей.\n3. Демонстрируем обходной путь (сериализация среза в строку).\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\t// ❌ ОШИБКИ КОМПИЛЯЦИИ (раскомментируйте для проверки):\n\t// var badMap1 map[[]int]string        // invalid map key type []int\n\t// var badMap2 map[map[string]int]bool // invalid map key type map[string]int\n\t// var badMap3 map[func()]int          // invalid map key type func()\n\n\t// ✔ РАЗРЕШЕННЫЕ СРАВНИМЫЕ ТИПЫ (Comparable):\n\t// int, float64, string, bool, pointer (*T), channel (chan T),\n\t// array ([N]T где T comparable), struct (где все поля comparable).\n\n\t// Паттерн обхода: сериализация среза в comparable-тип (массив или строку):\n\ttype Vector3D [3]float64 // Статический массив comparable!\n\tmatrix := map[Vector3D]string{\n\t\t{1.0, 2.0, 3.0}: \"Точка A\",\n\t\t{0.0, 0.0, 0.0}: \"Начало координат\",\n\t}\n\n\tfmt.Printf(\"Мапа с ключом-массивом [3]float64: %v\\n\", matrix)\n}",
+        "note": "Типы ключей в Go"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Мапа с ключом-массивом [3]float64: map[[0 0 0]:Начало координат [1 2 3]:Точка A]",
+        "note": "Массивы полностью разрешены как ключи"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор проверяет интерфейс `types.Comparable(keyType)`.\n",
+    "pitfalls": "\n- Использование `float64` с `NaN` в качестве ключа: `math.NaN() != math.NaN()`, такой ключ невозможно прочитать обратно!\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему срезы не сделали comparable, сравнивая их побайтово?»\n**Ответ:** Потому что мутация среза в памяти изменила бы его хэш, и элемент навсегда потерялся бы в старом бакете хэш-таблицы (нарушение инварианта хэширования).\n"
+  },
+  {
+    "num": 35,
+    "title": "Сравнение ручной очистки через delete в цикле и встроенной функции clear(m)",
+    "task": "Напиши функцию ClearMap(m map[string]int), удаляющую все элементы. Реализуй через for k := range m { delete(m, k) }. В Go 1.21+ используй встроенную clear(m) и сравни.",
+    "theory": "\n**Эволюция очистки мап в Go:**\n- **До Go 1.21:** `for k := range m { delete(m, k) }` — требовал создания итератора и $N$ вызовов `runtime.mapdelete`;\n- **Go 1.21+:** `clear(m)` — специализированная встроенная операция `runtime.mapclear`, очищающая бакеты за один системный вызов.\n",
+    "step_by_step": "\n1. Пишем `ClearMapLegacy(m map[string]int)`.\n2. Сравниваем поведение с `clear(m)`.\n3. Проверяем длину после обеих операций.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc ClearMapLegacy(m map[string]int) {\n\tfor k := range m {\n\t\tdelete(m, k)\n\t}\n}\n\nfunc main() {\n\tm1 := map[string]int{\"a\": 1, \"b\": 2, \"c\": 3}\n\tm2 := map[string]int{\"x\": 10, \"y\": 20, \"z\": 30}\n\n\t// 1. Ручная очистка в цикле:\n\tClearMapLegacy(m1)\n\tfmt.Printf(\"1. После ClearMapLegacy: len = %d | %v\\n\", len(m1), m1)\n\n\t// 2. Современный clear(m):\n\tclear(m2)\n\tfmt.Printf(\"2. После clear(m2):       len = %d | %v\\n\", len(m2), m2)\n}",
+        "note": "Два способа очистки map"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. После ClearMapLegacy: len = 0 | map[]\n# 2. После clear(m2):       len = 0 | map[]",
+        "note": "Результаты идентичны"
+      }
+    ],
+    "under_the_hood": "\n`runtime.mapclear` оптимизирует обнуление памяти через векторные инструкции без накладных расходов на хэширование ключей.\n",
+    "pitfalls": "\n- Попытка пересоздать мапу внутри функции `func Clear(m map[K]V) { m = make(...) }`: это изменит только локальную копию указателя, а вызывающая сторона останется со старой мапой!\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `func Clear(m map[K]V) { m = make(map[K]V) }` не работает?»\n**Ответ:** Потому что `m` передается по значению (копируется указатель `*hmap`). Переприсваивание `m = make(...)` меняет локальный указатель функции, не затрагивая оригинал.\n"
+  },
+  {
+    "num": 36,
+    "title": "Удаление элементов тестовой мапы через delete(m, k) и гарантия отсутствия сбоев",
+    "task": "Удаление ключей: Заполните мапу тестовыми данными. Удалите один из ключей с помощью встроенной функции delete. Попробуйте вызвать delete для ключа, которого в мапе нет. Происходит ли при этом ошибка или паника?",
+    "theory": "\nЗакрепление надежности удаления данных из справочников.\n",
+    "step_by_step": "\n1. Заполняем `serverConfigs := map[string]string{...}`.\n2. Удаляем существующий ключ `\"dev\"`.\n3. Удаляем отсутствующий ключ `\"staging\"`.\n4. Выводим оставшиеся конфигурации.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tconfigs := map[string]string{\n\t\t\"local\": \"localhost:8080\",\n\t\t\"dev\":   \"dev.example.com\",\n\t\t\"prod\":  \"api.example.com\",\n\t}\n\n\tfmt.Printf(\"Исходные конфиги: %v\\n\", configs)\n\n\tdelete(configs, \"dev\")\n\tdelete(configs, \"staging\") // Несуществующий ключ\n\n\tfmt.Printf(\"Итоговые конфиги: %v (паники и ошибок нет!)\\n\", configs)\n}",
+        "note": "Удаление ключей"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Исходные конфиги: map[dev:dev.example.com local:localhost:8080 prod:api.example.com]\n# Итоговые конфиги: map[local:localhost:8080 prod:api.example.com] (паники и ошибок нет!)",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\nNo-op при отсутствии ключа.\n",
+    "pitfalls": "\n- Вызов `delete` без передачи мапы (синтаксическая ошибка).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова амортизированная сложность `delete`?»\n**Ответ:** $O(1)$.\n"
+  },
+  {
+    "num": 37,
+    "title": "Фатальная ошибка конкурентной записи: fatal error: concurrent map writes и sync.Mutex / sync.RWMutex",
+    "task": "Fatal error: concurrent map writes: Создай мапу. В цикле запусти 100 горутин (добавь слово go перед вызовом анонимной функции go func(){ m[\"a\"] = 1 }()), которые одновременно пишут в мапу. Поймай аварийное завершение программы. (Мапы в Go не потокобезопасны на запись!).",
+    "theory": "\n**Потокобезопасность мап в Go:**\n1. Встроенные мапы в Go **НЕ являются потокобезопасными (Not Thread-Safe)**;\n2. При одновременной записи из нескольких горутин рантайм Go обнаруживает гонку через битовый флаг `hmap.flags & hashWriting` и вызывает **немедленный краш процесса** `fatal error: concurrent map writes`;\n3. Эту фатальную ошибку **НЕВОЗМОЖНО перехватить через `recover()`**;\n4. **Решение:** использовать мьютексы `sync.Mutex` / `sync.RWMutex` или `sync.Map`.\n",
+    "step_by_step": "\n1. Объясняем механизм детекции гонки в рантайме.\n2. Пишем безопасную структуру `SafeCounter` с `sync.RWMutex`.\n3. Запускаем 100 конкурентных горутин с корректной синхронизацией через `sync.WaitGroup`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n)\n\n// SafeMap инкапсулирует мапу и RWMutex для защиты от гонок:\ntype SafeMap struct {\n\tmu   sync.RWMutex\n\tdata map[string]int\n}\n\nfunc NewSafeMap() *SafeMap {\n\treturn &SafeMap{data: make(map[string]int)}\n}\n\nfunc (s *SafeMap) Set(key string, val int) {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\ts.data[key] = val\n}\n\nfunc (s *SafeMap) Get(key string) (int, bool) {\n\ts.mu.RLock()\n\tdefer s.mu.RUnlock()\n\tv, ok := s.data[key]\n\treturn v, ok\n}\n\nfunc main() {\n\tsafeMap := NewSafeMap()\n\tvar wg sync.WaitGroup\n\n\t// 100 конкурентных горутин безопасно пишут в мапу:\n\tfor i := 0; i < 100; i++ {\n\t\twg.Add(1)\n\t\tgo func(workerID int) {\n\t\t\tdefer wg.Done()\n\t\t\tsafeMap.Set(fmt.Sprintf(\"key_%d\", workerID%10), workerID)\n\t\t}(i)\n\t}\n\n\twg.Wait()\n\tfmt.Printf(\"✔ 100 горутин успешно завершили работу без краша!\\n\")\n\tval, ok := safeMap.Get(\"key_5\")\n\tfmt.Printf(\"Значение key_5: %d (найден: %t)\\n\", val, ok)\n}",
+        "note": "Потокобезопасная мапа с sync.RWMutex"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run -race main.go\n# ✔ 100 горутин успешно завершили работу без краша!\n# Значение key_5: 95 (найден: true)",
+        "note": "Сборка с флагом -race подтверждает 0 data races"
+      }
+    ],
+    "under_the_hood": "\nВ начале `runtime.mapassign` проверяется `if h.flags&hashWriting != 0 { throw(\"concurrent map writes\") }`. Флаг `hashWriting` выставляется на время модификации бакета.\n",
+    "pitfalls": "\n- Надежда перехватить `fatal error: concurrent map writes` через `recover()`: это системный `throw()`, который немедленно аварийно завершает весь процесс ОС.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go не встроили мьютекс в каждую мапу по умолчанию?»\n**Ответ:** Большинство мап используются локально в пределах одной горутины. Автоматическая блокировка замедлила бы все однопоточные операции в разы. Для многопоточности ответственность возложена на разработчика (`sync.RWMutex` или `sync.Map`).\n"
+  },
+  {
+    "num": 38,
+    "title": "Хранение указателей на структуры в мапе map[int]*User и прямая мутация полей",
+    "task": "Создай мапу с указателями на структуры в качестве значений: map[int]*User. Измени поля структуры, полученной из мапы. Покажи, что мапа хранит указатель, и изменения видны при повторном чтении.",
+    "theory": "\n**Мапа структур vs Мапа указателей на структуры:**\n- Если мапа хранит структуры по значению `map[int]User`, выражение `m[1].Age++` вызовет **ошибку компиляции** `cannot assign to struct field m[1].Age in map` (элементы мапы не адресуемы);\n- Если мапа хранит указатели `map[int]*User`, чтение `u := m[1]` возвращает указатель, и мутация `u.Age++` **напрямую изменяет объект в куче**!\n",
+    "step_by_step": "\n1. Создаем структуру `type User struct { Name string; Age int }`.\n2. Создаем `users := make(map[int]*User)`.\n3. Извлекаем указатель и меняем возраст.\n4. Проверяем повторным чтением.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tName string\n\tAge  int\n}\n\nfunc main() {\n\tusers := map[int]*User{\n\t\t101: {Name: \"Алексей\", Age: 25},\n\t\t102: {Name: \"Мария\", Age: 30},\n\t}\n\n\tfmt.Printf(\"1. До изменения:   %+v\\n\", users[101])\n\n\t// Получаем указатель и мутируем поля напрямую:\n\tuser := users[101]\n\tuser.Age = 26\n\tuser.Name = \"Алексей Смирнов\"\n\n\t// Повторное чтение из мапы видит изменения:\n\tfmt.Printf(\"2. После мутации: %+v (ИЗМЕНЕНИЯ СОХРАНИЛИСЬ!)\\n\", users[101])\n}",
+        "note": "Мапа указателей на структуры"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. До изменения:   &{Name:Алексей Age:25}\n# 2. После мутации: &{Name:Алексей Смирнов Age:26} (ИЗМЕНЕНИЯ СОХРАНИЛИСЬ!)",
+        "note": "Прямая мутация структуры через указатель"
+      }
+    ],
+    "under_the_hood": "\nЗначением мапы является 8-байтный адрес в куче.\n",
+    "pitfalls": "\n- Разыменование `nil`-указателя `m[missingID].Age++`: вызовет панику `nil pointer dereference`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему компилятор запрещает `m[1].Age = 20` для `map[int]User`?»\n**Ответ:** Потому что значения в бакетах мапы могут перемещаться в памяти при расширении (Growth / Evacuation), поэтому элементы мапы не являются адресуемыми (`&m[1]` запрещен).\n"
+  },
+  {
+    "num": 39,
+    "title": "Многократная итерация по мапе и экспериментальная фиксация случайного порядка",
+    "task": "Переберите все элементы мапы и выведите их. Запустите программу 5 раз, чтобы убедиться в псевдослучайном порядке итерации.",
+    "theory": "\nПрактический эксперимент по фиксации недетерминированного обхода.\n",
+    "step_by_step": "\n1. Создаем мапу фруктов.\n2. Обходим в цикле из 5 итераций.\n3. Фиксируем чередование последовательностей.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfruits := map[string]int{\n\t\t\"яблоко\": 10,\n\t\t\"груша\":  20,\n\t\t\"слива\":  30,\n\t\t\"вишня\":  40,\n\t\t\"персик\": 50,\n\t}\n\n\tfor run := 1; run <= 5; run++ {\n\t\tfmt.Printf(\"Итерация #%d: \", run)\n\t\tfor name := range fruits {\n\t\t\tfmt.Printf(\"%s \", name)\n\t\t}\n\t\tfmt.Println()\n\t}\n}",
+        "note": "Эксперимент со случайным порядком"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Итерация #1: яблоко груша слива вишня персик \n# Итерация #2: слива вишня персик яблоко груша \n# Итерация #3: вишня персик яблоко груша слива \n# Итерация #4: груша слива вишня персик яблоко \n# Итерация #5: персик яблоко груша слива вишня",
+        "note": "Каждый запуск начинается со случайного бакета"
+      }
+    ],
+    "under_the_hood": "\n`fastrand()` инициализирует смещение итератора.\n",
+    "pitfalls": "\n- Надежда, что мапа маленького размера (1 бакет) всегда обходится одинаково.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В какой версии Go порядок обхода мапы был полностью детерминированным?»\n**Ответ:** До Go 1.0. Рандомизация была введена намеренно, чтобы разработчики не полагались на случайные детали реализации.\n"
+  },
+  {
+    "num": 40,
+    "title": "Множество (Set) на основе map[int]struct{} с методами Add, Remove и Contains",
+    "task": "Используйте map как множество: реализуйте добавление, удаление, проверку наличия элемента.",
+    "theory": "\nИнкапсуляция числового множества `IntSet`.\n",
+    "step_by_step": "\n1. Создаем тип `type IntSet map[int]struct{}`.\n2. Реализуем базовые методы.\n3. Тестируем дедупликацию.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype IntSet map[int]struct{}\n\nfunc NewIntSet() IntSet {\n\treturn make(IntSet)\n}\n\nfunc (s IntSet) Add(v int) { s[v] = struct{}{} }\nfunc (s IntSet) Remove(v int) { delete(s, v) }\nfunc (s IntSet) Contains(v int) bool {\n\t_, ok := s[v]\n\treturn ok\n}\n\nfunc main() {\n\tids := NewIntSet()\n\tids.Add(10)\n\tids.Add(20)\n\tids.Add(10) // Дубликат игнорируется\n\n\tfmt.Printf(\"Размер множества: %d (уникальные элементы)\\n\", len(ids))\n\tfmt.Printf(\"Содержит 10: %t\\n\", ids.Contains(10))\n\tfmt.Printf(\"Содержит 30: %t\\n\", ids.Contains(30))\n\n\tids.Remove(10)\n\tfmt.Printf(\"После Remove(10), содержит 10: %t\\n\", ids.Contains(10))\n}",
+        "note": "Числовой IntSet"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Размер множества: 2 (уникальные элементы)\n# Содержит 10: true\n# Содержит 30: false\n# После Remove(10), содержит 10: false",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\nZero-overhead структура памяти.\n",
+    "pitfalls": "\n- Использование среза для частых проверок `Contains`: поиск в срезе $O(N)$, а в `Set` — $O(1)$.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «При каком количестве элементов поиск в срезе быстрее, чем в мапе?»\n**Ответ:** При $N \\le 8-16$ элементах линейный перебор непрерывного среза в L1 кэше процессора может быть быстрее вычисления хэша мапы.\n"
+  },
+  {
+    "num": 41,
+    "title": "Группировка тегов и списков в мапе со срезами map[string][]string",
+    "task": "Создайте мапу, где значениями являются слайсы (map[string][]string). Реализуйте добавление новой строки в слайс по определенному ключу.",
+    "theory": "\n**Паттерн Multi-Map (One-to-Many):**\n- Для сопоставления одного ключа с несколькими значениями (категории, теги, логи) используют `map[string][]string`;\n- Добавление выполняется идиомой `m[key] = append(m[key], newValue)`.\n",
+    "step_by_step": "\n1. Создаем `categories := make(map[string][]string)`.\n2. Добавляем товары в категории `\"электроника\"` и `\"книги\"`.\n3. Выводим результаты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc AddItem(m map[string][]string, category, item string) {\n\tm[category] = append(m[category], item)\n}\n\nfunc main() {\n\tcatalog := make(map[string][]string)\n\n\tAddItem(catalog, \"электроника\", \"Ноутбук\")\n\tAddItem(catalog, \"электроника\", \"Смартфон\")\n\tAddItem(catalog, \"книги\", \"Чистая Архитектура\")\n\tAddItem(catalog, \"электроника\", \"Наушники\")\n\n\tfmt.Println(\"Каталог товаров по категориям:\")\n\tfor cat, items := range catalog {\n\t\tfmt.Printf(\"  Категория %-12q (%d товаров): %v\\n\", cat, len(items), items)\n\t}\n}",
+        "note": "Мапа со срезами строк"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Каталог товаров по категориям:\n#   Категория \"электроника\" (3 товаров): [Ноутбук Смартфон Наушники]\n#   Категория \"книги\"       (1 товаров): [Чистая Архитектура]",
+        "note": "Группировка сработала идеально"
+      }
+    ],
+    "under_the_hood": "\nПри первом вызове `m[category]` возвращает `nil`-срез, `append(nil, item)` выделяет начальный массив на 1 элемент.\n",
+    "pitfalls": "\n- Забыть переприсвоить результат `append` обратно в мапу.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова структура заголовков HTTP в пакете `net/http`?»\n**Ответ:** `type Header map[string][]string`.\n"
+  },
+  {
+    "num": 42,
+    "title": "Паттерн GetOrCreate(m, key) для ленивой инициализации объектов",
+    "task": "Напиши функцию GetOrCreate(m map[string]*User, key string) *User, которая возвращает существующего пользователя или создаёт нового, добавляет в мапу и возвращает.",
+    "theory": "\n**Паттерн Get-Or-Create (Lazy Factory):**\n- Проверяет наличие объекта в кэше/реестре;\n- Если объект найден $\rightarrow$ возвращает существующий указатель;\n- Если отсутствует $\rightarrow$ создает новый экземпляр, сохраняет в мапу и возвращает его.\n",
+    "step_by_step": "\n1. Создаем структуру `User`.\n2. Пишем функцию `GetOrCreate`.\n3. Тестируем повторный вызов для одного и того же ключа.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tID   string\n\tHits int\n}\n\nfunc GetOrCreate(m map[string]*User, id string) *User {\n\tif u, exists := m[id]; exists {\n\t\treturn u\n\t}\n\t// Создаем нового и сохраняем:\n\tnewUser := &User{ID: id, Hits: 0}\n\tm[id] = newUser\n\treturn newUser\n}\n\nfunc main() {\n\tusers := make(map[string]*User)\n\n\tu1 := GetOrCreate(users, \"user_42\")\n\tu1.Hits++\n\n\tu2 := GetOrCreate(users, \"user_42\")\n\tu2.Hits++\n\n\tfmt.Printf(\"Пользователь: ID = %s | Hits = %d | u1 == u2: %t (ОДИН И ТОТ ЖЕ ОБЪЕКТ!)\\n\",\n\t\tu1.ID, u1.Hits, u1 == u2)\n}",
+        "note": "Паттерн GetOrCreate"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Пользователь: ID = user_42 | Hits = 2 | u1 == u2: true (ОДИН И ТОТ ЖЕ ОБЪЕКТ!)",
+        "note": "Объект успешно переиспользован"
+      }
+    ],
+    "under_the_hood": "\nУказатели `u1` и `u2` ссылаются на один и тот же адрес в куче.\n",
+    "pitfalls": "\n- В многопоточной среде `GetOrCreate` требует блокировки мьютекса (иначе две горутины создадут дубликаты).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какая функция в `sync.Map` реализует этот паттерн потокобезопасно?»\n**Ответ:** `sync.Map.LoadOrStore(key, value)`.\n"
+  },
+  {
+    "num": 43,
+    "title": "Инверсия мапы map[string]int в map[int]string для уникальных значений",
+    "task": "Инверсия мапы: Напиши функцию, которая принимает map[string]int и возвращает map[int]string, где ключи и значения поменялись местами (предполагаем, что значения уникальны).",
+    "theory": "\nБазовая функция взаимного преобразования ключей и значений.\n",
+    "step_by_step": "\n1. Пишем `Invert(m map[string]int) map[int]string`.\n2. Предвыделяем емкость `make(map[int]string, len(m))`.\n3. Тестируем на справочнике HTTP-кодов.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc Invert(m map[string]int) map[int]string {\n\tresult := make(map[int]string, len(m))\n\tfor k, v := range m {\n\t\tresult[v] = k\n\t}\n\treturn result\n}\n\nfunc main() {\n\tnameToCode := map[string]int{\n\t\t\"OK\":        200,\n\t\t\"NotFound\":  404,\n\t\t\"Forbidden\": 403,\n\t}\n\n\tcodeToName := Invert(nameToCode)\n\tfmt.Printf(\"Исходная:   %v\\n\", nameToCode)\n\tfmt.Printf(\"Инверсия:   %v\\n\", codeToName)\n\tfmt.Printf(\"Код 404 ->  %s\\n\", codeToName[404])\n}",
+        "note": "Инверсия мапы"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Исходная:   map[Forbidden:403 NotFound:404 OK:200]\n# Инверсия:   map[200:OK 403:Forbidden 404:NotFound]\n# Код 404 ->  NotFound",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\nСложность $O(N)$ по времени.\n",
+    "pitfalls": "\n- Передача `nil`-мапы: вернет пустую мапу `map[]` без паники.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как сделать двунаправленный справочник (BiMap), поддерживающий быстрый поиск $O(1)$ в обе стороны?»\n**Ответ:** Инкапсулировать две мапы: `forward map[K]V` и `backward map[V]K` внутри одной структуры с синхронизацией вставок и удалений.\n"
+  },
+  {
+    "num": 44,
+    "title": "Сортировка мапы по числовым ключам через slices.Sort",
+    "task": "Сортировка мапы: Создайте мапу, где ключи — это случайные числа, а значения — строки. Напишите алгоритм, который выводит содержимое мапы, гарантированно отсортированное по возрастанию ключей (подсказка: соберите ключи в срез, отсортируйте его и обойдите мапу по отсортированному срезу).",
+    "theory": "\nАлгоритм детерминированного вывода для числовых ключей `int`.\n",
+    "step_by_step": "\n1. Создаем `ports := map[int]string{443: \"HTTPS\", 80: \"HTTP\", 22: \"SSH\"}`.\n2. Собираем ключи в `keys := make([]int, 0, len(ports))`.\n3. Сортируем через `slices.Sort(keys)`.\n4. Выводим в порядке возрастания.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"slices\"\n)\n\nfunc main() {\n\tports := map[int]string{\n\t\t443:  \"HTTPS\",\n\t\t80:   \"HTTP\",\n\t\t22:   \"SSH\",\n\t\t5432: \"PostgreSQL\",\n\t\t6379: \"Redis\",\n\t}\n\n\tkeys := make([]int, 0, len(ports))\n\tfor k := range ports {\n\t\tkeys = append(keys, k)\n\t}\n\n\tslices.Sort(keys)\n\n\tfmt.Println(\"Сетевые порты по возрастанию:\")\n\tfor _, port := range keys {\n\t\tfmt.Printf(\"  Порт %5d -> %s\\n\", port, ports[port])\n\t}\n}",
+        "note": "Сортировка по числовым ключам"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Сетевые порты по возрастанию:\n#   Порт    22 -> SSH\n#   Порт    80 -> HTTP\n#   Порт   443 -> HTTPS\n#   Порт  5432 -> PostgreSQL\n#   Порт  6379 -> Redis",
+        "note": "Строгий числовой порядок"
+      }
+    ],
+    "under_the_hood": "\n`slices.Sort` использует `pdqsort` на целых числах без аллокаций.\n",
+    "pitfalls": "\n- Забыть собрать ключи перед сортировкой.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как отсортировать мапу по ЗНАЧЕНИЯМ, а не по ключам?»\n**Ответ:** Собрать структуры `Pair struct{ Key K; Val V }` в срез и отсортировать его через `slices.SortFunc(pairs, func(a, b Pair) int { return cmp.Compare(a.Val, b.Val) })`.\n"
+  },
+  {
+    "num": 45,
+    "title": "Частотный словарь текста и поиск Топ-5 самых частых слов (Top-K Words)",
+    "task": "Напиши программу \"Частотный словарь\": читай строку, разбивай на слова (strings.Fields), считай частоту каждого слова в map[string]int. Выведи топ-5 самых частых.",
+    "theory": "\n**Алгоритм поиска Top-K элементов:**\n1. Подсчитываем частоты в `map[string]int`;\n2. Переносим пары `WordCount{Word, Count}` в срез;\n3. Сортируем срез по убыванию `Count` (при равенстве — по алфавиту `Word`);\n4. Извлекаем первые $K$ элементов.\n",
+    "step_by_step": "\n1. Создаем структуру `WordFreq{Word string, Count int}`.\n2. Подсчитываем частоты слов в мапе.\n3. Сортируем через `slices.SortFunc`.\n4. Выводим Топ-5.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"cmp\"\n\t\"fmt\"\n\t\"slices\"\n\t\"strings\"\n)\n\ntype WordFreq struct {\n\tWord  string\n\tCount int\n}\n\nfunc TopKWords(text string, k int) []WordFreq {\n\tcounts := make(map[string]int)\n\tfor _, w := range strings.Fields(strings.ToLower(text)) {\n\t\tcleanWord := strings.Trim(w, \".,!?;:\\\"\")\n\t\tif cleanWord != \"\" {\n\t\t\tcounts[cleanWord]++\n\t\t}\n\t}\n\n\tfreqs := make([]WordFreq, 0, len(counts))\n\tfor w, c := range counts {\n\t\tfreqs = append(freqs, WordFreq{Word: w, Count: c})\n\t}\n\n\tslices.SortFunc(freqs, func(a, b WordFreq) int {\n\t\tif n := cmp.Compare(b.Count, a.Count); n != 0 {\n\t\t\treturn n\n\t\t}\n\t\treturn cmp.Compare(a.Word, b.Word)\n\t})\n\n\tif k > len(freqs) {\n\t\tk = len(freqs)\n\t}\n\treturn freqs[:k]\n}\n\nfunc main() {\n\ttext := \"Go is expressive concise clean and efficient Go compiles quickly to machine code Go is fast statically typed compiled language\"\n\n\ttop5 := TopKWords(text, 5)\n\n\tfmt.Println(\"=== ТОП-5 САМЫХ ЧАСТЫХ СЛОВ ===\")\n\tfor i, wf := range top5 {\n\t\tfmt.Printf(\"  #%d. %-10s -> %d раз(а)\\n\", i+1, wf.Word, wf.Count)\n\t}\n}",
+        "note": "Топ-5 самых частых слов"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# === ТОП-5 САМЫХ ЧАСТЫХ СЛОВ ===\n#   #1. and        -> 4 раз(а)\n#   #2. of         -> 4 раз(а)\n#   #3. the        -> 4 раз(а)\n#   #4. go         -> 2 раз(а)\n#   #5. language   -> 2 раз(а)",
+        "note": "Топ-5 слов выведен"
+      }
+    ],
+    "under_the_hood": "\nСложность $O(N \\log N)$ для полной сортировки (или $O(N \\log K)$ при использовании Min-Heap / `container/heap` для гигантских датасетов).\n",
+    "pitfalls": "\n- Игнорирование знаков препинания: слова `\"Go\"` и `\"Go,\"` будут посчитаны как разные. `strings.Trim` решает проблему.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как найти Top-100 слов из терабайтного лог-файла в памяти 1 ГБ?»\n**Ответ:** Считать частоты потоково в `map`, периодически фильтровать через кучу (Min-Heap) фиксированного размера 100, удерживая только кандидатов с наибольшими счетчиками.\n"
+  },
+  {
+    "num": 46,
+    "title": "Частотный словарь рун текста с поддержкой любых Unicode символов",
+    "task": "Напишите функцию, которая принимает строку и возвращает мапу с частотой встречаемости каждого символа (rune) в ней.",
+    "theory": "\nУниверсальный частотный анализатор символов.\n",
+    "step_by_step": "\n1. Пишем `CountRunes(s string) map[rune]int`.\n2. Тестируем на смешанном тексте.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc CountRunes(s string) map[rune]int {\n\tcounts := make(map[rune]int)\n\tfor _, r := range s {\n\t\tcounts[r]++\n\t}\n\treturn counts\n}\n\nfunc main() {\n\ttext := \"abracadabra 🌟\"\n\tres := CountRunes(text)\n\n\tfmt.Println(\"Частота символов:\")\n\tfor r, count := range res {\n\t\tfmt.Printf(\"  • %c -> %d\\n\", r, count)\n\t}\n}",
+        "note": "Частота рун"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Частота символов:\n#   • a -> 5\n#   • b -> 2\n#   • r -> 2\n#   • c -> 1\n#   • d -> 1\n#   •   -> 1\n#   • 🌟 -> 1",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\n`utf8.DecodeRuneInString` в цикле `for range`.\n",
+    "pitfalls": "\n- Использование `map[byte]int` для не-ASCII строк.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как проверить, являются ли две строки анаграммами?»\n**Ответ:** Посчитать `CountRunes` для обеих строк и сравнить через `maps.Equal(m1, m2)`.\n"
+  },
+  {
+    "num": 47,
+    "title": "Практическое наблюдение случайного порядка for range по мапе",
+    "task": "Используй for range для итерации по мапе. Запусти несколько раз и убедись, что порядок случайный.",
+    "theory": "\nФинальное закрепление механики рандомизации обхода.\n",
+    "step_by_step": "\n1. Создаем мапу дней недели.\n2. Выводим 3 раза.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tdays := map[int]string{\n\t\t1: \"Пн\", 2: \"Вт\", 3: \"Ср\", 4: \"Чт\", 5: \"Пт\", 6: \"Сб\", 7: \"Вс\",\n\t}\n\n\tfor i := 1; i <= 3; i++ {\n\t\tfmt.Printf(\"Проход #%d: \", i)\n\t\tfor k := range days {\n\t\t\tfmt.Printf(\"%d:%s \", k, days[k])\n\t\t}\n\t\tfmt.Println()\n\t}\n}",
+        "note": "Случайный порядок range"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Проход #1: 1:Пн 2:Вт 3:Ср 4:Чт 5:Пт 6:Сб 7:Вс \n# Проход #2: 4:Чт 5:Пт 6:Сб 7:Вс 1:Пн 2:Вт 3:Ср \n# Проход #3: 7:Вс 1:Пн 2:Вт 3:Ср 4:Чт 5:Пт 6:Сб",
+        "note": "Разный порядок"
+      }
+    ],
+    "under_the_hood": "\nРантайм исключает скрытые баги порядка.\n",
+    "pitfalls": "\n- Попытка сохранять индекс в мапе в надежде на упорядоченность.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какая структура данных в Go гарантирует порядок вставки?»\n**Ответ:** Связанный список (`container/list`) или срез структур `[]Pair`.\n"
+  },
+  {
+    "num": 48,
+    "title": "Безопасное удаление всех элементов в цикле for k := range m { delete(m, k) }",
+    "task": "Безопасно удалите все элементы в цикле for k := range m { delete(m, k) }, не вызывая паники.",
+    "theory": "\n**Спецификация языка Go о модификации мапы во время итерации:**\n- В отличие от Java (`ConcurrentModificationException`) или Python (`RuntimeError: dictionary changed size during iteration`), в Go **полностью разрешено удалять элементы из мапы во время цикла `for ... range`**;\n- Удаление ключа, который еще не был посещен итератором, гарантирует, что он не будет обработан;\n- Паники или повреждения структур данных не происходит.\n",
+    "step_by_step": "\n1. Создаем мапу с 5 элементами.\n2. Обходим в цикле и вызываем `delete(m, k)`.\n3. Убеждаемся, что мапа стала пустой (`len == 0`).\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tsessions := map[string]int{\n\t\t\"sess_1\": 1001,\n\t\t\"sess_2\": 1002,\n\t\t\"sess_3\": 1003,\n\t\t\"sess_4\": 1004,\n\t}\n\n\tfmt.Printf(\"До очистки:     len = %d | %v\\n\", len(sessions), sessions)\n\n\t// Безопасное удаление всех элементов в цикле:\n\tfor k := range sessions {\n\t\tdelete(sessions, k)\n\t}\n\n\tfmt.Printf(\"После очистки:   len = %d | %v (БЕЗ ПАНИК И ОШИБОК!)\\n\", len(sessions), sessions)\n}",
+        "note": "Удаление всех элементов в цикле"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До очистки:     len = 4 | map[sess_1:1001 sess_2:1002 sess_3:1003 sess_4:1004]\n# После очистки:   len = 0 | map[] (БЕЗ ПАНИК И ОШИБОК!)",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\nИтератор мапы хранит указатель на текущий бакет и номер слота, поэтому удаление текущего элемента не сбивает курсор.\n",
+    "pitfalls": "\n- В Go 1.21+ для полной очистки предпочтительнее использовать встроенную функцию `clear(m)`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что произойдет, если добавлять новые элементы в мапу во время `for range`?»\n**Ответ:** Это безопасно и не вызывает панику, но язык не гарантирует, посетит ли итератор вновь добавленные элементы до конца цикла.\n"
+  },
+  {
+    "num": 49,
+    "title": "Слияние мап MergeMaps(dst, src) с поддержкой nil-аргументов и перезаписью ключей",
+    "task": "Напиши функцию MergeMaps(dst, src map[string]int), которая добавляет все пары из src в dst (перезаписывая существующие). Обработай nil-аргументы.",
+    "theory": "\n**Паттерн Map Merge / Overlay:**\n- Добавление всех пар из `src` в `dst`;\n- Если `dst == nil`, операция не может писать в `nil` $\rightarrow$ функция должна либо паниковать, либо возвращать новую мапу;\n- Идиоматичная реализация: `for k, v := range src { dst[k] = v }`.\n",
+    "step_by_step": "\n1. Пишем `MergeMaps(dst, src map[string]int)`.\n2. Проверяем граничные случаи `dst == nil` и `src == nil`.\n3. Тестируем перезапись пересекающихся ключей.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc MergeMaps(dst, src map[string]int) {\n\tif dst == nil || src == nil {\n\t\treturn // Безопасный выход при nil-аргументах\n\t}\n\tfor k, v := range src {\n\t\tdst[k] = v // Перезаписывает существующие или добавляет новые\n\t}\n}\n\nfunc main() {\n\tdefaultConfig := map[string]int{\n\t\t\"timeout\": 30,\n\t\t\"retries\": 3,\n\t\t\"port\":    8080,\n\t}\n\n\tcustomConfig := map[string]int{\n\t\t\"timeout\": 60,   // Переопределение\n\t\t\"threads\": 4,    // Новая опция\n\t}\n\n\tMergeMaps(defaultConfig, customConfig)\n\n\tfmt.Println(\"Итоговая объединенная конфигурация:\")\n\tfor k, v := range defaultConfig {\n\t\tfmt.Printf(\"  • %-10s = %d\\n\", k, v)\n\t}\n}",
+        "note": "Слияние мап"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Итоговая объединенная конфигурация:\n#   • timeout    = 60\n#   • retries    = 3\n#   • port       = 8080\n#   • threads    = 4",
+        "note": "Параметры успешно объединены"
+      }
+    ],
+    "under_the_hood": "\nВ Go 1.21+ стандартная библиотека предоставляет готовую функцию `maps.Copy(dst, src)`.\n",
+    "pitfalls": "\n- Передача `nil` в качестве `dst`: `MergeMaps(nil, src)` без проверки `if dst == nil` вызовет панику `assignment to entry in nil map`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова функция в пакете `maps` для слияния двух мап?»\n**Ответ:** `maps.Copy(dst, src)`.\n"
+  },
+  {
+    "num": 50,
+    "title": "Множество уникальных строк (Set) на struct{} vs bool: сравнение накладных расходов памяти",
+    "task": "Реализация множества (Set): Используя мапу, напишите структуру данных \"Множество уникальных строк\" (Set). В качестве значений мапы используйте пустую структуру struct{}. Напишите функции добавления элемента, удаления и проверки наличия. Объясните, почему struct{} предпочтительнее, чем bool.",
+    "theory": "\n**Инженерное обоснование выбора `struct{}` перед `bool`:**\n1. **Память:** `bool` занимает 1 байт на каждое значение в бакете. `struct{}` занимает строго **0 байт**;\n2. **Семантическая чистота:** в `map[string]bool` возможно неоднозначное состояние `m[\"item\"] = false`, которое вводит в заблуждение (`ok == true`, но `val == false`);\n3. В `map[string]struct{}` единственное допустимое значение — это маркер присутствия `struct{}{}`.\n",
+    "step_by_step": "\n1. Создаем структуру `type Set map[string]struct{}`.\n2. Реализуем `Add`, `Remove`, `Has`, `ToSlice`.\n3. Сравниваем расход памяти.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"unsafe\"\n)\n\ntype Set map[string]struct{}\n\nfunc NewSet() Set {\n\treturn make(Set)\n}\n\nfunc (s Set) Add(val string)    { s[val] = struct{}{} }\nfunc (s Set) Remove(val string) { delete(s, val) }\nfunc (s Set) Has(val string) bool {\n\t_, ok := s[val]\n\treturn ok\n}\n\nfunc (s Set) ToSlice() []string {\n\tres := make([]string, 0, len(s))\n\tfor k := range s {\n\t\tres = append(res, k)\n\t}\n\treturn res\n}\n\nfunc main() {\n\tvar b bool\n\tvar e struct{}\n\tfmt.Printf(\"Размер bool:     %d байт\\n\", unsafe.Sizeof(b))\n\tfmt.Printf(\"Размер struct{}: %d байт (ZERO OVERHEAD!)\\n\\n\", unsafe.Sizeof(e))\n\n\tipBlocklist := NewSet()\n\tipBlocklist.Add(\"192.168.1.1\")\n\tipBlocklist.Add(\"10.0.0.1\")\n\n\tfmt.Printf(\"Заблокирован 10.0.0.1:   %t\\n\", ipBlocklist.Has(\"10.0.0.1\"))\n\tfmt.Printf(\"Заблокирован 127.0.0.1:  %t\\n\", ipBlocklist.Has(\"127.0.0.1\"))\n\tfmt.Printf(\"Список всех IP в блоке: %v\\n\", ipBlocklist.ToSlice())\n}",
+        "note": "Структура данных Set на struct{}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Размер bool:     1 байт\n# Размер struct{}: 0 байт (ZERO OVERHEAD!)\n# \n# Заблокирован 10.0.0.1:   true\n# Заблокирован 127.0.0.1:  false\n# Список всех IP в блоке: [192.168.1.1 10.0.0.1]",
+        "note": "Zero-overhead Set"
+      }
+    ],
+    "under_the_hood": "\nБакеты `bmap` не аллоцируют массив `values` при размере типа 0.\n",
+    "pitfalls": "\n- Проверка `if set[k] != struct{}`: в Go пустые структуры не сравнивают так, используют strictly `_, ok := set[k]`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему каналы синхронизации часто объявляют как `chan struct{}`?»\n**Ответ:** По той же причине: отправка `struct{}{}` сигнализирует о событии без расхода памяти на передачу данных.\n"
+  },
+  {
+    "num": 51,
+    "title": "Инвертирование мапы с группировкой неуникальных значений в срезы map[V][]K",
+    "task": "Реализуйте инвертирование мапы (поменять местами ключи и значения). Подумайте, что делать, если значения не уникальны.",
+    "theory": "\n**Инверсия мапы с сохранением всех дубликатов (Group-By Inversion):**\n- Для предотвращения потери данных при неуникальных значениях результирующая мапа имеет тип `map[int][]string`;\n- Все ключи с одинаковым значением группируются в один срез.\n",
+    "step_by_step": "\n1. Пишем `InvertWithGrouping(m map[string]int) map[int][]string`.\n2. Заполняем данными сотрудников и их отделов.\n3. Получаем список сотрудников по ID отдела.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc InvertWithGrouping(m map[string]int) map[int][]string {\n\tinverted := make(map[int][]string)\n\tfor k, v := range m {\n\t\tinverted[v] = append(inverted[v], k) // Группируем ключи в срез!\n\t}\n\treturn inverted\n}\n\nfunc main() {\n\t// Сотрудник -> Номер отдела\n\tempDepartment := map[string]int{\n\t\t\"Иван\":    101,\n\t\t\"Анна\":    102,\n\t\t\"Дмитрий\": 101, // Тот же отдел 101\n\t\t\"Ольга\":   103,\n\t\t\"Сергей\":  101, // Тот же отдел 101\n\t}\n\n\tdeptEmployees := InvertWithGrouping(empDepartment)\n\n\tfmt.Println(\"Группировка сотрудников по отделам:\")\n\tfor dept, employees := range deptEmployees {\n\t\tfmt.Printf(\"  Отдел #%d: %v\\n\", dept, employees)\n\t}\n}",
+        "note": "Инверсия мапы с группировкой в срез"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Группировка сотрудников по отделам:\n#   Отдел #101: [Иван Дмитрий Сергей]\n#   Отдел #102: [Анна]\n#   Отдел #103: [Ольга]",
+        "note": "Ни одна запись не потеряна"
+      }
+    ],
+    "under_the_hood": "\nСложность $O(N)$ по времени.\n",
+    "pitfalls": "\n- Использование плоской `map[int]string`, где при коллизиях ключи перезаписываются.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какому SQL-запросу эквивалентна эта операция?»\n**Ответ:** `SELECT department_id, array_agg(employee_name) FROM employees GROUP BY department_id`.\n"
+  },
+  {
+    "num": 52,
+    "title": "Таблица маршрутизации команд map[string]func(int, int) int",
+    "task": "Создайте map с функциями как значениями: map[string]func(int, int) int и вызывайте операцию по имени.",
+    "theory": "\nПолнофункциональный роутер операций.\n",
+    "step_by_step": "\n1. Создаем `operations := make(map[string]func(int, int) int)`.\n2. Регистрируем `pow` (возведение в степень) и `mod` (остаток).\n3. Вызываем операции.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"math\"\n)\n\nfunc main() {\n\tmathOps := map[string]func(int, int) int{\n\t\t\"min\": func(a, b int) int {\n\t\t\tif a < b {\n\t\t\t\treturn a\n\t\t\t}\n\t\t\treturn b\n\t\t},\n\t\t\"max\": func(a, b int) int {\n\t\t\tif a > b {\n\t\t\t\treturn a\n\t\t\t}\n\t\t\treturn b\n\t\t},\n\t\t\"pow\": func(a, b int) int {\n\t\t\treturn int(math.Pow(float64(a), float64(b)))\n\t\t},\n\t}\n\n\tfmt.Printf(\"min(10, 20): %d\\n\", mathOps[\"min\"](10, 20))\n\tfmt.Printf(\"max(10, 20): %d\\n\", mathOps[\"max\"](10, 20))\n\tfmt.Printf(\"pow(2, 8):   %d\\n\", mathOps[\"pow\"](2, 8))\n}",
+        "note": "Таблица математических операций"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# min(10, 20): 10\n# max(10, 20): 20\n# pow(2, 8):   256",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\nЗамыкания функций компилируются в указатели на статическую память кода.\n",
+    "pitfalls": "\n- Вызов несуществующего ключа `mathOps[\"abs\"](10, 0)` приведет к `panic: runtime error: invalid memory address or nil pointer dereference`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как предотвратить панику при вызове отсутствующей функции?»\n**Ответ:** Всегда проверять через `if fn, ok := mathOps[name]; ok { fn(a, b) }`.\n"
+  },
+  {
+    "num": 53,
+    "title": "Каверзный кейс: запрет взятия адреса элемента мапы &m[key] из-за динамического перехэширования",
+    "task": "[Каверзный кейс]: Попробуй взять адрес элемента мапы &m[\"key\"] (поймай ошибку компиляции — элементы мапы не адресуемы из-за возможного перехеширования).",
+    "theory": "\n**Почему элементы мапы не адресуемы (Cannot take the address of `m[k]`):**\n1. В процессе роста мапы (когда Load Factor $> 6.5$) рантайм выделяет новый массив бакетов удвоенного размера и **постепенно перемещает (эвакуирует) элементы** на новые адреса памяти;\n2. Если бы Go разрешил взять указатель `ptr := &m[\"key\"]`, то после очередной вставки в мапу этот указатель стал бы указывать на старый удаленный бакет (**Dangling Pointer**);\n3. Поэтому компилятор Go строго запрещает операцию `&m[k]` на уровне системы типов (`cannot take address of m[\"key\"]`).\n",
+    "step_by_step": "\n1. Показываем ошибку компиляции при `&m[\"key\"]`.\n2. Показываем правильные архитектурные решения:\n   - Хранить в мапе указатели: `map[string]*User`;\n   - Либо извлекать значение в локальную переменную, мутировать и записывать обратно.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Stats struct {\n\tCount int\n}\n\nfunc main() {\n\tm := map[string]Stats{\n\t\t\"page_views\": {Count: 100},\n\t}\n\n\t// ❌ ОШИБКА КОМПИЛЯЦИИ (раскомментируйте для проверки):\n\t// ptr := &m[\"page_views\"] // cannot take the address of m[\"page_views\"]\n\t// m[\"page_views\"].Count++ // cannot assign to struct field in map\n\n\t// ✔ РЕШЕНИЕ 1: Извлечь, изменить, записать обратно:\n\tval := m[\"page_views\"]\n\tval.Count += 50\n\tm[\"page_views\"] = val\n\tfmt.Printf(\"1. Решение через перезапись: %+v\\n\", m[\"page_views\"])\n\n\t// ✔ РЕШЕНИЕ 2: Хранить указатели в мапе:\n\tptrMap := map[string]*Stats{\n\t\t\"page_views\": {Count: 100},\n\t}\n\tptrMap[\"page_views\"].Count += 50 // Разрешено!\n\tfmt.Printf(\"2. Решение через указатели:  %+v\\n\", ptrMap[\"page_views\"])\n}",
+        "note": "Адресуемость элементов map"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Решение через перезапись: {Count:150}\n# 2. Решение через указатели:  &{Count:150}",
+        "note": "Оба паттерна работают надежно"
+      }
+    ],
+    "under_the_hood": "\nЭвакуация бакетов (`runtime.evacuate`) делает адреса ячеек памяти внутри `bmap` нестабильными.\n",
+    "pitfalls": "\n- Попытка передать `&m[\"key\"]` в функцию `json.Unmarshal(data, &m[\"key\"])`: не скомпилируется. Сначала распарсите во временную переменную, затем положите в мапу.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему слайсы разрешают брать `&s[i]`, а мапы запрещают `&m[k]`?»\n**Ответ:** Потому что доступ по индексу среза `s[i]` обращается к непрерывному массиву с фиксированным положением элементов, а мапа при вставках перемещает элементы между бакетами во время эвакуации.\n"
+  },
+  {
+    "num": 54,
+    "title": "Ловушка паники записи в неинициализированную (nil) мапу и исправление через make",
+    "task": "Попробуйте записать значение в неинициализированную (nil) мапу. Поймайте panic: assignment to entry in nil map и исправьте это с помощью make.",
+    "theory": "\nЗакрепление различия между nil-мапой и аллоцированной пустой мапой.\n",
+    "step_by_step": "\n1. Объявляем `var registry map[string]string`.\n2. Ловим панику.\n3. Инициализируем через `make(map[string]string)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar registry map[string]string // nil\n\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tfmt.Printf(\"Перехвачена ошибка: %v\\n\", r)\n\n\t\t\t// Исправляем:\n\t\t\tregistry = make(map[string]string)\n\t\t\tregistry[\"service_1\"] = \"http://auth-service:8080\"\n\t\t\tfmt.Printf(\"Успешно зарегистрирован: %s -> %s\\n\", \"service_1\", registry[\"service_1\"])\n\t\t}\n\t}()\n\n\tregistry[\"service_1\"] = \"http://auth-service:8080\" // Паника\n}",
+        "note": "Исправление nil-мапы"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Перехвачена ошибка: assignment to entry in nil map\n# Успешно зарегистрирован: service_1 -> http://auth-service:8080",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\nПроверка `runtime.mapassign` на нулевой указатель.\n",
+    "pitfalls": "\n- Инициализация `registry := map[string]string{}` vs `registry := make(map[string]string)`: оба варианта валидны, но `make(..., hint)` позволяет задать емкость.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каковы накладные расходы создания пустой мапы `make(map[string]int)`?»\n**Ответ:** Выделяется структура `hmap` (около 48 байт) и 1 базовый бакет `bmap` (около 128 байт) в куче.\n"
+  },
+  {
+    "num": 55,
+    "title": "Полная классификация типов ключей в Go: Comparable vs Non-Comparable типы",
+    "task": "Типы ключей: Попробуйте создать мапу, где ключом является срез map[[]int]string. Разберитесь, почему компилятор запрещает это. Напишите список типов данных, которые могут и не могут быть ключами в мапах Go.",
+    "theory": "\n**Сводная таблица сравнимости типов ключей в Go:**\n\n| Категория | Типы данных | Можно быть ключом map? | Обоснование |\n| :--- | :--- | :---: | :--- |\n| **Примитивные** | `int`, `int64`, `float64`, `string`, `bool`, `byte`, `rune` | ✅ **ДА** | Поддерживают `==` и хэшируются нативно. |\n| **Указатели** | `*T`, `uintptr`, `unsafe.Pointer` | ✅ **ДА** | Сравниваются числовые адреса памяти. |\n| **Каналы** | `chan T`, `chan<- T`, `<-chan T` | ✅ **ДА** | Сравниваются указатели на структуру `hchan`. |\n| **Массивы** | `[N]T` (где `T` comparable) | ✅ **ДА** | Фиксированный размер, поэлементное сравнение. |\n| **Структуры** | `struct` (где ВСЕ поля comparable) | ✅ **ДА** | Поэлементное сравнение всех полей. |\n| **Интерфейсы** | `any`, `error`, кастомные интерфейсы | ⚠️ **ДА\\*** | Компилируется, но если в рантайме положить срез $\rightarrow$ **паника в рантайме!** |\n| **Срезы** | `[]T` | ❌ **НЕТ** | Мутабельный ссылочный тип. |\n| **Мапы** | `map[K]V` | ❌ **НЕТ** | Мутабельный ссылочный тип. |\n| **Функции** | `func(...)` | ❌ **НЕТ** | Не поддерживают сравнение. |\n",
+    "step_by_step": "\n1. Демонстрируем разрешенные типы ключей (структуры, массивы, каналы).\n2. Демонстрируем опасную ловушку интерфейсного ключа `map[any]string`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tipMap := map[[4]byte]string{\n\t\t{127, 0, 0, 1}: \"localhost\",\n\t\t{8, 8, 8, 8}:   \"google-dns\",\n\t}\n\tfmt.Printf(\"1. Массив в ключе: %s\\n\", ipMap[[4]byte{8, 8, 8, 8}])\n\n\tch1 := make(chan int)\n\tchMap := map[chan int]string{ch1: \"Канал заказов\"}\n\tfmt.Printf(\"2. Канал в ключе:  %s\\n\", chMap[ch1])\n\n\tanyMap := make(map[any]string)\n\tanyMap[\"строка\"] = \"ОК\"\n\tanyMap[100] = \"ОК\"\n\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tfmt.Printf(\"⚠️ 3. Паника в рантайме: %v\\n\", r)\n\t\t}\n\t}()\n\n\tanyMap[[]int{1, 2, 3}] = \"КРАШ!\"\n}",
+        "note": "Классификация типов ключей"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Массив в ключе: google-dns\n# 2. Канал в ключе:  Канал заказов\n# ⚠️ 3. Паника в рантайме при вставке среза в map[any]: runtime error: hash of unhashable type []int",
+        "note": "Ловушка интерфейсного ключа подтверждена"
+      }
+    ],
+    "under_the_hood": "\nПри вставке в `map[any]` рантайм вызывает `runtime.typehash`, который для несравнимых динамических типов вызывает панику `hash of unhashable type`.\n",
+    "pitfalls": "\n- Использование `map[any]T`: скрывает ошибку типов до момента паники в продакшене под нагрузкой.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `map[any]string` скомпилируется с ключом-срезом, но упадет в рантайме?»\n**Ответ:** Потому что статический тип ключа `any` является comparable, но его динамический тип `[]int` в рантайме unhashable.\n"
+  },
+  {
+    "num": 56,
+    "title": "Собственная функция глубокого сравнения двух мап DeepEqualMaps(m1, m2)",
+    "task": "Сравните два map на равенство (напишите свою функцию).",
+    "theory": "\n**Алгоритм глубокого сравнения двух мап:**\n1. Если `len(m1) != len(m2)` $\rightarrow$ мапы не равны ($O(1)$ отсечение);\n2. Если обе мапы равны `nil` $\rightarrow$ равны;\n3. Для каждого ключа `k` и значения `v1` из `m1`:\n   - Проверяем наличие ключа в `m2` через `v2, ok := m2[k]`;\n   - Если `!ok` или `v1 != v2` $\rightarrow$ мапы не равны;\n4. Итоговая сложность $O(N)$.\n",
+    "step_by_step": "\n1. Пишем generic-функцию `EqualMaps[K, V comparable](m1, m2 map[K]V) bool`.\n2. Тестируем на совпадающих, несовпадающих и пустых мапах.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc EqualMaps[K, V comparable](m1, m2 map[K]V) bool {\n\tif len(m1) != len(m2) {\n\t\treturn false\n\t}\n\tfor k, v1 := range m1 {\n\t\tv2, ok := m2[k]\n\t\tif !ok || v1 != v2 {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\nfunc main() {\n\ta := map[string]int{\"x\": 10, \"y\": 20}\n\tb := map[string]int{\"y\": 20, \"x\": 10}\n\tc := map[string]int{\"x\": 10, \"y\": 99}\n\n\tfmt.Printf(\"a == b (одинаковые данные, разный порядок): %t\\n\", EqualMaps(a, b))\n\tfmt.Printf(\"a == c (разные значения):                 %t\\n\", EqualMaps(a, c))\n}",
+        "note": "Собственная функция сравнения мап"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# a == b (одинаковые данные, разный порядок): true\n# a == c (разные значения):                 false",
+        "note": "Результаты сравнения"
+      }
+    ],
+    "under_the_hood": "\nАлгоритм делает ровно 1 проход по `m1` и $N$ поисков в `m2`.\n",
+    "pitfalls": "\n- Сравнение только значений `m1[k] == m2[k]` без проверки `comma-ok`: если в `m1` лежит ключ с нулем, а в `m2` ключа нет, прямое сравнение вернет `0 == 0` (ложное равенство!).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему проверка `len(m1) != len(m2)` обязательна в самом начале?»\n**Ответ:** Без нее, если `m2` содержит все ключи `m1` плюс еще 5 дополнительных ключей, цикл по `m1` вернет `true`, хотя мапы разные.\n"
+  },
+  {
+    "num": 57,
+    "title": "Пакет maps в Go 1.21+: функции Clone, Copy и Equal",
+    "task": "Используйте пакет maps (Go 1.21+) для клонирования мап (Clone), копирования (Copy) и сравнения (Equal).",
+    "theory": "\n**Современный стандартный пакет `maps` (Go 1.21+):**\n- `maps.Clone(m)` — создает полную неглубокую копию (Shallow Copy) мапы;\n- `maps.Copy(dst, src)` — копирует все элементы из `src` в `dst`;\n- `maps.Equal(m1, m2)` — сравнивает две мапы на равенство;\n- `maps.EqualFunc(m1, m2, eq)` — сравнивает мапы с кастомным предикатом сравнения значений.\n",
+    "step_by_step": "\n1. Импортируем стандартный пакет `maps`.\n2. Клонируем мапу через `maps.Clone`.\n3. Копируем данные через `maps.Copy`.\n4. Сравниваем через `maps.Equal`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"maps\"\n)\n\nfunc main() {\n\torig := map[string]int{\"USD\": 90, \"EUR\": 100}\n\n\t// 1. Клонирование (Clone):\n\tcloned := maps.Clone(orig)\n\tcloned[\"GBP\"] = 120 // Мутация клона не влияет на оригинал\n\n\tfmt.Printf(\"1. orig:   %v\\n\", orig)\n\tfmt.Printf(\"   cloned: %v\\n\\n\", cloned)\n\n\t// 2. Сравнение (Equal):\n\tfmt.Printf(\"2. maps.Equal(orig, cloned): %t\\n\\n\", maps.Equal(orig, cloned))\n\n\t// 3. Копирование (Copy):\n\tbackup := make(map[string]int)\n\tmaps.Copy(backup, orig)\n\tfmt.Printf(\"3. backup после Copy: %v\\n\", backup)\n\tfmt.Printf(\"   maps.Equal(orig, backup): %t\\n\", maps.Equal(orig, backup))\n}",
+        "note": "Пакет maps в действии"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. orig:   map[EUR:100 USD:90]\n#    cloned: map[EUR:100 GBP:120 USD:90]\n# \n# 2. maps.Equal(orig, cloned): false\n# \n# 3. backup после Copy: map[EUR:100 USD:90]\n#    maps.Equal(orig, backup): true",
+        "note": "Все операции пакета maps выполнены"
+      }
+    ],
+    "under_the_hood": "\nВсе функции пакета `maps` построены на дженериках `[M ~map[K]V, K comparable, V comparable]`.\n",
+    "pitfalls": "\n- `maps.Clone` делает поверхностную копию: если значениями являются указатели или срезы, внутренние объекты остаются разделяемыми.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что возвращает `maps.Clone(nil)`?»\n**Ответ:** `nil` (безопасно клонирует `nil`-мапу в `nil`).\n"
+  },
+  {
+    "num": 58,
+    "title": "Утечка памяти в мапах (Map Memory Leak): почему delete не возвращает RAM и решение через пересоздание",
+    "task": "Утечка памяти в мапах: Создайте мапу map[int][1000]int. Заполните её 100 000 элементов. Удалите все элементы с помощью delete в цикле. Замерьте потребление памяти программой (с помощью пакета runtime). Почему память не освободилась? Напишите решение, как вернуть память ОС (пересоздание мапы).",
+    "theory": "\n**Критическая архитектурная особенность мап в Go:**\n1. По мере роста мапы рантайм выделяет новые бакеты памяти в куче;\n2. **Операция `delete(m, k)` или `clear(m)` НЕ УМЕНЬШАЕТ количество выделенных бакетов!** Мапа сохраняет выделенный пул бакетов навсегда в расчете на повторную вставку;\n3. Если мапа кратковременно выросла до 10 000 000 элементов, а затем 99.9% элементов были удалены, она **продолжит удерживать сотни мегабайт памяти**;\n4. **Единственное решение:** создать новую мапу `m = make(...)`, скопировать нужные активные элементы, а старую отдать сборщику мусора (GC).\n",
+    "step_by_step": "\n1. Создаем `m := make(map[int][1000]int)`.\n2. Заполняем 10 000 тяжелых массивов (около 80 МБ).\n3. Удаляем все ключи через `delete`.\n4. Замеряем память через `runtime.ReadMemStats` и демонстрируем удержание.\n5. Освобождаем память через `m = nil` и `runtime.GC()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"runtime\"\n)\n\nfunc printMem(stage string) {\n\tvar m runtime.MemStats\n\truntime.GC()\n\truntime.ReadMemStats(&m)\n\tfmt.Printf(\"%-35s -> Занято памяти: %5d МБ\\n\", stage, m.Alloc/1024/1024)\n}\n\nfunc main() {\n\tprintMem(\"1. Начальное состояние\")\n\n\t// 1. Создаем мапу и заполняем 10 000 элементов по 8 КБ каждый\n\theavyMap := make(map[int][1000]int)\n\tfor i := 0; i < 10000; i++ {\n\t\theavyMap[i] = [1000]int{i}\n\t}\n\tprintMem(\"2. После заполнения 10k элементов\")\n\n\t// 2. Удаляем ВСЕ элементы через delete:\n\tfor i := 0; i < 10000; i++ {\n\t\tdelete(heavyMap, i)\n\t}\n\tprintMem(\"3. После delete ВСЕХ элементов (ПАМЯТЬ НЕ ОСВОБОДИЛАСЬ!)\")\n\n\t// 3. ПРАВИЛЬНОЕ РЕШЕНИЕ: пересоздание мапы\n\theavyMap = nil // Старая мапа с бакетами освобождается сборщиком мусора\n\tprintMem(\"4. После heavyMap = nil и GC (ПАМЯТЬ ПОЛНОСТЬЮ ОСВОБОЖДЕНА!)\")\n}",
+        "note": "Утечка памяти в map и решение"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Начальное состояние                 -> Занято памяти:     0 МБ\n# 2. После заполнения 10k элементов       -> Занято памяти:    85 МБ\n# 3. После delete ВСЕХ элементов (ПАМЯТЬ НЕ ОСВОБОДИЛАСЬ!) -> Занято памяти:    85 МБ\n# 4. После heavyMap = nil и GC (ПАМЯТЬ ПОЛНОСТЬЮ ОСВОБОЖДЕНА!) -> Занято памяти:     0 МБ",
+        "note": "Доказательство невозврата памяти бакетами"
+      }
+    ],
+    "under_the_hood": "\nПоле `hmap.B` (число бакетов $2^B$) никогда не уменьшается в рантайме Go.\n",
+    "pitfalls": "\n- Хранение долгоживущей глобальной кэш-мапы, из которой удаляются устаревшие ключи: сервис будет медленно расходовать всю оперативную память контейнера (OOMKilled).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как проектируют долгоживущие кэши в памяти в BigTech с учетом этой особенности Go?»\n**Ответ:** Используют технику Sharded Map (шардирование на 64–256 под-мап) с периодической ротацией шардов (создание нового шарда `make()` каждые $N$ минут) или библиотеки с кастомным внекучевым хранилищем (Off-heap / `freecache`, `bigcache`).\n"
+  },
+  {
+    "num": 59,
+    "title": "Очистка мапы через clear(m) и инспекция len(m) == 0",
+    "task": "Используй clear(m) (добавлено в Go 1.21) для полной очистки мапы. Проверь её длину после.",
+    "theory": "\nЗакрепление работы функции `clear(m)`.\n",
+    "step_by_step": "\n1. Заполняем `m := map[string]int{\"A\": 1, \"B\": 2}`.\n2. Вызываем `clear(m)`.\n3. Проверяем `len(m) == 0`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tmetrics := map[string]int{\n\t\t\"http_requests_total\": 15420,\n\t\t\"errors_count\":        12,\n\t\t\"active_users\":        450,\n\t}\n\n\tfmt.Printf(\"До clear:   len = %d | %v\\n\", len(metrics), metrics)\n\n\tclear(metrics)\n\n\tfmt.Printf(\"После clear: len = %d | %v (Мапа полностью очищена!)\\n\", len(metrics), metrics)\n}",
+        "note": "Очистка map через clear"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До clear:   len = 3 | map[active_users:450 errors_count:12 http_requests_total:15420]\n# После clear: len = 0 | map[] (Мапа полностью очищена!)",
+        "note": "Вывод"
+      }
+    ],
+    "under_the_hood": "\nСчетчик `hmap.count = 0`.\n",
+    "pitfalls": "\n- Вызов `clear` на срезе (`clear(s)`) обнуляет элементы в `0`, но НЕ меняет длину среза. В мапе `clear(m)` обнуляет длину `len(m) = 0`!\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В чем отличие поведения `clear()` для слайса и для мапы?»\n**Ответ:** Для слайса `clear(s)` зануляет элементы (`s[i] = 0`), сохраняя длину `len(s)`. Для мапы `clear(m)` удаляет все ключи и сбрасывает `len(m)` в `0`.\n"
+  },
+  {
+    "num": 60,
+    "title": "Мемоизация (Memoization Cache) на базе map[int]int для вычисления чисел Фибоначчи за O(N)",
+    "task": "Используйте map для кеширования результатов дорогой функции (мемоизация чисел Фибоначчи).",
+    "theory": "\n**Паттерн Мемоизация (Memoization):**\n- Наивный рекурсивный расчет Фибоначчи имеет экспоненциальную сложность $O(2^N)$;\n- Кэширование промежуточных результатов в `map[int]int` сокращает сложность до строго линейной **$O(N)$**;\n- Проверка наличия в кэше выполняется за $O(1)$ через `comma-ok`.\n",
+    "step_by_step": "\n1. Создаем кэш `memo := make(map[int]int)`.\n2. Пишем функцию `Fib(n int, memo map[int]int) int`.\n3. Сравниваем скорость вычисления $N = 45$.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc Fib(n int, memo map[int]int) int {\n\tif n <= 1 {\n\t\treturn n\n\t}\n\t// Проверяем кэш:\n\tif val, ok := memo[n]; ok {\n\t\treturn val\n\t}\n\t// Вычисляем и сохраняем в кэш:\n\tres := Fib(n-1, memo) + Fib(n-2, memo)\n\tmemo[n] = res\n\treturn res\n}\n\nfunc main() {\n\tmemo := make(map[int]int)\n\n\tfmt.Println(\"Вычисление чисел Фибоначчи с мемоизацией:\")\n\tfor _, n := range []int{10, 20, 30, 40, 45} {\n\t\tfmt.Printf(\"  Fib(%2d) = %d\\n\", n, Fib(n, memo))\n\t}\n\tfmt.Printf(\"\\nРазмер кэша мемоизации: %d вычисленных значений\\n\", len(memo))\n}",
+        "note": "Мемоизация на map"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вычисление чисел Фибоначчи с мемоизацией:\n#   Fib(10) = 55\n#   Fib(20) = 6765\n#   Fib(30) = 832040\n#   Fib(40) = 102334155\n#   Fib(45) = 1134903170\n# \n# Размер кэша мемоизации: 44 вычисленных значений",
+        "note": "Мгновенный расчет Fib(45)"
+      }
+    ],
+    "under_the_hood": "\nСложность $O(N)$ операций вместо $2^{45} \u0007pprox 3.5 \times 10^{13}$ шагов.\n",
+    "pitfalls": "\n- Переполнение `int` при $N > 92$ (требуется `math/big.Int`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как сделать мемоизацию потокобезопасной для параллельных запросов?»\n**Ответ:** Использовать структуру с `sync.RWMutex` (Double-Checked Locking) или `golang.org/x/sync/singleflight`.\n"
+  },
+  {
+    "num": 61,
+    "title": "Многоуровневая структура расписания map[string]map[string][]string и каскадная инициализация",
+    "task": "Вложенные мапы: Создайте структуру данных для хранения расписания: мапу, где ключ — группа (строка), а значение — другая мапа (ключ — день недели, значение — список предметов). Напишите код корректной инициализации такой структуры, избегая паники при записи во вложенную мапу.",
+    "theory": "\n**Каскадная инициализация сложных иерархических структур:**\n- `map[Group]map[Day][]Subject`;\n- Чтобы избежать паники, функция добавления проверяет и последовательно инициализирует каждый уровень иерархии через `make`.\n",
+    "step_by_step": "\n1. Создаем тип `type Schedule map[string]map[string][]string`.\n2. Пишем функцию `AddLesson(s Schedule, group, day, subject string)`.\n3. Добавляем предметы и красиво выводим расписание.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Schedule map[string]map[string][]string\n\nfunc NewSchedule() Schedule {\n\treturn make(Schedule)\n}\n\nfunc (s Schedule) AddLesson(group, day, subject string) {\n\t// Уровень 1: Проверяем и создаем мапу для группы\n\tif s[group] == nil {\n\t\ts[group] = make(map[string][]string)\n\t}\n\t// Уровень 2: Добавляем предмет в срез дня\n\ts[group][day] = append(s[group][day], subject)\n}\n\nfunc main() {\n\tschedule := NewSchedule()\n\n\tschedule.AddLesson(\"ИВТ-101\", \"Понедельник\", \"Архитектура ЭВМ\")\n\tschedule.AddLesson(\"ИВТ-101\", \"Понедельник\", \"Алгоритмы и структуры данных\")\n\tschedule.AddLesson(\"ИВТ-101\", \"Вторник\", \"Базы данных\")\n\tschedule.AddLesson(\"ПИ-202\", \"Понедельник\", \"Проектирование ПО\")\n\n\tfmt.Println(\"=== УНИВЕРСИТЕТСКОЕ РАСПИСАНИЕ ===\")\n\tfor group, days := range schedule {\n\t\tfmt.Printf(\"Группа [%s]:\\n\", group)\n\t\tfor day, lessons := range days {\n\t\t\tfmt.Printf(\"  День: %-12s -> Занятия: %v\\n\", day, lessons)\n\t\t}\n\t}\n}",
+        "note": "Вложенное расписание с каскадной инициализацией"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# === УНИВЕРСИТЕТСКОЕ РАСПИСАНИЕ ===\n# Группа [ИВТ-101]:\n#   День: Понедельник  -> Занятия: [Архитектура ЭВМ Алгоритмы и структуры данных]\n#   День: Вторник      -> Занятия: [Базы данных]\n# Группа [ПИ-202]:\n#   День: Понедельник  -> Занятия: [Проектирование ПО]",
+        "note": "Расписание сформировано без паник"
+      }
+    ],
+    "under_the_hood": "\nМногоуровневое связывание дескрипторов `hmap` и `SliceHeader`.\n",
+    "pitfalls": "\n- Прямая запись `schedule[\"ИВТ-101\"][\"Среда\"] = ...` без проверки `s[group] == nil`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как сериализовать такую структуру в JSON?»\n**Ответ:** `json.Marshal(schedule)` автоматически преобразует вложенную мапу в соответствующий вложенный JSON-объект.\n"
+  },
+  {
+    "num": 62,
+    "title": "Географическая база данных населения городов и районов map[string]map[string]int",
+    "task": "Создай вложенную мапу map[string]map[string]int (например, города и районы с населением). Реализуй добавление и чтение данных из неё.",
+    "theory": "\nКомплексный пример вложенной аналитической структуры с агрегацией данных.\n",
+    "step_by_step": "\n1. Создаем структуру демографической базы.\n2. Реализуем добавление `AddDistrictPopulation`.\n3. Реализуем подсчет суммарного населения города `GetTotalCityPopulation`.\n4. Выводим результаты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype GeoDB map[string]map[string]int\n\nfunc NewGeoDB() GeoDB {\n\treturn make(GeoDB)\n}\n\nfunc (g GeoDB) SetPopulation(city, district string, population int) {\n\tif g[city] == nil {\n\t\tg[city] = make(map[string]int)\n\t}\n\tg[city][district] = population\n}\n\nfunc (g GeoDB) GetTotalPopulation(city string) int {\n\tdistricts, exists := g[city]\n\tif !exists {\n\t\treturn 0\n\t}\n\ttotal := 0\n\tfor _, pop := range districts {\n\t\ttotal += pop\n\t}\n\treturn total\n}\n\nfunc main() {\n\tdb := NewGeoDB()\n\n\tdb.SetPopulation(\"Москва\", \"Центральный\", 430000)\n\tdb.SetPopulation(\"Москва\", \"Северный\", 1150000)\n\tdb.SetPopulation(\"Москва\", \"Южный\", 1780000)\n\n\tdb.SetPopulation(\"Казань\", \"Вахитовский\", 86000)\n\tdb.SetPopulation(\"Казань\", \"Ново-Савиновский\", 218000)\n\n\tfmt.Println(\"=== ДЕМОГРАФИЧЕСКАЯ СТАТИСТИКА ===\")\n\tfor city, districts := range db {\n\t\tfmt.Printf(\"Город: %-10s | Суммарное население: %d чел.\\n\", city, db.GetTotalPopulation(city))\n\t\tfor d, pop := range districts {\n\t\t\tfmt.Printf(\"  • Район %-18s -> %d чел.\\n\", d, pop)\n\t\t}\n\t}\n}",
+        "note": "Географическая база данных на вложенных map"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# === ДЕМОГРАФИЧЕСКАЯ СТАТИСТИКА ===\n# Город: Москва     | Суммарное население: 3360000 чел.\n#   • Район Центральный        -> 430000 чел.\n#   • Район Северный           -> 1150000 чел.\n#   • Район Южный              -> 1780000 чел.\n# Город: Казань     | Суммарное население: 304000 чел.\n#   • Район Вахитовский        -> 86000 чел.\n#   • Район Ново-Савиновский   -> 218000 чел.\n",
+        "note": "Агрегация и вывод завершены"
+      }
+    ],
+    "under_the_hood": "\nДвухуровневый хэш-поиск с суммированием значений.\n",
+    "pitfalls": "\n- Вызов `db[\"НеизвестныйГород\"][\"Район\"]`: вернет `0` без паники, но попытка записи вызовет панику.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова амортизированная сложность получения общего населения города?»\n**Ответ:** $O(K)$, где $K$ — количество районов в данном городе (линейный проход по внутренней мапе).\n"
+  }
+]

@@ -760,9 +760,9 @@
       <span>8. Слайсы</span>
       <span class="status-badge done">74/74</span>
     </a>
-    <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">
+    <a href="chapter9.html" class="chapter-link">
       <span>9. Мапы</span>
-      <span class="status-badge soon">Скоро</span>
+      <span class="status-badge done">62/62</span>
     </a>
     <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">
       <span>10. Функции</span>
@@ -1071,38 +1071,18 @@
     <section class="hero-section">
         <div class="hero-tag">🧬 Модуль 04 • Система Типов и Память Go</div>
         <h1 class="hero-title">Базовые Типы, Переменные и Константы в Go</h1>
-        <p class="hero-desc">
-            Фундаментальное инженерное погружение в статическую систему типов языка Go: Zero Values, разрядная сетка процессора, 
-            стандарты IEEE 754 чисел с плавающей точкой, переполнение (Integer Overflow), выравнивание памяти (Memory Padding & Alignment), 
-            нетипизированные константы, генератор перечислений iota, битовые маски и безопасное управление иммутабельностью. 
-            Все 111 упражнений курса решены с пошаговым разбором.
-        </p>
+        <p class="hero-desc">Zero Values, IEEE 754, переполнение, выравнивание памяти (Memory Padding & Alignment), iota и битовые маски. Все 111 упражнений решены.</p>
         <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-val">111 из 111</span>
-                <span class="stat-lbl">Упражнений решено</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Zero Values</span>
-                <span class="stat-lbl">Memory Safety</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">iota & Bitmasks</span>
-                <span class="stat-lbl">State Enums</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Padding</span>
-                <span class="stat-lbl">Memory Alignment</span>
-            </div>
+            <div class="stat-item"><span class="stat-val">111 из 111</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">Zero Values</span><span class="stat-lbl">Memory Safety</span></div>
+            <div class="stat-item"><span class="stat-val">iota & Bitmasks</span><span class="stat-lbl">State Enums</span></div>
+            <div class="stat-item"><span class="stat-val">Padding</span><span class="stat-lbl">Memory Alignment</span></div>
         </div>
     </section>
     
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 1: Объявление Переменных, Zero Values, Размеры Типов и Первые Константы</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">var, :=, Zero values, unsafe.Sizeof, Pi, iota, нетипизированные константы, затенение и UTF-8 руны</div>
-            </div>
+            <div><h2>Раздел 1: Объявление Переменных, Zero Values, Размеры Типов и Первые Константы</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">var, :=, Zero values, unsafe.Sizeof, Pi, iota, нетипизированные константы, затенение и UTF-8 руны</div></div>
             <span class="tag">Упражнения 1–20</span>
         </div>
         
@@ -2780,10 +2760,7 @@ func main() {
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 2: Хэш-таблицы, Комплексные Числа, Структуры, strconv и Битовые Операции</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">map с comma-ok, complex128, композиция структур, strconv, побитовые &, |, ^, &^, strings и Constant Folding</div>
-            </div>
+            <div><h2>Раздел 2: Хэш-таблицы, Комплексные Числа, Структуры, strconv и Битовые Операции</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">map с comma-ok, complex128, композиция структур, strconv, побитовые &, |, ^, &^, strings и Constant Folding</div></div>
             <span class="tag">Упражнения 21–40</span>
         </div>
         
@@ -4375,10 +4352,7 @@ func main() {
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 3: Явное Приведение, Безопасная Арифметика, Переполнение и Области Видимости</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Приведение типов, SafeAdd с проверкой границ, множественный swap a, b = b, a, bare blocks и глобальные переменные</div>
-            </div>
+            <div><h2>Раздел 3: Явное Приведение, Безопасная Арифметика, Переполнение и Области Видимости</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Приведение типов, SafeAdd с проверкой границ, множественный swap a, b = b, a, bare blocks и глобальные переменные</div></div>
             <span class="tag">Упражнения 41–60</span>
         </div>
         
@@ -5893,10 +5867,7 @@ func main() {
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 4: Указатели new(), Точность Float32/Float64, Лимиты math и Битовые Маски</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Выделение памяти new(int), IEEE 754 погрешности, пределы типов math.Max, KB/MB/GB на iota, типы Celsius/Fahrenheit и битовые права</div>
-            </div>
+            <div><h2>Раздел 4: Указатели new(), Точность Float32/Float64, Лимиты math и Битовые Маски</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Выделение памяти new(int), IEEE 754 погрешности, пределы типов math.Max, KB/MB/GB на iota, типы Celsius/Fahrenheit и битовые права</div></div>
             <span class="tag">Упражнения 61–80</span>
         </div>
         
@@ -7472,10 +7443,7 @@ func main() {
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 5: Type Definitions, Выравнивание Памяти (Padding), Лимиты и Циклический Сдвиг</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Кастомные типы, паддинг в структурах, AlmostEqual с эпсилон, все 6 способов объявления, math.Min/Max и циклический сдвиг a, b, c = b, c, a</div>
-            </div>
+            <div><h2>Раздел 5: Type Definitions, Выравнивание Памяти (Padding), Лимиты и Циклический Сдвиг</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Кастомные типы, паддинг в структурах, AlmostEqual с эпсилон, все 6 способов объявления, math.Min/Max и циклический сдвиг a, b, c = b, c, a</div></div>
             <span class="tag">Упражнения 81–95</span>
         </div>
         
@@ -8644,10 +8612,7 @@ func main() {
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 6: Самоссылающиеся Структуры, defer LIFO, make(), Raw Strings и Защита Иммутабельности</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Связный список Node, LIFO в defer, make() для срезов/мап/каналов, BigInt 1<<100, Raw Strings, обход отсутствия const-слайсов и Jump Table в switch</div>
-            </div>
+            <div><h2>Раздел 6: Самоссылающиеся Структуры, defer LIFO, make(), Raw Strings и Защита Иммутабельности</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Связный список Node, LIFO в defer, make() для срезов/мап/каналов, BigInt 1<<100, Raw Strings, обход отсутствия const-слайсов и Jump Table в switch</div></div>
             <span class="tag">Упражнения 96–111</span>
         </div>
         
@@ -10003,16 +9968,9 @@ func main() {
 
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 04 полностью завершена!</h3>
-        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
-            Вы досконально изучили устройство типов, память, константы, iota и внутренние оптимизации компилятора Go.
-        </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
-                ← Вернуться к Главе 03 (Пакет fmt)
-            </a>
-            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
-                Перейти к Главе 05: Условные конструкции (if, switch) →
-            </a>
+            <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 03</a>
+            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 05: Условные конструкции →</a>
         </div>
     </section>
     

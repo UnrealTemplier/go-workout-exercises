@@ -713,9 +713,9 @@
       <span>8. Слайсы</span>
       <span class="status-badge done">74/74</span>
     </a>
-    <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">
+    <a href="chapter9.html" class="chapter-link">
       <span>9. Мапы</span>
-      <span class="status-badge soon">Скоро</span>
+      <span class="status-badge done">62/62</span>
     </a>
     <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">
       <span>10. Функции</span>
@@ -1024,39 +1024,18 @@
     <section class="hero-section">
         <div class="hero-tag">🔄 Модуль 06 • Итерации и Управление Потоком</div>
         <h1 class="hero-title">Циклы (for, for-range) и Итераторы в Go</h1>
-        <p class="hero-desc">
-            Исчерпывающий практический курс по итерационным алгоритмам и низкоуровневой механике циклов в Go: 
-            трехкомпонентный for, while-стиль, бесконечные REPL-серверы, алгоритмы Two Pointers (In-place $O(1)$), 
-            глубокий разбор бага замыкания Loop Variables до и после Go 1.22+, обход каналов `chan`, предотвращение утечек 
-            дескрипторов в `defer`, UTF-8 смещения рун, недетерминированная итерация по `map`, стек скобок и промышленная пагинация (Batching). 
-            Все 64 упражнения курса решены шаг за шагом.
-        </p>
+        <p class="hero-desc">Итерационные алгоритмы, Two Pointers (In-place $O(1)$), Loopvar Scope Go 1.22+, каналы chan, defer в циклах, недетерминированный map и батчинг. 64 упражнения решено.</p>
         <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-val">64 из 64</span>
-                <span class="stat-lbl">Упражнений решено</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">for range</span>
-                <span class="stat-lbl">Slices, Maps, Chans</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Go 1.22+</span>
-                <span class="stat-lbl">Loopvar Per-Iteration Scope</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Two Pointers</span>
-                <span class="stat-lbl">In-place $O(1)$ Space</span>
-            </div>
+            <div class="stat-item"><span class="stat-val">64 из 64</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">for range</span><span class="stat-lbl">Slices, Maps, Chans</span></div>
+            <div class="stat-item"><span class="stat-val">Go 1.22+</span><span class="stat-lbl">Loopvar Per-Iteration Scope</span></div>
+            <div class="stat-item"><span class="stat-val">Two Pointers</span><span class="stat-lbl">In-place $O(1)$ Space</span></div>
         </div>
     </section>
     
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 1: Простые Числа, Two Pointers, 2D Слайсы, Шаг i+=2, Степени Двойки и Анализ Строк</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Trial division с sqrt, проверка палиндрома, угадай число, таблица 2D, трехкомпонентный for, for-while, for range по map и Unicode руны</div>
-            </div>
+            <div><h2>Раздел 1: Простые Числа, Two Pointers, 2D Слайсы, Шаг i+=2, Степени Двойки и Анализ Строк</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Trial division с sqrt, проверка палиндрома, угадай число, таблица 2D, трехкомпонентный for, for-while, for range по map и Unicode руны</div></div>
             <span class="tag">Упражнения 1–16</span>
         </div>
         
@@ -2397,10 +2376,7 @@ func main() {
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 2: Бесконечные Циклы, Таблица Умножения, Loopvar Scope в Go 1.22, Labeled Break и Ловушка Defer</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Break по exit, моноширинный %4d, for x < 100, &item указатели, for i := range, Labeled Break/Continue в матрицах, рандомизация map, UTF-8 байты и изоляция defer</div>
-            </div>
+            <div><h2>Раздел 2: Бесконечные Циклы, Таблица Умножения, Loopvar Scope в Go 1.22, Labeled Break и Ловушка Defer</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Break по exit, моноширинный %4d, for x < 100, &item указатели, for i := range, Labeled Break/Continue в матрицах, рандомизация map, UTF-8 байты и изоляция defer</div></div>
             <span class="tag">Упражнения 17–32</span>
         </div>
         
@@ -3732,10 +3708,7 @@ func main() {
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 3: Разворот In-Place, Локальность Break, UTF-8 Привет, Каналы chan int и Паттерн Do-While</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Три способа суммирования, two pointers reverse, игнорирование параметров, break Label синтаксис, побайтовый vs посимвольный обход, ловушка копирования v*=10, range по каналу и do-while</div>
-            </div>
+            <div><h2>Раздел 3: Разворот In-Place, Локальность Break, UTF-8 Привет, Каналы chan int и Паттерн Do-While</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Три способа суммирования, two pointers reverse, игнорирование параметров, break Label синтаксис, побайтовый vs посимвольный обход, ловушка копирования v*=10, range по каналу и do-while</div></div>
             <span class="tag">Упражнения 33–48</span>
         </div>
         
@@ -5021,10 +4994,7 @@ func main() {
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 4: Копирование Структур []Person, Массив [5]int vs Срез, Мутация Map/Slice, Скобки и Пагинация</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Копирование структур по значению, array vs slice в range, UTF-8 Привет Go!, поиск первого вхождения, мутация map во время range, опасность append в range, безопасный nil-range, стек скобок и батчинг по 10 штук</div>
-            </div>
+            <div><h2>Раздел 4: Копирование Структур []Person, Массив [5]int vs Срез, Мутация Map/Slice, Скобки и Пагинация</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Копирование структур по значению, array vs slice в range, UTF-8 Привет Go!, поиск первого вхождения, мутация map во время range, опасность append в range, безопасный nil-range, стек скобок и батчинг по 10 штук</div></div>
             <span class="tag">Упражнения 49–64</span>
         </div>
         
@@ -6467,16 +6437,9 @@ func main() {
 
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 06 полностью завершена!</h3>
-        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
-            Вы в совершенстве освоили все виды циклов, Two Pointers, каналы, Labeled-метки и эффективную работу с памятью в Go.
-        </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
-                ← Вернуться к Главе 05 (Условные конструкции)
-            </a>
-            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
-                Перейти к Главе 07: Массивы (Arrays) →
-            </a>
+            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 05</a>
+            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 07: Массивы →</a>
         </div>
     </section>
     

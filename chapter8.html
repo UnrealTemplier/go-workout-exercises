@@ -723,9 +723,9 @@
       <a href="#ex-73" class="sub-exercise-link" title="Упр 73: Многокритериальная сортировка среза структур User через slices.SortFunc (Go 1.21+)">73. Многокритериальная сортировка среза структур User через slices.SortFunc (Go 1.21+)</a>
       <a href="#ex-74" class="sub-exercise-link" title="Упр 74: Многомерный треугольный динамический срез (Треугольник Паскаля) и ступенчатый вывод">74. Многомерный треугольный динамический срез (Треугольник Паскаля) и ступенчатый вывод</a>
     </div>
-    <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">
+    <a href="chapter9.html" class="chapter-link">
       <span>9. Мапы</span>
-      <span class="status-badge soon">Скоро</span>
+      <span class="status-badge done">62/62</span>
     </a>
     <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">
       <span>10. Функции</span>
@@ -1034,40 +1034,18 @@
     <section class="hero-section">
         <div class="hero-tag">🍰 Модуль 08 • Динамические Коллекции</div>
         <h1 class="hero-title">Срезы (Slices) и Модель Памяти в Go</h1>
-        <p class="hero-desc">
-            Фундаментальное инженерное погружение в ключевую структуру данных языка Go — Срезы (Slices): 
-            детальный разбор дескриптора SliceHeader (Data pointer, Len, Cap), механика геометрического роста append 
-            (стратегия Go 1.18+), защита данных через трехзначный слайсинг s[low:high:max], предотвращение критических утечек памяти 
-            при слайсинге больших массивов, алгоритмы фильтрации и разворота In-Place (Zero Allocations), 
-            реализация стека LIFO, тонкости сериализации nil vs empty срезов в REST/JSON API и новейший пакет slices (Go 1.21+). 
-            Все 74 упражнения курса решены шаг за шагом.
-        </p>
+        <p class="hero-desc">Дескриптор SliceHeader (Data, Len, Cap), геометрический рост append, трехзначный слайсинг s[low:high:max], предотвращение утечек памяти, In-Place фильтрация и пакет slices. 74 упражнения решено.</p>
         <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-val">74 из 74</span>
-                <span class="stat-lbl">Упражнений решено</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">SliceHeader</span>
-                <span class="stat-lbl">Data, Len, Cap (24B)</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Zero Alloc</span>
-                <span class="stat-lbl">In-Place & Pre-alloc</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">slices (1.21+)</span>
-                <span class="stat-lbl">Generics & Fast Sort</span>
-            </div>
+            <div class="stat-item"><span class="stat-val">74 из 74</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">SliceHeader</span><span class="stat-lbl">Data, Len, Cap (24B)</span></div>
+            <div class="stat-item"><span class="stat-val">Zero Alloc</span><span class="stat-lbl">In-Place & Pre-alloc</span></div>
+            <div class="stat-item"><span class="stat-val">slices (1.21+)</span><span class="stat-lbl">Generics & Fast Sort</span></div>
         </div>
     </section>
     
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 1: Базовый Массив, Создание Срезов, make, Рост append, Трехзначный Слайсинг и InspectSlice</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">len/cap свойства, [...] vs [], окно в массив arr[1:4], make(3, 5), несравнимость [2][]int, стратегия роста append, вариативный append..., ре-слайсинг s[:cap], cap(s[1:3]), паника out of bounds, s[low:high:max], расщепление связи, безопасный copy, срез строк, утилита InspectSlice и трюк удаления</div>
-            </div>
+            <div><h2>Раздел 1: Базовый Массив, Создание Срезов, make, Рост append, Трехзначный Слайсинг и InspectSlice</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">len/cap свойства, [...] vs [], окно в массив arr[1:4], make(3, 5), несравнимость [2][]int, стратегия роста append, вариативный append..., ре-слайсинг s[:cap], cap(s[1:3]), паника out of bounds, s[low:high:max], расщепление связи, безопасный copy, срез строк, утилита InspectSlice и трюк удаления</div></div>
             <span class="tag">Упражнения 1–18</span>
         </div>
         
@@ -2481,10 +2459,7 @@ func main() {
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 2: Ловушка Реаллокации в Функциях, Вставка со Сдвигом, Overlapping Copy, Nil vs Empty в JSON и s[:0]</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">make([]int, 3), потеря мутаций в функциях, пошаговый append, вставка append+copy, InsertAt, безопасный сдвиг memmove, Filter, срез из [6]int, матрица [][]int, nil vs empty срез в REST API, переиспользование s[:0], возврат copy и запись вне len</div>
-            </div>
+            <div><h2>Раздел 2: Ловушка Реаллокации в Функциях, Вставка со Сдвигом, Overlapping Copy, Nil vs Empty в JSON и s[:0]</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">make([]int, 3), потеря мутаций в функциях, пошаговый append, вставка append+copy, InsertAt, безопасный сдвиг memmove, Filter, срез из [6]int, матрица [][]int, nil vs empty срез в REST API, переиспользование s[:0], возврат copy и запись вне len</div></div>
             <span class="tag">Упражнения 19–37</span>
         </div>
         
@@ -3976,10 +3951,7 @@ func main() {
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 3: Копирование Структур, DeleteByIndex, Смена Адресов &s[0], In-Place Filter, Fast Delete и Утечки Памяти</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">for range по []Person, сохранение underlying array при удалении, коллизии s2[0]=99, отслеживание смены &s[0], идиоматичный возврат срезов, FilterInPlace за 0B, FastDelete за O(1), ChunkSlice, memory leak 1MB и предвыделение make(0, 100)</div>
-            </div>
+            <div><h2>Раздел 3: Копирование Структур, DeleteByIndex, Смена Адресов &s[0], In-Place Filter, Fast Delete и Утечки Памяти</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">for range по []Person, сохранение underlying array при удалении, коллизии s2[0]=99, отслеживание смены &s[0], идиоматичный возврат срезов, FilterInPlace за 0B, FastDelete за O(1), ChunkSlice, memory leak 1MB и предвыделение make(0, 100)</div></div>
             <span class="tag">Упражнения 38–56</span>
         </div>
         
@@ -5518,10 +5490,7 @@ func main() {
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 4: In-Place Reverse, Пакет slices (Go 1.21+), LIFO Стек, Multi-Sort, Jagged Arrays и Треугольные Срезы</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Разворот на месте, утечка в суффиксе big, s[:0] в sync.Pool, IsSorted на cmp.Ordered, стек Push/Pop, sort.Slice, O(1) vs O(N) удаление, современный пакет slices, Union без дубликатов, slices.DeleteFunc, сбор указателей []*int, slices.SortFunc и треугольный срез</div>
-            </div>
+            <div><h2>Раздел 4: In-Place Reverse, Пакет slices (Go 1.21+), LIFO Стек, Multi-Sort, Jagged Arrays и Треугольные Срезы</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Разворот на месте, утечка в суффиксе big, s[:0] в sync.Pool, IsSorted на cmp.Ordered, стек Push/Pop, sort.Slice, O(1) vs O(N) удаление, современный пакет slices, Union без дубликатов, slices.DeleteFunc, сбор указателей []*int, slices.SortFunc и треугольный срез</div></div>
             <span class="tag">Упражнения 57–74</span>
         </div>
         
@@ -7062,16 +7031,9 @@ func main() {
 
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 08 полностью завершена!</h3>
-        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
-            Вы в совершенстве освоили срезы, устройство дескриптора SliceHeader, стратегию роста, In-Place фильтрацию и управление памятью.
-        </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
-                ← Вернуться к Главе 07 (Массивы)
-            </a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
-                Глава 09: Хэш-таблицы (Maps) (Скоро) →
-            </a>
+            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 07</a>
+            <a href="chapter9.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 09: Хэш-таблицы (Maps) →</a>
         </div>
     </section>
     

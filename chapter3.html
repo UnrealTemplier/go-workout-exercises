@@ -714,9 +714,9 @@
       <span>8. Слайсы</span>
       <span class="status-badge done">74/74</span>
     </a>
-    <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">
+    <a href="chapter9.html" class="chapter-link">
       <span>9. Мапы</span>
-      <span class="status-badge soon">Скоро</span>
+      <span class="status-badge done">62/62</span>
     </a>
     <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">
       <span>10. Функции</span>
@@ -1025,38 +1025,18 @@
     <section class="hero-section">
         <div class="hero-tag">💻 Модуль 03 • Консольный Ввод-Вывод и fmt</div>
         <h1 class="hero-title">Пакет fmt и Консольный Ввод-Вывод в Go</h1>
-        <p class="hero-desc">
-            Глубокое практическое руководство по потоковому вводу-выводу в Go: детальный разбор всех спецификаторов пакета fmt, 
-            буферизованное чтение через bufio.Reader/Scanner, посимвольная обработка UTF-8 рун, интерфейсы fmt.Stringer и fmt.GoStringer, 
-            валидация потоков Stdin/Stdout/Stderr, создание надежных CLI REPL-интерпретаторов и цветная ANSI-стилизация. 
-            Все 65 упражнений курса решены с пошаговым объяснением.
-        </p>
+        <p class="hero-desc">Глубокое практическое руководство по потоковому вводу-выводу в Go: спецификаторы fmt, bufio.Reader/Scanner, UTF-8 руны, Stringer и ANSI-стилизация. 65 упражнений решено.</p>
         <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-val">65 из 65</span>
-                <span class="stat-lbl">Упражнений решено</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">bufio</span>
-                <span class="stat-lbl">Reader & Scanner</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">fmt.Stringer</span>
-                <span class="stat-lbl">Кастомная печать</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">ANSI & TUI</span>
-                <span class="stat-lbl">Цветные терминалы</span>
-            </div>
+            <div class="stat-item"><span class="stat-val">65 из 65</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">bufio</span><span class="stat-lbl">Reader & Scanner</span></div>
+            <div class="stat-item"><span class="stat-val">fmt.Stringer</span><span class="stat-lbl">Кастомная печать</span></div>
+            <div class="stat-item"><span class="stat-val">ANSI & TUI</span><span class="stat-lbl">Цветные терминалы</span></div>
         </div>
     </section>
     
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 1: Базовые функции fmt, Спецификаторы и Первые Чтения</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Print, Println, Printf, %d/%f/%s/%t, буферизованный ReadByte, выравнивание %4d, парсинг Sscanf и время</div>
-            </div>
+            <div><h2>Раздел 1: Базовые функции fmt, Спецификаторы и Первые Чтения</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Print, Println, Printf, %d/%f/%s/%t, буферизованный ReadByte, выравнивание %4d, парсинг Sscanf и время</div></div>
             <span class="tag">Упражнения 1–15</span>
         </div>
         
@@ -2313,10 +2293,7 @@ func main() {
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 2: Потоки, Инспекция Типов, Точность Float и Stderr</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Эхо-сканер, сложение с валидацией, глагол %T, точность %.2f, экранирование %q, запись в os.Stderr и fmt.Sprintf</div>
-            </div>
+            <div><h2>Раздел 2: Потоки, Инспекция Типов, Точность Float и Stderr</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Эхо-сканер, сложение с валидацией, глагол %T, точность %.2f, экранирование %q, запись в os.Stderr и fmt.Sprintf</div></div>
             <span class="tag">Упражнения 16–30</span>
         </div>
         
@@ -3497,10 +3474,7 @@ func main() {
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 3: Проблема Пробелов, Scanln, Файловый Fprintf и EOF</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Механика токенизации Scan, Scanln, календарный Scanf, запись в io.Writer, обработка io.EOF и CLI-анкеты</div>
-            </div>
+            <div><h2>Раздел 3: Проблема Пробелов, Scanln, Файловый Fprintf и EOF</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Механика токенизации Scan, Scanln, календарный Scanf, запись в io.Writer, обработка io.EOF и CLI-анкеты</div></div>
             <span class="tag">Упражнения 31–45</span>
         </div>
         
@@ -4778,10 +4752,7 @@ go run main.go
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 4: Unicode Руны, Интерфейс fmt.Stringer, Stderr 2> и os.Args</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">ReadRune, UTF-8 кодовые точки, Stringer/GoStringer контракты, флаги командной строки flag.Int</div>
-            </div>
+            <div><h2>Раздел 4: Unicode Руны, Интерфейс fmt.Stringer, Stderr 2> и os.Args</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">ReadRune, UTF-8 кодовые точки, Stringer/GoStringer контракты, флаги командной строки flag.Int</div></div>
             <span class="tag">Упражнения 46–55</span>
         </div>
         
@@ -5663,10 +5634,7 @@ go run main.go -help
 </div>
 
         <div class="section-separator">
-            <div>
-                <h2>Раздел 5: Продвинутый REPL, ScanWords, Таблицы, Прогресс-бар и ANSI</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Сравнительный анализ семейств Scan, REPL-шелл, суммирование потока ScanWords, анимация \r и цветной вывод</div>
-            </div>
+            <div><h2>Раздел 5: Продвинутый REPL, ScanWords, Таблицы, Прогресс-бар и ANSI</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">Сравнительный анализ семейств Scan, REPL-шелл, суммирование потока ScanWords, анимация \r и цветной вывод</div></div>
             <span class="tag">Упражнения 56–65</span>
         </div>
         
@@ -6678,16 +6646,9 @@ func main() {
 
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 03 полностью завершена!</h3>
-        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
-            Вы освоили весь арсенал работы с потоками ввода-вывода, интерфейсами Stringer, форматированием и терминальной графикой.
-        </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter2.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
-                ← Вернуться к Главе 02 (Компиляция и сборка)
-            </a>
-            <a href="chapter4.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
-                Перейти к Главе 04: Базовые типы, переменные и константы →
-            </a>
+            <a href="chapter2.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 02</a>
+            <a href="chapter4.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 04: Базовые типы →</a>
         </div>
     </section>
     
