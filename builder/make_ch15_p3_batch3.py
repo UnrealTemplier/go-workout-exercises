@@ -1,0 +1,238 @@
+import json
+
+part3 = []
+
+# Ex 87-96
+part3.append({
+    "num": 87,
+    "title": "Встраивание неэкспортируемой структуры: Car встраивает engine, видимость методов снаружи",
+    "task": "Встраивание неэкспортируемой структуры: пакет vehicle содержит приватную структуру engine с публичным методом Start(). Экспортируемая структура Car встраивает engine. Покажи, что метод Start доступен снаружи пакета, хотя сам тип engine невидим.",
+    "theory": "Методы встроенного приватного типа всплывают наружу, если они экспортированы (начинаются с заглавной буквы).",
+    "step_by_step": "1. Моделируем приватный тип internalEngine с методом Start().\n2. Экспортируем Car со встраиванием internalEngine.\n3. Вызываем car.Start() из main.",
+    "code_blocks": [
+        {
+            "filename": "main.go",
+            "lang": "go",
+            "code": "package main\n\nimport \"fmt\"\n\n// Имитация пакета vehicle:\ntype internalEngine struct{}\n\n// Метод Start() экспортируемый (с заглавной буквы)!\nfunc (internalEngine) Start() {\n\tfmt.Println(\"🚀 Двигатель запущен через promoted метод!\")\n}\n\ntype Car struct {\n\tinternalEngine // Приватное встраивание\n\tModel          string\n}\n\nfunc main() {\n\tc := Car{Model: \"Tesla\"}\n\n\t// Снаружи пакета метод Start() доступен напрямую:\n\tc.Start()\n\n\t// Но обратиться к c.internalEngine напрямую нельзя (оно неэкспортировано)!\n}"
+        },
+        {
+            "filename": "Терминал",
+            "lang": "bash",
+            "code": "go run main.go\n# 🚀 Двигатель запущен через promoted метод!"
+        }
+    ],
+    "under_the_hood": "Компилятор экспортирует метод Start в таблице символов структуры Car.",
+    "pitfalls": "- Попытка объявить метод неэкспортируемым `start()` в надежде, что он станет публичным.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Зачем встраивать приватные структуры с публичными методами?»\n**Ответ:** Чтобы скрыть внутреннюю реализацию и имя типа, но предоставить готовый интерфейс (например, `sync.Mutex.Lock()`)."
+})
+
+part3.append({
+    "num": 88,
+    "title": "Потокобезопасная коллекция ThreadSafeMap с инкапсуляцией sync.RWMutex",
+    "task": "Потокобезопасная коллекция: структура ThreadSafeMap[K comparable, V any] с приватным sync.RWMutex и приватной map. Методы Set(k, v), Get(k) (v, bool), Delete(k), Len() int.",
+    "theory": "RWMutex позволяет множественное параллельное чтение и эксклюзивную запись.",
+    "step_by_step": "1. Объявляем дженерик-структуру ThreadSafeMap[K comparable, V any].\n2. Реализуем Set, Get, Delete, Len с RLock/Lock.\n3. Проверяем в конкурентных горутинах.",
+    "code_blocks": [
+        {
+            "filename": "main.go",
+            "lang": "go",
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n)\n\ntype ThreadSafeMap[K comparable, V any] struct {\n\tmu   sync.RWMutex\n\tdata map[K]V\n}\n\nfunc NewThreadSafeMap[K comparable, V any]() *ThreadSafeMap[K, V] {\n\treturn &ThreadSafeMap[K, V]{data: make(map[K]V)}\n}\n\nfunc (m *ThreadSafeMap[K, V]) Set(k K, v V) {\n\tm.mu.Lock()\n\tdefer m.mu.Unlock()\n\tm.data[k] = v\n}\n\nfunc (m *ThreadSafeMap[K, V]) Get(k K) (V, bool) {\n\tm.mu.RLock()\n\tdefer m.mu.RUnlock()\n\tval, ok := m.data[k]\n\treturn val, ok\n}\n\nfunc main() {\n\tsm := NewThreadSafeMap[string, int]()\n\tsm.Set(\"users_online\", 1420)\n\tval, _ := sm.Get(\"users_online\")\n\tfmt.Println(\"Онлайн:\", val)\n}"
+        },
+        {
+            "filename": "Терминал",
+            "lang": "bash",
+            "code": "go run -race main.go\n# Онлайн: 1420"
+        }
+    ],
+    "under_the_hood": "RWMutex разделяет горутины чтения без взаимных блокировок.",
+    "pitfalls": "- Забыть `defer m.mu.RUnlock()` в Get.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Когда `sync.Map` из стандартной библиотеки лучше `RWMutex + map`?»\n**Ответ:** Когда ключи пишутся один раз, а читаются миллионы раз, или когда несколько горутин обращаются к непересекающимся наборам ключей."
+})
+
+part3.append({
+    "num": 89,
+    "title": "Паттерн Цепочка Обязанностей (Chain of Responsibility): последовательная обработка запроса",
+    "task": "Паттерн Chain of Responsibility: интерфейс Handler с методами SetNext(Handler) Handler и Handle(req *Request) error. Реализуй цепочку: AuthHandler -> RateLimitHandler -> BusinessHandler.",
+    "theory": "Паттерн позволяет передавать запрос по цепочке потенциальных обработчиков.",
+    "step_by_step": "1. Объявляем интерфейс Handler.\n2. Реализуем AuthHandler, RateLimitHandler, BusinessHandler.\n3. Связываем через SetNext и запускаем запрос.",
+    "code_blocks": [
+        {
+            "filename": "main.go",
+            "lang": "go",
+            "code": "package main\n\nimport \"fmt\"\n\ntype Request struct {\n\tUser  string\n\tLimit int\n}\n\ntype Handler interface {\n\tSetNext(Handler) Handler\n\tHandle(*Request) error\n}\n\ntype BaseHandler struct {\n\tnext Handler\n}\n\nfunc (b *BaseHandler) SetNext(h Handler) Handler { b.next = h; return h }\n\ntype AuthHandler struct{ BaseHandler }\nfunc (a *AuthHandler) Handle(r *Request) error {\n\tif r.User == \"\" { return fmt.Errorf(\"ошибка авторизации\") }\n\tfmt.Println(\"✅ Авторизация пройдена\")\n\tif a.next != nil { return a.next.Handle(r) }\n\treturn nil\n}\n\ntype BusinessHandler struct{ BaseHandler }\nfunc (b *BusinessHandler) Handle(r *Request) error {\n\tfmt.Println(\"🚀 Бизнес-логика выполнена для\", r.User)\n\treturn nil\n}\n\nfunc main() {\n\tauth := &AuthHandler{}\n\tbiz := &BusinessHandler{}\n\tauth.SetNext(biz)\n\n\t_ = auth.Handle(&Request{User: \"Дмитрий\"})\n}"
+        },
+        {
+            "filename": "Терминал",
+            "lang": "bash",
+            "code": "go run main.go\n# ✅ Авторизация пройдена\n# 🚀 Бизнес-логика выполнена для Дмитрий"
+        }
+    ],
+    "under_the_hood": "Запросы последовательно обходят связный список обработчиков.",
+    "pitfalls": "- Бесконечный цикл при циклической ссылке в SetNext.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Где паттерн Chain of Responsibility применяется в веб-серверах?»\n**Ответ:** В цепочках HTTP-фильтров, перехватчиках gRPC Interceptors и конвейерах обработки сообщений."
+})
+
+part3.append({
+    "num": 90,
+    "title": "Композиция интерфейсов Repository: объединение Reader, Writer и Deleter в единый CRUD-контракт",
+    "task": "Композиция интерфейсов: интерфейсы Reader[T], Writer[T], Deleter. Интерфейс Repository[T] встраивает все три. Реализуй InMemoryRepository[T] удовлетворяющий Repository.",
+    "theory": "Дженерик-интерфейсы и композиция контрактов для слоя персистентности.",
+    "step_by_step": "1. Объявляем Reader, Writer, Deleter и Repository.\n2. Реализуем InMemoryRepo[T].\n3. Проверяем CRUD-операции.",
+    "code_blocks": [
+        {
+            "filename": "main.go",
+            "lang": "go",
+            "code": "package main\n\nimport \"fmt\"\n\ntype Reader[T any] interface { Get(id int) (T, bool) }\ntype Writer[T any] interface { Save(id int, val T) }\ntype Deleter interface { Delete(id int) }\n\ntype Repository[T any] interface {\n\tReader[T]\n\tWriter[T]\n\tDeleter\n}\n\ntype InMemoryRepo[T any] struct {\n\tstore map[int]T\n}\n\nfunc NewInMemoryRepo[T any]() *InMemoryRepo[T] {\n\treturn &InMemoryRepo[T]{store: make(map[int]T)}\n}\n\nfunc (r *InMemoryRepo[T]) Get(id int) (T, bool) { v, ok := r.store[id]; return v, ok }\nfunc (r *InMemoryRepo[T]) Save(id int, val T)   { r.store[id] = val }\nfunc (r *InMemoryRepo[T]) Delete(id int)        { delete(r.store, id) }\n\nfunc main() {\n\tvar repo Repository[string] = NewInMemoryRepo[string]()\n\trepo.Save(1, \"Запись 1\")\n\tv, _ := repo.Get(1)\n\tfmt.Println(\"Прочитано:\", v)\n}"
+        },
+        {
+            "filename": "Терминал",
+            "lang": "bash",
+            "code": "go run main.go\n# Прочитано: Запись 1"
+        }
+    ],
+    "under_the_hood": "Таблица методов itab включает все методы составного интерфейса.",
+    "pitfalls": "- Избыточная связанность, если сервису нужен только Reader.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в функциях бизнес-логики лучше принимать Reader[T], а не Repository[T]?»\n**Ответ:** Чтобы изолировать бизнес-логику и защитить данные от случайной модификации (Interface Segregation Principle)."
+})
+
+part3.append({
+    "num": 91,
+    "title": "Паттерн Адаптер (Adapter Pattern): адаптация LegacyPrinter к интерфейсу ModernPrinter",
+    "task": "Паттерн «Адаптер» (Adapter): есть устаревший LegacyPrinter (метод PrintOld(text string)). Новый код ожидает интерфейс ModernPrinter (метод PrintFormatted(header, body string)). Напиши адаптер PrinterAdapter.",
+    "theory": "Адаптер преобразует интерфейс одного класса в интерфейс, ожидаемый клиентами.",
+    "step_by_step": "1. Создаем LegacyPrinter{ PrintOld(string) }.\n2. Объявляем интерфейс ModernPrinter.\n3. Создаем PrinterAdapter со встраиванием LegacyPrinter.\n4. Реализуем PrintFormatted.",
+    "code_blocks": [
+        {
+            "filename": "main.go",
+            "lang": "go",
+            "code": "package main\n\nimport \"fmt\"\n\ntype LegacyPrinter struct{}\nfunc (LegacyPrinter) PrintOld(text string) {\n\tfmt.Println(\"=== LEGACY PRINT ===\\n\" + text)\n}\n\ntype ModernPrinter interface {\n\tPrintFormatted(header, body string)\n}\n\ntype PrinterAdapter struct {\n\tlegacy LegacyPrinter\n}\n\nfunc (a PrinterAdapter) PrintFormatted(header, body string) {\n\tformatted := fmt.Sprintf(\"[%s]\n%s\", header, body)\n\ta.legacy.PrintOld(formatted)\n}\n\nfunc main() {\n\tvar p ModernPrinter = PrinterAdapter{legacy: LegacyPrinter{}}\n\tp.PrintFormatted(\"Отчет\", \"Все системы работают стабильно\")\n}"
+        },
+        {
+            "filename": "Терминал",
+            "lang": "bash",
+            "code": "go run main.go\n# === LEGACY PRINT ===\n# [Отчет]\n# Все системы работают стабильно"
+        }
+    ],
+    "under_the_hood": "Адаптер инкапсулирует вызов устаревшего API внутри нового контракта.",
+    "pitfalls": "- Прямая модификация устаревшего кода вместо написания адаптера.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Когда в Go необходим паттерн Адаптер?»\n**Ответ:** При интеграции внешних SDK или при постепенном рефакторинге легаси систем."
+})
+
+part3.append({
+    "num": 92,
+    "title": "Инициализация вложенных структур: фабричный конструктор NewCar(model, engine)",
+    "task": "Инициализация вложенных структур: Car содержит Engine (структура). Напиши конструктор NewCar(model string, hp int) Car, который корректно инициализирует и внешнюю, и внутреннюю структуру.",
+    "theory": "Явная инициализация всех уровней композиции в конструкторе.",
+    "step_by_step": "1. Создаем Engine{HP int}.\n2. Создаем Car{Model string, Engine Engine}.\n3. Пишем NewCar.\n4. Тестируем.",
+    "code_blocks": [
+        {
+            "filename": "main.go",
+            "lang": "go",
+            "code": "package main\n\nimport \"fmt\"\n\ntype Engine struct{ HorsePower int }\n\ntype Car struct {\n\tModel  string\n\tEngine Engine\n}\n\nfunc NewCar(model string, hp int) Car {\n\treturn Car{\n\t\tModel:  model,\n\t\tEngine: Engine{HorsePower: hp},\n\t}\n}\n\nfunc main() {\n\tc := NewCar(\"BMW M5\", 600)\n\tfmt.Printf(\"Авто: %s, Мощность: %d л.с.\\n\", c.Model, c.Engine.HorsePower)\n}"
+        },
+        {
+            "filename": "Терминал",
+            "lang": "bash",
+            "code": "go run main.go\n# Авто: BMW M5, Мощность: 600 л.с."
+        }
+    ],
+    "under_the_hood": "Конструктор собирает структуру в единый непрерывный блок памяти.",
+    "pitfalls": "- Оставлять поля Engine неинициализированными (нулевыми).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что возвращать из конструктора: значение `Car` или указатель `*Car`?»\n**Ответ:** Значение `Car`, если структура маленькая и не содержит мьютексов; указатель `*Car`, если структура крупная, содержит мьютексы или требует мутации через методы."
+})
+
+part3.append({
+    "num": 93,
+    "title": "Защита от создания структуры через литерал: приватный тип и фабрика GetInstance()",
+    "task": "Ограничение создания: пакет appinfo. Структура Info не может быть создана через appinfo.Info{} из main (сделай структуру приватной info или запрети создание без конструктора, сделав приватное неэкспортируемое поле). Доступ только через GetInfo().",
+    "theory": "Добавление неэкспортируемого поля `_ struct{}` предотвращает прямое создание структуры через литерал без конструктора из других пакетов.",
+    "step_by_step": "1. Моделируем структуру с неэкспортируемым маркером.\n2. Экспортируем функцию GetInfo().\n3. Показываем защиту.",
+    "code_blocks": [
+        {
+            "filename": "main.go",
+            "lang": "go",
+            "code": "package main\n\nimport \"fmt\"\n\ntype AppInfo struct {\n\tVersion   string\n\tBuildTime string\n\t_         struct{} // Предотвращает литеральную инициализацию без имен полей\n}\n\nfunc GetAppInfo() AppInfo {\n\treturn AppInfo{\n\t\tVersion:   \"v1.22.4\",\n\t\tBuildTime: \"2026-09-02\",\n\t}\n}\n\nfunc main() {\n\tinfo := GetAppInfo()\n\tfmt.Printf(\"Версия: %s (Сборка: %s)\\n\", info.Version, info.BuildTime)\n}"
+        },
+        {
+            "filename": "Терминал",
+            "lang": "bash",
+            "code": "go run main.go\n# Версия: v1.22.4 (Сборка: 2026-09-02)"
+        }
+    ],
+    "under_the_hood": "Пустая структура `struct{}` имеет нулевой размер (0 байт) и не расходует память.",
+    "pitfalls": "- Попытка создать неименованный литерал `AppInfo{\"v1\", \"time\"}` вызовет ошибку компиляции.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Зачем в структуре поле `_ struct{}`?»\n**Ответ:** Чтобы запретить позиционную инициализацию `Type{\"a\", \"b\"}` и заставить разработчиков явно указывать имена полей или использовать конструктор."
+})
+
+part3.append({
+    "num": 94,
+    "title": "Пакет auth: структуры Token и Session с инкапсуляцией времени жизни и валидации",
+    "task": "Пакет auth: структуры Token (значение, expiresAt) и Session (userID, token). Методы IsExpired() bool, IsValid() bool. Инкапсулируй проверку времени жизни токена.",
+    "theory": "Инкапсуляция валидации токенов авторизации внутри доменного метода.",
+    "step_by_step": "1. Создаем Token{Value, ExpiresAt time.Time}.\n2. Создаем Session{UserID, Token}.\n3. Реализуем IsExpired() и IsValid().",
+    "code_blocks": [
+        {
+            "filename": "main.go",
+            "lang": "go",
+            "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"time\"\n)\n\ntype Token struct {\n\tValue     string\n\tExpiresAt time.Time\n}\n\nfunc (t Token) IsExpired() bool {\n\treturn time.Now().After(t.ExpiresAt)\n}\n\ntype Session struct {\n\tUserID int\n\tToken  Token\n}\n\nfunc (s Session) IsValid() bool {\n\treturn s.UserID > 0 && !s.Token.IsExpired()\n}\n\nfunc main() {\n\tsess := Session{\n\t\tUserID: 42,\n\t\tToken: Token{\n\t\t\tValue:     \"jwt_secure_token\",\n\t\t\tExpiresAt: time.Now().Add(1 * time.Hour),\n\t\t},\n\t}\n\tfmt.Println(\"Сессия активна?\", sess.IsValid())\n}"
+        },
+        {
+            "filename": "Терминал",
+            "lang": "bash",
+            "code": "go run main.go\n# Сессия активна? true"
+        }
+    ],
+    "under_the_hood": "Сравнение времени через time.Now().After().",
+    "pitfalls": "- Игнорирование часовых поясов при сравнении времени.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как тестировать методы, зависящие от `time.Now()`?»\n**Ответ:** Инжектировать интерфейс часов `Clock { Now() time.Time }` или передавать текущее время аргументом."
+})
+
+part3.append({
+    "num": 95,
+    "title": "Паттерн Команда (Command Pattern): абстракция действий с поддержкой Execute и Undo",
+    "task": "Паттерн «Команда» (Command): интерфейс Command с методами Execute() error и Undo() error. Реализуйте команды WriteTextCommand и DeleteTextCommand. Структура Button или History хранит и исполняет команды с возможностью отката.",
+    "theory": "Инкапсуляция запроса как объекта для поддержки истории и отмены операций (Undo).",
+    "step_by_step": "1. Объявляем интерфейс Command.\n2. Создаем Document{ text string }.\n3. Реализуем AppendTextCommand с Execute и Undo.\n4. Тестируем историю выполнения.",
+    "code_blocks": [
+        {
+            "filename": "main.go",
+            "lang": "go",
+            "code": "package main\n\nimport \"fmt\"\n\ntype Command interface {\n\tExecute()\n\tUndo()\n}\n\ntype Document struct{ Content string }\n\ntype AppendTextCommand struct {\n\tdoc  *Document\n\ttext string\n}\n\nfunc (c *AppendTextCommand) Execute() { c.doc.Content += c.text }\nfunc (c *AppendTextCommand) Undo()    { c.doc.Content = c.doc.Content[:len(c.doc.Content)-len(c.text)] }\n\nfunc main() {\n\tdoc := &Document{}\n\tcmd := &AppendTextCommand{doc: doc, text: \"Привет, Мир!\"}\n\n\tcmd.Execute()\n\tfmt.Println(\"После Execute:\", doc.Content)\n\n\tcmd.Undo()\n\tfmt.Println(\"После Undo:   \", doc.Content)\n}"
+        },
+        {
+            "filename": "Терминал",
+            "lang": "bash",
+            "code": "go run main.go\n# После Execute: Привет, Мир!\n# После Undo:    "
+        }
+    ],
+    "under_the_hood": "Команды хранят контекст для восстановления предыдущего состояния.",
+    "pitfalls": "- Попытка отката Undo без предварительного Execute.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Где паттерн Command применяется в backend-системах?»\n**Ответ:** В CQRS архитектуре, сагах транзакций (Saga Pattern) для компенсирующих транзакций и в очередях фоновых задач."
+})
+
+part3.append({
+    "num": 96,
+    "title": "Методы с поддержкой context.Context: корректная обработка отмены операции и таймаутов",
+    "task": "Методы с context.Context: структура DataFetcher (метод Fetch(ctx context.Context, url string) ([]byte, error)). Метод уважает ctx.Done() и возвращает ошибку при отмене контекста.",
+    "theory": "Передача context.Context первым параметром — обязательный стандарт для всех I/O и долгих операций в Go.",
+    "step_by_step": "1. Создаем DataFetcher{}.\n2. Реализуем Fetch(ctx context.Context, query string).\n3. Проверяем поведение при time.WithTimeout.",
+    "code_blocks": [
+        {
+            "filename": "main.go",
+            "lang": "go",
+            "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\ntype DataFetcher struct{}\n\nfunc (df DataFetcher) Fetch(ctx context.Context, query string) (string, error) {\n\tselect {\n\tcase <-time.After(100 * time.Millisecond):\n\t\treturn \"Данные по запросу: \" + query, nil\n\tcase <-ctx.Done():\n\t\treturn \"\", ctx.Err()\n\t}\n}\n\nfunc main() {\n\tdf := DataFetcher{}\n\n\t// Таймаут 50мс (операция требует 100мс):\n\tctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)\n\tdefer cancel()\n\n\t_, err := df.Fetch(ctx, \"analytics\")\n\tif err != nil {\n\t\tfmt.Println(\"❌ Запрос отменен по таймауту:\", err)\n\t}\n}"
+        },
+        {
+            "filename": "Терминал",
+            "lang": "bash",
+            "code": "go run main.go\n# ❌ Запрос отменен по таймауту: context deadline exceeded"
+        }
+    ],
+    "under_the_hood": "Канал `ctx.Done()` закрывается при отмене таймера рантайма.",
+    "pitfalls": "- Сохранение `context.Context` внутри структуры вместо передачи первым аргументом метода.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему нельзя хранить `context.Context` внутри полей структуры?»\n**Ответ:** Это нарушает официальные правила Go: контекст имеет время жизни одного запроса и должен передаваться явно по стеку вызовов, иначе возникают гонки данных и утечки контекстов."
+})
+
+print(f"Batch 3 of Part 3: {len(part3)} exercises.")
+with open('builder/gen_ch15_p3_batch3.json', 'w', encoding='utf-8') as f:
+    json.dump(part3, f, ensure_ascii=False, indent=2)

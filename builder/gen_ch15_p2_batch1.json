@@ -1,0 +1,244 @@
+[
+  {
+    "num": 34,
+    "title": "Полиморфизм: интерфейс Describer с методом Describe() для Circle и Rectangle",
+    "task": "Полиморфизм: интерфейс Describer с методом Describe() string. Реализуйте для Circle и Rectangle. Функция PrintAll(desc []Describer) выводит описание каждого.",
+    "theory": "Полиморфизм подтипов на основе общего интерфейса.",
+    "step_by_step": "1. Объявляем Describer.\n2. Реализуем Describe() для Circle и Rectangle.\n3. Пишем PrintAll(desc []Describer).",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Describer interface {\n\tDescribe() string\n}\n\ntype Circle struct{ R float64 }\nfunc (c Circle) Describe() string { return fmt.Sprintf(\"Круг радиусом %.1f\", c.R) }\n\ntype Rectangle struct{ W, H float64 }\nfunc (r Rectangle) Describe() string { return fmt.Sprintf(\"Прямоугольник %.1fx%.1f\", r.W, r.H) }\n\nfunc PrintAll(items []Describer) {\n\tfor _, item := range items {\n\t\tfmt.Println(\"•\", item.Describe())\n\t}\n}\n\nfunc main() {\n\tshapes := []Describer{Circle{5}, Rectangle{4, 6}}\n\tPrintAll(shapes)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# • Круг радиусом 5.0\n# • Прямоугольник 4.0x6.0"
+      }
+    ],
+    "under_the_hood": "Вызовы методов диспетчеризуются через iface.itab.",
+    "pitfalls": "- Попытка передать []Circle в []Describer напрямую без конвертации.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как устроен динамический полиморфизм в Go?»\n**Ответ:** Через интерфейсные таблицы itab, хранящие указатели на конкретные методы структуры."
+  },
+  {
+    "num": 35,
+    "title": "Встраивание bytes.Buffer в CustomReader и автоматическое всплытие потоковых методов",
+    "task": "Создай структуру CustomReader, встроив в неё bytes.Buffer. Покажи, что методы Buffer (Write, WriteString, Bytes и т.д.) продвигаются (promoted) и доступны напрямую на CustomReader.",
+    "theory": "Встраивание стандартных типов передает все их методы внешней структуре.",
+    "step_by_step": "1. Создаем CustomReader{ bytes.Buffer, ID string }.\n2. Вызываем WriteString и Bytes напрямую на CustomReader.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n)\n\ntype CustomReader struct {\n\tbytes.Buffer // Встраивание\n\tID           string\n}\n\nfunc main() {\n\tcr := &CustomReader{ID: \"stream_1\"}\n\tcr.WriteString(\"Данные потока\") // Promoted method\n\tfmt.Printf(\"[%s] Прочитано: %s\\n\", cr.ID, cr.String())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# [stream_1] Прочитано: Данные потока"
+      }
+    ],
+    "under_the_hood": "Компилятор генерирует прокси-вызовы к встроенному полю Buffer.",
+    "pitfalls": "- Копирование структуры со встроенным Buffer (bytes.Buffer нельзя копировать после использования!).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему bytes.Buffer нельзя передавать по значению?»\n**Ответ:** Buffer содержит внутренний срез и массив-буфер; копирование приведет к повреждению памяти при росте буфера."
+  },
+  {
+    "num": 36,
+    "title": "Приватные методы: вызов неэкспортируемого метода из публичного API структуры",
+    "task": "Создайте приватный метод (начинается с маленькой буквы) внутри структуры и вызовите его из публичного метода этой же структуры.",
+    "theory": "Вспомогательные методы инкапсулируют внутреннюю логику.",
+    "step_by_step": "1. Создаем OrderProcessor.\n2. Реализуем приватный метод validate() bool.\n3. Вызываем его из публичного Process().",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype OrderProcessor struct {\n\tOrderID int\n\tAmount  float64\n}\n\nfunc (op *OrderProcessor) validate() bool {\n\treturn op.OrderID > 0 && op.Amount > 0\n}\n\nfunc (op *OrderProcessor) Process() error {\n\tif !op.validate() {\n\t\treturn fmt.Errorf(\"заказ %d не прошел валидацию\", op.OrderID)\n\t}\n\tfmt.Printf(\"Заказ #%d на сумму %.2f успешно обработан!\\n\", op.OrderID, op.Amount)\n\treturn nil\n}\n\nfunc main() {\n\top := &OrderProcessor{OrderID: 101, Amount: 4500}\n\t_ = op.Process()\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Заказ #101 на сумму 4500.00 успешно обработан!"
+      }
+    ],
+    "under_the_hood": "Приватный метод не экспортируется в заголовки пакета.",
+    "pitfalls": "- Дублирование валидации в нескольких публичных методах вместо выноса в приватный.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Доступны ли приватные методы структуры в тестах?»\n**Ответ:** Да, если тест находится в том же пакете."
+  },
+  {
+    "num": 37,
+    "title": "Анонимное встраивание Engine в Car и прямой вызов car.Start()",
+    "task": "Создай структуру Engine с методом Start(). Создай структуру Car, которая анонимно встраивает Engine. Вызови car.Start() напрямую у структуры Car (встраивание полей и методов).",
+    "theory": "Всплытие методов через композицию.",
+    "step_by_step": "1. Создаем Engine с методом Start().\n2. Создаем Car со встраиванием Engine.\n3. Вызываем car.Start().",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Engine struct{ Type string }\nfunc (e Engine) Start() { fmt.Printf(\"Двигатель %s запущен!\\n\", e.Type) }\n\ntype Car struct {\n\tEngine\n\tBrand string\n}\n\nfunc main() {\n\tc := Car{Engine: Engine{\"V8 Turbo\"}, Brand: \"Porsche\"}\n\tc.Start()\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Двигатель V8 Turbo запущен!"
+      }
+    ],
+    "under_the_hood": "Синтаксис c.Start() преобразуется в c.Engine.Start().",
+    "pitfalls": "- Ожидание, что Engine знает о структуре Car.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Можно ли переопределить метод Start в Car?»\n**Ответ:** Да, тогда вызовется Car.Start, а к Engine.Start можно обратиться явно через c.Engine.Start()."
+  },
+  {
+    "num": 38,
+    "title": "Потокобезопасная структура SafeCounter со встроенным *sync.Mutex",
+    "task": "Создай структуру SafeCounter, встроив *sync.Mutex. Покажи, что методы Lock/Unlock продвигаются. Напиши метод Inc() с защитой мьютекса. Объясни, почему встраивается именно *sync.Mutex, а не sync.Mutex.",
+    "theory": "Встраивание указателя *sync.Mutex предотвращает случайное фатальное копирование мьютекса при передаче структуры.",
+    "step_by_step": "1. Создаем SafeCounter{ *sync.Mutex, val int }.\n2. Реализуем Inc() и Value().\n3. Запускаем конкурентный инкремент.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n)\n\ntype SafeCounter struct {\n\t*sync.Mutex // Указатель на мьютекс\n\tval         int\n}\n\nfunc NewSafeCounter() *SafeCounter {\n\treturn &SafeCounter{Mutex: &sync.Mutex{}}\n}\n\nfunc (c *SafeCounter) Inc() {\n\tc.Lock() // Promoted Lock\n\tdefer c.Unlock()\n\tc.val++\n}\n\nfunc main() {\n\tc := NewSafeCounter()\n\tvar wg sync.WaitGroup\n\tfor i := 0; i < 1000; i++ {\n\t\twg.Add(1)\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tc.Inc()\n\t\t}()\n\t}\n\twg.Wait()\n\tfmt.Println(\"Счетчик:\", c.val)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run -race main.go\n# Счетчик: 1000"
+      }
+    ],
+    "under_the_hood": "Мьютекс разделяется между всеми копиями ссылки на структуру.",
+    "pitfalls": "- Встраивание значения sync.Mutex и случайное копирование структуры по значению (приведет к Data Race).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в Go запрещено копировать sync.Mutex?»\n**Ответ:** Копирование мьютекса копирует его внутреннее битовое состояние блокировки, что приводит к дедлокам и гонкам данных (go vet выдает предупреждение)."
+  },
+  {
+    "num": 39,
+    "title": "Разрешение конфликтов имен (Ambiguous Selectors) при встраивании GPS и MobilePhone в SmartCar",
+    "task": "Конфликты имен при композиции: Создайте две структуры: GPS (с методом GetCoordinates()) и MobilePhone (с методом GetCoordinates()). Создайте структуру SmartCar, встроив в неё обе эти структуры. Попробуйте вызвать smartCar.GetCoordinates(). Разберитесь в ошибке компиляции (ambiguous selector) и решите её, вызвав методы явно через имена встроенных типов.",
+    "theory": "Коллизия имен при множественном встраивании устраняется явной квалификацией имени встроенного типа.",
+    "step_by_step": "1. Создаем GPS и MobilePhone с методом GetCoordinates().\n2. Создаем SmartCar со встраиванием обеих структур.\n3. Показываем ошибку ambiguous selector и исправляем через smartCar.GPS.GetCoordinates().",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype GPS struct{}\nfunc (GPS) GetCoordinates() string { return \"55.7558° N, 37.6173° E (GPS)\" }\n\ntype MobilePhone struct{}\nfunc (MobilePhone) GetCoordinates() string { return \"55.7512° N, 37.6184° E (GSM)\" }\n\ntype SmartCar struct {\n\tGPS\n\tMobilePhone\n}\n\nfunc main() {\n\tcar := SmartCar{}\n\n\t// ❌ ОШИБКА: car.GetCoordinates() -> ambiguous selector car.GetCoordinates\n\n\t// ✅ Явное разрешение конфликта:\n\tfmt.Println(\"Координаты GPS:\", car.GPS.GetCoordinates())\n\tfmt.Println(\"Координаты GSM:\", car.MobilePhone.GetCoordinates())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Координаты GPS: 55.7558° N, 37.6173° E (GPS)\n# Координаты GSM: 55.7512° N, 37.6184° E (GSM)"
+      }
+    ],
+    "under_the_hood": "Компилятор видит два кандидата на одном уровне глубины в дереве селекторов и останавливает сборку.",
+    "pitfalls": "- Попытка вызвать неоднозначный метод напрямую.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как компилятор Go разрешает совпадение имен при встраивании на разной глубине?»\n**Ответ:** Метод с меньшей глубиной вложенности затеняет (shadows) метод с большей глубиной. Ошибка возникает только при совпадении на одинаковой глубине."
+  },
+  {
+    "num": 40,
+    "title": "Кредитный аккаунт CreditAccount: расширение базовой структуры Account и поле CreditLimit",
+    "task": "\"Наследование\" через композицию (Embedding): Создай структуру CreditAccount. Встрой в неё структуру account анонимным полем. Добавь поле CreditLimit float64.",
+    "theory": "Расширение модели данных путем добавления новых полей к встроенной структуре.",
+    "step_by_step": "1. Создаем базовый Account.\n2. Создаем CreditAccount со встраиванием Account и CreditLimit.\n3. Тестируем.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Account struct{ Balance float64 }\n\ntype CreditAccount struct {\n\tAccount\n\tCreditLimit float64\n}\n\nfunc (c *CreditAccount) AvailableFunds() float64 {\n\treturn c.Balance + c.CreditLimit\n}\n\nfunc main() {\n\tca := CreditAccount{Account: Account{Balance: 1000}, CreditLimit: 5000}\n\tfmt.Printf(\"Доступно средств: %.2f руб.\\n\", ca.AvailableFunds())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Доступно средств: 6000.00 руб."
+      }
+    ],
+    "under_the_hood": "Поле Balance лежит внутри подструктуры Account в непрерывной памяти.",
+    "pitfalls": "- Забыть проинициализировать встроенную структуру.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как получить доступ к встроенной структуре целиком?»\n**Ответ:** Через имя встроенного типа ca.Account."
+  },
+  {
+    "num": 41,
+    "title": "Безопасное хэширование паролей: сеттер SetPassword(raw string) с crypto/sha256",
+    "task": "Создайте структуру User с полями Email и PasswordHash. Сделайте сеттер SetPassword(raw string), который внутри хэширует пароль (используйте crypto/sha256) перед сохранением, чтобы сырой пароль никогда не хранился в памяти.",
+    "theory": "Инкапсуляция криптографической обработки внутри сеттера.",
+    "step_by_step": "1. Создаем User{Email, passwordHash}.\n2. Реализуем SetPassword с sha256.Sum256.\n3. Реализуем CheckPassword.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"crypto/sha256\"\n\t\"encoding/hex\"\n\t\"fmt\"\n)\n\ntype User struct {\n\tEmail        string\n\tpasswordHash string\n}\n\nfunc (u *User) SetPassword(raw string) {\n\thash := sha256.Sum256([]byte(raw))\n\tu.passwordHash = hex.EncodeToString(hash[:])\n}\n\nfunc (u *User) CheckPassword(raw string) bool {\n\thash := sha256.Sum256([]byte(raw))\n\treturn u.passwordHash == hex.EncodeToString(hash[:])\n}\n\nfunc main() {\n\tu := &User{Email: \"dev@yandex.ru\"}\n\tu.SetPassword(\"super_secret_123\")\n\tfmt.Println(\"Пароль верен?\", u.CheckPassword(\"super_secret_123\"))\n\tfmt.Println(\"Пароль неверен?\", u.CheckPassword(\"wrong_pass\"))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Пароль верен? true\n# Пароль неверен? false"
+      }
+    ],
+    "under_the_hood": "Сырой пароль удаляется сборщиком мусора, в структуре хранится только хэш.",
+    "pitfalls": "- Хранение сырого пароля в публичном поле.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что используют для хэширования паролей в продакшене?»\n**Ответ:** bcrypt или argon2id с солью (salt) для защиты от радужных таблиц."
+  },
+  {
+    "num": 42,
+    "title": "Конфликт одинаковых полей Name при множественном встраивании: s.TypeA.Name vs s.TypeB.Name",
+    "task": "Создай структуру, встраивающую два типа с одинаковым полем Name. Попробуй обратиться к .Name — получи ошибку ambiguous selector. Исправь через явное указание: s.TypeA.Name vs s.TypeB.Name.",
+    "theory": "Явное указание пути к полю устраняет неоднозначность.",
+    "step_by_step": "1. Создаем TypeA{Name} и TypeB{Name}.\n2. Создаем Composite{TypeA, TypeB}.\n3. Обращаемся через c.TypeA.Name и c.TypeB.Name.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Author struct{ Name string }\ntype Publisher struct{ Name string }\n\ntype BookRelease struct {\n\tAuthor\n\tPublisher\n}\n\nfunc main() {\n\trelease := BookRelease{\n\t\tAuthor:    Author{Name: \"Дональд Кнут\"},\n\t\tPublisher: Publisher{Name: \"Addison-Wesley\"},\n\t}\n\tfmt.Println(\"Автор:       \", release.Author.Name)\n\tfmt.Println(\"Издательство:\", release.Publisher.Name)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Автор:        Дональд Кнут\n# Издательство: Addison-Wesley"
+      }
+    ],
+    "under_the_hood": "Компилятор вычисляет смещение каждого поля в байтах.",
+    "pitfalls": "- Попытка прямого обращения release.Name.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как работает ambiguous selector на этапе компиляции?»\n**Ответ:** Компилятор генерирует ошибку во время проверки типов при обнаружении более одного пути одинаковой длины."
+  },
+  {
+    "num": 43,
+    "title": "Реализация sort.Interface для среза Student: сортировка по убыванию успеваемости",
+    "task": "Интерфейс sort.Interface: реализуйте его для слайса структур Student (поля Name, Grade), чтобы сортировать по убыванию успеваемости. Используйте sort.Sort.",
+    "theory": "Классическая сортировка через Len, Less, Swap.",
+    "step_by_step": "1. Создаем Student{Name, Grade}.\n2. Объявляем type ByGrade []Student.\n3. Реализуем Len, Less, Swap.\n4. Сортируем через sort.Sort.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sort\"\n)\n\ntype Student struct {\n\tName  string\n\tGrade float64\n}\n\ntype ByGrade []Student\n\nfunc (b ByGrade) Len() int           { return len(b) }\nfunc (b ByGrade) Less(i, j int) bool { return b[i].Grade > b[j].Grade } // Убывание\nfunc (b ByGrade) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }\n\nfunc main() {\n\tstudents := ByGrade{\n\t\t{\"Анна\", 4.5},\n\t\t{\"Борис\", 4.9},\n\t\t{\"Виктор\", 3.8},\n\t}\n\tsort.Sort(students)\n\tfor _, s := range students {\n\t\tfmt.Printf(\"• %-8s: %.1f\\n\", s.Name, s.Grade)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# • Борис   : 4.9\n# • Анна    : 4.5\n# • Виктор  : 3.8"
+      }
+    ],
+    "under_the_hood": "Алгоритм QuickSort/Pattern-defeating Quicksort работает на срезе без аллокаций.",
+    "pitfalls": "- Неправильный знак в Less для сортировки по убыванию.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что быстрее: sort.Sort или slices.SortFunc?»\n**Ответ:** slices.SortFunc быстрее за счет дженериков и отсутствия интерфейсного оверхеда."
+  },
+  {
+    "num": 44,
+    "title": "Встраивание интерфейса io.Reader в структуру MyProcessor и делегирование чтения",
+    "task": "Встрой интерфейс io.Reader в структуру MyProcessor. Покажи, что MyProcessor автоматически удовлетворяет io.Reader, если встроенное поле инициализировано типом, реализующим io.Reader.",
+    "theory": "Встраивание интерфейса в структуру автоматически делегирует все методы интерфейса вложенному полю.",
+    "step_by_step": "1. Создаем MyProcessor{ io.Reader, Name string }.\n2. Передаем MyProcessor в io.ReadAll.\n3. Проверяем чтение.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"strings\"\n)\n\ntype MyProcessor struct {\n\tio.Reader // Встраивание интерфейса\n\tName      string\n}\n\nfunc main() {\n\tp := MyProcessor{\n\t\tReader: strings.NewReader(\"Привет от встроенного интерфейса!\"),\n\t\tName:   \"MainProcessor\",\n\t}\n\tdata, _ := io.ReadAll(p) // p реализует io.Reader!\n\tfmt.Println(string(data))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Привет от встроенного интерфейса!"
+      }
+    ],
+    "under_the_hood": "Вызов p.Read делегируется вызову метода внутри поля Reader.",
+    "pitfalls": "- Вызов Read при Reader == nil приведет к панике nil pointer dereference.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Зачем встраивать интерфейсы в структуры?»\n**Ответ:** Для переопределения части методов (декораторы) без ручной реализации всех остальных методов интерфейса."
+  }
+]

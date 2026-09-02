@@ -49,6 +49,9 @@ with open('builder/chapter13_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter14_data.json', 'r', encoding='utf-8') as f:
     ch14_exercises = json.load(f)
 
+with open('builder/chapter15_data.json', 'r', encoding='utf-8') as f:
+    ch15_exercises = json.load(f)
+
 all_ch1 = s1 + s2 + s3 + s4 + s5 + s6
 all_ch2 = ch2_exercises
 all_ch3 = ch3_exercises
@@ -63,8 +66,9 @@ all_ch11 = ch11_exercises
 all_ch12 = ch12_exercises
 all_ch13 = ch13_exercises
 all_ch14 = ch14_exercises
+all_ch15 = ch15_exercises
 
-total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11) + len(all_ch12) + len(all_ch13) + len(all_ch14)
+total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11) + len(all_ch12) + len(all_ch13) + len(all_ch14) + len(all_ch15)
 
 print("=== ТЕХНИЧЕСКИЙ АУДИТ УЧЕБНИКА GO ===")
 print(f"Глава 1:  {len(all_ch1)} упражнений")
@@ -81,6 +85,7 @@ print(f"Глава 11: {len(all_ch11)} упражнений")
 print(f"Глава 12: {len(all_ch12)} упражнений")
 print(f"Глава 13: {len(all_ch13)} упражнений")
 print(f"Глава 14: {len(all_ch14)} упражнений")
+print(f"Глава 15: {len(all_ch15)} упражнений")
 print(f"Всего упражнений в учебнике: {total_ex}")
 
 issues = []
@@ -151,6 +156,8 @@ for ex in all_ch13:
     check_exercise(13, ex)
 for ex in all_ch14:
     check_exercise(14, ex)
+for ex in all_ch15:
+    check_exercise(15, ex)
 
 # Check HTML files and anchors
 html_files = [
@@ -168,6 +175,7 @@ html_files = [
     ('chapter12.html', 12, len(all_ch12)),
     ('chapter13.html', 13, len(all_ch13)),
     ('chapter14.html', 14, len(all_ch14)),
+    ('chapter15.html', 15, len(all_ch15)),
 ]
 
 for fname, ch_num, count in html_files:
@@ -192,4 +200,4 @@ if issues:
         print("  •", iss)
     exit(1)
 else:
-    print(f"\n✅ ИДЕАЛЬНО: Все {total_ex} упражнений в 14 главах успешно прошли синтаксический, структурный и HTML-аудит!")
+    print(f"\n✅ ИДЕАЛЬНО: Все {total_ex} упражнений в 15 главах успешно прошли синтаксический, структурный и HTML-аудит!")
