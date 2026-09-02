@@ -57,6 +57,8 @@ with open('builder/chapter15_data.json', 'r', encoding='utf-8') as f:
     ch15_exercises = json.load(f)
 with open('builder/chapter16_data.json', 'r', encoding='utf-8') as f:
     ch16_exercises = json.load(f)
+with open('builder/chapter17_data.json', 'r', encoding='utf-8') as f:
+    ch17_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -149,6 +151,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             14: ('chapter14.html', '77/77'),
             15: ('chapter15.html', '127/127'),
             16: ('chapter16.html', '131/131'),
+            17: ('chapter17.html', '58/58'),
         }
         
         if num in status_map:
@@ -1074,12 +1077,67 @@ def build_chapter16_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter15.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 15 (ООП в Go)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 17: Обработка ошибок (Error Handling) (Скоро) →</a>
+            <a href="chapter17.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 17 (Обработка ошибок) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '16. Дженерики (131/131)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter17_html(chapters):
+    sidebar_html = build_sidebar(chapters, 17, ch17_exercises)
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 17</div>
+        <h1 class="hero-title">Обработка ошибок (Error Handling)</h1>
+        <p class="hero-desc">
+            Исчерпывающее практическое руководство по идиоматичной обработке ошибок в Go. Полный разбор интерфейса <code>error</code>, 
+            паттерна Sentinel Errors, создания структурированных кастомных ошибок, цепочек оборачивания через <code>fmt.Errorf("%w")</code>, 
+            рекурсивной проверки <code>errors.Is</code> и извлечения типов <code>errors.As</code>, агрегации ошибок через <code>errors.Join</code> 
+            (Go 1.20+), работы с <code>panic</code> и <code>recover</code>, паттерна <code>Must</code>, deferred error handling, 
+            конкурентного сбора ошибок из горутин и устранения антипаттерна Log-and-Return. Все 58 упражнений от базовых концепций 
+            до уровня Senior/Lead BigTech.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-val">58 из 58</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">errors.Is / As</span><span class="stat-lbl">Deep Unwrap Chains</span></div>
+            <div class="stat-item"><span class="stat-val">errors.Join</span><span class="stat-lbl">Go 1.20+ Multi-Errors</span></div>
+            <div class="stat-item"><span class="stat-val">Panic & Recover</span><span class="stat-lbl">Fault Tolerance & Defer</span></div>
+        </div>
+    </section>
+    """)
+    section_groups_ch17 = [
+        (1, 20, "Раздел 1: Базовые Ошибки, Оборачивание %w, Sentinel Errors и Проверка errors.Is", "Деление на 0, AppError, errors.New vs fmt.Errorf, sentinel ErrNotFound, if err != nil Line of Sight, %v vs %w, errors.As, errors.Unwrap, ValidationError, цепочка readFile->parseJSON->validate, паттерн Retry, системные ошибки os.PathError"),
+        (21, 40, "Раздел 2: errors.Join, Извлечение errors.As, Guard Clauses, Паника и Recover", "errors.Join форма, AppError HTTPCode, NotFoundError Resource/ID, switch errors.Is, ErrPermissionDenied, QueryError, Guard Clauses, сбор ошибок в цикле, recover на верхнем уровне, Deferred Error Handling (rollback/commit), SafeParseInt, паттерн MustLoadConfig/MustOpen, Best Effort, ошибки os.File.Sync"),
+        (41, 58, "Раздел 3: Concurrency, Таймауты, Graceful Degradation и Чистая Архитектура", "Retry с задержкой, errors.Is внутри Join, деление на 0 с recover, context.WithTimeout и DeadlineExceeded, Panic-to-Error трансформация, CloseResource, централизованный роутер, Fail-Fast vs Best-Effort, опасность игнорирования _, ProcessAndSave, ParseConfig JSON, позиционный контекст строки, устранение Log-and-Return, Graceful degradation, сбор ошибок из горутин через канал и sync.WaitGroup")
+    ]
+    ex_dict = {e["num"]: e for e in ch17_exercises}
+    for start_n, end_n, title, desc in section_groups_ch17:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 17 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили идиоматичную обработку ошибок в Go: цепочки оборачивания с %w, рекурсивные проверки через errors.Is/As, древовидную агрегацию через errors.Join, паттерны Must и Deferred Rollback, а также безопасную изоляцию паник через recover.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter16.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 16 (Дженерики)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 18: Паника и восстановление (Panic & Recover) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '17. Обработка ошибок (58/58)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1101,6 +1159,7 @@ if __name__ == '__main__':
         ('chapter14.html', build_chapter14_html),
         ('chapter15.html', build_chapter15_html),
         ('chapter16.html', build_chapter16_html),
+        ('chapter17.html', build_chapter17_html),
     ]
     
     for filename, builder_fn in pages:

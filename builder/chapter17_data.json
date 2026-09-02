@@ -1,0 +1,1278 @@
+[
+  {
+    "num": 1,
+    "title": "Оборачивание ошибок через fmt.Errorf и спецификатор %w",
+    "task": "Используйте `fmt.Errorf(\"failed to process user %d: %w\", id, err)` для оборачивания (wrap) ошибки с сохранением контекста и цепочки вызовов.",
+    "theory": "В Go 1.13+ спецификатор `%w` внутри `fmt.Errorf` создает обернутую ошибку (Wrapped Error), реализующую скрытый интерфейс `Unwrap() error`. Это позволяет добавлять контекст к ошибке на каждом уровне архитектуры без потери доступа к первопричине (Root Cause).",
+    "step_by_step": "1. Создадим базовую ошибку базы данных `var ErrDatabaseUnavailable = errors.New(\"database connection refused\")`.\n2. Напишем функцию `processUser(id int) error`, которая вызывает запрос и оборачивает ошибку через `fmt.Errorf(\"failed to process user %d: %w\", id, err)`.\n3. В `main` вызовем функцию и проверим, что `errors.Is(err, ErrDatabaseUnavailable)` возвращает `true`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar ErrDatabaseUnavailable = errors.New(\"database connection refused\")\n\nfunc queryUser(id int) error {\n\t// Симуляция сбоя подключения к БД\n\treturn ErrDatabaseUnavailable\n}\n\nfunc processUser(id int) error {\n\tif err := queryUser(id); err != nil {\n\t\treturn fmt.Errorf(\"failed to process user %d: %w\", id, err)\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr := processUser(42)\n\tif err != nil {\n\t\tfmt.Println(\"Полный текст ошибки:\", err)\n\t\tif errors.Is(err, ErrDatabaseUnavailable) {\n\t\t\tfmt.Println(\"Первопричина: сбой подключения к базе данных\")\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Полный текст ошибки: failed to process user 42: database connection refused\n# Первопричина: сбой подключения к базе данных"
+      }
+    ],
+    "under_the_hood": "`fmt.Errorf` со спецификатором `%w` оборачивает ошибку в структуру `fmt.wrapError`, у которой есть метод `Unwrap() error`, возвращающий исходную ошибку `err`.",
+    "pitfalls": "Использование `%v` или `%s` вместо `%w` просто форматирует текст ошибки в строку, безвозвратно уничтожая цепочку `Unwrap()`, делая невозможным вызов `errors.Is` и `errors.As`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Когда следует использовать %w, а когда %v при форматировании ошибок?»\n**Ответ:** `%w` используют, когда вызывающий код (клиент пакета) должен иметь возможность программно проверить тип или маркер ошибки через `errors.Is`/`errors.As`. `%v` используют, когда вы хотите скрыть детали реализации и не делать ошибку частью публичного API пакета."
+  },
+  {
+    "num": 2,
+    "title": "Функция деления и возврат сигнатуры (float64, error)",
+    "task": "Напишите функцию деления, которая возвращает `(float64, error)`. При делении на ноль возвращайте `errors.New(\"division by zero\")`.",
+    "theory": "Идиоматичный паттерн в Go для функций, способных завершиться сбоем — возвращать пару значений `(T, error)`, где `error` всегда идет последним возвращаемым значением. При успешном выполнении возвращается `(result, nil)`.",
+    "step_by_step": "1. Создадим функцию `Divide(a, b float64) (float64, error)`.\n2. Проверим `if b == 0` и вернем `0, errors.New(\"division by zero\")`.\n3. При `b != 0` вернем результат деления `a / b, nil`.\n4. В `main` протестируем успешный вызов и деление на ноль.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nfunc Divide(a, b float64) (float64, error) {\n\tif b == 0 {\n\t\treturn 0, errors.New(\"division by zero\")\n\t}\n\treturn a / b, nil\n}\n\nfunc main() {\n\tres, err := Divide(10, 2)\n\tif err != nil {\n\t\tfmt.Println(\"Ошибка:\", err)\n\t} else {\n\t\tfmt.Printf(\"10 / 2 = %.2f\\n\", res)\n\t}\n\n\t_, errZero := Divide(10, 0)\n\tif errZero != nil {\n\t\tfmt.Println(\"Ошибка деления на 0:\", errZero)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# 10 / 2 = 5.00\n# Ошибка деления на 0: division by zero"
+      }
+    ],
+    "under_the_hood": "Интерфейс `error` в Go — это встроенный стандартный интерфейс с единственным методом `Error() string`. `errors.New` создает экземпляр структуры `errors.errorString` в памяти кучи.",
+    "pitfalls": "Никогда не используйте возвращаемое полезное значение, если `err != nil`. По соглашению в Go, при ошибке полезное значение считается невалидным (zero value).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в Go ошибки возвращаются как значения, а не через исключения (try/catch)?»\n**Ответ:** Возврат ошибок как обычных значений делает поток управления прозрачным, локальным и предсказуемым. Разработчик обязан явно обработать или пробросить ошибку на месте возникновения, что исключает скрытые прыжки по стеку вызовов."
+  },
+  {
+    "num": 3,
+    "title": "Кастомный тип ошибки AppError с полями Code и Message",
+    "task": "**Кастомная ошибка**: Создай структуру `AppError` с полями `Code int` и `Message string`. Реализуй для неё метод `Error() string`. Верни её из функции.",
+    "theory": "Любая пользовательская структура данных в Go становится ошибкой, если она реализует интерфейс `error`, то есть определяет метод `Error() string`. Это позволяет прикреплять к ошибке любые метаданные (HTTP статус-код, внутренний код ошибки, таймстемп, трассировку).",
+    "step_by_step": "1. Объявим структуру `AppError` с полями `Code int` и `Message string`.\n2. Реализуем метод `(e *AppError) Error() string`.\n3. Напишем функцию `validateUser(age int) error`, возвращающую `*AppError`.\n4. В `main` вызовем функцию и обработаем ошибку.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype AppError struct {\n\tCode    int\n\tMessage string\n}\n\nfunc (e *AppError) Error() string {\n\treturn fmt.Sprintf(\"[Error %d] %s\", e.Code, e.Message)\n}\n\nfunc validateUser(age int) error {\n\tif age < 18 {\n\t\treturn &AppError{\n\t\t\tCode:    403,\n\t\t\tMessage: \"пользователь должен быть совершеннолетним\",\n\t\t}\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr := validateUser(16)\n\tif err != nil {\n\t\tfmt.Println(\"Получена ошибка:\", err.Error())\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Получена ошибка: [Error 403] пользователь должен быть совершеннолетним"
+      }
+    ],
+    "under_the_hood": "При возврате `&AppError` в интерфейс `error` создается `iface { tab: *itab(AppError), data: *AppError }`. Метод `Error()` вызывается через таблицу методов `itab`.",
+    "pitfalls": "Критическая ловушка типизированного nil: если функция возвращает `*AppError` равный `nil`, а сигнатура возврата объявлена как `error`, то `err != nil` вернет `true`! Всегда возвращайте литерал `nil`, если ошибки нет.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему возврат var err *AppError = nil внутри функции с возвращаемым типом error приводит к багу?»\n**Ответ:** Интерфейс `error` считается `nil` только когда оба его внутренних поля `tab` (тип) и `data` (указатель) равны `nil`. Если вернуть типизированный указатель `(*AppError)(nil)`, поле типа `tab` будет заполнено дескриптором `*AppError`, поэтому проверка `if err != nil` ошибочно вернет `true`."
+  },
+  {
+    "num": 4,
+    "title": "Базовые ошибки: errors.New против fmt.Errorf",
+    "task": "**Базовые ошибки**: Используй `errors.New(\"bad input\")` и `fmt.Errorf(\"user %s not found\", name)` для создания простых ошибок.",
+    "theory": "- `errors.New` используется для статических текстовых сообщений, не требующих форматирования.\n- `fmt.Errorf` используется для динамических сообщений с интерполяцией переменных (ID, имена файлов, статусы).",
+    "step_by_step": "1. Создадим функцию `checkInput(input string) error` со статической ошибкой `errors.New`.\n2. Создадим функцию `findUser(name string) error` с динамической ошибкой `fmt.Errorf`.\n3. В `main` вызовем обе функции и распечатаем результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nfunc checkInput(input string) error {\n\tif input == \"\" {\n\t\treturn errors.New(\"bad input: empty payload\")\n\t}\n\treturn nil\n}\n\nfunc findUser(name string) error {\n\t// Симулируем отсутствие пользователя\n\treturn fmt.Errorf(\"user %q not found in local cache\", name)\n}\n\nfunc main() {\n\tif err := checkInput(\"\"); err != nil {\n\t\tfmt.Println(\"checkInput err:\", err)\n\t}\n\n\tif err := findUser(\"Алексей\"); err != nil {\n\t\tfmt.Println(\"findUser err:  \", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# checkInput err: bad input: empty payload\n# findUser err:   user \"Алексей\" not found in local cache"
+      }
+    ],
+    "under_the_hood": "`errors.New` возвращает указатель `&errorString{s}`. Два вызова `errors.New(\"err\") == errors.New(\"err\")` вернут `false`, так как сравниваются адреса в куче.",
+    "pitfalls": "По соглашению Go, текст ошибок должен начинаться со строчной буквы и не заканчиваться точкой (кроме имен собственных и аббревиатур), чтобы при оборачивании текст сливался в читаемую фразу.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в Go сообщения об ошибках пишут со строчной буквы?»\n**Ответ:** Потому что ошибки в Go часто оборачиваются в цепочки через `fmt.Errorf(\"failed to %s: %w\", op, err)`. Если бы каждая ошибка начиналась с заглавной буквы, цепочка выглядела бы неаккуратно: `Failed to open: File not found: Permission denied`."
+  },
+  {
+    "num": 5,
+    "title": "Sentinel-ошибки и проверка через errors.Is",
+    "task": "Создайте Sentinel-ошибку `var ErrNotFound = errors.New(\"not found\")`. Используйте `errors.Is(err, ErrNotFound)` для проверки, даже если ошибка была обернута несколько раз.",
+    "theory": "Sentinel Error (маркерная ошибка) — это предопределенная переменная на уровне пакета. `errors.Is` рекурсивно разворачивает цепочку ошибок через `Unwrap()`, проверяя, есть ли среди них искомый маркер.",
+    "step_by_step": "1. Объявим `var ErrNotFound = errors.New(\"not found\")`.\n2. Создадим цепочку из трех функций: `repoFind -> serviceGet -> handlerGet`.\n3. Каждая промежуточная функция оборачивает ошибку через `%w`.\n4. В `main` убедимся, что `errors.Is(err, ErrNotFound)` находит маркер на самом верху.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar ErrNotFound = errors.New(\"not found\")\n\nfunc repoFind(id int) error {\n\treturn ErrNotFound\n}\n\nfunc serviceGet(id int) error {\n\tif err := repoFind(id); err != nil {\n\t\treturn fmt.Errorf(\"service error for id %d: %w\", id, err)\n\t}\n\treturn nil\n}\n\nfunc handlerGet(id int) error {\n\tif err := serviceGet(id); err != nil {\n\t\treturn fmt.Errorf(\"handler GET failed: %w\", err)\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr := handlerGet(100)\n\tif err != nil {\n\t\tfmt.Println(\"Цепочка ошибок:\", err)\n\t\tif errors.Is(err, ErrNotFound) {\n\t\t\tfmt.Println(\"-> Результат: запись успешно опознана как ErrNotFound (HTTP 404)\")\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Цепочка ошибок: handler GET failed: service error for id 100: not found\n# -> Результат: запись успешно опознана как ErrNotFound (HTTP 404)"
+      }
+    ],
+    "under_the_hood": "`errors.Is` проверяет `err == target`, а если не совпало — вызывает метод `Is(error) bool` у структуры ошибки (если он есть) или метод `Unwrap() error`, повторяя поиск по цепочке.",
+    "pitfalls": "Не сравнивайте обернутые ошибки через оператор `==`, так как `err == ErrNotFound` вернет `false` для обернутой ошибки.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как работает errors.Is под капотом?»\n**Ответ:** 1) Проверяет прямое равенство `err == target`. 2) Проверяет, реализует ли `err` метод `Is(target error) bool`. 3) Если нет, вызывает `Unwrap()` и рекурсивно повторяет алгоритм для внутренней ошибки."
+  },
+  {
+    "num": 6,
+    "title": "Идиоматичная проверка if err != nil",
+    "task": "Вызови функцию `Divide` и проверь ошибку стандартным `if err != nil`.",
+    "theory": "В Go проверка `if err != nil` является фундаментальным идиоматичным способом контроля хода программы (Happy Path слева, ошибки обрабатываются сразу).",
+    "step_by_step": "1. Создадим функцию `SafeDivide(a, b int) (int, error)`.\n2. Вызовем функцию в `main`.\n3. Сразу после вызова напишем `if err != nil` с логированием или возвратом.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nfunc SafeDivide(a, b int) (int, error) {\n\tif b == 0 {\n\t\treturn 0, errors.New(\"cannot divide by zero\")\n\t}\n\treturn a / b, nil\n}\n\nfunc main() {\n\tres, err := SafeDivide(40, 0)\n\tif err != nil {\n\t\tfmt.Printf(\"Обработка сбоя: %v\\n\", err)\n\t\treturn\n\t}\n\tfmt.Printf(\"Результат: %d\\n\", res)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Обработка сбоя: cannot divide by zero"
+      }
+    ],
+    "under_the_hood": "Компилятор Go оптимизирует проверки `if err != nil`, генерируя короткие условные переходы (`TESTQ`/`JNZ`) на ассемблере x86-64.",
+    "pitfalls": "Избегайте глубокой вложенности `if err == nil { ... if err2 == nil { ... } }`. Обрабатывайте ошибки первыми (Guard Clause), сохраняя основной поток кода на верхнем уровне отступов.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что такое принцип Line of Sight в Go?»\n**Ответ:** Это правило оформления кода, при котором основной успешный путь выполнения («Happy Path») идет ровно по левому краю функции с минимальным уровнем отступов, а ошибки обрабатываются в коротких guard-блоках `if err != nil` с ранним выходом (`return`)."
+  },
+  {
+    "num": 7,
+    "title": "Сравнение sentinel-ошибок: оператор == против errors.Is",
+    "task": "**Sentinel Errors (Маркерные ошибки)**: Объяви на уровне пакета `var ErrNotFound = errors.New(\"not found\")`. Верни её из функции. В `main` сравни результат строго: `if err == ErrNotFound`.",
+    "theory": "Прямое сравнение `err == ErrNotFound` работает только для прямых необернутых ошибок. Как только ошибка будет обернута через `%w`, прямое сравнение вернет `false`.",
+    "step_by_step": "1. Объявим пакетную переменную `var ErrUserNotFound = errors.New(\"user not found\")`.\n2. Создадим функцию `findDirect(id int) error`, возвращающую `ErrUserNotFound` напрямую.\n3. Продемонстрируем успешное сравнение через `==`.\n4. Покажем, что для обернутой ошибки `==` ломается, а `errors.Is` работает надежно.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar ErrUserNotFound = errors.New(\"user not found\")\n\nfunc findDirect(id int) error {\n\treturn ErrUserNotFound\n}\n\nfunc findWrapped(id int) error {\n\treturn fmt.Errorf(\"user service: %w\", ErrUserNotFound)\n}\n\nfunc main() {\n\terr1 := findDirect(1)\n\tfmt.Println(\"findDirect == ErrUserNotFound:\", err1 == ErrUserNotFound)\n\n\terr2 := findWrapped(2)\n\tfmt.Println(\"findWrapped == ErrUserNotFound:\", err2 == ErrUserNotFound) // false!\n\tfmt.Println(\"errors.Is(findWrapped, ErrUserNotFound):\", errors.Is(err2, ErrUserNotFound)) // true!\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# findDirect == ErrUserNotFound: true\n# findWrapped == ErrUserNotFound: false\n# errors.Is(findWrapped, ErrUserNotFound): true"
+      }
+    ],
+    "under_the_hood": "`errors.New` выделяет уникальный адрес в памяти. Оператор `==` сравнивает равенство указателей интерфейса `iface.data`.",
+    "pitfalls": "В современном коде Go 1.13+ всегда предпочитайте `errors.Is` прямому оператору `==`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в Go 1.13+ не рекомендуется использовать if err == ErrNotFound?»\n**Ответ:** Потому что любая внутренняя функция в цепочке вызовов может обернуть ошибку контекстом через `fmt.Errorf(\"%w\")`, после чего прямое сравнение `==` перестанет работать, что приведет к трудноуловимым багам."
+  },
+  {
+    "num": 8,
+    "title": "Добавление контекста с помощью fmt.Errorf и глагола %v",
+    "task": "Используй `fmt.Errorf(\"reading %s: %v\", filename, err)` для добавления контекста. Покажи, что `%v` просто вставляет текст ошибки.",
+    "theory": "Спецификатор `%v` преобразует ошибку `err` в строку через вызов `err.Error()`. При этом результирующая ошибка не реализует метод `Unwrap()`, а значит исходная ошибка скрыта.",
+    "step_by_step": "1. Создадим ошибку `var ErrDiskFailure = errors.New(\"hardware read error\")`.\n2. Обернем её с помощью `%v`: `fmt.Errorf(\"reading %s: %v\", filename, err)`.\n3. В `main` покажем, что `errors.Is` вернет `false`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar ErrDiskFailure = errors.New(\"hardware read error\")\n\nfunc readFile(filename string) error {\n\t// Добавляем строковый контекст без оборачивания:\n\treturn fmt.Errorf(\"reading %s: %v\", filename, ErrDiskFailure)\n}\n\nfunc main() {\n\terr := readFile(\"app.json\")\n\tfmt.Println(\"Текст ошибки:\", err)\n\n\t// errors.Is не может развернуть %v:\n\tif errors.Is(err, ErrDiskFailure) {\n\t\tfmt.Println(\"Disk failure detected\")\n\t} else {\n\t\tfmt.Println(\"errors.Is вернул false (цепочка разорвана глаголом %v)\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Текст ошибки: reading app.json: hardware read error\n# errors.Is вернул false (цепочка разорвана глаголом %v)"
+      }
+    ],
+    "under_the_hood": "Спецификатор `%v` создает обычную структуру `errors.errorString`, в которую записывается отформатированная строка.",
+    "pitfalls": "Если вам нужно сохранить возможность проверки исходной ошибки выше по стеку, используйте `%w` вместо `%v`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Когда разрыв цепочки через %v является преимуществом?»\n**Ответ:** Когда нужно скрыть детали реализации внутреннего слоя (Information Hiding). Например, чтобы слой HTTP-контроллеров не зависел от драйвера базы данных PostgreSQL."
+  },
+  {
+    "num": 9,
+    "title": "Множественные типы ошибок и диспетчеризация через errors.As",
+    "task": "Напишите функцию, которая возвращает несколько разных типов ошибок, и корректно обработайте их в `main` с помощью `switch` и `errors.As`.",
+    "theory": "`errors.As` находит в цепочке ошибку, соответствующую целевому типу структуры/указателя, и копирует значение в переданный указатель. Это безопасный аналог Type Assertion для цепочек ошибок.",
+    "step_by_step": "1. Объявим кастомные типы ошибок `NetworkTimeoutError` и `InvalidFormatError`.\n2. Напишем функцию `fetchData(url string) error`.\n3. В `main` обработаем ошибки через `switch` с `errors.As`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype NetworkTimeoutError struct {\n\tURL string\n}\n\nfunc (e *NetworkTimeoutError) Error() string {\n\treturn fmt.Sprintf(\"network timeout requesting %s\", e.URL)\n}\n\ntype InvalidFormatError struct {\n\tLine int\n}\n\nfunc (e *InvalidFormatError) Error() string {\n\treturn fmt.Sprintf(\"invalid payload format at line %d\", e.Line)\n}\n\nfunc fetchData(mode int) error {\n\tswitch mode {\n\tcase 1:\n\t\treturn fmt.Errorf(\"api gateway: %w\", &NetworkTimeoutError{URL: \"https://api.internal/v1\"})\n\tcase 2:\n\t\treturn fmt.Errorf(\"parser: %w\", &InvalidFormatError{Line: 42})\n\tdefault:\n\t\treturn nil\n\t}\n}\n\nfunc main() {\n\tfor _, mode := range []int{1, 2} {\n\t\terr := fetchData(mode)\n\t\tvar netErr *NetworkTimeoutError\n\t\tvar fmtErr *InvalidFormatError\n\n\t\tswitch {\n\t\tcase errors.As(err, &netErr):\n\t\t\tfmt.Printf(\"[RETRY] Тайм-аут сети к URL: %s\\n\", netErr.URL)\n\t\tcase errors.As(err, &fmtErr):\n\t\t\tfmt.Printf(\"[REJECT] Ошибка формата на строке: %d\\n\", fmtErr.Line)\n\t\tdefault:\n\t\t\tfmt.Println(\"Успех или неизвестная ошибка\")\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [RETRY] Тайм-аут сети к URL: https://api.internal/v1\n# [REJECT] Ошибка формата на строке: 42"
+      }
+    ],
+    "under_the_hood": "`errors.As` проверяет типы через рефлексию `reflect.TypeOf` и метод `As(target any) bool`, присваивая указатель на найденную структуру.",
+    "pitfalls": "Второй аргумент `errors.As` обязан быть указателем на переменную типа ошибки (`&netErr`), иначе возникнет паника в рантайме.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему второй аргумент errors.As должен быть непустым указателем?»\n**Ответ:** `errors.As` должен записать найденное значение ошибки в переменную вызывающего кода. Если передать не указатель или указатель на интерфейс nil, функция запаникует с ошибкой `errors: *target must be interface or implement error`."
+  },
+  {
+    "num": 10,
+    "title": "Распаковка ошибки через errors.Unwrap (Go 1.13+)",
+    "task": "Используй `fmt.Errorf` с глаголом `%w` (Go 1.13+): `fmt.Errorf(\"processing failed: %w\", err)`. Покажи, что ошибка **обёрнута** (wrapped) и сохраняет оригинал.",
+    "theory": "Функция `errors.Unwrap(err)` извлекает внутреннюю ошибку ровно на один уровень глубже. Если ошибка не оборачивает другую ошибку, `errors.Unwrap` возвращает `nil`.",
+    "step_by_step": "1. Создадим базовую ошибку `baseErr := errors.New(\"connection reset\")`.\n2. Обернем её: `wrappedErr := fmt.Errorf(\"processing failed: %w\", baseErr)`.\n3. Извлечем базовую ошибку через `errors.Unwrap(wrappedErr)`.\n4. В `main` убедимся, что распакованная ошибка идентична `baseErr`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nfunc main() {\n\tbaseErr := errors.New(\"connection reset\")\n\twrappedErr := fmt.Errorf(\"processing failed: %w\", baseErr)\n\n\tfmt.Println(\"Обернутая ошибка:  \", wrappedErr)\n\n\tunwrappedErr := errors.Unwrap(wrappedErr)\n\tfmt.Println(\"Распакованная ошибка:\", unwrappedErr)\n\tfmt.Println(\"unwrappedErr == baseErr:\", unwrappedErr == baseErr)\n\n\t// Попытка распаковать базовую ошибку возвращает nil:\n\tfmt.Println(\"Unwrap(baseErr):\", errors.Unwrap(baseErr))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Обернутая ошибка:   processing failed: connection reset\n# Распакованная ошибка: connection reset\n# unwrappedErr == baseErr: true\n# Unwrap(baseErr): <nil>"
+      }
+    ],
+    "under_the_hood": "`errors.Unwrap` проверяет наличие метода `Unwrap() error` у интерфейса `err` и вызывает его.",
+    "pitfalls": "Для поиска ошибки в глубине цепочки лучше использовать `errors.Is`/`errors.As`, а не вручную крутить цикл `errors.Unwrap`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем разница между errors.Unwrap и errors.Is?»\n**Ответ:** `errors.Unwrap` разворачивает ровно один слой обертки. `errors.Is` выполняет полный рекурсивный обход всего дерева/цепочки оберток до совпадения."
+  },
+  {
+    "num": 11,
+    "title": "Кастомная структура ошибки ValidationError с метаданными полей",
+    "task": "**Кастомная структура ошибки**: Создайте структуру `ValidationError` с полями `FieldName string` и `Value any`. Реализуйте метод `Error() string` для этой структуры, чтобы она удовлетворяла интерфейсу `error`.",
+    "theory": "Кастомные ошибки-структуры позволяют передавать вызывающему коду структурированную контекстную информацию (имя некорректного поля, переданное значение, допустимые границы).",
+    "step_by_step": "1. Объявим структуру `ValidationError` с полями `FieldName string` и `Value any`.\n2. Реализуем метод `(e ValidationError) Error() string`.\n3. Создадим функцию `validateEmail(email string) error`.\n4. В `main` проверим валидацию.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"strings\"\n)\n\ntype ValidationError struct {\n\tFieldName string\n\tValue     any\n}\n\nfunc (e ValidationError) Error() string {\n\treturn fmt.Sprintf(\"поле %q содержит невалидное значение: %v\", e.FieldName, e.Value)\n}\n\nfunc validateEmail(email string) error {\n\tif !strings.Contains(email, \"@\") {\n\t\treturn ValidationError{\n\t\t\tFieldName: \"email\",\n\t\t\tValue:     email,\n\t\t}\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr := validateEmail(\"invalid-email-address\")\n\tif err != nil {\n\t\tfmt.Println(\"Ошибка валидации:\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Ошибка валидации: поле \"email\" содержит невалидное значение: invalid-email-address"
+      }
+    ],
+    "under_the_hood": "Поскольку ресивер `(e ValidationError)` объявлен по значению, любая переменная `ValidationError` реализует `error` напрямую.",
+    "pitfalls": "Если объявить метод на указателе `(e *ValidationError)`, то передача структуры по значению `ValidationError{}` не будет удовлетворять интерфейсу `error`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Когда объявлять метод Error() на указателе (*MyError), а когда на значении (MyError)?»\n**Ответ:** По соглашению в Go метод `Error()` объявляют на указателе `*MyError`, если структура содержит мутируемые поля или для исключения копирования тяжелых структур. Если структура маленькая и иммутабельная (как `time.ParseError`), допустим value receiver."
+  },
+  {
+    "num": 12,
+    "title": "Обертывание ошибок репозитория с добавлением слоя контекста",
+    "task": "**Обертывание (Wrapping)**: При получении ошибки в функции (например, от базы данных), не возвращай её как есть. Оберни её: `return fmt.Errorf(\"failed to get user: %w\", err)`.",
+    "theory": "Оборачивание ошибок на границах архитектурных слоев (Repository -> Service -> Handler) строит полную трассировку выполнения, объясняя *какая именно операция* завершилась сбоем.",
+    "step_by_step": "1. Создадим функцию `dbQuery(query string) error`.\n2. Создадим функцию `GetUserByID(id int) error`, которая вызывает `dbQuery` и оборачивает ошибку.\n3. В `main` распечатаем результирующую ошибку.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nfunc dbQuery(query string) error {\n\treturn errors.New(\"connection timeout\")\n}\n\nfunc GetUserByID(id int) error {\n\terr := dbQuery(\"SELECT * FROM users WHERE id = ?\")\n\tif err != nil {\n\t\treturn fmt.Errorf(\"failed to get user %d: %w\", id, err)\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr := GetUserByID(500)\n\tif err != nil {\n\t\tfmt.Println(\"Случилась ошибка:\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Случилась ошибка: failed to get user 500: connection timeout"
+      }
+    ],
+    "under_the_hood": "Обертка сохраняет ссылку на `err` внутри `fmt.wrapError.err`.",
+    "pitfalls": "Не оборачивайте ошибку дважды одной и той же фразой `failed to get user: failed to get user`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем преимущество цепочек ошибок Go над Java Stacktrace?»\n**Ответ:** Цепочки ошибок в Go содержат только осмысленный бизнес- и системный контекст, добавленный разработчиком, в отличие от тяжелых стектрейсов JVM, замедляющих рантайм на сбор адресов фреймов стека."
+  },
+  {
+    "num": 13,
+    "title": "Пробитие обертки errors.Is сквозь цепочку вызовов",
+    "task": "**[Каверзный кейс]**: Оберни ошибку: `fmt.Errorf(\"db query failed: %w\", err)`. Проверь исходную ошибку с помощью `errors.Is` (она \"пробьется\" через обертку `%w`).",
+    "theory": "Спецификатор `%w` формирует односвязный список ошибок. `errors.Is` выполняет линейный проход по цепочке `Unwrap()` до нахождения целевого маркера.",
+    "step_by_step": "1. Объявим `var ErrNoRows = errors.New(\"sql: no rows in result set\")`.\n2. Создадим функцию `findOrder(id string) error` с тремя уровнями обертывания.\n3. В `main` убедимся, что `errors.Is(err, ErrNoRows)` вернет `true`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar ErrNoRows = errors.New(\"sql: no rows in result set\")\n\nfunc rawQuery() error {\n\treturn ErrNoRows\n}\n\nfunc findOrder(orderID string) error {\n\tif err := rawQuery(); err != nil {\n\t\treturn fmt.Errorf(\"db query failed: %w\", err)\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr := findOrder(\"ord-999\")\n\tfmt.Printf(\"Обернутая ошибка: %v\\n\", err)\n\n\tif errors.Is(err, ErrNoRows) {\n\t\tfmt.Println(\"Успех: ошибка распознана как отсутствие строк (ErrNoRows)\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Обернутая ошибка: db query failed: sql: no rows in result set\n# Успех: ошибка распознана как отсутствие строк (ErrNoRows)"
+      }
+    ],
+    "under_the_hood": "`errors.Is` рекурсивно проверяет равенство каждого узла в графе оберток.",
+    "pitfalls": "Если случайно использовать `%v` вместо `%w` хотя бы на одном звене цепи, `errors.Is` не сможет дойти до исходной ошибки.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Может ли ошибка в Go содержать несколько предков (дерево ошибок)?»\n**Ответ:** Да! Начиная с Go 1.20, тип ошибки может реализовывать метод `Unwrap() []error` (как в `errors.Join`), формируя дерево ошибок, по которому `errors.Is` осуществляет поиск в глубину (DFS)."
+  },
+  {
+    "num": 14,
+    "title": "Безопасное извлечение ошибки через errors.As",
+    "task": "Используйте `errors.As(err, &validationErr)` для безопасного извлечения вашей кастомной ошибки из глубины обернутых ошибок.",
+    "theory": "`errors.As` заменяет устаревший Type Assertion `err.(MyError)`. В отличие от кастинга, `errors.As` успешно находит ошибку даже внутри многократно обернутой цепочки.",
+    "step_by_step": "1. Создадим структуру `ValidationError struct { Field string; Code string }`.\n2. Напишем функцию с двукратным оборачиванием ошибки.\n3. В `main` извлечем `ValidationError` через `errors.As`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype ValidationError struct {\n\tField string\n\tCode  string\n}\n\nfunc (e *ValidationError) Error() string {\n\treturn fmt.Sprintf(\"validation failed on field %s (code: %s)\", e.Field, e.Code)\n}\n\nfunc parsePayload() error {\n\treturn &ValidationError{Field: \"username\", Code: \"ERR_TOO_SHORT\"}\n}\n\nfunc handleRequest() error {\n\tif err := parsePayload(); err != nil {\n\t\treturn fmt.Errorf(\"http handler failed: %w\", err)\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr := handleRequest()\n\n\tvar valErr *ValidationError\n\tif errors.As(err, &valErr) {\n\t\tfmt.Println(\"Успешно извлечена структура ValidationError:\")\n\t\tfmt.Printf(\" -> Поле: %s\\n\", valErr.Field)\n\t\tfmt.Printf(\" -> Код:  %s\\n\", valErr.Code)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Успешно извлечена структура ValidationError:\n#  -> Поле: username\n#  -> Код:  ERR_TOO_SHORT"
+      }
+    ],
+    "under_the_hood": "`errors.As` находит первую ошибку в цепочке, чей тип совместим с типом переменной, переданной по указателю.",
+    "pitfalls": "Всегда проверяйте булев результат `if errors.As(err, &target)`. Использование `valErr` без проверки при `false` приведет к nil pointer dereference.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему type assertion err.(*MyError) опасен в современном Go?»\n**Ответ:** Если функция внутри обернет ошибку через `fmt.Errorf(\"%w\")`, `err` перестанет быть `*MyError` (станет `*fmt.wrapError`), и type assertion завершится неудачей или паникой."
+  },
+  {
+    "num": 15,
+    "title": "Проверка глубоко обернутой ошибки sentinel-типа",
+    "task": "Напиши функцию, возвращающую обёрнутую ошибку. В `main` используй `errors.Is(err, target)` для проверки: является ли ошибка (возможно, глубоко обёрнутая) конкретной sentinel-ошибкой.",
+    "theory": "Проверка `errors.Is(err, target)` гарантирует корректную работу независимо от того, сколько промежуточных слоев и middleware добавили свои описания в цепочку.",
+    "step_by_step": "1. Объявим `var ErrUnauthorized = errors.New(\"unauthorized access\")`.\n2. Создадим цепочку из 3 слоев: `AuthService -> Router -> Middleware`.\n3. В `main` проверим `errors.Is(err, ErrUnauthorized)`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar ErrUnauthorized = errors.New(\"unauthorized access\")\n\nfunc authService() error {\n\treturn ErrUnauthorized\n}\n\nfunc router() error {\n\tif err := authService(); err != nil {\n\t\treturn fmt.Errorf(\"router auth check: %w\", err)\n\t}\n\treturn nil\n}\n\nfunc middleware() error {\n\tif err := router(); err != nil {\n\t\treturn fmt.Errorf(\"http middleware: %w\", err)\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr := middleware()\n\tfmt.Println(\"Стек ошибки:\", err)\n\n\tif errors.Is(err, ErrUnauthorized) {\n\t\tfmt.Println(\"Ответ клиенту: HTTP 401 Unauthorized\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Стек ошибки: http middleware: router auth check: unauthorized access\n# Ответ клиенту: HTTP 401 Unauthorized"
+      }
+    ],
+    "under_the_hood": "Цепочка вызовов `Unwrap` поднимает маркер наверх без ручного парсинга строк текста ошибки.",
+    "pitfalls": "Не сравнивайте текст ошибки через `strings.Contains(err.Error(), \"unauthorized\")`, это хрупко и приводит к багам при смене локали или текста.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему парсинг текста ошибки через strings.Contains считается грубейшим антипаттерном?»\n**Ответ:** Потому что текст ошибки может измениться при рефакторинге или обновлении сторонней библиотеки, что сломает логику в рантайме без предупреждений компилятора."
+  },
+  {
+    "num": 16,
+    "title": "Архитектурная цепочка вызовов: readFile -> parseJSON -> validate",
+    "task": "Создайте цепочку функций: `readFile -> parseJSON -> validate`. Каждая возвращает ошибку. Пробросьте ошибку вверх, добавив контекст с помощью `fmt.Errorf(\"...: %w\", err)`.",
+    "theory": "Каждый уровень абстракции должен отвечать за свой уровень контекста: нижний уровень сообщает о сбое I/O, средний — о сбое парсинга, верхний — о сбое бизнес-валидации.",
+    "step_by_step": "1. Реализуем `readFile(path string) ([]byte, error)`.\n2. Реализуем `parseJSON(data []byte) (map[string]any, error)`.\n3. Реализуем `validate(m map[string]any) error`.\n4. В `loadConfig` свяжем функции и пробросим ошибки вверх через `%w`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar ErrFileNotFound = errors.New(\"file does not exist\")\n\nfunc readFile(path string) ([]byte, error) {\n\tif path == \"\" {\n\t\treturn nil, ErrFileNotFound\n\t}\n\treturn []byte(`{\"port\": \"not_a_number\"}`), nil\n}\n\nfunc parseJSON(data []byte) (map[string]any, error) {\n\treturn map[string]any{\"port\": \"invalid\"}, nil\n}\n\nfunc validate(cfg map[string]any) error {\n\tif cfg[\"port\"] == \"invalid\" {\n\t\treturn errors.New(\"port must be an integer\")\n\t}\n\treturn nil\n}\n\nfunc loadConfig(path string) error {\n\tdata, err := readFile(path)\n\tif err != nil {\n\t\treturn fmt.Errorf(\"loadConfig: reading %q: %w\", path, err)\n\t}\n\n\tcfg, err := parseJSON(data)\n\tif err != nil {\n\t\treturn fmt.Errorf(\"loadConfig: parsing json: %w\", err)\n\t}\n\n\tif err := validate(cfg); err != nil {\n\t\treturn fmt.Errorf(\"loadConfig: validation: %w\", err)\n\t}\n\treturn nil\n}\n\nfunc main() {\n\tif err := loadConfig(\"config.json\"); err != nil {\n\t\tfmt.Println(\"Сбой конфигурации:\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Сбой конфигурации: loadConfig: validation: port must be an integer"
+      }
+    ],
+    "under_the_hood": "Каждый уровень добавляет префикс со своим именем функции, формируя читаемую трассировку.",
+    "pitfalls": "Не забывайте выходить из функции `return ...` сразу после получения `err != nil`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как правильно форматировать контекст при оборачивании ошибки?»\n**Ответ:** Шаблон: `<имя_функции_или_действия>: <параметры>: %w`. Например: `fmt.Errorf(\"fetchUser(id=%d): sending request: %w\", id, err)`."
+  },
+  {
+    "num": 17,
+    "title": "Паттерн повторных попыток (Retry) с экспоненциальной задержкой",
+    "task": "Реализуйте паттерн повторных попыток (Retry): если функция вернула определенную ошибку (например, \"timeout\"), вызовите ее снова до 3 раз с экспоненциальной задержкой.",
+    "theory": "Паттерн Retry с экспоненциальным backoff увеличивает задержку между попытками вдвое ($T, 2T, 4T$), снижая нагрузку на восстанавливающуюся систему.",
+    "step_by_step": "1. Объявим `var ErrTimeout = errors.New(\"timeout\")`.\n2. Реализуем `Retry(attempts int, initialDelay time.Duration, fn func() error) error`.\n3. В цикле вызываем функцию, при `ErrTimeout` удваиваем задержку.\n4. В `main` протестируем успешное восстановление на 3-й попытке.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"time\"\n)\n\nvar ErrTimeout = errors.New(\"request timeout\")\n\nfunc Retry(attempts int, delay time.Duration, fn func() error) error {\n\tvar lastErr error\n\tfor i := 1; i <= attempts; i++ {\n\t\terr := fn()\n\t\tif err == nil {\n\t\t\treturn nil\n\t\t}\n\t\tif !errors.Is(err, ErrTimeout) {\n\t\t\treturn err // Non-retryable error\n\t\t}\n\t\tlastErr = err\n\t\tfmt.Printf(\"Попытка %d не удалась (%v). Ожидание %v...\\n\", i, err, delay)\n\t\ttime.Sleep(delay)\n\t\tdelay *= 2 // Экспоненциальный рост\n\t}\n\treturn fmt.Errorf(\"все %d попыток исчерпаны: %w\", attempts, lastErr)\n}\n\nfunc main() {\n\tcount := 0\n\tunstableCall := func() error {\n\t\tcount++\n\t\tif count < 3 {\n\t\t\treturn ErrTimeout\n\t\t}\n\t\treturn nil\n\t}\n\n\terr := Retry(3, 10*time.Millisecond, unstableCall)\n\tif err != nil {\n\t\tfmt.Println(\"Итоговый сбой:\", err)\n\t} else {\n\t\tfmt.Println(\"Успешно выполнено на попытке:\", count)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Попытка 1 не удалась (request timeout). Ожидание 10ms...\n# Попытка 2 не удалась (request timeout). Ожидание 20ms...\n# Успешно выполнено на попытке: 3"
+      }
+    ],
+    "under_the_hood": "Проверка `errors.Is(err, ErrTimeout)` гарантирует, что мы повторяем только транзиентные (временные) сбои.",
+    "pitfalls": "Никогда не делайте retry для фатальных ошибок (например, невалидный пароль или 400 Bad Request).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Зачем к экспоненциальному backoff добавляют Full Jitter (рандомизацию)?»\n**Ответ:** Без Jitter все параллельные клиенты будут повторять запросы в одни и те же синхронные моменты времени, вызывая повторные волны перегрузки (Thundering Herd Problem). Jitter размывает запросы во времени."
+  },
+  {
+    "num": 18,
+    "title": "Sentinel-ошибки в нескольких функциях пакета",
+    "task": "Создай **sentinel error**: `var ErrNotFound = errors.New(\"not found\")`. Используй её в нескольких функциях. Проверь через `errors.Is` в разных уровнях обёртки.",
+    "theory": "Sentinel-ошибки объявляются как пакетные переменные `var Err... = errors.New(...)` и экспортируются для использования другими пакетами.",
+    "step_by_step": "1. Объявим `var ErrNotFound = errors.New(\"item not found\")`.\n2. Создадим функции `GetProduct(id int)` и `GetCategory(id int)`.\n3. В `main` обработаем результат обеих функций единым блоком `errors.Is`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar ErrNotFound = errors.New(\"item not found\")\n\nfunc GetProduct(id int) error {\n\tif id <= 0 {\n\t\treturn fmt.Errorf(\"product repo: %w\", ErrNotFound)\n\t}\n\treturn nil\n}\n\nfunc GetCategory(id int) error {\n\tif id <= 0 {\n\t\treturn fmt.Errorf(\"category repo: %w\", ErrNotFound)\n\t}\n\treturn nil\n}\n\nfunc checkItem(name string, fetch func(int) error, id int) {\n\terr := fetch(id)\n\tif errors.Is(err, ErrNotFound) {\n\t\tfmt.Printf(\"[%s #%d] Объект не найден в системе (HTTP 404)\\n\", name, id)\n\t} else if err != nil {\n\t\tfmt.Printf(\"[%s #%d] Системная ошибка: %v\\n\", name, id, err)\n\t} else {\n\t\tfmt.Printf(\"[%s #%d] Успешно загружен\\n\", name, id)\n\t}\n}\n\nfunc main() {\n\tcheckItem(\"Товар\", GetProduct, -1)\n\tcheckItem(\"Категория\", GetCategory, -5)\n\tcheckItem(\"Товар\", GetProduct, 10)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Товар #-1] Объект не найден в системе (HTTP 404)\n# [Категория #-5] Объект не найден в системе (HTTP 404)\n# [Товар #10] Успешно загружен"
+      }
+    ],
+    "under_the_hood": "Один экземпляр переменной `ErrNotFound` переиспользуется всеми функциями пакета без новых аллокаций.",
+    "pitfalls": "Пакетные переменные `var Err...` мутабельны. Ни в коем случае не перезаписывайте их значения в рантайме.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как защитить sentinel error от случайной перезаписи из другого пакета?»\n**Ответ:** Использовать кастомный тип константы: `type Error string; func (e Error) Error() string { return string(e) }; const ErrNotFound = Error(\"not found\")`."
+  },
+  {
+    "num": 19,
+    "title": "Распаковка errors.Is против оператора прямого равенства ==",
+    "task": "**Распаковка `errors.Is`**: Получив обернутую ошибку из упр. 204, используй `errors.Is(err, ErrNotFound)`, чтобы проверить, есть ли в цепочке обертываний наша маркерная ошибка. (Простое `==` тут уже не сработает).",
+    "theory": "При оборачивании ошибки тип переменной меняется со статического `*errors.errorString` на `*fmt.wrapError`. Прямое сравнение указателей `err == ErrNotFound` возвращает `false`.",
+    "step_by_step": "1. Создадим маркер `var ErrNotFound = errors.New(\"not found\")`.\n2. Обернем его: `wrapped := fmt.Errorf(\"wrap 1: %w\", fmt.Errorf(\"wrap 2: %w\", ErrNotFound))`.\n3. Сравним результаты `wrapped == ErrNotFound` и `errors.Is(wrapped, ErrNotFound)`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar ErrNotFound = errors.New(\"not found\")\n\nfunc main() {\n\twrapped := fmt.Errorf(\"api handler: %w\", fmt.Errorf(\"db service: %w\", ErrNotFound))\n\n\tfmt.Println(\"Текст цепочки:\", wrapped)\n\n\t// Прямое сравнение:\n\tfmt.Printf(\"Прямое сравнение (wrapped == ErrNotFound): %v\\n\", wrapped == ErrNotFound)\n\n\t// Проверка через errors.Is:\n\tfmt.Printf(\"Проверка errors.Is(wrapped, ErrNotFound):  %v\\n\", errors.Is(wrapped, ErrNotFound))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Текст цепочки: api handler: db service: not found\n# Прямое сравнение (wrapped == ErrNotFound): false\n# Проверка errors.Is(wrapped, ErrNotFound):  true"
+      }
+    ],
+    "under_the_hood": "`errors.Is` разворачивает стек `wrap 1 -> wrap 2 -> ErrNotFound` и находит совпадение по указателю памяти.",
+    "pitfalls": "Всегда используйте `errors.Is` вместо `==` при работе с любыми интерфейсами `error`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что возвращает errors.Is(nil, nil)?»\n**Ответ:** `errors.Is(nil, nil)` возвращает `true`. Вызов `errors.Is(err, nil)` возвращает `err == nil`."
+  },
+  {
+    "num": 20,
+    "title": "Оборачивание системных ошибок ввода-вывода os.Open",
+    "task": "**Оборачивание ошибок (Wrapping)**: Напишите функцию `ReadFileConfig()`, которая вызывает `os.Open`. Если возникает ошибка, оберните её с помощью `fmt.Errorf(\"не удалось прочитать конфиг: %w\", err)` (используя спецификатор `%w`).",
+    "theory": "При вызове стандартных функций ОС (`os.Open`, `net.Dial`) они возвращают системные ошибки (`*os.PathError`). Оборачивание через `%w` сохраняет доступ к исходной системной ошибке.",
+    "step_by_step": "1. Создадим функцию `ReadFileConfig(path string) ([]byte, error)`.\n2. Вызовем `os.Open(path)`.\n3. Обернем ошибку: `fmt.Errorf(\"не удалось прочитать конфиг: %w\", err)`.\n4. В `main` извлечем `*os.PathError` через `errors.As`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"os\"\n)\n\nfunc ReadFileConfig(path string) ([]byte, error) {\n\tfile, err := os.Open(path)\n\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"не удалось прочитать конфиг: %w\", err)\n\t}\n\tdefer file.Close()\n\treturn os.ReadFile(path)\n}\n\nfunc main() {\n\t_, err := ReadFileConfig(\"/non/existent/config.yaml\")\n\tif err != nil {\n\t\tfmt.Println(\"Ошибка:\", err)\n\n\t\tvar pathErr *os.PathError\n\t\tif errors.As(err, &pathErr) {\n\t\t\tfmt.Println(\"-> Системный сбой ОС:\")\n\t\t\tfmt.Printf(\"   Операция: %s\\n\", pathErr.Op)\n\t\t\tfmt.Printf(\"   Путь:     %s\\n\", pathErr.Path)\n\t\t\tfmt.Printf(\"   Причина:  %v\\n\", pathErr.Err)\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Ошибка: не удалось прочитать конфиг: open /non/existent/config.yaml: no such file or directory\n# -> Системный сбой ОС:\n#    Операция: open\n#    Путь:     /non/existent/config.yaml\n#    Причина:  no such file or directory"
+      }
+    ],
+    "under_the_hood": "`os.Open` возвращает структуру `&os.PathError{Op: \"open\", Path: path, Err: syscall.ENOENT}`.",
+    "pitfalls": "Не забывайте вызывать `defer file.Close()` только после успешной проверки `err == nil`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему defer file.Close() нельзя ставить до проверки if err != nil?»\n**Ответ:** Если `os.Open` вернет ошибку, указатель `file` будет равен `nil`. Вызов `file.Close()` на nil-указателе приведет к немедленной панике (Nil Pointer Dereference)."
+  },
+  {
+    "num": 21,
+    "title": "Агрегация ошибок валидации формы через errors.Join (Go 1.20+)",
+    "task": "Изучите функцию `errors.Join` (Go 1.20+), чтобы собрать несколько ошибок, возникших при валидации разных полей формы, в одну агрегированную ошибку.",
+    "theory": "Функция `errors.Join(errs ...error) error` объединяет срез ошибок в единое дерево ошибок. Результирующая ошибка форматирует все сообщения через перенос строки `\\n` и реализует метод `Unwrap() []error`.",
+    "step_by_step": "1. Создадим форму `RegistrationForm` с полями `Email`, `Password`, `Age`.\n2. Напишем валидатор `ValidateForm(f RegistrationForm) error`.\n3. Соберем ошибки в срез и вернем `errors.Join(errs...)`.\n4. В `main` убедимся, что `errors.Is` находит любую из ошибок в объединенном результате.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"strings\"\n)\n\nvar (\n\tErrInvalidEmail    = errors.New(\"некорректный email\")\n\tErrPasswordTooWeak = errors.New(\"пароль должен быть не менее 8 символов\")\n\tErrUnderage        = errors.New(\"возраст должен быть не менее 18 лет\")\n)\n\ntype RegistrationForm struct {\n\tEmail    string\n\tPassword string\n\tAge      int\n}\n\nfunc ValidateForm(f RegistrationForm) error {\n\tvar errs []error\n\tif !strings.Contains(f.Email, \"@\") {\n\t\terrs = append(errs, ErrInvalidEmail)\n\t}\n\tif len(f.Password) < 8 {\n\t\terrs = append(errs, ErrPasswordTooWeak)\n\t}\n\tif f.Age < 18 {\n\t\terrs = append(errs, ErrUnderage)\n\t}\n\treturn errors.Join(errs...)\n}\n\nfunc main() {\n\tform := RegistrationForm{\n\t\tEmail:    \"bad-email\",\n\t\tPassword: \"123\",\n\t\tAge:      15,\n\t}\n\n\terr := ValidateForm(form)\n\tif err != nil {\n\t\tfmt.Println(\"Сводная ошибка валидации:\")\n\t\tfmt.Println(err)\n\n\t\t// errors.Is находит каждую отдельную ошибку в Join:\n\t\tfmt.Println(\"-> Email с ошибкой:\", errors.Is(err, ErrInvalidEmail))\n\t\tfmt.Println(\"-> Пароль слабый: \", errors.Is(err, ErrPasswordTooWeak))\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Сводная ошибка валидации:\n# некорректный email\n# пароль должен быть не менее 8 символов\n# возраст должен быть не менее 18 лет\n# -> Email с ошибкой: true\n# -> Пароль слабый:  true"
+      }
+    ],
+    "under_the_hood": "`errors.Join` фильтрует `nil` элементы и возвращает `nil`, если все аргументы равны `nil`.",
+    "pitfalls": "`errors.Join` доступен только в Go 1.20+. В старых версиях использовались внешние библиотеки вроде `uber-go/multierr`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как errors.Is проверяет ошибку внутри errors.Join?»\n**Ответ:** `errors.Join` возвращает структуру `joinError`, реализующую метод `Unwrap() []error`. Функция `errors.Is` рекурсивно обходит каждый элемент возвращенного среза."
+  },
+  {
+    "num": 22,
+    "title": "Извлечение HTTP-кода из кастомной ошибки AppError через errors.As",
+    "task": "**Извлечение типа `errors.As`**: Оберни свою структуру `AppError` (из упр. 202) через `%w`. В `main` используй `errors.As(err, &myAppErr)`, чтобы достать её из обертки и прочитать конкретный HTTP `Code`.",
+    "theory": "`errors.As` позволяет слою HTTP-хендлеров централизованно мапить кастомные ошибки доменного слоя в соответствующие HTTP-статус коды (400, 403, 404, 500).",
+    "step_by_step": "1. Объявим `type AppError struct { HTTPCode int; Message string }`.\n2. Реализуем `(e *AppError) Error() string`.\n3. Создадим цепочку вызовов `DomainService -> HTTPHandler`.\n4. В `main` извлечем `HTTPCode`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype AppError struct {\n\tHTTPCode int\n\tMessage  string\n}\n\nfunc (e *AppError) Error() string {\n\treturn fmt.Sprintf(\"HTTP %d: %s\", e.HTTPCode, e.Message)\n}\n\nfunc domainLogic() error {\n\treturn &AppError{HTTPCode: 403, Message: \"доступ запрещен настройками приватности\"}\n}\n\nfunc service() error {\n\tif err := domainLogic(); err != nil {\n\t\treturn fmt.Errorf(\"service layer: %w\", err)\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr := service()\n\tif err != nil {\n\t\tvar appErr *AppError\n\t\tif errors.As(err, &appErr) {\n\t\t\tfmt.Printf(\"Отправка клиенту статуса: %d\\n\", appErr.HTTPCode)\n\t\t\tfmt.Printf(\"Тело ответа:             %s\\n\", appErr.Message)\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Отправка клиенту статуса: 403\n# Тело ответа:             доступ запрещен настройками приватности"
+      }
+    ],
+    "under_the_hood": "`errors.As` проверяет типы на соответствие указателю `*AppError` и копирует адрес структуры.",
+    "pitfalls": "Передавайте в `errors.As` указатель на указатель `&appErr`, где `var appErr *AppError`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как в production HTTP-серверах реализуют централизованный Error Handler?»\n**Ответ:** Кастомные HTTP-хэндлеры возвращают `error`. Централизованный middleware перехватывает ошибку, через `errors.As` извлекает `*AppError`, выставляет соответствующий HTTP-код, пишет аудит-лог и отправляет JSON клиенту."
+  },
+  {
+    "num": 23,
+    "title": "Кастомный тип NotFoundError с деталями ресурса и ID",
+    "task": "Создай **кастомный тип ошибки** `type NotFoundError struct { Resource string; ID int }`. Реализуй `Error() string`. Используй `errors.As` для извлечения конкретного типа из цепочки ошибок.",
+    "theory": "Структурированная ошибка `NotFoundError` точно указывает, какой именно ресурс (`User`, `Order`, `Invoice`) и с каким идентификатором отсутствует.",
+    "step_by_step": "1. Объявим `type NotFoundError struct { Resource string; ID int }`.\n2. Реализуем `Error() string`.\n3. Создадим функцию `FindUser(id int) error`.\n4. В `main` извлечем `NotFoundError` и выведем форматированное сообщение.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype NotFoundError struct {\n\tResource string\n\tID       int\n}\n\nfunc (e *NotFoundError) Error() string {\n\treturn fmt.Sprintf(\"ресурс %s с ID=%d не найден\", e.Resource, e.ID)\n}\n\nfunc FindUser(id int) error {\n\treturn fmt.Errorf(\"user repository: %w\", &NotFoundError{Resource: \"User\", ID: id})\n}\n\nfunc main() {\n\terr := FindUser(777)\n\tif err != nil {\n\t\tvar notFound *NotFoundError\n\t\tif errors.As(err, &notFound) {\n\t\t\tfmt.Printf(\"Сущность: %s | Идентификатор: %d\\n\", notFound.Resource, notFound.ID)\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Сущность: User | Идентификатор: 777"
+      }
+    ],
+    "under_the_hood": "`NotFoundError` передается по указателю `*NotFoundError`, реализуя контракт `error`.",
+    "pitfalls": "Не забывайте, что `NotFoundError` реализует `error` только для указателя `*NotFoundError`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему структурированные ошибки лучше конкатенации строк fmt.Errorf?»\n**Ответ:** Структурированные ошибки позволяют тестировать логику через проверку полей структуры `err.ID == 777` вместо ненадежного сравнения строковых сообщений."
+  },
+  {
+    "num": 24,
+    "title": "Диспетчеризация sentinel errors через switch и errors.Is",
+    "task": "Напиши функцию, возвращающую разные sentinel errors: `ErrInvalidInput`, `ErrNotFound`, `ErrPermissionDenied`. В вызывающем коде используй `switch` с `errors.Is` для разной логики обработки.",
+    "theory": "Конструкция `switch` с предикатами `errors.Is` позволяет элегантно маршрутизировать обработку различных бизнес-ошибок.",
+    "step_by_step": "1. Объявим три sentinel-ошибки: `ErrInvalidInput`, `ErrNotFound`, `ErrPermissionDenied`.\n2. Создадим функцию `executeAction(code int) error`.\n3. В `main` напишем блок `switch` с ветками `case errors.Is(err, ...)`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar (\n\tErrInvalidInput      = errors.New(\"invalid input\")\n\tErrNotFound          = errors.New(\"not found\")\n\tErrPermissionDenied  = errors.New(\"permission denied\")\n)\n\nfunc executeAction(scenario int) error {\n\tswitch scenario {\n\tcase 1:\n\t\treturn fmt.Errorf(\"action: %w\", ErrInvalidInput)\n\tcase 2:\n\t\treturn fmt.Errorf(\"action: %w\", ErrNotFound)\n\tcase 3:\n\t\treturn fmt.Errorf(\"action: %w\", ErrPermissionDenied)\n\tdefault:\n\t\treturn nil\n\t}\n}\n\nfunc handle(scenario int) {\n\terr := executeAction(scenario)\n\tswitch {\n\tcase errors.Is(err, ErrInvalidInput):\n\t\tfmt.Println(\"[400 Bad Request] Некорректные параметры запроса\")\n\tcase errors.Is(err, ErrNotFound):\n\t\tfmt.Println(\"[404 Not Found] Запрошенный объект не существует\")\n\tcase errors.Is(err, ErrPermissionDenied):\n\t\tfmt.Println(\"[403 Forbidden] Недостаточно прав для операции\")\n\tcase err != nil:\n\t\tfmt.Printf(\"[500 Internal Error] Непредвиденный сбой: %v\\n\", err)\n\tdefault:\n\t\tfmt.Println(\"[200 OK] Успешное выполнение\")\n\t}\n}\n\nfunc main() {\n\thandle(1)\n\thandle(2)\n\thandle(3)\n\thandle(0)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [400 Bad Request] Некорректные параметры запроса\n# [404 Not Found] Запрошенный объект не существует\n# [403 Forbidden] Недостаточно прав для операции\n# [200 OK] Успешное выполнение"
+      }
+    ],
+    "under_the_hood": "`switch` без условия (tagless switch) вычисляет булевы выражения в порядке их объявления сверху вниз.",
+    "pitfalls": "Ветка `case err != nil` должна быть предпоследней перед `default`, чтобы перехватывать все остальные непредвиденные ошибки.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В каком порядке следует проверять ошибки в switch?»\n**Ответ:** От самых специфичных и частых ошибок к более общим, завершая проверкой `case err != nil` для непредвиденных системных сбоев (Catch-all)."
+  },
+  {
+    "num": 25,
+    "title": "Sentinel-ошибка ErrPermissionDenied и проверка вложенности",
+    "task": "**Проверка ошибок через `errors.Is`**: Объявите глобальную ошибку-маркер (sentinel error) `var ErrPermissionDenied = errors.New(\"доступ запрещен\")`. Напишите функцию, которая глубоко в цепочке вызовов возвращает эту ошибку (обернутую другими ошибками). В функции `main` проверьте наличие этой конкретной ошибки в цепочке с помощью `errors.Is`.",
+    "theory": "Sentinel-ошибки безопасности должны надежно определяться на уровне контроллера для возврата клиенту кода `403 Forbidden` вместо `500 Internal Server Error`.",
+    "step_by_step": "1. Объявим `var ErrPermissionDenied = errors.New(\"доступ запрещен\")`.\n2. Создадим три уровня вложенности вызовов.\n3. В `main` проверим `errors.Is(err, ErrPermissionDenied)`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar ErrPermissionDenied = errors.New(\"доступ запрещен\")\n\nfunc checkACL(userID int) error {\n\treturn ErrPermissionDenied\n}\n\nfunc secureService(userID int) error {\n\tif err := checkACL(userID); err != nil {\n\t\treturn fmt.Errorf(\"security check: %w\", err)\n\t}\n\treturn nil\n}\n\nfunc apiHandler(userID int) error {\n\tif err := secureService(userID); err != nil {\n\t\treturn fmt.Errorf(\"api endpoint /admin: %w\", err)\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr := apiHandler(42)\n\tif errors.Is(err, ErrPermissionDenied) {\n\t\tfmt.Println(\"Безопасность: доступ отклонен (HTTP 403)\")\n\t\tfmt.Printf(\"Полная трассировка: %v\\n\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Безопасность: доступ отклонен (HTTP 403)\n# Полная трассировка: api endpoint /admin: security check: доступ запрещен"
+      }
+    ],
+    "under_the_hood": "`errors.Is` раскручивает стек вызовов без выделения дополнительной памяти.",
+    "pitfalls": "Не маскируйте ошибки прав доступа под общую ошибку базы данных.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в микросервисах важно мапить ErrPermissionDenied в HTTP 403 / gRPC PermissionDenied?»\n**Ответ:** Чтобы клиентское приложение понимало причину отказа (ошибка авторизации) и не запускало бессмысленные автоматические повторы (Retry Storm)."
+  },
+  {
+    "num": 26,
+    "title": "Создание кастомного типа ошибки с методом Error() string",
+    "task": "Создай кастомный тип ошибки (структуру, реализующую метод `Error() string`).",
+    "theory": "Кастомная ошибка может содержать подробные системные характеристики: временную метку `time.Time`, хост `Host`, операцию `Op`.",
+    "step_by_step": "1. Объявим `type QueryError struct { Query string; DurationMs int64; Err error }`.\n2. Реализуем `(e *QueryError) Error() string` и `(e *QueryError) Unwrap() error`.\n3. В `main` выведем ошибку.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype QueryError struct {\n\tQuery      string\n\tDurationMs int64\n\tErr        error\n}\n\nfunc (e *QueryError) Error() string {\n\treturn fmt.Sprintf(\"запрос %q упал за %d мс: %v\", e.Query, e.DurationMs, e.Err)\n}\n\nfunc (e *QueryError) Unwrap() error {\n\treturn e.Err\n}\n\nfunc executeSlowQuery() error {\n\treturn &QueryError{\n\t\tQuery:      \"SELECT count(*) FROM big_table\",\n\t\tDurationMs: 5200,\n\t\tErr:        errors.New(\"statement timeout exceeded\"),\n\t}\n}\n\nfunc main() {\n\terr := executeSlowQuery()\n\tif err != nil {\n\t\tfmt.Println(\"Лог ошибки:\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Лог ошибки: запрос \"SELECT count(*) FROM big_table\" упал за 5200 мс: statement timeout exceeded"
+      }
+    ],
+    "under_the_hood": "Метод `Unwrap() error` позволяет `QueryError` поддерживать нативную интеграцию с `errors.Is`/`errors.As`.",
+    "pitfalls": "Если структура оборачивает другую ошибку, всегда реализуйте метод `Unwrap() error`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Зачем кастомной структуре ошибки реализовывать метод Unwrap() error?»\n**Ответ:** Без метода `Unwrap()` стандартные функции `errors.Is` и `errors.As` не смогут заглянуть внутрь вашей структуры и найти вложенную первопричину (`Err`)."
+  },
+  {
+    "num": 27,
+    "title": "Паттерн Guard Clauses: ранний возврат и плоская структура кода",
+    "task": "Напиши функцию с **guard clauses**: функция выполняет 3 проверки (валидация входных данных, проверка существования файла, проверка прав). Каждая проверка — `if err != nil { return ..., err }`. Избегай вложенных `if/else`.",
+    "theory": "Паттерн Guard Clauses (защитные условия) устраняет \"лесенку\" вложенных блоков `if-else`, делая код плоским, линейным и простым для чтения.",
+    "step_by_step": "1. Создадим функцию `ProcessDocument(user string, docID string, data []byte) error`.\n2. Реализуем 3 последовательных проверки с немедленным выходом при ошибке.\n3. В `main` протестируем обработку.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nfunc validateInput(user, docID string) error {\n\tif user == \"\" || docID == \"\" {\n\t\treturn errors.New(\"пользователь и ID документа обязательны\")\n\t}\n\treturn nil\n}\n\nfunc checkPermissions(user string) error {\n\tif user == \"guest\" {\n\t\treturn errors.New(\"гостевым пользователям запрещено редактирование\")\n\t}\n\treturn nil\n}\n\nfunc verifyPayload(data []byte) error {\n\tif len(data) == 0 {\n\t\treturn errors.New(\"документ не может быть пустым\")\n\t}\n\treturn nil\n}\n\nfunc ProcessDocument(user, docID string, data []byte) error {\n\t// Guard 1: Проверка входных аргументов\n\tif err := validateInput(user, docID); err != nil {\n\t\treturn fmt.Errorf(\"guard validate: %w\", err)\n\t}\n\n\t// Guard 2: Проверка прав доступа\n\tif err := checkPermissions(user); err != nil {\n\t\treturn fmt.Errorf(\"guard perms: %w\", err)\n\t}\n\n\t// Guard 3: Проверка тела документа\n\tif err := verifyPayload(data); err != nil {\n\t\treturn fmt.Errorf(\"guard payload: %w\", err)\n\t}\n\n\t// Основная логика (Happy Path):\n\tfmt.Printf(\"Документ %s успешно обработан для %s (%d байт)\\n\", docID, user, len(data))\n\treturn nil\n}\n\nfunc main() {\n\tif err := ProcessDocument(\"guest\", \"doc-1\", []byte(\"data\")); err != nil {\n\t\tfmt.Println(\"Сбой:\", err)\n\t}\n\n\tif err := ProcessDocument(\"admin\", \"doc-2\", []byte(\"Hello Go\")); err != nil {\n\t\tfmt.Println(\"Сбой:\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Сбой: guard perms: гостевым пользователям запрещено редактирование\n# Документ doc-2 успешно обработан для admin (8 байт)"
+      }
+    ],
+    "under_the_hood": "Guard clauses минимизируют цикломатическую сложность (Cyclomatic Complexity) функции.",
+    "pitfalls": "Не оборачивайте успешную часть в `else { ... }`. После блока `if err != nil { return err }` код продолжается на основном уровне отступа.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в Go сообществе избегают конструкции if err == nil { ... } else { return err }?»\n**Ответ:** Потому что это инвертирует логику, сдвигает успешный путь вправо и заставляет разработчика держать в голове контекст вложенности вместо чтения функции сверху вниз."
+  },
+  {
+    "num": 28,
+    "title": "Объединение ошибок цикла валидации через errors.Join",
+    "task": "**Множественные ошибки (Join)**: В цикле валидации данных у тебя накопилось 3 разных ошибки. Используй `errors.Join(err1, err2, err3)` (Go 1.20+), чтобы склеить их в одну ошибку, и выведи её.",
+    "theory": "Сбор нескольких независимых ошибок в цикле с последующим вызовом `errors.Join(errs...)` позволяет вернуть клиенту исчерпывающий список всех некорректных строк за один запрос.",
+    "step_by_step": "1. Создадим срез строк `records`.\n2. В цикле проверим каждую запись и соберем ошибки.\n3. Объединим ошибки через `errors.Join`.\n4. В `main` выведем отчет об ошибках.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"strconv\"\n)\n\nfunc validateRows(rows []string) error {\n\tvar errList []error\n\tfor i, row := range rows {\n\t\tif _, err := strconv.Atoi(row); err != nil {\n\t\t\terrList = append(errList, fmt.Errorf(\"строка %d (%q): не является числом\", i+1, row))\n\t\t}\n\t}\n\treturn errors.Join(errList...)\n}\n\nfunc main() {\n\tbatch := []string{\"100\", \"invalid_num\", \"300\", \"another_bad_val\", \"500\"}\n\n\terr := validateRows(batch)\n\tif err != nil {\n\t\tfmt.Println(\"Ошибки пакетной обработки:\")\n\t\tfmt.Println(err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Ошибки пакетной обработки:\n# строка 2 (\"invalid_num\"): не является числом\n# строка 4 (\"another_bad_val\"): не является числом"
+      }
+    ],
+    "under_the_hood": "`errors.Join` форматирует ошибки через разделитель `\\n`, сохраняя строковую структуру отчета.",
+    "pitfalls": "Если список `errList` пуст, `errors.Join(errList...)` безопасно вернет `nil`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что вернет errors.Join() без аргументов или со всеми nil?»\n**Ответ:** `errors.Join()` без аргументов или если все переданные элементы равны `nil` вернет строго литерал `nil`."
+  },
+  {
+    "num": 29,
+    "title": "Перехват критической паники через defer и recover на верхнем уровне",
+    "task": "Напишите функцию, которая вызывает `panic` при критическом сбое, и используйте `defer` + `recover` на верхнем уровне (`main` или HTTP-хендлере), чтобы перехватить панику и превратить ее в обычный лог или HTTP 500.",
+    "theory": "`panic` останавливает нормальное выполнение горутины, раскручивая стек и выполняя `defer`-функции. Функция `recover()` останавливает панику и возвращает значение, переданное в `panic()`.",
+    "step_by_step": "1. Создадим функцию `riskyOperation()`, вызывающую `panic(\"непредвиденный сбой драйвера\")`.\n2. Создадим middleware `safeHandler()`, содержащий `defer func() { if r := recover(); r != nil { ... } }()`.\n3. В `main` вызовем `safeHandler()` и убедимся, что процесс не упал.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"runtime/debug\"\n)\n\nfunc riskyOperation() {\n\t// Симуляция критического сбоя\n\tpanic(\"критическая ошибка: обращение к неинициализированной памяти\")\n}\n\nfunc safeHandler() {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tfmt.Printf(\"[RECOVER] Перехвачена паника: %v\\n\", r)\n\t\t\tfmt.Println(\"[RECOVER] Ответ клиенту: HTTP 500 Internal Server Error\")\n\t\t\tfmt.Printf(\"[STACKTRACE]:\\n%s\\n\", string(debug.Stack()))\n\t\t}\n\t}()\n\n\tfmt.Println(\"Старт обработки запроса...\")\n\triskyOperation()\n\tfmt.Println(\"Запрос обработан успешно (не будет напечатано)\")\n}\n\nfunc main() {\n\tsafeHandler()\n\tfmt.Println(\"Сервер продолжает стабильную работу после перехвата паники!\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Старт обработки запроса...\n# [RECOVER] Перехвачена паника: критическая ошибка: обращение к неинициализированной памяти\n# [RECOVER] Ответ клиенту: HTTP 500 Internal Server Error\n# [STACKTRACE]:\n# ...\n# Сервер продолжает стабильную работу после перехвата паники!"
+      }
+    ],
+    "under_the_hood": "`recover()` возвращает ненулевое значение только при вызове напрямую внутри функции, запущенной через `defer`.",
+    "pitfalls": "Паника, возникшая в фоновой горутине `go func()`, НЕ может быть перехвачена `recover()` в родительской горутине! Каждая горутина обязана иметь свой собственный `recover`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Может ли recover() в main горутине поймать панику в фоновой go func()?»\n**Ответ:** Нет! Паника изолирована в рамках конкретной горутины. Неперехваченная паника в любой горутине немедленно аварийно завершает весь процесс приложения."
+  },
+  {
+    "num": 30,
+    "title": "Deferred Error Handling и откат транзакций при ошибке",
+    "task": "Напиши функцию с **deferred error handling**: `func DoSomething() (result int, err error)`. В `defer` проверяй `err != nil` и выполняй cleanup (закрытие файла, откат транзакции) только при ошибке.",
+    "theory": "Именованные возвращаемые значения `(result int, err error)` доступны внутри `defer`-замыкания. Это позволяет выполнять откат ресурсов (Rollback / Cleanup) строго в случае возникновения ошибки.",
+    "step_by_step": "1. Объявим функцию `ExecuteTransaction(amount int) (txID int, err error)`.\n2. В `defer` проверим `if err != nil` и сымитируем Rollback.\n3. При `err == nil` выполним Commit.\n4. В `main` протестируем успешную и неуспешную транзакцию.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nfunc ExecuteTransaction(amount int) (txID int, err error) {\n\tfmt.Println(\"[TX] Начало транзакции\")\n\ttxID = 1001\n\n\tdefer func() {\n\t\tif err != nil {\n\t\t\tfmt.Printf(\"[TX #%d] Ошибка (%v) -> Выполнен ROLLBACK!\\n\", txID, err)\n\t\t} else {\n\t\t\tfmt.Printf(\"[TX #%d] Успех -> Выполнен COMMIT!\\n\", txID)\n\t\t}\n\t}()\n\n\tif amount <= 0 {\n\t\terr = errors.New(\"сумма перевода должна быть больше нуля\")\n\t\treturn 0, err\n\t}\n\n\t// Успешная бизнес-логика\n\treturn txID, nil\n}\n\nfunc main() {\n\t_, _ = ExecuteTransaction(500)\n\t_, _ = ExecuteTransaction(-50)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [TX] Начало транзакции\n# [TX #1001] Успех -> Выполнен COMMIT!\n# [TX] Начало транзакции\n# [TX #1001] Ошибка (сумма перевода должна быть больше нуля) -> Выполнен ROLLBACK!"
+      }
+    ],
+    "under_the_hood": "`defer` функция выполняется после вычисления выражения `return`, но до возврата управления вызывающей функции, видя финальное значение именованной переменной `err`.",
+    "pitfalls": "Если не использовать именованные возвращаемые значения `(err error)`, `defer` не сможет увидеть ошибку, возвращаемую из функции.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как реализовать паттерн автоматического Rollback транзакции базы данных в Go?»\n**Ответ:** Использовать `defer tx.Rollback()`. В конце успешного пути вызывать `tx.Commit()`. Если `Commit()` уже выполнен, последующий `Rollback()` в `defer` безопасно вернет `sql.ErrTxDone` без побочных эффектов."
+  },
+  {
+    "num": 31,
+    "title": "Оборачивание кастомной ошибки и распаковка через errors.As",
+    "task": "Верни кастомную ошибку из функции, обернув её через `%w`. Извлеки оригинальный тип ошибки с помощью `errors.As`.",
+    "theory": "Кастомные структуры ошибок, обернутые через `%w`, сохраняют все свои поля и методы при извлечении через `errors.As`.",
+    "step_by_step": "1. Создадим структуру `QuotaExceededError struct { Limit, Used int }`.\n2. Обернем её: `fmt.Errorf(\"storage service: %w\", &QuotaExceededError{Limit: 100, Used: 120})`.\n3. В `main` извлечем структуру через `errors.As` и подсчитаем перерасход.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype QuotaExceededError struct {\n\tLimit int\n\tUsed  int\n}\n\nfunc (e *QuotaExceededError) Error() string {\n\treturn fmt.Sprintf(\"превышена квота: использовано %d из %d MB\", e.Used, e.Limit)\n}\n\nfunc uploadFile(sizeMB int) error {\n\tlimit := 100\n\tif sizeMB > limit {\n\t\treturn fmt.Errorf(\"upload handler: %w\", &QuotaExceededError{Limit: limit, Used: sizeMB})\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr := uploadFile(150)\n\tif err != nil {\n\t\tvar quotaErr *QuotaExceededError\n\t\tif errors.As(err, &quotaErr) {\n\t\t\tfmt.Printf(\"Перерасход квоты на %d MB!\\n\", quotaErr.Used-quotaErr.Limit)\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Перерасход квоты на 50 MB!"
+      }
+    ],
+    "under_the_hood": "`errors.As` выполняет рекурсивный поиск по цепочке `Unwrap` и находит указатель на `*QuotaExceededError`.",
+    "pitfalls": "Переменная `var quotaErr *QuotaExceededError` изначально равна `nil`. `errors.As` сама инициализирует её адресом найденной структуры.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Может ли errors.As извлечь интерфейс, а не конкретную структуру?»\n**Ответ:** Да! `errors.As` может искать ошибку, реализующую определенный интерфейс (например `interface{ Timeout() bool }`), что позволяет писать абстрактные обработчики."
+  },
+  {
+    "num": 32,
+    "title": "Извлечение имени поля FieldName из ValidationError",
+    "task": "**Распаковка кастомной ошибки через `errors.As`**: Напишите функцию, которая возвращает обернутую ошибку `ValidationError`. В вызывающем коде с помощью функции `errors.As` извлеките исходную структуру ошибки и выведите в консоль имя поля `FieldName`, в котором произошла ошибка.",
+    "theory": "Извлечение метаданных ошибки позволяет строить информативные ответы API (например, подсвечивать конкретное поле в JSON-ответе для фронтенда).",
+    "step_by_step": "1. Создадим структуру `ValidationError struct { FieldName string; ErrMsg string }`.\n2. Напишем функцию с оборачиванием ошибки.\n3. В `main` извлечем `FieldName` через `errors.As`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype ValidationError struct {\n\tFieldName string\n\tErrMsg    string\n}\n\nfunc (e *ValidationError) Error() string {\n\treturn fmt.Sprintf(\"поле %s: %s\", e.FieldName, e.ErrMsg)\n}\n\nfunc validateAge(age int) error {\n\tif age < 0 {\n\t\treturn fmt.Errorf(\"userService: %w\", &ValidationError{FieldName: \"age\", ErrMsg: \"не может быть отрицательным\"})\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr := validateAge(-5)\n\tif err != nil {\n\t\tvar valErr *ValidationError\n\t\tif errors.As(err, &valErr) {\n\t\t\tfmt.Printf(\"Подсветка поля формы: [FIELD=%s] Причина: %s\\n\", valErr.FieldName, valErr.ErrMsg)\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Подсветка поля формы: [FIELD=age] Причина: не может быть отрицательным"
+      }
+    ],
+    "under_the_hood": "`errors.As` связывает указатель `valErr` со структурой `ValidationError` на стеке/в куче.",
+    "pitfalls": "Не забывайте проверять результат `if errors.As(err, &valErr)` перед чтением полей.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как мапить ValidationError в стандартизированный ответ RFC 7807 (Problem Details)?»\n**Ответ:** Извлечь через `errors.As` срез `ValidationErrors` и сериализовать в структуру `{\"type\": \"about:blank\", \"title\": \"Validation Error\", \"invalid_params\": [...]}`."
+  },
+  {
+    "num": 33,
+    "title": "Преобразование паники в ошибку: SafeParseInt с panic и recover",
+    "task": "Напиши функцию `SafeParseInt(s string) (int, error)`, использующую `panic/recover` для защиты от неожиданных ситуаций (хотя `strconv.Atoi` и так возвращает ошибку, сымитируй через `panic`). Обсуди, когда `recover` уместен, а когда — нет.",
+    "theory": "Паттерн Safe Wrapper превращает внутренние паники сторонних библиотек или опасных алгоритмов в обычные Go-ошибки `(T, error)` на границе публичного API.",
+    "step_by_step": "1. Объявим функцию `SafeParseInt(s string) (res int, err error)`.\n2. В `defer` перехватим `recover()` и запишем ошибку в `err`.\n3. В `main` протестируем успешный парсинг и перехват паники.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n)\n\nfunc riskyAtoi(s string) int {\n\tval, err := strconv.Atoi(s)\n\tif err != nil {\n\t\tpanic(\"invalid integer format: \" + s)\n\t}\n\treturn val\n}\n\nfunc SafeParseInt(s string) (res int, err error) {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\terr = fmt.Errorf(\"SafeParseInt recovered: %v\", r)\n\t\t}\n\t}()\n\treturn riskyAtoi(s), nil\n}\n\nfunc main() {\n\tv1, err1 := SafeParseInt(\"12345\")\n\tfmt.Printf(\"Результат 1: %d (err: %v)\\n\", v1, err1)\n\n\tv2, err2 := SafeParseInt(\"not_a_number\")\n\tfmt.Printf(\"Результат 2: %d (err: %v)\\n\", v2, err2)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Результат 1: 12345 (err: <nil>)\n# Результат 2: 0 (err: SafeParseInt recovered: invalid integer format: not_a_number)"
+      }
+    ],
+    "under_the_hood": "`recover()` перехватывает панику, очищает состояние паники рантайма и возвращает управление.",
+    "pitfalls": "Никогда не используйте `panic/recover` для обычного потока управления программой (Control Flow). Паника — только для аварийных сбоев.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Где в стандартной библиотеке Go используется panic/recover для возврата error?»\n**Ответ:** В пакетах `encoding/json` и `fmt` парсеры используют внутреннюю панику для глубокого выхода из рекурсивного спуска, а на верхнем уровне публичной функции перехватывают её через `recover()` и возвращают обычный `error`."
+  },
+  {
+    "num": 34,
+    "title": "Паттерн Must: LoadConfig против MustLoadConfig",
+    "task": "**Паника vs Ошибка**: Напиши пакет `config`. Сделай функцию `LoadConfig() error` (которая читает файл и возвращает ошибку, если файла нет) и функцию `MustLoadConfig()`, которая вызывает `LoadConfig` и если есть ошибка — делает `panic()`. Это классический паттерн \"Must\".",
+    "theory": "Префикс `Must...` — общепринятое соглашение в Go для функций инициализации, которые паникуют при сбое. Они применяются только во время старта приложения (`main` или `init`), когда продолжение работы невозможно.",
+    "step_by_step": "1. Создадим структуру `Config`.\n2. Реализуем `LoadConfig(path string) (*Config, error)`.\n3. Реализуем `MustLoadConfig(path string) *Config`.\n4. В `main` покажем работу паттерна.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype Config struct {\n\tPort int\n}\n\nfunc LoadConfig(path string) (*Config, error) {\n\tif path == \"\" {\n\t\treturn nil, errors.New(\"config path is empty\")\n\t}\n\treturn &Config{Port: 8080}, nil\n}\n\n// MustLoadConfig паникует при ошибке инициализации\nfunc MustLoadConfig(path string) *Config {\n\tcfg, err := LoadConfig(path)\n\tif err != nil {\n\t\tpanic(fmt.Sprintf(\"критический сбой загрузки конфига: %v\", err))\n\t}\n\treturn cfg\n}\n\nfunc main() {\n\t// Безопасная инициализация при старте:\n\tcfg := MustLoadConfig(\"app.yaml\")\n\tfmt.Printf(\"Конфигурация успешно загружена: Port=%d\\n\", cfg.Port)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Конфигурация успешно загружена: Port=8080"
+      }
+    ],
+    "under_the_hood": "Паттерн `Must` избавляет от необходимости писать `if err != nil` при инициализации глобальных переменных `var re = regexp.MustCompile(...)`.",
+    "pitfalls": "Никогда не вызывайте `Must...` функции внутри HTTP-хендлеров или фоновых воркеров — это приведет к падению сервера.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В каких стандартных пакетах Go используется паттерн Must?»\n**Ответ:** `regexp.MustCompile`, `template.Must`, `net/url.MustParse`. Они предназначены для компиляции статических константных выражений на этапе старта."
+  },
+  {
+    "num": 35,
+    "title": "Сравнение парадигм: возврат ошибок в Go против исключений try/catch",
+    "task": "Сравните подход \"возвращать ошибки\" (как в Go) и \"бросать исключения\" (как в Java/Python). Попробуйте написать функцию без `if err != nil` и осознайте, почему в Go это считается плохой практикой.",
+    "theory": "В языках с исключениями (`try/catch`) ошибки невидимы в сигнатуре метода и приводят к скрытым аварийным завершениям. В Go ошибки являются явной частью контракта функции.",
+    "step_by_step": "1. Создадим функцию `ParseUser(raw string) (*User, error)`.\n2. Покажем явную обработку ошибок.\n3. В комментариях проанализируем архитектурные преимущества подхода Go.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype User struct {\n\tName string\n}\n\nfunc ParseUser(raw string) (*User, error) {\n\tif raw == \"\" {\n\t\treturn nil, errors.New(\"raw string is empty\")\n\t}\n\treturn &User{Name: raw}, nil\n}\n\nfunc main() {\n\tuser, err := ParseUser(\"\")\n\tif err != nil {\n\t\tfmt.Println(\"Явная обработка ошибки на месте вызова:\", err)\n\t\treturn\n\t}\n\tfmt.Println(\"Пользователь:\", user.Name)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Явная обработка ошибки на месте вызова: raw string is empty"
+      }
+    ],
+    "under_the_hood": "Отсутствие исключений исключает сбор стектрейсов и накладные расходы на раскрутку стека при штатных бизнес-ошибках.",
+    "pitfalls": "Игнорирование ошибок через пустой идентификатор `_` лишает код гарантий надежности.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в Go нет исключений (exceptions)?»\n**Ответ:** 1) Исключения стимулируют разработчиков относиться к штатным ситуациям (файл не найден, сеть недоступна) как к авариям. 2) Исключения запутывают поток управления (нелокальные переходы goto по стеку). 3) Ошибки как значения заставляют продумывать обработку каждого сбоя."
+  },
+  {
+    "num": 36,
+    "title": "Функция MustOpen и область применения паники",
+    "task": "Напиши функцию `MustOpen(filename string) *os.File`, которая паникует при ошибке (паттерн `Must`). Покажи, когда это уместно: `init`, глобальные переменные, константные конфигурации.",
+    "theory": "`MustOpen` используется только тогда, когда отсутствие файла является фатальной ошибкой конфигурации сборки программы (например, embedded assets или ssl certs).",
+    "step_by_step": "1. Реализуем `MustOpen(filename string) *os.File`.\n2. В `main` перехватим панику для демонстрации.\n3. Выведем сообщение о контролируемом падении.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n)\n\nfunc MustOpen(filename string) *os.File {\n\tfile, err := os.Open(filename)\n\tif err != nil {\n\t\tpanic(fmt.Sprintf(\"MustOpen failed on %q: %v\", filename, err))\n\t}\n\treturn file\n}\n\nfunc main() {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tfmt.Printf(\"Перехвачена паника MustOpen: %v\\n\", r)\n\t\t}\n\t}()\n\n\t_ = MustOpen(\"/non/existent/secret.key\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Перехвачена паника MustOpen: MustOpen failed on \"/non/existent/secret.key\": open /non/existent/secret.key: no such file or directory"
+      }
+    ],
+    "under_the_hood": "`panic` записывает сообщение в структуру горутины `g._panic` и начинает unwinding фреймов стека.",
+    "pitfalls": "Не используйте `MustOpen` для пользовательских файлов, загружаемых во время работы сервиса.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Когда допустимо использовать panic в Go?»\n**Ответ:** Только в двух случаях: 1) Фатальная ошибка при старте программы (отсутствует обязательный конфиг, не компилируется регулярка). 2) Неисправимое повреждение внутреннего инварианта программы (баг программиста)."
+  },
+  {
+    "num": 37,
+    "title": "Сбор слайса ошибок и объединение через errors.Join (Go 1.20+)",
+    "task": "Реализуйте функцию, которая может вернуть несколько ошибок (слайс ошибок). Используйте `errors.Join` (Go 1.20+) для объединения.",
+    "theory": "`errors.Join(errs...)` принимает срез `[]error` и объединяет их в единую структуру, реализующую интерфейс `error`.",
+    "step_by_step": "1. Создадим функцию `checkServerHealth() error`.\n2. Проверим базу данных, кэш и брокер сообщений.\n3. Соберем ошибки и объединим через `errors.Join`.\n4. В `main` распечатаем статус здоровья.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar (\n\tErrDBDown    = errors.New(\"db: connection timeout\")\n\tErrCacheDown = errors.New(\"redis: out of memory\")\n)\n\nfunc checkServerHealth() error {\n\tvar errs []error\n\n\t// Проверка 1: БД\n\terrs = append(errs, ErrDBDown)\n\t// Проверка 2: Кэш\n\terrs = append(errs, ErrCacheDown)\n\n\treturn errors.Join(errs...)\n}\n\nfunc main() {\n\terr := checkServerHealth()\n\tif err != nil {\n\t\tfmt.Println(\"Отчет о сбоях сервера:\")\n\t\tfmt.Println(err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Отчет о сбоях сервера:\n# db: connection timeout\n# redis: out of memory"
+      }
+    ],
+    "under_the_hood": "`joinError` формирует единую строку через `\\n`, сохраняя исходный срез ошибок внутри структуры.",
+    "pitfalls": "Если слайс `errs` содержит только `nil`, `errors.Join` вернет `nil`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как errors.Join форматирует вывод метода Error()?»\n**Ответ:** Соединяет сообщения всех ненулевых ошибок через символ перевода строки `\\n`."
+  },
+  {
+    "num": 38,
+    "title": "Агрегация независимых системных операций",
+    "task": "Напиши функцию, выполняющую несколько независимых операций. Собери все ошибки в `[]error`. Верни aggregated error через `fmt.Errorf(\"multiple errors: %w\", errors.Join(errs...))` (Go 1.20+) или просто склей строк.",
+    "theory": "При параллельном или последовательном выполнении независимых задач (очистка временных файлов, сброс кэшей) важно выполнить *все* задачи и вернуть совокупную ошибку.",
+    "step_by_step": "1. Создадим функцию `cleanupOldLogs(dirs []string) error`.\n2. Для каждой директории выполним удаление.\n3. Объединим ошибки через `errors.Join` с контекстом `fmt.Errorf`.\n4. В `main` вызовем очистку.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nfunc cleanDir(dir string) error {\n\tif dir == \"/var/log/protected\" {\n\t\treturn errors.New(\"permission denied\")\n\t}\n\treturn nil\n}\n\nfunc cleanupOldLogs(dirs []string) error {\n\tvar errs []error\n\tfor _, d := range dirs {\n\t\tif err := cleanDir(d); err != nil {\n\t\t\terrs = append(errs, fmt.Errorf(\"cleanup %s: %w\", d, err))\n\t\t}\n\t}\n\n\tif len(errs) > 0 {\n\t\treturn fmt.Errorf(\"cleanup failed with %d errors:\\n%w\", len(errs), errors.Join(errs...))\n\t}\n\treturn nil\n}\n\nfunc main() {\n\tdirs := []string{\"/tmp/logs\", \"/var/log/protected\", \"/opt/logs\"}\n\tif err := cleanupOldLogs(dirs); err != nil {\n\t\tfmt.Println(err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# cleanup failed with 1 errors:\n# cleanup /var/log/protected: permission denied"
+      }
+    ],
+    "under_the_hood": "Двойное оборачивание через `%w` и `errors.Join` сохраняет полную древовидную структуру ошибок.",
+    "pitfalls": "Не прерывайте цикл очистки при первой ошибке, если остальные директории могут быть успешно очищены.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем отличие Best Effort от Fail Fast?»\n**Ответ:** Fail Fast немедленно завершает операцию при первой ошибке. Best Effort выполняет максимально возможный объем работы, собирает все возникшие ошибки и возвращает их агрегированный результат."
+  },
+  {
+    "num": 39,
+    "title": "Игнорирование ошибок: когда допустимо и когда опасно",
+    "task": "**Игнорирование ошибок**: Вызови `fmt.Println` (он возвращает кол-во записанных байт и ошибку). Проигнорируй возврат с помощью `_, _ = fmt.Println(...)`. Пойми, когда это допустимо, а когда — преступление.",
+    "theory": "Игнорирование ошибки допустимо только для тривиального консольного вывода `fmt.Println` (где падение stdout означает падение самого процесса) или при закрытии read-only ресурсов в `defer`.",
+    "step_by_step": "1. Покажем допустимое игнорирование для `fmt.Println`.\n2. Покажем опасное игнорирование для сетевого сокета или записи в файл.\n3. В `main` объясним разницу.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n)\n\nfunc safeConsoleOutput() {\n\t// Допустимо: ошибка записи в stdout не может быть обработана приложением\n\t_, _ = fmt.Println(\"Информационное сообщение\")\n}\n\nfunc criticalFileWrite() error {\n\tf, err := os.Create(\"important.txt\")\n\tif err != nil {\n\t\treturn err\n\t}\n\tdefer f.Close()\n\n\t// ОПАСНО: игнорировать ошибку f.Write или f.Sync()!\n\t// Если диск переполнен, данные будут потеряны без ведома программы.\n\t_, err = f.WriteString(\"Секретные данные\")\n\tif err != nil {\n\t\treturn fmt.Errorf(\"write error: %w\", err)\n\t}\n\n\treturn f.Sync() // Фиксация на физическом диске\n}\n\nfunc main() {\n\tsafeConsoleOutput()\n\tif err := criticalFileWrite(); err != nil {\n\t\tfmt.Println(\"Сбой записи файла:\", err)\n\t} else {\n\t\tfmt.Println(\"Файл успешно сохранен на диск\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Информационное сообщение\n# Файл успешно сохранен на диск"
+      }
+    ],
+    "under_the_hood": "Линтер `errcheck` в CI/CD пайплайнах проверяет кодовую базу на любые необработанные ошибки.",
+    "pitfalls": "Игнорирование ошибок `json.Unmarshal` или `f.Close()` для записываемых файлов приводит к бесшумной потере данных (Silent Data Corruption).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему defer file.Close() опасен для файлов, открытых на запись?»\n**Ответ:** При записи на диск буферы сбрасываются во время закрытия файла (`close syscall`). Если диск переполнен, ошибка сброса буфера вернется из `Close()`. Если проигнорировать её в `defer file.Close()`, приложение будет считать файл успешно сохраненным, хотя данные потеряны."
+  },
+  {
+    "num": 40,
+    "title": "Философия Go: когда использовать panic, а когда возвращать error",
+    "task": "**Паника против Ошибки**: Напишите парсер конфигурационного файла. Если файл поврежден, функция должна возвращать `error`. Если же в кодовой базе переданы некорректные системные параметры (например, пустой путь к конфигурационному файлу), вызовите `panic`. Опишите в комментариях философию Go: когда нужно использовать панику, а когда возвращать ошибку.",
+    "theory": "Философия обработки ошибок в Go:\n1. `error` используется для всех ожидаемых, штатных и внешних сбоев (сеть, ввод-вывод, некорректный JSON, отказ базы данных).\n2. `panic` используется только для критических нарушений целостности программы, вызванных ошибками программиста (передача `nil` туда, где ожидался указатель, пустой путь к встроенному конфигу).",
+    "step_by_step": "1. Создадим функцию `ParseConfigFile(filePath string, data []byte) (map[string]string, error)`.\n2. Если `filePath == \"\"`, вызовем `panic(\"filePath cannot be empty\")`.\n3. Если `data` повреждена, вернем `nil, errors.New(\"corrupted config format\")`.\n4. В `main` продемонстрируем оба случая.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nfunc ParseConfigFile(filePath string, data []byte) (map[string]string, error) {\n\t// 1. Ошибка программиста (невалидный параметр вызова) -> ПАНИКА\n\tif filePath == \"\" {\n\t\tpanic(\"ParseConfigFile: filePath argument must not be empty string (programmer bug)\")\n\t}\n\n\t// 2. Внешняя ошибка данных (битый файл) -> ВОЗВРАТ ERROR\n\tif len(data) == 0 || data[0] != '{' {\n\t\treturn nil, errors.New(\"corrupted config: expected JSON object starting with '{'\")\n\t}\n\n\treturn map[string]string{\"env\": \"prod\"}, nil\n}\n\nfunc main() {\n\t// Случай 1: Штатная ошибка данных\n\t_, err := ParseConfigFile(\"app.json\", []byte(\"INVALID_DATA\"))\n\tif err != nil {\n\t\tfmt.Println(\"Штатная ошибка (обработана):\", err)\n\t}\n\n\t// Случай 2: Ошибка программиста (паника)\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tfmt.Println(\"Перехвачена аварийная паника:\", r)\n\t\t}\n\t}()\n\t_, _ = ParseConfigFile(\"\", []byte(\"{}\"))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Штатная ошибка (обработана): corrupted config: expected JSON object starting with '{'\n# Перехвачена аварийная паника: ParseConfigFile: filePath argument must not be empty string (programmer bug)"
+      }
+    ],
+    "under_the_hood": "Компилятор Go не разделяет checked и unchecked исключения — `error` всегда проверяется кодом явно.",
+    "pitfalls": "Не используйте панику для бизнес-валидации полей формы (возраст, email).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Каковы 3 главных правила использования panic в production коде Go?»\n**Ответ:** 1) Не паниковать в библиотечном коде (только возвращать error). 2) Использовать panic только при инициализации приложения (`main`/`init`). 3) В HTTP/RPC серверах оборачивать каждый запрос в recovery-middleware для защиты от падения всего инстанса."
+  },
+  {
+    "num": 41,
+    "title": "Универсальный исполнитель повторов Retry с логированием",
+    "task": "Напиши функцию `Retry(operation func() error, attempts int, delay time.Duration) error`, которая повторяет операцию при ошибке с задержкой. Логируй каждую попытку.",
+    "theory": "Универсальная функция `Retry` инкапсулирует цикл повторов произвольного замыкания `func() error`, логируя каждую неудачную попытку в консоль.",
+    "step_by_step": "1. Объявим `Retry(operation func() error, attempts int, delay time.Duration) error`.\n2. В цикле вызовем `operation()`, логируя попытку `i`.\n3. В `main` сымитируем операцию, успешную со второй попытки.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc Retry(operation func() error, attempts int, delay time.Duration) error {\n\tvar lastErr error\n\tfor i := 1; i <= attempts; i++ {\n\t\terr := operation()\n\t\tif err == nil {\n\t\t\tfmt.Printf(\"[RETRY] Попытка %d/%d: УСПЕХ!\\n\", i, attempts)\n\t\t\treturn nil\n\t\t}\n\t\tlastErr = err\n\t\tfmt.Printf(\"[RETRY] Попытка %d/%d завершилась ошибкой: %v\\n\", i, attempts, err)\n\t\tif i < attempts {\n\t\t\ttime.Sleep(delay)\n\t\t}\n\t}\n\treturn fmt.Errorf(\"все %d попыток провалены: %w\", attempts, lastErr)\n}\n\nfunc main() {\n\tcalls := 0\n\tsendWebhook := func() error {\n\t\tcalls++\n\t\tif calls < 2 {\n\t\t\treturn errors.New(\"503 Service Unavailable\")\n\t\t}\n\t\treturn nil\n\t}\n\n\terr := Retry(sendWebhook, 3, 5*time.Millisecond)\n\tif err != nil {\n\t\tfmt.Println(\"Итог:\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [RETRY] Попытка 1/3 завершилась ошибкой: 503 Service Unavailable\n# [RETRY] Попытка 2/3: УСПЕХ!"
+      }
+    ],
+    "under_the_hood": "Замыкание `sendWebhook` сохраняет состояние счетчика вызовов `calls` между итерациями цикла.",
+    "pitfalls": "Всегда проверяйте `i < attempts` перед `time.Sleep`, чтобы не спать впустую после последней неудачной попытки.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как поддержать отмену Retry через context.Context?»\n**Ответ:** Заменить `time.Sleep(delay)` на `select { case <-ctx.Done(): return ctx.Err(); case <-time.After(delay): }`."
+  },
+  {
+    "num": 42,
+    "title": "Множественные ошибки и их проверка через errors.Is",
+    "task": "**[Каверзный кейс]**: Напиши функцию, которая возвращает несколько ошибок одновременно. (Можно использовать `errors.Join` из Go 1.20+). Проверь наличие конкретной ошибки в объединенной ошибке через `errors.Is`.",
+    "theory": "`errors.Is` умеет находить маркерную ошибку внутри `errors.Join`, даже если она является лишь одной из пяти объединенных ошибок.",
+    "step_by_step": "1. Объявим две маркерные ошибки `ErrQuotaExceeded` и `ErrRateLimited`.\n2. Создадим функцию `checkLimits() error`, возвращающую обе ошибки через `errors.Join`.\n3. В `main` проверим наличие каждой ошибки через `errors.Is`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar (\n\tErrQuotaExceeded = errors.New(\"monthly quota exceeded\")\n\tErrRateLimited   = errors.New(\"too many requests per second\")\n)\n\nfunc checkLimits() error {\n\treturn errors.Join(ErrQuotaExceeded, ErrRateLimited)\n}\n\nfunc main() {\n\terr := checkLimits()\n\n\tfmt.Println(\"Полный текст объединенных ошибок:\")\n\tfmt.Println(err)\n\n\tfmt.Println(\"\\nПроверка через errors.Is:\")\n\tfmt.Println(\"-> Содержит ErrQuotaExceeded:\", errors.Is(err, ErrQuotaExceeded))\n\tfmt.Println(\"-> Содержит ErrRateLimited:  \", errors.Is(err, ErrRateLimited))\n\tfmt.Println(\"-> Содержит ErrNotFound:     \", errors.Is(err, errors.New(\"not found\")))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Полный текст объединенных ошибок:\n# monthly quota exceeded\n# too many requests per second\n# \n# Проверка через errors.Is:\n# -> Содержит ErrQuotaExceeded: true\n# -> Содержит ErrRateLimited:   true\n# -> Содержит ErrNotFound:      false"
+      }
+    ],
+    "under_the_hood": "`joinError.Unwrap()` возвращает срез `[]error`, по которому `errors.Is` выполняет рекурсивный поиск.",
+    "pitfalls": "Не проверяйте объединенные ошибки простым сравнением `err == ErrQuotaExceeded`, так как `joinError` — это отдельная структура.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как errors.As работает с errors.Join?»\n**Ответ:** `errors.As` обходит срез ошибок слева направо и возвращает *первую* ошибку, совпавшую с запрашиваемым типом."
+  },
+  {
+    "num": 43,
+    "title": "Отложенный Recover: защита от деления на 0",
+    "task": "**Отложенный Recover**: Напиши функцию, которая может запаниковать (например, деление на 0). В начале функции добавь `defer func() { if r := recover(); r != nil { fmt.Println(\"Спасены от:\", r) } }()`.",
+    "theory": "Деление целого числа на ноль в Go вызывает панику рантайма `runtime error: integer divide by zero`. Отложенный `defer` с `recover()` гарантирует перехват этой паники.",
+    "step_by_step": "1. Создадим функцию `dangerousDivision(a, b int)`.\n2. Добавим `defer` с `recover()`.\n3. Выполним деление на ноль `a / b`.\n4. В `main` вызовем функцию.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc dangerousDivision(a, b int) {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tfmt.Println(\"Спасены от паники:\", r)\n\t\t}\n\t}()\n\n\tfmt.Println(\"Вычисляем:\", a, \"/\", b)\n\tres := a / b // Паника при b == 0\n\tfmt.Println(\"Результат:\", res)\n}\n\nfunc main() {\n\tdangerousDivision(10, 2)\n\tdangerousDivision(10, 0)\n\tfmt.Println(\"Программа штатно завершила работу!\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Вычисляем: 10 / 2\n# Результат: 5\n# Вычисляем: 10 / 0\n# Спасены от паники: runtime error: integer divide by zero\n# Программа штатно завершила работу!"
+      }
+    ],
+    "under_the_hood": "Арифметическая ошибка на уровне процессора перехватывается сигналом ОС `SIGFPE`, который рантайм Go транслирует в Go-панику.",
+    "pitfalls": "Деление чисел с плавающей точкой `10.0 / 0.0` НЕ вызывает панику, а возвращает `+Inf` (по стандарту IEEE 754). Паникует только целочисленное деление `int / 0`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему 1.0 / 0.0 не паникует в Go, а 1 / 0 паникует?»\n**Ответ:** Числа с плавающей запятой (`float64`) следуют стандарту IEEE 754, где деление на ноль дает бесконечность `+Inf` или `-Inf`. Целочисленные типы (`int`) не имеют представления для бесконечности, поэтому процессор генерирует исключение деления на ноль, превращаемое рантаймом Go в панику."
+  },
+  {
+    "num": 44,
+    "title": "Таймаут операции через context.WithTimeout и context.DeadlineExceeded",
+    "task": "Напиши функцию `Timeout(operation func() error, timeout time.Duration) error`, используя `context.WithTimeout`. Отменяй операцию по таймауту и возвращай `context.DeadlineExceeded`.",
+    "theory": "`context.WithTimeout` — стандартный способ ограничения времени выполнения блокирующих операций. При превышении лимита контекст закрывает канал `ctx.Done()` и возвращает ошибку `context.DeadlineExceeded`.",
+    "step_by_step": "1. Создадим функцию `RunWithTimeout(timeout time.Duration, op func() error) error`.\n2. Запустим операцию в горутине, передавая результат в канал `done := make(chan error, 1)`.\n3. Через `select` выберем `case err := <-done` или `case <-ctx.Done(): return ctx.Err()`.\n4. В `main` проверим быстрый и зависающий вызовы.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc RunWithTimeout(timeout time.Duration, op func() error) error {\n\tctx, cancel := context.WithTimeout(context.Background(), timeout)\n\tdefer cancel()\n\n\tdone := make(chan error, 1)\n\tgo func() {\n\t\tdone <- op()\n\t}()\n\n\tselect {\n\tcase err := <-done:\n\t\treturn err\n\tcase <-ctx.Done():\n\t\treturn ctx.Err() // context.DeadlineExceeded\n\t}\n}\n\nfunc main() {\n\tslowOperation := func() error {\n\t\ttime.Sleep(100 * time.Millisecond)\n\t\treturn nil\n\t}\n\n\terr := RunWithTimeout(20*time.Millisecond, slowOperation)\n\tif errors.Is(err, context.DeadlineExceeded) {\n\t\tfmt.Println(\"Операция отменена по таймауту:\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Операция отменена по таймауту: context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "Буферизованный канал `make(chan error, 1)` предотвращает утечку горутины, если та завершится после истечения таймаута.",
+    "pitfalls": "Всегда создавайте канал завершения с буфером размера 1, иначе горутина зависнет на отправке `done <- op()`, вызвав утечку памяти (Goroutine Leak).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему канал done в паттерне Timeout обязан быть буферизованным?»\n**Ответ:** Если канал небуферизован, а операция завершилась после того, как `select` вышел по `ctx.Done()`, горутина навечно заблокируется на `done <- err`, так как читателя больше нет. Буфер емкостью 1 позволяет горутине завершиться и быть собранной сборщиком мусора."
+  },
+  {
+    "num": 45,
+    "title": "Трансформация паники в error внутри функции",
+    "task": "Используй `defer` и `recover()` внутри функции для перехвата паники. Верни перехваченную панику как обычную `error` из функции.",
+    "theory": "Преобразование паники в ошибку позволяет изолировать опасный код внутри функции, защищая вызывающий код от аварийного завершения.",
+    "step_by_step": "1. Объявим `func ExecutePlugin(name string) (err error)`.\n2. В `defer` перехватим панику и сформируем `err = fmt.Errorf(\"plugin panic: %v\", r)`.\n3. В `main` вызовем функцию и распечатаем возвращенный `err`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc riskyPlugin() {\n\tvar ptr *int\n\t*ptr = 42 // Nil pointer dereference panic\n}\n\nfunc ExecutePlugin() (err error) {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\terr = fmt.Errorf(\"plugin execution crashed: %v\", r)\n\t\t}\n\t}()\n\n\triskyPlugin()\n\treturn nil\n}\n\nfunc main() {\n\terr := ExecutePlugin()\n\tif err != nil {\n\t\tfmt.Println(\"Штатно обработана внутренняя авария плагина:\")\n\t\tfmt.Println(\"->\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Штатно обработана внутренняя авария плагина:\n# -> plugin execution crashed: runtime error: invalid memory address or nil pointer dereference"
+      }
+    ],
+    "under_the_hood": "Присваивание именованному возвращаемому значению `err` в `defer` перезаписывает результат функции до возврата в стек вызова.",
+    "pitfalls": "Не скрывайте паники вслепую без логирования или возврата ошибки — это затруднит поиск багов.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Когда паттерн Panic-to-Error оправдан в архитектуре?»\n**Ответ:** При интеграции с динамическими плагинами, парсерами недоверенных форматов или выполнении пользовательского кода/скриптов, чтобы ошибка в одном модуле не обрушила весь микросервис."
+  },
+  {
+    "num": 46,
+    "title": "Пакетные маркеры ErrNotFound и ErrPermission",
+    "task": "Создайте sentinel-ошибки (пакетные переменные) `ErrNotFound`, `ErrPermission`. Возвращайте их и проверяйте снаружи.",
+    "theory": "Пакетные маркерные ошибки задают контракт взаимодействия с модулем.",
+    "step_by_step": "1. Объявим `var ErrNotFound = errors.New(\"resource not found\")` и `var ErrPermission = errors.New(\"permission denied\")`.\n2. Реализуем функцию доступа к файлу.\n3. В `main` обработаем обе ошибки через `errors.Is`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar (\n\tErrNotFound   = errors.New(\"resource not found\")\n\tErrPermission = errors.New(\"permission denied\")\n)\n\nfunc AccessFile(user string, fileID int) error {\n\tif fileID != 100 {\n\t\treturn ErrNotFound\n\t}\n\tif user != \"root\" {\n\t\treturn ErrPermission\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr1 := AccessFile(\"alice\", 999)\n\tif errors.Is(err1, ErrNotFound) {\n\t\tfmt.Println(\"err1: Файл не существует\")\n\t}\n\n\terr2 := AccessFile(\"alice\", 100)\n\tif errors.Is(err2, ErrPermission) {\n\t\tfmt.Println(\"err2: Недостаточно прав для чтения файла\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# err1: Файл не существует\n# err2: Недостаточно прав для чтения файла"
+      }
+    ],
+    "under_the_hood": "Экземпляры ошибок создаются при загрузке пакета и не аллоцируются повторно.",
+    "pitfalls": "Именуйте маркерные ошибки с префиксом `Err` (например `ErrTimeout`, `ErrClosed`).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Каковы стандарты именования ошибок в Go Code Review Guidelines?»\n**Ответ:** 1) Sentinel-ошибки именуются как `ErrXxx` (например `ErrNotFound`). 2) Кастомные типы ошибок именуются как `XxxError` (например `PathError`, `ValidationError`). 3) Текст ошибки пишется в нижнем регистре без знаков препинания в конце."
+  },
+  {
+    "num": 47,
+    "title": "Комплексная валидация формы регистрации через errors.Join",
+    "task": "**Объединение ошибок (`errors.Join`)**: Напишите валидатор формы регистрации. Напишите несколько независимых проверок (валидация email, пароля, возраста). Соберите все возникшие ошибки в один пакет с помощью функции `errors.Join` (доступна в современных версиях Go) и верните результат вызывающему коду.",
+    "theory": "Комплексная валидация позволяет пользователю исправить все ошибки в форме за один раз, а не отправлять запрос по кругу после исправления каждого отдельного поля.",
+    "step_by_step": "1. Создадим форму `UserSignupRequest`.\n2. Реализуем проверки: email содержит `@`, пароль $\\ge 8$ символов, возраст $\\ge 18$.\n3. Объединим ошибки через `errors.Join`.\n4. В `main` выведем отчет.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"strings\"\n)\n\ntype UserSignupRequest struct {\n\tEmail    string\n\tPassword string\n\tAge      int\n}\n\nfunc ValidateSignup(req UserSignupRequest) error {\n\tvar errs []error\n\n\tif !strings.Contains(req.Email, \"@\") || !strings.Contains(req.Email, \".\") {\n\t\terrs = append(errs, errors.New(\"email: некорректный формат адреса\"))\n\t}\n\tif len(req.Password) < 8 {\n\t\terrs = append(errs, errors.New(\"password: длина должна быть не менее 8 символов\"))\n\t}\n\tif req.Age < 18 {\n\t\terrs = append(errs, errors.New(\"age: регистрация доступна только с 18 лет\"))\n\t}\n\n\treturn errors.Join(errs...)\n}\n\nfunc main() {\n\treq := UserSignupRequest{\n\t\tEmail:    \"invalid_email\",\n\t\tPassword: \"short\",\n\t\tAge:      16,\n\t}\n\n\tif err := ValidateSignup(req); err != nil {\n\t\tfmt.Println(\"Ошибки заполнения формы:\")\n\t\tfmt.Println(err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Ошибки заполнения формы:\n# email: некорректный формат адреса\n# password: длина должна быть не менее 8 символов\n# age: регистрация доступна только с 18 лет"
+      }
+    ],
+    "under_the_hood": "`errors.Join` создает структуру `joinError`, форматируя сообщения через `\\n`.",
+    "pitfalls": "Не используйте `errors.Join`, если ошибки должны приводить к мгновенной остановке вычислений (Fail Fast).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как обработать каждую ошибку из errors.Join по отдельности?»\n**Ответ:** Если ошибка реализует `interface{ Unwrap() []error }`, можно вызвать этот метод и проитерироваться по срезу вложенных ошибок `for _, err := range err.(interface{ Unwrap() []error }).Unwrap()`."
+  },
+  {
+    "num": 48,
+    "title": "Безопасное закрытие ресурсов: CloseResource с логированием и паникой",
+    "task": "Напиши функцию `CloseResource(c io.Closer)`, которая вызывает `c.Close()` и паникует, если закрытие вернуло ошибку (используй `log.Panic` или `panic(err)`).",
+    "theory": "Функция `CloseResource` полезна для критических системных дескрипторов (блокировки файлов, транзакционные журналы WAL), сбой закрытия которых грозит повреждением данных.",
+    "step_by_step": "1. Создадим структуру `CriticalFile` с методом `Close() error`.\n2. Реализуем `CloseResource(c io.Closer)`.\n3. В `main` покажем успешное и аварийное закрытие.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n)\n\ntype CriticalFile struct {\n\tName      string\n\tShouldFail bool\n}\n\nfunc (c *CriticalFile) Close() error {\n\tif c.ShouldFail {\n\t\treturn errors.New(\"диск поврежден: ошибка сброса буфера на носитель\")\n\t}\n\tfmt.Printf(\"Файл %s успешно закрыт\\n\", c.Name)\n\treturn nil\n}\n\nfunc CloseResource(c io.Closer) {\n\tif err := c.Close(); err != nil {\n\t\tpanic(fmt.Sprintf(\"критический сбой закрытия ресурса: %v\", err))\n\t}\n}\n\nfunc main() {\n\tf1 := &CriticalFile{Name: \"wal.log\", ShouldFail: false}\n\tCloseResource(f1)\n\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tfmt.Printf(\"Перехвачена паника: %v\\n\", r)\n\t\t}\n\t}()\n\n\tf2 := &CriticalFile{Name: \"data.db\", ShouldFail: true}\n\tCloseResource(f2)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Файл wal.log успешно закрыт\n# Перехвачена паника: критический сбой закрытия ресурса: диск поврежден: ошибка сброса буфера на носитель"
+      }
+    ],
+    "under_the_hood": "`io.Closer` — стандартный интерфейс с методом `Close() error`.",
+    "pitfalls": "Для обычных read-only файлов лучше логировать ошибку закрытия, а не паниковать.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Когда сбой Close() требует аварийного завершения приложения?»\n**Ответ:** При работе с Write-Ahead Log (WAL) в базах данных или репликационных логах: сбой записи заголовка файла закрытия делает состояние БД несогласованным."
+  },
+  {
+    "num": 49,
+    "title": "Централизованный хэндлер-роутер с единой точкой логирования",
+    "task": "**Централизованный хэндлер**: Напиши функцию-роутер, которая вызывает 3 другие функции (которые могут вернуть ошибки). Если любая из них возвращает ошибку, роутер логирует её и возвращает \"HTTP 500\", не дублируя код обработки логов каждый раз.",
+    "theory": "Централизованный роутер устраняет дублирование кода: внутренние сервисы только возвращают ошибки с контекстом, а верхнеуровневый хендлер отвечает за аудит, логирование и формирование ответа клиенту.",
+    "step_by_step": "1. Создадим 3 шага конвейера: `stepAuth`, `stepFetchData`, `stepRender`.\n2. Реализуем `HandleRequest(action string) (string, int)`.\n3. В `main` протестируем успешный запрос и обработку сбоя.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nfunc stepAuth(token string) error {\n\tif token != \"secret_token\" {\n\t\treturn errors.New(\"auth: invalid bearer token\")\n\t}\n\treturn nil\n}\n\nfunc stepFetchData() error {\n\treturn errors.New(\"db: connection dropped by peer\")\n}\n\nfunc stepRender() error {\n\treturn nil\n}\n\nfunc HandleRequest(token string) (body string, statusCode int) {\n\t// Внутренний раннер для централизации обработки ошибок:\n\texecute := func() error {\n\t\tif err := stepAuth(token); err != nil {\n\t\t\treturn fmt.Errorf(\"step 1 failed: %w\", err)\n\t\t}\n\t\tif err := stepFetchData(); err != nil {\n\t\t\treturn fmt.Errorf(\"step 2 failed: %w\", err)\n\t\t}\n\t\tif err := stepRender(); err != nil {\n\t\t\treturn fmt.Errorf(\"step 3 failed: %w\", err)\n\t\t}\n\t\treturn nil\n\t}\n\n\tif err := execute(); err != nil {\n\t\t// Единая точка логирования и формирования ответа\n\t\tfmt.Printf(\"[SERVER ERROR LOG] Ошибка обработки запроса: %v\\n\", err)\n\t\treturn `{\"error\": \"Internal Server Error\"}`, 500\n\t}\n\n\treturn `{\"status\": \"success\"}`, 200\n}\n\nfunc main() {\n\tbody, code := HandleRequest(\"secret_token\")\n\tfmt.Printf(\"HTTP Код: %d | Ответ: %s\\n\", code, body)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [SERVER ERROR LOG] Ошибка обработки запроса: step 2 failed: db: connection dropped by peer\n# HTTP Код: 500 | Ответ: {\"error\": \"Internal Server Error\"}"
+      }
+    ],
+    "under_the_hood": "Замыкание `execute` инкапсулирует последовательность шагов, возвращая первую возникшую ошибку.",
+    "pitfalls": "Не логируйте ошибку на каждом шаге `step1`, `step2` — это замусоривает логи дубликатами одного и того же сбоя.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему антипаттерн log-and-return так вреден для мониторинга (Grafana/Kibana)?»\n**Ответ:** Потому что на один реальный сбой в логах появляется 5-10 сообщений от каждого слоя стека, что искажает метрики частоты ошибок (Error Rate) и затрудняет поиск первопричины инцидента."
+  },
+  {
+    "num": 50,
+    "title": "Сравнение стратегий обработки: Fail-Fast против Best-Effort",
+    "task": "Напиши программу с двумя стратегиями: **fail fast** (при первой ошибке всё падает) и **best effort** (продолжается с логированием ошибок, собирает все). Сравни подходы.",
+    "theory": "- **Fail-Fast:** Прерывает выполнение при первом сбое. Подходит для транзакций, платежей, миграций БД.\n- **Best-Effort:** Продолжает выполнение, обрабатывая все возможные элементы и собирая ошибки. Подходит для фоновых рассылок, очистки мусора, импорта каталогов.",
+    "step_by_step": "1. Создадим список задач `tasks`.\n2. Реализуем стратегию `processFailFast(tasks []int) error`.\n3. Реализуем стратегию `processBestEffort(tasks []int) error`.\n4. В `main` сравним поведение на одних и тех же данных.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nfunc runTask(id int) error {\n\tif id == 2 || id == 4 {\n\t\treturn fmt.Errorf(\"task #%d failed\", id)\n\t}\n\tfmt.Printf(\" -> Задача #%d успешно выполнена\\n\", id)\n\treturn nil\n}\n\n// Fail-Fast: остановка на первом сбое\nfunc processFailFast(tasks []int) error {\n\tfmt.Println(\"=== Стратегия FAIL-FAST ===\")\n\tfor _, id := range tasks {\n\t\tif err := runTask(id); err != nil {\n\t\t\treturn fmt.Errorf(\"fail-fast abort: %w\", err)\n\t\t}\n\t}\n\treturn nil\n}\n\n// Best-Effort: сбор всех ошибок и продолжение\nfunc processBestEffort(tasks []int) error {\n\tfmt.Println(\"\\n=== Стратегия BEST-EFFORT ===\")\n\tvar errs []error\n\tfor _, id := range tasks {\n\t\tif err := runTask(id); err != nil {\n\t\t\terrs = append(errs, err)\n\t\t}\n\t}\n\treturn errors.Join(errs...)\n}\n\nfunc main() {\n\ttasks := []int{1, 2, 3, 4, 5}\n\n\tif err := processFailFast(tasks); err != nil {\n\t\tfmt.Println(\"Прервано:\", err)\n\t}\n\n\tif err := processBestEffort(tasks); err != nil {\n\t\tfmt.Println(\"Сводные ошибки после выполнения:\")\n\t\tfmt.Println(err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# === Стратегия FAIL-FAST ===\n#  -> Задача #1 успешно выполнена\n# Прервано: fail-fast abort: task #2 failed\n# \n# === Стратегия BEST-EFFORT ===\n#  -> Задача #1 успешно выполнена\n#  -> Задача #3 успешно выполнена\n#  -> Задача #5 успешно выполнена\n# Сводные ошибки после выполнения:\n# task #2 failed\n# task #4 failed"
+      }
+    ],
+    "under_the_hood": "`processBestEffort` использует `errors.Join` для сохранения полной картины всех сбоев пачки.",
+    "pitfalls": "В финансовых транзакциях использование Best-Effort недопустимо из-за риска частичных несогласованных проводок.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Когда применять Fail-Fast, а когда Best-Effort в распределенных системах?»\n**Ответ:** Fail-Fast применяют для операций с жесткой согласованностью (ACID, двухфазный коммит 2PC). Best-Effort применяют для массовых асинхронных уведомлений (Push/Email рассылки), пакетной инвалидации кэшей и репликации с eventual consistency."
+  },
+  {
+    "num": 51,
+    "title": "Опасность игнорирования ошибок через blank identifier _",
+    "task": "**Игнорирование ошибок**: Напишите код, в котором вы умышленно игнорируете возвращаемую ошибку с помощью `_`. Напишите комментарий, почему в продакшн-кодовой базе это является критически опасной практикой.",
+    "theory": "Игнорирование возвращаемой ошибки через `_` скрывает сбои оборудования, сети или формата данных. Программа продолжает работу в поврежденном состоянии, порождая \"тихие\" баги (Silent Failures) и коррупцию данных.",
+    "step_by_step": "1. Создадим структуру `UserSession`.\n2. Покажем опасный пример с `_ = json.Unmarshal(...)`.\n3. Покажем безопасный пример с явной обработкой ошибки.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n)\n\ntype UserSession struct {\n\tUserID  int    `json:\"user_id\"`\n\tIsAdmin bool   `json:\"is_admin\"`\n}\n\nfunc dangerousHandler(rawJSON []byte) {\n\tvar session UserSession\n\t// ОПАСНО: игнорирование ошибки! Если JSON битый, session останется пустой,\n\t// и дальнейшая логика может некорректно авторизовать или деавторизовать пользователя.\n\t_ = json.Unmarshal(rawJSON, &session)\n\n\tfmt.Printf(\"[Опасно] UserID=%d, IsAdmin=%v (тихая ошибка)\\n\", session.UserID, session.IsAdmin)\n}\n\nfunc safeHandler(rawJSON []byte) error {\n\tvar session UserSession\n\tif err := json.Unmarshal(rawJSON, &session); err != nil {\n\t\treturn fmt.Errorf(\"парсинг сессии: %w\", err)\n\t}\n\tfmt.Printf(\"[Безопасно] UserID=%d, IsAdmin=%v\\n\", session.UserID, session.IsAdmin)\n\treturn nil\n}\n\nfunc main() {\n\tbadJSON := []byte(`{\"user_id\": \"NOT_AN_INTEGER\"}`)\n\n\tdangerousHandler(badJSON)\n\n\tif err := safeHandler(badJSON); err != nil {\n\t\tfmt.Println(\"Безопасный хендлер перехватил ошибку:\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Опасно] UserID=0, IsAdmin=false (тихая ошибка)\n# Безопасный хендлер перехватил ошибку: парсинг сессии: json: cannot unmarshal string into Go struct field UserSession.user_id of type int"
+      }
+    ],
+    "under_the_hood": "При игнорировании ошибки в `session` остаются дефолтные zero values полей, которые программа принимает за валидные данные.",
+    "pitfalls": "Используйте линтеры `golangci-lint` с правилом `errcheck` для автоматической блокировки PR с непроверенными ошибками.",
+    "bigtech_interview": "**Вопрос с собеседования:** «К каким последствиям приводит _ = row.Scan(...) при чтении из SQL базы?»\n**Ответ:** Если тип колонки изменился или колонка равна NULL, `Scan` завершится сбоем, а переменные останутся со значениями по умолчанию (0, \"\"). Приложение продолжит работать с искаженными данными, что может привести к финансовым потерям."
+  },
+  {
+    "num": 52,
+    "title": "Многоуровневая цепочка преобразований: строка -> вычисление -> файл",
+    "task": "**[Высокая сложность]**: Напиши функцию, которая считывает число из строки, делит его на другое число и записывает результат в файл. Оберни ошибки на каждом этапе (`strconv`, `math`, `os`), чтобы в логе было видно всю цепочку вызовов.",
+    "theory": "Сложная бизнес-операция состоит из разнородных этапов (парсинг, вычисление, ввод-вывод). Оборачивание на каждом этапе дает кристально понятную цепочку трассировки ошибки.",
+    "step_by_step": "1. Реализуем функцию `ProcessAndSave(numStr string, divisor int, filename string) error`.\n2. Этап 1: `strconv.Atoi` с `%w`.\n3. Этап 2: Проверка деления на ноль с `%w`.\n4. Этап 3: `os.WriteFile` с `%w`.\n5. В `main` вызовем функцию с некорректным делителем и выведем цепочку.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"os\"\n\t\"strconv\"\n)\n\nvar (\n\tErrZeroDivision = errors.New(\"деление на ноль недопустимо\")\n)\n\nfunc ProcessAndSave(numStr string, divisor int, filename string) error {\n\t// Этап 1: Парсинг числа\n\tnum, err := strconv.Atoi(numStr)\n\tif err != nil {\n\t\treturn fmt.Errorf(\"ProcessAndSave: parse input %q: %w\", numStr, err)\n\t}\n\n\t// Этап 2: Арифметика\n\tif divisor == 0 {\n\t\treturn fmt.Errorf(\"ProcessAndSave: math error (%d / %d): %w\", num, divisor, ErrZeroDivision)\n\t}\n\tresult := num / divisor\n\n\t// Этап 3: Сохранение на диск\n\tcontent := []byte(fmt.Sprintf(\"Result: %d\\n\", result))\n\tif err := os.WriteFile(filename, content, 0644); err != nil {\n\t\treturn fmt.Errorf(\"ProcessAndSave: save to %q: %w\", filename, err)\n\t}\n\n\treturn nil\n}\n\nfunc main() {\n\terr := ProcessAndSave(\"100\", 0, \"out.txt\")\n\tif err != nil {\n\t\tfmt.Println(\"Стек ошибки бизнес-процесса:\")\n\t\tfmt.Println(err)\n\n\t\tif errors.Is(err, ErrZeroDivision) {\n\t\t\tfmt.Println(\"-> Первопричина: деление на 0\")\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Стек ошибки бизнес-процесса:\n# ProcessAndSave: math error (100 / 0): деление на ноль недопустимо\n# -> Первопричина: деление на 0"
+      }
+    ],
+    "under_the_hood": "Каждый `fmt.Errorf` добавляет префикс с аргументами вызова, создавая контекст без использования внешних библиотек трассировки.",
+    "pitfalls": "Не забывайте указывать спецификатор `%w`, чтобы `errors.Is(err, ErrZeroDivision)` продолжал работать.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как проектировать цепочки ошибок в микросервисах?»\n**Ответ:** Каждый слой оборачивает ошибку с префиксом операции: `[Handler] -> [Service] -> [Repository] -> [Driver]`. В логах верхнего уровня получается прозрачная трассировка `handleOrder: processPayment: chargeCard: bank timeout`."
+  },
+  {
+    "num": 53,
+    "title": "Парсинг и детальная валидация JSON: ParseConfig",
+    "task": "Напиши функцию `ParseConfig(data []byte) (*Config, error)`, валидирующую JSON. Возвращай детальную ошибку с указанием, какое поле невалидно (например, `fmt.Errorf(\"field %q: %w\", \"port\", ErrInvalidValue)`).",
+    "theory": "При парсинге конфигураций важно указывать не только факт ошибки, но и конкретное имя поля и ожидаемый диапазон значений.",
+    "step_by_step": "1. Объявим структуру `Config` с полями `Host string` и `Port int`.\n2. Объявим `var ErrInvalidValue = errors.New(\"недопустимое значение\")`.\n3. Реализуем `ParseConfig(data []byte) (*Config, error)`.\n4. В `main` протестируем невалидный порт.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar (\n\tErrInvalidValue = errors.New(\"недопустимое значение\")\n\tErrRequired     = errors.New(\"обязательное поле отсутствует\")\n)\n\ntype Config struct {\n\tHost string `json:\"host\"`\n\tPort int    `json:\"port\"`\n}\n\nfunc ParseConfig(data []byte) (*Config, error) {\n\tvar cfg Config\n\tif err := json.Unmarshal(data, &cfg); err != nil {\n\t\treturn nil, fmt.Errorf(\"invalid json syntax: %w\", err)\n\t}\n\n\tif cfg.Host == \"\" {\n\t\treturn nil, fmt.Errorf(\"field %q: %w\", \"host\", ErrRequired)\n\t}\n\tif cfg.Port < 1 || cfg.Port > 65535 {\n\t\treturn nil, fmt.Errorf(\"field %q (value %d): %w (expected 1..65535)\", \"port\", cfg.Port, ErrInvalidValue)\n\t}\n\n\treturn &cfg, nil\n}\n\nfunc main() {\n\tinvalidJSON := []byte(`{\"host\": \"localhost\", \"port\": 99999}`)\n\n\tcfg, err := ParseConfig(invalidJSON)\n\tif err != nil {\n\t\tfmt.Println(\"Ошибка конфигурации:\", err)\n\t\tif errors.Is(err, ErrInvalidValue) {\n\t\t\tfmt.Println(\"-> Ошибка связана с недопустимым значением поля\")\n\t\t}\n\t} else {\n\t\tfmt.Printf(\"Конфиг валиден: %+v\\n\", cfg)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Ошибка конфигурации: field \"port\" (value 99999): недопустимое значение (expected 1..65535)\n# -> Ошибка связана с недопустимым значением поля"
+      }
+    ],
+    "under_the_hood": "`json.Unmarshal` парсит байты в структуру, после чего бизнес-правила проверяют числовые ограничения.",
+    "pitfalls": "Не возвращайте просто `ErrInvalidValue` без указания имени поля `field %q`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как отличить дефолтное значение 0 от явно переданного 0 в JSON?»\n**Ответ:** Использовать указатель на поле `Port *int json:\"port\"`. Если поле не передано в JSON, указатель равен `nil`, если передано `0`, указатель равен `&0`."
+  },
+  {
+    "num": 54,
+    "title": "Ошибки с позиционным контекстом строки и операции",
+    "task": "**Ошибки с контекстом**: Напиши функцию парсинга числа из строки. Если возникает ошибка, она должна возвращать ошибку, в которой сказано: \"ошибка в функции ParseData на строке N: [оригинальная ошибка]\".",
+    "theory": "При обработке файлов (CSV, TSV, конфигурации) критически важно включать номер строки (`line N`), в которой произошел сбой.",
+    "step_by_step": "1. Создадим функцию `ParseData(lineNum int, raw string) (int, error)`.\n2. Обернем `strconv.Atoi` с указанием номера строки.\n3. В `main` обработаем список строк.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n)\n\nfunc ParseData(lineNum int, raw string) (int, error) {\n\tval, err := strconv.Atoi(raw)\n\tif err != nil {\n\t\treturn 0, fmt.Errorf(\"ошибка в функции ParseData на строке %d: %w\", lineNum, err)\n\t}\n\treturn val, nil\n}\n\nfunc main() {\n\tlines := []string{\"100\", \"200\", \"corrupted_300\", \"400\"}\n\n\tfor i, line := range lines {\n\t\tval, err := ParseData(i+1, line)\n\t\tif err != nil {\n\t\t\tfmt.Println(\"Сбой парсинга:\", err)\n\t\t} else {\n\t\t\tfmt.Printf(\"Строка %d: %d\\n\", i+1, val)\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Строка 1: 100\n# Строка 2: 200\n# Сбой парсинга: ошибка в функции ParseData на строке 3: strconv.Atoi: parsing \"corrupted_300\": invalid syntax\n# Строка 4: 400"
+      }
+    ],
+    "under_the_hood": "Контекст строки интерполируется в строку ошибки без изменения типа оригинальной `strconv.NumError`.",
+    "pitfalls": "Нумерация строк для людей должна начинаться с 1 (`i+1`), а не с 0.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как прикрепить номер строки к ошибке без ручного форматирования строк?»\n**Ответ:** Создать кастомную структуру `type LineError struct { Line int; Err error }` с методами `Error()` и `Unwrap()`."
+  },
+  {
+    "num": 55,
+    "title": "Сравнение инструментов: errors.Is против errors.As",
+    "task": "Напиши программу, демонстрирующую разницу между `errors.Is` (sentinel errors) и `errors.As` (custom types). Приведи примеры: когда что использовать.",
+    "theory": "- `errors.Is`: проверяет равенство *конкретного значения* ошибки (sentinel errors, например `ErrNotFound`, `io.EOF`).\n- `errors.As`: проверяет соответствие *типу ошибки* и извлекает экземпляр структуры для чтения ее полей (например `*os.PathError`, `*ValidationError`).",
+    "step_by_step": "1. Объявим sentinel ошибку `ErrClosed`.\n2. Объявим структуру ошибки `HTTPError struct { Status int }`.\n3. Создадим две функции, возвращающие эти ошибки.\n4. В `main` покажем работу `errors.Is` и `errors.As`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\n// 1. Sentinel Error (Маркер): проверяется через errors.Is\nvar ErrConnectionClosed = errors.New(\"connection closed\")\n\n// 2. Custom Type Error (Структура с данными): извлекается через errors.As\ntype HTTPError struct {\n\tStatusCode int\n\tDetail     string\n}\n\nfunc (e *HTTPError) Error() string {\n\treturn fmt.Sprintf(\"HTTP %d: %s\", e.StatusCode, e.Detail)\n}\n\nfunc doNetworkCall(mode int) error {\n\tif mode == 1 {\n\t\treturn fmt.Errorf(\"network layer: %w\", ErrConnectionClosed)\n\t}\n\treturn fmt.Errorf(\"api layer: %w\", &HTTPError{StatusCode: 503, Detail: \"Service Overloaded\"})\n}\n\nfunc main() {\n\t// Пример 1: Проверка через errors.Is\n\terr1 := doNetworkCall(1)\n\tif errors.Is(err1, ErrConnectionClosed) {\n\t\tfmt.Println(\"[errors.Is] Обнаружено закрытие соединения (Sentinel)\")\n\t}\n\n\t// Пример 2: Извлечение через errors.As\n\terr2 := doNetworkCall(2)\n\tvar httpErr *HTTPError\n\tif errors.As(err2, &httpErr) {\n\t\tfmt.Printf(\"[errors.As] Извлечен тип HTTPError: статус=%d, детали=%s\\n\",\n\t\t\thttpErr.StatusCode, httpErr.Detail)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [errors.Is] Обнаружено закрытие соединения (Sentinel)\n# [errors.As] Извлечен тип HTTPError: статус=503, детали=Service Overloaded"
+      }
+    ],
+    "under_the_hood": "`errors.Is` сравнивает указатели/значения, а `errors.As` сравнивает `reflect.TypeOf` и копирует указатель на объект.",
+    "pitfalls": "Не используйте `errors.Is` для структур `HTTPError{}`, если их поля могут отличаться при каждом вызове.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Когда выбирать Sentinel Error, а когда Custom Struct Error?»\n**Ответ:** Sentinel Error (`errors.Is`) выбирают, когда важен только сам факт конкретной ошибки (нет динамических данных). Custom Struct Error (`errors.As`) выбирают, когда ошибка несет динамические метаданные (таймаут, имя файла, HTTP-код, параметры валидации)."
+  },
+  {
+    "num": 56,
+    "title": "Устранение антипаттерна Log-and-Return: чистая обработка ошибок",
+    "task": "Напиши функцию, которая **логирует ошибку и возвращает её** (log-and-return). Объясни, почему это антипаттерн (дублирование логов, нарушение единственной ответственности). Перепиши: возвращай ошибку с контекстом, а логируй в одном месте — в `main`.",
+    "theory": "Антипаттерн **Log-and-Return** заключается в том, что функция пишет ошибку в лог И возвращает её наверх. В результате при глубине стека в 5 функций одна ошибка записывается в лог 5 раз с разным текстом.\n**Правило Go:** *Ошибку нужно либо залогировать (обработать), либо вернуть (пробросить с контекстом), но никогда не делать и то, и другое одновременно!*",
+    "step_by_step": "1. Напишем антипаттерн с дублирующим логированием.\n2. Перепишем функцию идиоматично с оборачиванием через `%w`.\n3. Залогируем ошибку ровно один раз на самом верхнем уровне (`main`).",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar ErrRecordNotFound = errors.New(\"record not found\")\n\n// ПЛОХО: Log-and-Return (дублирует логирование на каждом слое)\nfunc badFindUser(id int) error {\n\terr := ErrRecordNotFound\n\t// fmt.Printf(\"[ERROR in badFindUser] id=%d: %v\\n\", id, err) // АНТИПАТТЕРН!\n\treturn err\n}\n\n// ХОРОШО: Только добавляем контекст и возвращаем\nfunc goodFindUser(id int) error {\n\terr := ErrRecordNotFound\n\tif err != nil {\n\t\treturn fmt.Errorf(\"findUser(id=%d): %w\", id, err)\n\t}\n\treturn nil\n}\n\nfunc goodService(id int) error {\n\tif err := goodFindUser(id); err != nil {\n\t\treturn fmt.Errorf(\"userService: %w\", err)\n\t}\n\treturn nil\n}\n\nfunc main() {\n\t// ЕДИНСТВЕННОЕ место логирования — точка входа/выхода\n\terr := goodService(42)\n\tif err != nil {\n\t\tfmt.Printf(\"[FINAL LOG] Ошибка обработки запроса: %v\\n\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [FINAL LOG] Ошибка обработки запроса: userService: findUser(id=42): record not found"
+      }
+    ],
+    "under_the_hood": "Единая точка логирования обеспечивает чистый структурированный лог в формате JSON для систем сбора метрик (Loki, Elasticsearch).",
+    "pitfalls": "Если вы залогировали ошибку на среднем уровне, не возвращайте её наверх, иначе верхний уровень залогирует её повторно.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в Uber и Google Go Style Guide строго запрещен Log-and-Return?»\n**Ответ:** Потому что он раздувает объем логов в Elastic/ClickHouse в 5–10 раз, спамит алерты в мониторинге и сбивает дежурного инженера с толку ложным ощущением множественных сбоев."
+  },
+  {
+    "num": 57,
+    "title": "Паттерн Graceful Degradation: логирование и продолжение работы",
+    "task": "Реализуйте функцию, которая в случае ошибки заносит её в лог, но продолжает выполнение цикла (graceful degradation).",
+    "theory": "Graceful Degradation (плавная деградация) позволяет сервису продолжать обслуживание пользователей при отказе второстепенных компонентов (например, если сервис рекомендаций недоступен, возвращаем стандартный список товаров).",
+    "step_by_step": "1. Создадим список пользователей для отправки уведомлений.\n2. Если отправка одному пользователю падает, залогируем ошибку и продолжим цикл (`continue`).\n3. В `main` убедимся, что остальные пользователи успешно получили уведомления.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nfunc sendPush(user string) error {\n\tif user == \"banned_user\" {\n\t\treturn errors.New(\"push token revoked\")\n\t}\n\tfmt.Printf(\"Push успешно доставлен пользователю: %s\\n\", user)\n\treturn nil\n}\n\nfunc BroadcastNotifications(users []string) {\n\tfor _, user := range users {\n\t\terr := sendPush(user)\n\t\tif err != nil {\n\t\t\t// Graceful degradation: логируем сбой и продолжаем обработку остальных\n\t\t\tfmt.Printf(\"[WARN] Не удалось отправить push пользователю %s: %v (продолжаем)\\n\", user, err)\n\t\t\tcontinue\n\t\t}\n\t}\n}\n\nfunc main() {\n\tusers := []string{\"alice\", \"banned_user\", \"carol\", \"dave\"}\n\tBroadcastNotifications(users)\n\tfmt.Println(\"Рассылка завершена успешно для доступных пользователей!\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Push успешно доставлен пользователю: alice\n# [WARN] Не удалось отправить push пользователю banned_user: push token revoked (продолжаем)\n# Push успешно доставлен пользователю: carol\n# Push успешно доставлен пользователю: dave\n# Рассылка завершена успешно для доступных пользователей!"
+      }
+    ],
+    "under_the_hood": "Отказ одного элемента в цикле не прерывает работу всего пакетного процесса.",
+    "pitfalls": "Используйте уровень логирования `WARN` (предупреждение) вместо `ERROR`, чтобы не срабатывали критические алерты дежурных инженеров.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что такое Circuit Breaker и как он связан с Graceful Degradation?»\n**Ответ:** Circuit Breaker отслеживает частоту ошибок к внешнему сервису. При превышении порога он размыкает цепь (Open State) и мгновенно возвращает fallback-ответ без выполнения реальных сетевых запросов, защищая систему от зависаний."
+  },
+  {
+    "num": 58,
+    "title": "Конкурентная обработка ошибок: сбор из горутин через канал и sync.WaitGroup",
+    "task": "Напиши программу с **ошибками в горутинах**: запусти 5 горутин, каждая возвращает ошибку через канал `chan error`. Собери все ошибки в `main` после `sync.WaitGroup`.",
+    "theory": "Горутины не могут возвращать значения через `return`. Стандартный паттерн сбора ошибок от параллельных воркеров — отправка ошибок в буферизованный канал `chan error` с последующим закрытием канала после завершения `sync.WaitGroup`.",
+    "step_by_step": "1. Создадим буферизованный канал `errCh := make(chan error, 5)`.\n2. Запустим 5 горутин с `wg.Add(1)` и отправкой ошибки в канал при сбое.\n3. В отдельной горутине подождем `wg.Wait()` и закроем `errCh`.\n4. В `main` вычитаем все ошибки из канала через `for err := range errCh`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n)\n\nfunc worker(id int, errCh chan<- error, wg *sync.WaitGroup) {\n\tdefer wg.Done()\n\n\t// Симулируем сбои у четных воркеров\n\tif id%2 == 0 {\n\t\terrCh <- fmt.Errorf(\"воркер #%d: сбой обработки данных\", id)\n\t\treturn\n\t}\n\n\tfmt.Printf(\"Воркер #%d успешно завершил задачу\\n\", id)\n}\n\nfunc main() {\n\tconst numWorkers = 5\n\terrCh := make(chan error, numWorkers)\n\tvar wg sync.WaitGroup\n\n\tfor i := 1; i <= numWorkers; i++ {\n\t\twg.Add(1)\n\t\tgo worker(i, errCh, &wg)\n\t}\n\n\t// Закрываем канал после завершения всех воркеров\n\tgo func() {\n\t\twg.Wait()\n\t\tclose(errCh)\n\t}()\n\n\t// Сбор всех возникших ошибок\n\tvar collectedErrs []error\n\tfor err := range errCh {\n\t\tcollectedErrs = append(collectedErrs, err)\n\t}\n\n\taggErr := errors.Join(collectedErrs...)\n\tif aggErr != nil {\n\t\tfmt.Println(\"\\nОбнаружены ошибки при параллельном выполнении:\")\n\t\tfmt.Println(aggErr)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Воркер #1 успешно завершил задачу\n# Воркер #3 успешно завершил задачу\n# Воркер #5 успешно завершил задачу\n# \n# Обнаружены ошибки при параллельном выполнении:\n# воркер #2: сбой обработки данных\n# воркер #4: сбой обработки данных"
+      }
+    ],
+    "under_the_hood": "Буферизованный канал `make(chan error, numWorkers)` гарантирует, что ни один воркер не заблокируется на отправке ошибки.",
+    "pitfalls": "Если канал небуферизован, а `main` начинает читать только после `wg.Wait()`, возникнет дедлок (все воркеры заблокируются на отправке).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как работает пакет golang.org/x/sync/errgroup?»\n**Ответ:** `errgroup.Group` запускает задачи в горутинах через `g.Go(func() error)`. При первой ошибке он отменяет контекст всех остальных горутин и возвращает первую возникшую ошибку из метода `g.Wait()`."
+  }
+]
