@@ -55,6 +55,8 @@ with open('builder/chapter14_data.json', 'r', encoding='utf-8') as f:
     ch14_exercises = json.load(f)
 with open('builder/chapter15_data.json', 'r', encoding='utf-8') as f:
     ch15_exercises = json.load(f)
+with open('builder/chapter16_data.json', 'r', encoding='utf-8') as f:
+    ch16_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -146,6 +148,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             13: ('chapter13.html', '71/71'),
             14: ('chapter14.html', '77/77'),
             15: ('chapter15.html', '127/127'),
+            16: ('chapter16.html', '131/131'),
         }
         
         if num in status_map:
@@ -1015,12 +1018,68 @@ def build_chapter15_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter14.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 14 (Интерфейсы)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 16: Дженерики (Generics) (Скоро) →</a>
+            <a href="chapter16.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 16 (Дженерики) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '15. ООП в Go (127/127)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter16_html(chapters):
+    sidebar_html = build_sidebar(chapters, 16, ch16_exercises)
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 16</div>
+        <h1 class="hero-title">Дженерики (Generics & Type Parameters)</h1>
+        <p class="hero-desc">
+            Исчерпывающее практическое руководство по параметрическому полиморфизму в Go 1.18+. Полный разбор Type Parameters, 
+            Type Sets, кастомных интерфейсов-ограничений (Constraints), объединений типов (Unions), оператора тильды (<code>~</code>), 
+            ограничений <code>comparable</code> и <code>cmp.Ordered</code>, алгоритма Type Inference (вывод типов аргументов и ограничений), 
+            стандартных библиотек <code>slices</code> и <code>maps</code> (Go 1.21+), обобщенных структур данных (Stack, Queue, Set, LinkedList, 
+            BST, PriorityQueue, SafeMap, Graph), паттернов Fan-In / Concurrency, и глубокого сравнения дженериков с интерфейсами на уровне 
+            рантайма (GC Shape Stenciling + Dictionaries). Все 131 упражнение с нуля до уровня Senior/Staff BigTech.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-val">131 из 131</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">Type Sets</span><span class="stat-lbl">Constraints & ~ Unions</span></div>
+            <div class="stat-item"><span class="stat-val">GC Shape</span><span class="stat-lbl">Stenciling & Dictionaries</span></div>
+            <div class="stat-item"><span class="stat-val">Go 1.21+</span><span class="stat-lbl">cmp, slices, maps</span></div>
+        </div>
+    </section>
+    """)
+    section_groups_ch16 = [
+        (1, 33, "Раздел 1: Параметры Типов, Встроенные Ограничения any/comparable и Вывод Типов", "Синтаксис [T any], [T comparable], [T cmp.Ordered], Type Inference, инверсия среза Reverse, стек Stack[T], Set[T], Filter/Map, поиск Max/Min, бинарный поиск, Swap, SafeSlice, Either[L,R], Optional[T]"),
+        (34, 66, "Раздел 2: Кастомные Constraints, Оператор Тильды ~ и Обобщенные Структуры", "Unique comparable, OrderedStringer, Keys map, GenericMap, Numeric, FindIndex, Reduce, StringOrInt union, тильда ~, Pair[T, U], BytesOrString, List[T], Ptr[T], NamedOrdered, reflect в дженериках, WrapWithLogging, underlying type, Closer, MaxBy, FIFO Queue, Cache, Set union/intersection, Result[T], запрет generic-методов на структурах"),
+        (67, 99, "Раздел 3: Продвинутые Структуры Данных, Функциональные Паттерны и Ограничения Методов", "MapSlice, Validator[T], Intersect Set, LinkedList (Prepend/Append/Find), BinarySearchTree BST, Result (Success/Failure), AnyInteger & побитовые операции, Pair.GetValues, Join Stringer, Retry с backoff, Channel[T], Type inference trap, Fluent Slice API, SafeMap RWMutex, Repository[T], Matrix, Calculator[T], UserRepository, Pool sync.Pool, EventEmitter, Memoize, RingBuffer, MergeMaps, Partition, Graph BFS, PriorityQueue min-heap, BatchProcess"),
+        (100, 131, "Раздел 4: Concurrency, Пакеты slices/maps, Constraint Type Inference и Архитектура", "Fan-In MergeChannels, variadic Sum, ChanToSlice, slices.Sort/Contains, DoublyLinkedList, type switch workaround any(v).(type), AreEqual, InOrder BST, Method Sets, Result.Unwrap, почему нельзя вызвать метод без constraint, ловушка return nil / var zero T, maps.Clone/Equal, shared underlying array append, Increment ~, JSON Marshal/Unmarshal, GroupBy, Closures, StringableNumeric, Stringify, Clone generic struct, Allowed, CountOccurrences, collections пакет + BFS, Constraint Type Inference CloneSlice[S ~[]E, E any], Generic Repository User/Product, Дженерики vs Интерфейсы (itab vs monomorphization), Min-Heap, Type-Safe Enum")
+    ]
+    ex_dict = {e["num"]: e for e in ch16_exercises}
+    for start_n, end_n, title, desc in section_groups_ch16:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 16 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили обобщенное программирование (Generics) в Go: Type Sets, аппроксимацию типов (~), Constraint Type Inference, реализацию обобщенных коллекций и понимание мономорфизации рантайма (GC Shape Stenciling).
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter15.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 15 (ООП в Go)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 17: Обработка ошибок (Error Handling) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '16. Дженерики (131/131)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1041,6 +1100,7 @@ if __name__ == '__main__':
         ('chapter13.html', build_chapter13_html),
         ('chapter14.html', build_chapter14_html),
         ('chapter15.html', build_chapter15_html),
+        ('chapter16.html', build_chapter16_html),
     ]
     
     for filename, builder_fn in pages:
