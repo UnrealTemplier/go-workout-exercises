@@ -63,6 +63,8 @@ with open('builder/chapter18_data.json', 'r', encoding='utf-8') as f:
     ch18_exercises = json.load(f)
 with open('builder/chapter19_data.json', 'r', encoding='utf-8') as f:
     ch19_exercises = json.load(f)
+with open('builder/chapter20_data.json', 'r', encoding='utf-8') as f:
+    ch20_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -158,6 +160,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             17: ('chapter17.html', '58/58'),
             18: ('chapter18.html', '100/100'),
             19: ('chapter19.html', '84/84'),
+            20: ('chapter20.html', '124/124'),
         }
         
         if num in status_map:
@@ -1252,12 +1255,69 @@ def build_chapter19_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter18.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 18 (Работа с файлами)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 20: Конкурентность и горутины (Concurrency) (Скоро) →</a>
+            <a href="chapter20.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 20 (Горутины и синхронизация) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '19. Логирование (84/84)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter20_html(chapters):
+    sidebar_html = build_sidebar(chapters, 20, ch20_exercises)
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 20</div>
+        <h1 class="hero-title">Горутины и синхронизация (Concurrency & Primitives)</h1>
+        <p class="hero-desc">
+            Исчерпывающее практическое руководство по модели конкурентности в Go: архитектура планировщика GMP 
+            (Goroutine, Machine, Processor), вытесняющая многозадачность (Async Preemption на сигналах <code>SIGURG</code> в Go 1.14+), 
+            мониторинг <code>runtime.NumGoroutine</code> и утечки горутин (Goroutine Leaks), примитивы синхронизации пакета <code>sync</code> 
+            (<code>WaitGroup</code>, <code>Mutex</code>, <code>RWMutex</code>, <code>Once</code>, <code>Pool</code>, <code>Cond</code>), 
+            потокобезопасные коллекции <code>sync.Map</code>, библиотека <code>errgroup</code> с контекстной отменой, и низкоуровневые 
+            Lock-Free алгоритмы на <code>sync/atomic</code> (<code>atomic.Int64</code>, <code>atomic.Pointer</code>, <code>atomic.Value</code>, 
+            CAS-лупы, Memory Ordering, защита от False Sharing). Все 124 упражнения от базового <code>go func()</code> до уровня 
+            Senior / Staff Concurrency Engineer.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-val">124 из 124</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">GMP Scheduler</span><span class="stat-lbl">M:N Lightweight Threads</span></div>
+            <div class="stat-item"><span class="stat-val">sync & atomic</span><span class="stat-lbl">Lock-Free & Memory Model</span></div>
+            <div class="stat-item"><span class="stat-val">Race Detector</span><span class="stat-lbl">ThreadSanitizer Protected</span></div>
+        </div>
+    </section>
+    """)
+    section_groups_ch20 = [
+        (1, 41, "Раздел 1: Горутины, Жизненный Цикл main(), Планировщик GMP и Базовый sync.WaitGroup", "Старт горутин, завершение main(), антипаттерн time.Sleep, Fan-Out воркеры, sync.WaitGroup (Add, Done, Wait), замыкание переменной цикла (семантика до и после Go 1.22), копирование WaitGroup по значению (copylocks), параллельный MapReduce, runtime.NumGoroutine и утечки памяти, GOMAXPROCS и automaxprocs, SafeCounter с sync.Mutex, SafeGo с защитой от паники, асинхронное вытеснение Go 1.14+, детекция дедлоков рантайма и паника отрицательного счетчика"),
+        (42, 82, "Раздел 2: Мьютексы (sync.Mutex, sync.RWMutex), Deadlock, sync.Once, sync.Pool и sync.Cond", "select {} зомби-горутины, защита критических секций, иерархия горутин, RWMutex для кэша (Read-Heavy), runtime.Goexit с сохранением defer, нереентерабельность Mutex (двойной Lock), defer mu.Unlock(), аудит ThreadSanitizer (-race), sync/atomic инкременты, потокобезопасный синглтон sync.Once, пул буферов sync.Pool (снижение нагрузки на GC), методы *Locked(), условные переменные sync.Cond (Wait, Signal, Broadcast), бенчмарк Mutex vs RWMutex (90/10), флаги atomic.Load/Store, sync.Map (Store, Load, Range), фиксация Once при панике, раздувание буферов и барьер синхронизации"),
+        (83, 124, "Раздел 3: Продвинутая Конкурентность: errgroup, Lock-Free Стек Трейбера, atomic.Pointer, Memory Ordering и Паттерны", "Забытый Unlock, библиотека errgroup (обработка первой ошибки, контекстная отмена ctx.Done, лимитер SetLimit), двухфазный барьер, неблокирующий TryLock (Go 1.18+), Priority Inversion и starvation mode, классический перекрестный дедлок (Lock Ordering), Lock-Free стек Трейбера на atomic.Pointer[T] (Go 1.19+), утечки горутин на небуферизованных каналах, горячая перезагрузка конфига atomic.Value/Pointer, Spin-Lock на atomic.Bool, барьеры памяти (Happens-Before), Lock-Free Max (CAS-loop), проблема ABA в Go, One-Shot сигналы, False Sharing и 64-байтный CPU Padding, Lazy Singleton, Producer-Consumer очередь с Graceful Shutdown")
+    ]
+    ex_dict = {e["num"]: e for e in ch20_exercises}
+    for start_n, end_n, title, desc in section_groups_ch20:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 20 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили базовую модель конкурентности и примитивы синхронизации в Go: планировщик GMP, безопасную работу с горутинами, пакеты <code>sync</code> (WaitGroup, Mutex, RWMutex, Once, Pool, Cond, Map), библиотеку <code>errgroup</code>, и низкоуровневые Lock-Free алгоритмы на <code>sync/atomic</code>.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter19.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 19 (Логирование)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 21: Каналы (Channels & Pipelines) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '20. Горутины и синхронизация (124/124)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1282,6 +1342,7 @@ if __name__ == '__main__':
         ('chapter17.html', build_chapter17_html),
         ('chapter18.html', build_chapter18_html),
         ('chapter19.html', build_chapter19_html),
+        ('chapter20.html', build_chapter20_html),
     ]
     
     for filename, builder_fn in pages:
