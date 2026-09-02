@@ -61,6 +61,8 @@ with open('builder/chapter17_data.json', 'r', encoding='utf-8') as f:
     ch17_exercises = json.load(f)
 with open('builder/chapter18_data.json', 'r', encoding='utf-8') as f:
     ch18_exercises = json.load(f)
+with open('builder/chapter19_data.json', 'r', encoding='utf-8') as f:
+    ch19_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -155,6 +157,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             16: ('chapter16.html', '131/131'),
             17: ('chapter17.html', '58/58'),
             18: ('chapter18.html', '100/100'),
+            19: ('chapter19.html', '84/84'),
         }
         
         if num in status_map:
@@ -1192,12 +1195,69 @@ def build_chapter18_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter17.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 17 (Обработка ошибок)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 19: Конкурентность и горутины (Concurrency) (Скоро) →</a>
+            <a href="chapter19.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 19 (Логирование) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '18. Работа с файлами (100/100)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter19_html(chapters):
+    sidebar_html = build_sidebar(chapters, 19, ch19_exercises)
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 19</div>
+        <h1 class="hero-title">Логирование (Logging & Observability)</h1>
+        <p class="hero-desc">
+            Исчерпывающее практическое руководство по структурированному логированию, трассировке и наблюдаемости (Observability) 
+            в Go. Полный разбор пакетов <code>log</code> и <code>log/slog</code> (стандарт Go 1.21+), архитектуры JSON-хендлеров, 
+            динамического изменения уровня логов через <code>slog.LevelVar</code> и сигналы ОС (<code>SIGUSR1</code>), кастомных 
+            <code>slog.Handler</code> (инжект контекста, OpenTelemetry <code>trace_id</code>/<code>span_id</code> корреляция, 
+            Sentry алертинг), маскирования персональных данных (PII/PCI-DSS) через <code>slog.LogValuer</code> и <code>ReplaceAttr</code>, 
+            log sampling (интервальное и вероятностное), zero-allocation логирования через <code>slog.LogAttrs</code>, асинхронных 
+            очередей на каналах, ротации логов на диске (lumberjack) и интеграции с Grafana Loki (LogQL) и ELK. Все 84 упражнения 
+            от базового <code>log.Println</code> до уровня Senior SRE / Staff Engineer.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-val">84 из 84</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">log/slog</span><span class="stat-lbl">Structured JSON Engine</span></div>
+            <div class="stat-item"><span class="stat-val">slog.LevelVar</span><span class="stat-lbl">Dynamic Runtime Tuning</span></div>
+            <div class="stat-item"><span class="stat-val">OpenTelemetry</span><span class="stat-lbl">Trace-to-Log Correlation</span></div>
+        </div>
+    </section>
+    """)
+    section_groups_ch19 = [
+        (1, 28, "Раздел 1: Структурированный slog, Динамические Уровни, Маскирование PII и Trace Correlation", "slog.LevelVar (HTTP PUT /loglevel), zerolog/slog JSON stdout, ReplaceAttr (PII password/email), slog.Group/Attr, RequestID middleware, LevelDebug фильтрация, slog.LogValuer (User), SplitHandler (Error в файл, Info в stdout), Sentry alert handler, контекстный slog (NewContext), полный HTTP audit middleware, ContextInjectHandler, zero-allocation slog.LogAttrs, logger.WithGroup, X-Request-ID, sampling (100% Error, 10% Info), защита секретов, Stack Trace JSON array, OpenTelemetry (trace_id, span_id)"),
+        (29, 56, "Раздел 2: Cloud-Native Observability, Grafana Loki, LogQL и Стандартный Пакет log", "WithContext helper, идеальный HTTP middleware (defer latency/status/IP), AddSource (caller), Jaeger link, probabilistic sampling (10%), Log Shipping архитектура (Fluent Bit / Vector), Grafana Loki (LogQL queries), Log-based metrics (count_over_time), log.SetOutput в файл, стандартный log.Println/Printf, сравнение log vs fmt, атомарность вывода, log.SetFlags (Ldate, Ltime, Lmicroseconds, Lshortfile), log.Fatalf (os.Exit 1, defer), Cloud-Native JSON стандарты, изолированный log.New, io.MultiWriter, дозапись O_APPEND, slog.NewTextHandler, Daily Logger, DI логгера, SRE Incident Response Workflow, stderr логгер"),
+        (57, 84, "Раздел 3: Паника, Кастомные Хендлеры, Модульные Логгеры и Безопасность (Security Observability)", "log.Panicf vs Fatalf (recover), сравнительный анализ паники, O_APPEND|O_CREATE|O_WRONLY, структурный slog.Info/Error, JSONHandler для ELK, infoLogger vs errorLogger, маскирование чувствительных данных, logger.With(\"module\", \"db\"), AppLogger обертка с фильтрацией, модульные [DB]/[API], универсальный middleware, базовый slog.Info, fallback на slog.Default(), глобальный slog.SetDefault, Security Observability (GDPR audit trail, data exfiltration alert), форматирование атрибутов, No-Op silent logger (io.Discard), фатальные ошибки, debug.Stack() при панике, кастомная ротация 1MB, slog.LevelWarn, runtime.Caller хелпер, комплексный UserService, градация Warn/Error при открытии файла, кастомный JSON логгер, вложенные группы, structured error logging, строгая фильтрация уровней")
+    ]
+    ex_dict = {e["num"]: e for e in ch19_exercises}
+    for start_n, end_n, title, desc in section_groups_ch19:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 19 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили структурированное логирование и основы Cloud-Native Observability в Go: современный пакет log/slog, динамическое управление уровнями через LevelVar, OpenTelemetry распределенную трассировку, маскирование PII-данных (152-ФЗ/GDPR), log sampling, интеграцию с Grafana Loki (LogQL) и проектирование отказоустойчивых асинхронных конвейеров.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter18.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 18 (Работа с файлами)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 20: Конкурентность и горутины (Concurrency) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '19. Логирование (84/84)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1221,6 +1281,7 @@ if __name__ == '__main__':
         ('chapter16.html', build_chapter16_html),
         ('chapter17.html', build_chapter17_html),
         ('chapter18.html', build_chapter18_html),
+        ('chapter19.html', build_chapter19_html),
     ]
     
     for filename, builder_fn in pages:
