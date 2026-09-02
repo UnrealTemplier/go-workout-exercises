@@ -42,6 +42,9 @@ with open('builder/chapter9_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter10_data.json', 'r', encoding='utf-8') as f:
     ch10_exercises = json.load(f)
 
+with open('builder/chapter11_data.json', 'r', encoding='utf-8') as f:
+    ch11_exercises = json.load(f)
+
 def format_text(txt):
     if not txt:
         return ""
@@ -127,6 +130,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             8: ('chapter8.html', '74/74'),
             9: ('chapter9.html', '62/62'),
             10: ('chapter10.html', '100/100'),
+            11: ('chapter11.html', '49/49'),
         }
         
         if num in status_map:
@@ -227,10 +231,8 @@ def build_exercise_card(ex):
 
 def build_chapter1_html(chapters):
     sidebar_html = build_sidebar(chapters, active_chapter_num=1, current_exercises=ch1_exercises)
-    
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
-    
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">🚀 Модуль 01 • Старт карьеры Go-разработчика</div>
@@ -241,26 +243,13 @@ def build_chapter1_html(chapters):
             Полный пошаговый разбор всех 91 упражнений курса с глубоким анализом работы компилятора, рантайма и продакшен-практик.
         </p>
         <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-val">91 из 91</span>
-                <span class="stat-lbl">Упражнений решено</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">100%</span>
-                <span class="stat-lbl">Теория + Практика</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">83</span>
-                <span class="stat-lbl">Главы курса</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">Go 1.22+</span>
-                <span class="stat-lbl">Стандарт индустрии</span>
-            </div>
+            <div class="stat-item"><span class="stat-val">91 из 91</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">100%</span><span class="stat-lbl">Теория + Практика</span></div>
+            <div class="stat-item"><span class="stat-val">83</span><span class="stat-lbl">Главы курса</span></div>
+            <div class="stat-item"><span class="stat-val">Go 1.22+</span><span class="stat-lbl">Стандарт индустрии</span></div>
         </div>
     </section>
     """)
-    
     section_groups = [
         (1, 15, "Раздел 1: Введение, Окружение, Компиляция и Базовые Пакеты", "Основы Go-модулей, многофайловые пакеты main, go run, go build, error handling и первые пакеты"),
         (16, 30, "Раздел 2: Внешние Зависимости, Инкапсуляция, Init() и Качество Кода", "Подключение библиотек, правила экспорта, жизненный цикл функций init(), go fmt и go vet"),
@@ -269,22 +258,17 @@ def build_chapter1_html(chapters):
         (61, 75, "Раздел 5: Анатомия go.mod, Безопасность govulncheck, GOPRIVATE и Internal", "Глубокий анализ go.mod/go.sum, аудит уязвимостей, приватные репозитории и правила каталога internal/"),
         (76, 91, "Раздел 6: Паттерн Registry, Бенчмаркинг, Ldflags, Vendor и Standard Layout", "Драйверы плагинов, снятие pprof-профилей, тестирование производительности benchmem, вендоринг и эталонный Standard Go Project Layout")
     ]
-    
     ex_dict = {e["num"]: e for e in ch1_exercises}
     for start_n, end_n, title, desc in section_groups:
         content_parts.append(f"""
         <div class="section-separator">
-            <div>
-                <h2>{title}</h2>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
-            </div>
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
             <span class="tag">Упражнения {start_n}–{end_n}</span>
         </div>
         """)
         for n in range(start_n, end_n + 1):
             if n in ex_dict:
                 content_parts.append(build_exercise_card(ex_dict[n]))
-                
     content_parts.append("""
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 01 полностью пройдена!</h3>
@@ -732,12 +716,66 @@ def build_chapter10_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter9.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 09 (Мапы)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 11: Указатели (Скоро) →</a>
+            <a href="chapter11.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 11: Указатели →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '10. Функции (100/100)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter11_html(chapters):
+    sidebar_html = build_sidebar(chapters, active_chapter_num=11, current_exercises=ch11_exercises)
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">🎯 Модуль 11 • Указатели и Модель Памяти</div>
+        <h1 class="hero-title">Указатели, Адресация и Escape-Анализ в Go</h1>
+        <p class="hero-desc">
+            Глубокое практическое руководство по низкоуровневой работе с памятью в Go: 
+            семантика значений против семантики указателей (Value vs Pointer Semantics), 
+            встроенная функция `new(T)` и литеральное взятие адреса `&T{}`, авто-разыменование структур (`u.Field`), 
+            работа с указателями на срезы `*[]T` и массивы `*[N]T`, механика Escape-анализа компилятора (`go build -gcflags="-m"`), 
+            двойные указатели `**T`, защита от `nil pointer dereference`, паттерны опциональных полей (Nullable DTO) 
+            и инвариант 8-байтных указателей в `unsafe.Sizeof`. Все 49 упражнений решены шаг за шагом.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-val">49 из 49</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">Escape Analysis</span><span class="stat-lbl">Stack vs Heap</span></div>
+            <div class="stat-item"><span class="stat-val">Nil Safety</span><span class="stat-lbl">Guard Clauses</span></div>
+            <div class="stat-item"><span class="stat-val">unsafe.Sizeof</span><span class="stat-lbl">8-Byte Pointer Invariant</span></div>
+        </div>
+    </section>
+    """)
+    section_groups_ch11 = [
+        (1, 25, "Раздел 1: new(T) vs &T{}, Срезы и Массивы, Авто-разыменование, Побег в Кучу и Swap", "new(T) против &User{}, мутация среза vs append, указатель на массив *[N]T, операторы & и *, синтаксический сахар u.Name, ClearSlice s[:0], Escape Analysis, nil-разыменование, двойные указатели **int, ловушка &v в цикле for range, типы *T и Swap"),
+        (26, 49, "Раздел 2: Указатели на Срезы, Рефлексия, Nil-Safety Helpers, Связные Списки и unsafe.Sizeof", "AppendWithPointer, указатель на элемент &arr[0], Identity == против Equality *, new(int) vs &x, мутация через reflect.ValueOf.Elem(), Zeroify, Nil Map паника, массивы указателей [3]*int, связный список Node, опциональные поля Profile и инвариант 8 байт unsafe.Sizeof")
+    ]
+    ex_dict = {e["num"]: e for e in ch11_exercises}
+    for start_n, end_n, title, desc in section_groups_ch11:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 11 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили работу с указателями, управление памятью, Escape-анализ и безопасное разыменование в Go.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter10.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 10 (Функции)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 12: Структуры (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '11. Указатели (49/49)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -753,6 +791,7 @@ if __name__ == '__main__':
         ('chapter8.html', build_chapter8_html),
         ('chapter9.html', build_chapter9_html),
         ('chapter10.html', build_chapter10_html),
+        ('chapter11.html', build_chapter11_html),
     ]
     
     for filename, builder_fn in pages:
