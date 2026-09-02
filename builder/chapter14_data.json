@@ -1,0 +1,1696 @@
+[
+  {
+    "num": 1,
+    "title": "Неявная реализация интерфейсов (Implicit Interface Satisfaction) без ключевого слова implements",
+    "task": "Объяви интерфейс Greeter с методом Greet() string. Создай структуру Englishman, реализующую его. Покажи, что в Go нет ключевого слова implements — реализация неявная.",
+    "theory": "\n**Утиная типизация (Structural Typing / Implicit Satisfaction) в Go:**\n- В Go **отсутствует ключевое слово `implements`**;\n- Тип автоматически удовлетворяет интерфейсу, если он реализует **все методы**, объявленные в интерфейсе с совпадающими сигнатурами;\n- Это исключает жесткую связь между поставщиком реализации и потребителем API (Loose Coupling).\n",
+    "step_by_step": "\n1. Объявляем интерфейс `Greeter` с методом `Greet() string`.\n2. Создаем структуру `Englishman{}` и реализуем метод `Greet() string`.\n3. Присваиваем структуру переменной интерфейса.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Greeter interface {\n\tGreet() string\n}\n\ntype Englishman struct {\n\tName string\n}\n\n// Englishman автоматически реализует интерфейс Greeter:\nfunc (e Englishman) Greet() string {\n\treturn fmt.Sprintf(\"Hello, my name is %s!\", e.Name)\n}\n\nfunc main() {\n\tvar g Greeter = Englishman{Name: \"Arthur\"}\n\tfmt.Println(g.Greet())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Hello, my name is Arthur!"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор Go строит интерфейсную таблицу `runtime.iface` (состоящую из `itab` с таблицей указателей на функции и `data` с указателем на значение).\n",
+    "pitfalls": "\n- Попытка искать ключевое слово `implements` или забыть один из методов интерфейса (ошибка `does not implement ... (missing method)`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему создатели Go отказались от явного `implements`?»\n**Ответ:** Неявные интерфейсы позволяют пакетам определять минимальные интерфейсы под свои нужды для типов из чужих библиотек без необходимости изменять исходный код этих библиотек.\n"
+  },
+  {
+    "num": 2,
+    "title": "Полиморфизм интерфейсов: динамическое переназначение структур Englishman и Spaniard",
+    "task": "Создай переменную типа интерфейса var g Greeter. Присвой ей Englishman{}. Вызови метод. Затем присвой другую структуру Spaniard{} — покажи полиморфизм.",
+    "theory": "\n**Динамический полиморфизм (Runtime Polymorphism):**\n- Переменная интерфейсного типа может в рантайме хранить значения любых конкретных типов, удовлетворяющих данному интерфейсу;\n- При каждом вызове метода вызывается реализация текущего активного типа.\n",
+    "step_by_step": "\n1. Создаем структуры `Englishman` и `Spaniard`.\n2. Присваиваем поочередно интерфейсу `var g Greeter`.\n3. Демонстрируем полиморфный вызов.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Greeter interface {\n\tGreet() string\n}\n\ntype Englishman struct{}\n\nfunc (Englishman) Greet() string {\n\treturn \"Hello!\"\n}\n\ntype Spaniard struct{}\n\nfunc (Spaniard) Greet() string {\n\treturn \"¡Hola!\"\n}\n\nfunc main() {\n\tvar g Greeter\n\n\tg = Englishman{}\n\tfmt.Printf(\"g (Englishman): %s\\n\", g.Greet())\n\n\tg = Spaniard{}\n\tfmt.Printf(\"g (Spaniard):   %s\\n\", g.Greet())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# g (Englishman): Hello!\n# g (Spaniard):   ¡Hola!"
+      }
+    ],
+    "under_the_hood": "\nПри переприсваивании `g = Spaniard{}` обновляется указатель `itab` внутри интерфейсной структуры на таблицу методов `Spaniard`.\n",
+    "pitfalls": "\n- Вызов метода на неинициализированном интерфейсе `var g Greeter; g.Greet()` (паника `nil pointer dereference`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Из каких двух указателей состоит интерфейс `iface` под капотом?»\n**Ответ:** 1) `*itab` (тип данных, метаинформация и таблица адресов методов); 2) `unsafe.Pointer` (указатель на сами данные объекта в памяти).\n"
+  },
+  {
+    "num": 3,
+    "title": "Интерфейс Animal с методом Speak() string для структур Dog и Cat",
+    "task": "Создайте интерфейс Animal с методом Speak() string. Реализуйте его для структур Dog и Cat (неявная реализация).",
+    "theory": "\nБазовое моделирование предметной области с полиморфными сущностями.\n",
+    "step_by_step": "\n1. Создаем интерфейс `Animal`.\n2. Реализуем `Speak()` для `Dog` (Гав!) и `Cat` (Мяу!).\n3. Тестируем.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Animal interface {\n\tSpeak() string\n}\n\ntype Dog struct{}\n\nfunc (Dog) Speak() string {\n\treturn \"Гав-гав!\"\n}\n\ntype Cat struct{}\n\nfunc (Cat) Speak() string {\n\treturn \"Мяу-мяу!\"\n}\n\nfunc main() {\n\tvar a1 Animal = Dog{}\n\tvar a2 Animal = Cat{}\n\n\tfmt.Printf(\"Собака: %s\\n\", a1.Speak())\n\tfmt.Printf(\"Кошка:  %s\\n\", a2.Speak())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Собака: Гав-гав!\n# Кошка:  Мяу-мяу!"
+      }
+    ],
+    "under_the_hood": "\nВызов метода осуществляется через косвенный вызов `CALL (itab.fun[0])`.\n",
+    "pitfalls": "\n- Опечатка в сигнатуре метода (например, возврат `int` вместо `string`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова стоимость вызова метода интерфейса по сравнению с прямым вызовом структуры?»\n**Ответ:** Вызов через интерфейс требует одного дополнительного разыменования указателя таблицы `itab.fun` (около 1-2 процессорных тактов) и препятствует инлайнингу (Inlining).\n"
+  },
+  {
+    "num": 4,
+    "title": "Полиморфизм в коллекциях: гетерогенный срез []Speaker и вызов методов в цикле",
+    "task": "Полиморфизм: Создай срез []Speaker. Положи туда собаку и кошку. В цикле пройдись по срезу и вызови Speak() для каждого. Заметь: структуры нигде не заявляют implements Speaker, они просто имеют нужный метод.",
+    "theory": "\n**Гетерогенные коллекции интерфейсов:**\n- Срез интерфейсов `[]Speaker` может объединять совершенно разнородные структуры в единую полиморфную последовательность.\n",
+    "step_by_step": "\n1. Объявляем `type Speaker interface { Speak() string }`.\n2. Создаем срез `speakers := []Speaker{Dog{}, Cat{}}`.\n3. Итерируемся в цикле `for range`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Speaker interface {\n\tSpeak() string\n}\n\ntype Dog struct{ Breed string }\n\nfunc (d Dog) Speak() string {\n\treturn fmt.Sprintf(\"[%s] Гав!\", d.Breed)\n}\n\ntype Cat struct{ Color string }\n\nfunc (c Cat) Speak() string {\n\treturn fmt.Sprintf(\"[%s] Мяу!\", c.Color)\n}\n\nfunc main() {\n\tspeakers := []Speaker{\n\t\tDog{Breed: \"Овчарка\"},\n\t\tCat{Color: \"Рыжий\"},\n\t\tDog{Breed: \"Хаски\"},\n\t}\n\n\tfmt.Println(\"Полиморфный хор:\")\n\tfor _, s := range speakers {\n\t\tfmt.Printf(\"  • %s\\n\", s.Speak())\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Полиморфный хор:\n#   • [Овчарка] Гав!\n#   • [Рыжий] Мяу!\n#   • [Хаски] Гав!"
+      }
+    ],
+    "under_the_hood": "\nКаждый элемент среза занимает 16 байт (`itab` + `data`).\n",
+    "pitfalls": "\n- Попытка преобразовать `[]Dog` напрямую в `[]Speaker` без поэлементного копирования (в Go это запрещено!).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go нельзя напрямую привести `[]Dog` к `[]Speaker`?»\n**Ответ:** Потому что размер элементов в памяти различается: `Dog` может занимать любой размер (например 8 байт), а интерфейс `Speaker` всегда занимает 16 байт (`itab + data`).\n"
+  },
+  {
+    "num": 5,
+    "title": "Универсальный переключатель типов Type Switch: функция PrintDetails(v any)",
+    "task": "Напиши функцию PrintDetails(v interface{}), использующую type switch для определения типа и вывода информации. Обработай int, string, bool, []int, struct.",
+    "theory": "\n**Конструкция Type Switch (`v.(type)`):**\n- Специальная конструкция Go для инспекции динамического типа значения, упакованного в пустой интерфейс `any` / `interface{}`;\n- Внутри каждого `case T:` переменная автоматически приводится к конкретному типу `T`.\n",
+    "step_by_step": "\n1. Пишем `PrintDetails(v any)`.\n2. Используем `switch val := v.(type)`.\n3. Обрабатываем `int`, `string`, `bool`, `[]int`, структуры и `default`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Point struct {\n\tX, Y int\n}\n\nfunc PrintDetails(v any) {\n\tswitch val := v.(type) {\n\tcase int:\n\t\tfmt.Printf(\"Целое число: %d (квадрат: %d)\\n\", val, val*val)\n\tcase string:\n\t\tfmt.Printf(\"Строка: %q (длина: %d байт)\\n\", val, len(val))\n\tcase bool:\n\t\tfmt.Printf(\"Булево значение: %t\\n\", val)\n\tcase []int:\n\t\tfmt.Printf(\"Срез чисел: %v (элементов: %d)\\n\", val, len(val))\n\tcase Point:\n\t\tfmt.Printf(\"Координата Point: X=%d, Y=%d\\n\", val.X, val.Y)\n\tdefault:\n\t\tfmt.Printf(\"Неизвестный тип (%T): %v\\n\", val, val)\n\t}\n}\n\nfunc main() {\n\tPrintDetails(42)\n\tPrintDetails(\"Golang\")\n\tPrintDetails(true)\n\tPrintDetails([]int{10, 20, 30})\n\tPrintDetails(Point{X: 5, Y: 10})\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Целое число: 42 (квадрат: 1764)\n# Строка: \"Golang\" (длина: 6 байт)\n# Булево значение: true\n# Срез чисел: [10 20 30] (элементов: 3)\n# Координата Point: X=5, Y=10"
+      }
+    ],
+    "under_the_hood": "\nType Switch сравнивает указатели на дескрипторы типов `_type` в `eface`.\n",
+    "pitfalls": "\n- Использование `v.(type)` вне оператора `switch` (синтаксическая ошибка компилятора).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В чем отличие `switch v.(type)` от `reflect.TypeOf(v)`?»\n**Ответ:** `switch v.(type)` работает на уровне компилятора без динамических аллокаций рефлексии и типизирует переменную `val` внутри каждого `case`.\n"
+  },
+  {
+    "num": 6,
+    "title": "Функция PlayWithAnimal(a Animal) и демонстрация полиморфизма в аргументах",
+    "task": "Напишите функцию, принимающую Animal и вызывающую Speak(). Передайте туда Dog и Cat, чтобы увидеть полиморфизм в действии.",
+    "theory": "\nПрием интерфейсов в качестве параметров функций — основа принципа Dependency Inversion (DIP).\n",
+    "step_by_step": "\n1. Объявляем `PlayWithAnimal(a Animal)`.\n2. Передаем различные структуры.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Animal interface {\n\tSpeak() string\n}\n\ntype Dog struct{ Name string }\n\nfunc (d Dog) Speak() string {\n\treturn d.Name + \" говорит: Гав!\"\n}\n\ntype Cat struct{ Name string }\n\nfunc (c Cat) Speak() string {\n\treturn c.Name + \" говорит: Мяу!\"\n}\n\nfunc PlayWithAnimal(a Animal) {\n\tfmt.Println(\"Звук животного:\", a.Speak())\n}\n\nfunc main() {\n\tPlayWithAnimal(Dog{Name: \"Бобик\"})\n\tPlayWithAnimal(Cat{Name: \"Мурка\"})\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Звук животного: Бобик говорит: Гав!\n# Звук животного: Мурка говорит: Мяу!"
+      }
+    ],
+    "under_the_hood": "\nСтруктура оборачивается в `iface` при передаче в функцию.\n",
+    "pitfalls": "\n- Передача `nil`-указателя в `Animal`, если метод обращается к полям структуры.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какое золотое правило проектирования API в Go?»\n**Ответ:** «Accept interfaces, return structs» (Принимай интерфейсы, возвращай конкретные структуры).\n"
+  },
+  {
+    "num": 7,
+    "title": "Утверждение типа Type Assertion s := v.(string) и паника при несовпадении типов",
+    "task": "Напиши функцию AssertString(v interface{}) string, делающую type assertion: s := v.(string). Покажи панику при неверном типе (передай int).",
+    "theory": "\n**Опасность одинарного Type Assertion `s := v.(T)`:**\n- Если тип значения внутри интерфейса не совпадает строго с `T`, рантайм **немедленно выбрасывает панику**: `panic: interface conversion: interface {} is int, not string`;\n- В продакшене одинарный Type Assertion без `comma-ok` допустим только если тип гарантирован на 100%.\n",
+    "step_by_step": "\n1. Пишем `AssertString(v any) string`.\n2. Вызываем со строкой (успех).\n3. Демонстрируем перехват паники через `recover()` при передаче `int`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc AssertString(v any) (result string) {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tfmt.Printf(\"⚠️ ПЕРЕХВАЧЕНА ПАНИКА: %v\\n\", r)\n\t\t\tresult = \"<ОШИБКА ТИПА>\"\n\t\t}\n\t}()\n\n\t// Одинарный Type Assertion (опасный):\n\treturn v.(string)\n}\n\nfunc main() {\n\tres1 := AssertString(\"Корректная строка\")\n\tfmt.Printf(\"1. Успешный вызов: %s\\n\", res1)\n\n\tres2 := AssertString(12345) // Передаем int вместо string!\n\tfmt.Printf(\"2. Результат:      %s\\n\", res2)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Успешный вызов: Корректная строка\n# ⚠️ ПЕРЕХВАЧЕНА ПАНИКА: interface conversion: interface {} is int, not string\n# 2. Результат:      <ОШИБКА ТИПА>"
+      }
+    ],
+    "under_the_hood": "\nПри несовпадении `_type` функция рантайма `runtime.panicdottypeE` инициирует панику.\n",
+    "pitfalls": "\n- Использование одинарного утверждения типа в HTTP-хэндлерах и микросервисах (крашит процесс).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как избежать паники при утверждении типа?»\n**Ответ:** Всегда использовать двухэлементную идиому проверки: `val, ok := v.(T)`.\n"
+  },
+  {
+    "num": 8,
+    "title": "Пустой интерфейс any (interface{}) и гетерогенный срез []any",
+    "task": "Используйте пустой интерфейс any (или interface{}), чтобы создать слайс, содержащий данные абсолютно разных типов (int, string, struct).",
+    "theory": "\n**Пустой интерфейс `any` (`interface{}`):**\n- Не содержит ни одного метода;\n- **Любой тип в Go удовлетворяет пустому интерфейсу**;\n- Начиная с Go 1.18, `any` является официальным встроенным алиасом для `interface{}`.\n",
+    "step_by_step": "\n1. Создаем срез `[]any`.\n2. Помещаем `int`, `string`, `bool`, `struct`.\n3. Выводим типы и значения.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tName string\n}\n\nfunc main() {\n\theterogeneousSlice := []any{\n\t\t42,\n\t\t\"Сообщение\",\n\t\t3.1415,\n\t\ttrue,\n\t\tUser{Name: \"Илья\"},\n\t\t[]byte{0xDE, 0xAD, 0xBE, 0xEF},\n\t}\n\n\tfor idx, item := range heterogeneousSlice {\n\t\tfmt.Printf(\"Элемент #%d: Тип = %-18T | Значение = %v\\n\", idx, item, item)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Элемент #0: Тип = int                | Значение = 42\n# Элемент #1: Тип = string             | Значение = Сообщение\n# Элемент #2: Тип = float64            | Значение = 3.1415\n# Элемент #3: Тип = bool               | Значение = true\n# Элемент #4: Тип = main.User          | Значение = {Илья}\n# Элемент #5: Тип = []uint8            | Значение = [222 173 190 239]"
+      }
+    ],
+    "under_the_hood": "\nПустой интерфейс представлен структурой `runtime.eface` (8 байт `_type` + 8 байт `data`).\n",
+    "pitfalls": "\n- Злоупотребление `[]any` вместо строгой статической типизации (приводит к потере безопасности типов и аллокациям в куче).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В чем отличие внутреннего представления `iface` и `eface`?»\n**Ответ:** `iface` используется для непустых интерфейсов с методами (содержит `*itab` с таблицей методов), а `eface` — для пустых `any` (содержит только простой `*_type` без таблицы методов).\n"
+  },
+  {
+    "num": 9,
+    "title": "Безопасное утверждение типа с проверкой Comma-Ok: s, ok := v.(string)",
+    "task": "Перепиши через \"comma ok\": s, ok := v.(string). Обработай false без паники. Напиши graceful degradation.",
+    "theory": "\n**Идиома `comma-ok` для Type Assertion:**\n- `val, ok := v.(T)` возвращает `ok == true` и приведенное значение при совпадении типов;\n- При несовпадении типов `ok == false`, `val` получает Zero Value типа `T`, и **паника не возникает**!\n",
+    "step_by_step": "\n1. Пишем безопасную функцию `ExtractString(v any) string`.\n2. Проверяем `ok`.\n3. Возвращаем дефолтное значение при сбое.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc ExtractString(v any) string {\n\t// Безопасное утверждение типа без риска паники:\n\tif str, ok := v.(string); ok {\n\t\treturn fmt.Sprintf(\"Найдена строка: %q (длина %d)\", str, len(str))\n\t}\n\treturn fmt.Sprintf(\"⚠️ Предоставлен не строковый тип (%T)\", v)\n}\n\nfunc main() {\n\tfmt.Println(ExtractString(\"Успешный текст\"))\n\tfmt.Println(ExtractString(999))\n\tfmt.Println(ExtractString(nil))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Найдена строка: \"Успешный текст\" (длина 27)\n# ⚠️ Предоставлен не строковый тип (int)\n# ⚠️ Предоставлен не строковый тип (<nil>)"
+      }
+    ],
+    "under_the_hood": "\nИнструкция рантайма `runtime.assertE2I` или проверка `eface._type == target_type`.\n",
+    "pitfalls": "\n- Забыть проверить `if ok` и использовать Zero Value `val`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что вернет `val, ok := v.(string)`, если `v == nil`?»\n**Ответ:** Вернет `val = \"\"` (пустая строка) и `ok = false` без паники.\n"
+  },
+  {
+    "num": 10,
+    "title": "Извлечение длины строки через str, ok := v.(string)",
+    "task": "Утверждение типа (Type Assertion): Внутри функции попытайся привести v к строке: str, ok := v.(string). Если ok — выведи длину строки, иначе выведи \"Не строка\".",
+    "theory": "\nПрактика безопасной обработки полиморфных текстовых данных.\n",
+    "step_by_step": "\n1. Пишем `CheckLength(v any)`.\n2. Используем `str, ok := v.(string)`.\n3. Выводим `len(str)` или сообщение об ошибке.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"unicode/utf8\"\n)\n\nfunc CheckLength(v any) {\n\tif str, ok := v.(string); ok {\n\t\tfmt.Printf(\"Строка %q: байт = %d, символов UTF-8 = %d\\n\",\n\t\t\tstr, len(str), utf8.RuneCountInString(str))\n\t} else {\n\t\tfmt.Printf(\"Значение %v (%T): Не строка\\n\", v, v)\n\t}\n}\n\nfunc main() {\n\tCheckLength(\"Привет, Go!\")\n\tCheckLength(100)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Строка \"Привет, Go!\": байт = 19, символов UTF-8 = 11\n# Значение 100 (int): Не строка"
+      }
+    ],
+    "under_the_hood": "\nПакет `unicode/utf8` декодирует руны.\n",
+    "pitfalls": "\n- Путаница между байтовой длиной `len(s)` и числом символов `utf8.RuneCountInString`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `len(\"Привет\") == 12`?»\n**Ответ:** Потому что каждая кириллическая буква в UTF-8 кодируется 2 байтами.\n"
+  },
+  {
+    "num": 11,
+    "title": "Универсальный числовой конвертер ToInt(v any) (int, error) через Type Switch и strconv",
+    "task": "Напиши функцию ToInt(v interface{}) (int, error), принимающую int, int8, int16, int32, int64, uint, string (через strconv) и возвращающую int. Используй type switch.",
+    "theory": "\n**Паттерн гибкого парсинга параметров (Flexible Type Coercion):**\n- В микросервисах параметры конфигурации и JSON-поля могут приходить как числами, так и строками;\n- `ToInt` нормализует все числовые типы и строковые представления к базовому типу `int`.\n",
+    "step_by_step": "\n1. Пишем `ToInt(v any) (int, error)`.\n2. Обрабатываем `int, int8..int64, uint..uint64, float64, string, bool`.\n3. Тестируем все варианты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n)\n\nfunc ToInt(v any) (int, error) {\n\tswitch val := v.(type) {\n\tcase int:\n\t\treturn val, nil\n\tcase int8:\n\t\treturn int(val), nil\n\tcase int16:\n\t\treturn int(val), nil\n\tcase int32:\n\t\treturn int(val), nil\n\tcase int64:\n\t\treturn int(val), nil\n\tcase uint:\n\t\treturn int(val), nil\n\tcase float64:\n\t\treturn int(val), nil\n\tcase string:\n\t\tn, err := strconv.Atoi(val)\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"не удалось преобразовать строку %q в int: %w\", val, err)\n\t\t}\n\t\treturn n, nil\n\tcase bool:\n\t\tif val {\n\t\t\treturn 1, nil\n\t\t}\n\t\treturn 0, nil\n\tdefault:\n\t\treturn 0, fmt.Errorf(\"неподдерживаемый тип для преобразования в int: %T\", v)\n\t}\n}\n\nfunc main() {\n\ttests := []any{\n\t\t42,\n\t\tint32(100),\n\t\t\"777\",\n\t\t3.99,\n\t\ttrue,\n\t\t\"не_число\",\n\t}\n\n\tfor _, item := range tests {\n\t\tval, err := ToInt(item)\n\t\tif err != nil {\n\t\t\tfmt.Printf(\"Вход: %-10v (%-7T) -> Ошибка: %v\\n\", item, item, err)\n\t\t} else {\n\t\t\tfmt.Printf(\"Вход: %-10v (%-7T) -> int: %d\\n\", item, item, val)\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вход: 42         (int    ) -> int: 42\n# Вход: 100        (int32  ) -> int: 100\n# Вход: 777        (string ) -> int: 777\n# Вход: 3.99       (float64) -> int: 3\n# Вход: true       (bool   ) -> int: 1\n# Вход: не_число   (string ) -> Ошибка: не удалось преобразовать строку \"не_число\" в int: strconv.Atoi: parsing \"не_число\": invalid syntax"
+      }
+    ],
+    "under_the_hood": "\nType Switch использует оптимизированный jump-table компилятора.\n",
+    "pitfalls": "\n- Переполнение `int` при конвертации `int64` на 32-битных платформах.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как в стандартной библиотеке Go парсятся нетипизированные JSON-числа?»\n**Ответ:** Через тип `json.Number` (строковая обертка с методами `Int64()` и `Float64()`) или декодер `UseNumber()`.\n"
+  },
+  {
+    "num": 12,
+    "title": "Объявление интерфейса геометрических фигур Shape с методом Area() float64",
+    "task": "Создай интерфейс Shape с методом Area() float64.",
+    "theory": "\nБазовый интерфейс контракта расчета площади.\n",
+    "step_by_step": "\n1. Объявляем `type Shape interface { Area() float64 }`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Shape interface {\n\tArea() float64\n}\n\ntype Square struct {\n\tSide float64\n}\n\nfunc (s Square) Area() float64 {\n\treturn s.Side * s.Side\n}\n\nfunc main() {\n\tvar sh Shape = Square{Side: 5.0}\n\tfmt.Printf(\"Площадь квадрата: %.2f\\n\", sh.Area())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Площадь квадрата: 25.00"
+      }
+    ],
+    "under_the_hood": "\nТаблица `itab` содержит один метод `Area`.\n",
+    "pitfalls": "\n- Добавление лишних методов в интерфейс без реальной потребности.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go популярны однометодные интерфейсы (`io.Reader`, `fmt.Stringer`)?»\n**Ответ:** Однометодные интерфейсы обеспечивают максимальную гибкость и следование принципу Interface Segregation Principle (ISP).\n"
+  },
+  {
+    "num": 13,
+    "title": "Простейший интерфейс Greeter: структуры Russian и English, функция SaySomething(g Greeter)",
+    "task": "Простейший интерфейс: Создайте интерфейс Greeter с методом Greet() string. Создайте структуру Russian и структуру English. Реализуйте этот метод для обеих структур (без явного указания implements!). Напишите функцию SaySomething(g Greeter), принимающую интерфейс, и передайте туда оба типа.",
+    "theory": "\nИнтерфейс как граница между модулями.\n",
+    "step_by_step": "\n1. Объявляем `Russian` и `English`.\n2. Пишем функцию `SaySomething(g Greeter)`.\n3. Вызываем для обоих типов.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Greeter interface {\n\tGreet() string\n}\n\ntype Russian struct{}\n\nfunc (Russian) Greet() string {\n\treturn \"Привет, мир!\"\n}\n\ntype English struct{}\n\nfunc (English) Greet() string {\n\treturn \"Hello, world!\"\n}\n\nfunc SaySomething(g Greeter) {\n\tfmt.Println(\"Приветствие:\", g.Greet())\n}\n\nfunc main() {\n\tSaySomething(Russian{})\n\tSaySomething(English{})\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Приветствие: Привет, мир!\n# Приветствие: Hello, world!"
+      }
+    ],
+    "under_the_hood": "\nПрямой вызов через интерфейсный указатель.\n",
+    "pitfalls": "\n- Создание интерфейса в том же пакете, где определены структуры (лучше определять интерфейс на стороне потребителя).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Где в Go идиоматично объявлять интерфейсы: на стороне создателя типа (producer) или потребителя (consumer)?»\n**Ответ:** На стороне потребителя (consumer), так как потребитель точно знает, какие методы ему требуются.\n"
+  },
+  {
+    "num": 14,
+    "title": "Интерфейс Shape с Area() и Perimeter(): структуры Rectangle и Circle в срезе []Shape",
+    "task": "Интерфейс геометрических фигур: Создайте интерфейс Shape с методами Area() float64 и Perimeter() float64. Реализуйте его для структур Rectangle и Circle. Создайте срез []Shape, наполните его разными фигурами и в цикле выведите площадь каждой.",
+    "theory": "\nИнтерфейсы с несколькими методами.\n",
+    "step_by_step": "\n1. Объявляем `Shape` с методами `Area()` и `Perimeter()`.\n2. Реализуем для `Rectangle` и `Circle`.\n3. Итерируемся по срезу `[]Shape`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"math\"\n)\n\ntype Shape interface {\n\tArea() float64\n\tPerimeter() float64\n}\n\ntype Rectangle struct {\n\tWidth, Height float64\n}\n\nfunc (r Rectangle) Area() float64      { return r.Width * r.Height }\nfunc (r Rectangle) Perimeter() float64 { return 2 * (r.Width + r.Height) }\n\ntype Circle struct {\n\tRadius float64\n}\n\nfunc (c Circle) Area() float64      { return math.Pi * c.Radius * c.Radius }\nfunc (c Circle) Perimeter() float64 { return 2 * math.Pi * c.Radius }\n\nfunc main() {\n\tshapes := []Shape{\n\t\tRectangle{Width: 10, Height: 5},\n\t\tCircle{Radius: 4},\n\t\tRectangle{Width: 3, Height: 3},\n\t}\n\n\tfor idx, sh := range shapes {\n\t\tfmt.Printf(\"Фигура #%d: Площадь = %6.2f | Периметр = %6.2f\\n\",\n\t\t\tidx+1, sh.Area(), sh.Perimeter())\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Фигура #1: Площадь =  50.00 | Периметр =  30.00\n# Фигура #2: Площадь =  50.27 | Периметр =  25.13\n# Фигура #3: Площадь =   9.00 | Периметр =  12.00"
+      }
+    ],
+    "under_the_hood": "\n`itab` содержит 2 слота в массиве методов `fun[0]` и `fun[1]`.\n",
+    "pitfalls": "\n- Реализация только одного метода из двух (структура не будет удовлетворять интерфейсу).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что будет, если структура реализует `Area()`, но забыла `Perimeter()`?»\n**Ответ:** Ошибка компиляции `does not implement Shape (missing method Perimeter)`.\n"
+  },
+  {
+    "num": 15,
+    "title": "Агрегация метрик фигур: функция TotalMetrics(shapes []Shape) (totalArea, totalPerimeter float64)",
+    "task": "Напишите функцию, принимающую срез Shape и выводящую суммарную площадь и периметр.",
+    "theory": "\nАгрегирующие функции над интерфейсными срезами.\n",
+    "step_by_step": "\n1. Пишем `TotalMetrics(shapes []Shape) (float64, float64)`.\n2. Суммируем площади и периметры.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Shape interface {\n\tArea() float64\n\tPerimeter() float64\n}\n\ntype Square struct{ Side float64 }\n\nfunc (s Square) Area() float64      { return s.Side * s.Side }\nfunc (s Square) Perimeter() float64 { return 4 * s.Side }\n\nfunc TotalMetrics(shapes []Shape) (totalArea, totalPerimeter float64) {\n\tfor _, sh := range shapes {\n\t\ttotalArea += sh.Area()\n\t\ttotalPerimeter += sh.Perimeter()\n\t}\n\treturn\n}\n\nfunc main() {\n\tshapes := []Shape{\n\t\tSquare{Side: 2.0}, // S=4, P=8\n\t\tSquare{Side: 3.0}, // S=9, P=12\n\t}\n\n\tarea, perim := TotalMetrics(shapes)\n\tfmt.Printf(\"Итоговая площадь: %.2f | Итоговый периметр: %.2f\\n\", area, perim)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Итоговая площадь: 13.00 | Итоговый периметр: 20.00"
+      }
+    ],
+    "under_the_hood": "\nИтератор вызывает методы через указатели `itab`.\n",
+    "pitfalls": "\n- Передача пустого или nil-среза (корректно вернет 0, 0).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как повысить производительность суммирования миллионов фигур?»\n**Ответ:** Использовать конкретный тип данных вместо интерфейсов `[]Square` для устранения indirect call и поддержки векторизации SIMD.\n"
+  },
+  {
+    "num": 16,
+    "title": "Type Switch: switch val := v.(type) с обработкой базовых типов",
+    "task": "Type Switch: Перепиши с использованием конструкции switch val := v.(type) { case string: ... case int: ... default: ... }.",
+    "theory": "\nЗакрепление синтаксиса Type Switch.\n",
+    "step_by_step": "\n1. Пишем `DescribeType(v any)`.\n2. Обрабатываем `int`, `string`, `default`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc DescribeType(v any) {\n\tswitch val := v.(type) {\n\tcase string:\n\t\tfmt.Printf(\"Строковый тип: %q\\n\", val)\n\tcase int:\n\t\tfmt.Printf(\"Целое число: %d\\n\", val)\n\tdefault:\n\t\tfmt.Printf(\"Прочий тип: %v\\n\", val)\n\t}\n}\n\nfunc main() {\n\tDescribeType(\"Привет\")\n\tDescribeType(100)\n\tDescribeType(3.14)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Строковый тип: \"Привет\"\n# Целое число: 100\n# Прочий тип: 3.14"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор строит таблицу типов `type_descriptor`.\n",
+    "pitfalls": "\n- Использование fallthrough в Type Switch (запрещено спецификацией Go).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Разрешен ли `fallthrough` в `type switch`?»\n**Ответ:** НЕТ! В `type switch` оператор `fallthrough` запрещен, так как тип переменной не может быть одновременно двумя разными типами.\n"
+  },
+  {
+    "num": 17,
+    "title": "Универсальная функция печати PrintAnything(v any) для чисел, строк и структур",
+    "task": "Используй пустой интерфейс interface{} (или алиас any) для создания функции PrintAnything(v any). Передай в неё число, строку и структуру.",
+    "theory": "\nПрием произвольных аргументов через `any`.\n",
+    "step_by_step": "\n1. Создаем функцию `PrintAnything(v any)`.\n2. Печатаем через `%v (%T)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Order struct {\n\tID    int\n\tTotal float64\n}\n\nfunc PrintAnything(v any) {\n\tfmt.Printf(\"Значение: %+v | Тип: %T\\n\", v, v)\n}\n\nfunc main() {\n\tPrintAnything(1024)\n\tPrintAnything(\"Универсальный интерфейс\")\n\tPrintAnything(Order{ID: 1, Total: 4990.50})\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Значение: 1024 | Тип: int\n# Значение: Универсальный интерфейс | Тип: string\n# Значение: {ID:1 Total:4990.5} | Тип: main.Order"
+      }
+    ],
+    "under_the_hood": "\nУпаковка объекта в `runtime.convT`.\n",
+    "pitfalls": "\n- Упаковка примитива `int` в интерфейс вызывает небольшую аллокацию в куче, если компилятор не может ее оптимизировать.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему передача `int` в `any` может приводить к аллокации памяти?»\n**Ответ:** Потому что интерфейс хранит указатель на данные `data`, и если значение больше машинного слова или его адрес убегает, рантайм выделяет память в куче через `runtime.convT64`.\n"
+  },
+  {
+    "num": 18,
+    "title": "Неявное удовлетворение интерфейсу Shape структурами Circle и Rectangle",
+    "task": "Создай структуры Circle и Rectangle. Реализуй для них метод Area(). (Теперь они неявно удовлетворяют интерфейсу Shape).",
+    "theory": "\nОднометодный интерфейс `Shape` и структуры.\n",
+    "step_by_step": "\n1. Создаем интерфейс `Shape`.\n2. Реализуем `Area()` для `Circle` и `Rectangle`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"math\"\n)\n\ntype Shape interface {\n\tArea() float64\n}\n\ntype Circle struct{ R float64 }\n\nfunc (c Circle) Area() float64 { return math.Pi * c.R * c.R }\n\ntype Rectangle struct{ W, H float64 }\n\nfunc (r Rectangle) Area() float64 { return r.W * r.H }\n\nfunc main() {\n\tvar s1 Shape = Circle{R: 3}\n\tvar s2 Shape = Rectangle{W: 4, H: 5}\n\n\tfmt.Printf(\"Circle Area:    %.2f\\n\", s1.Area())\n\tfmt.Printf(\"Rectangle Area: %.2f\\n\", s2.Area())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Circle Area:    28.27\n# Rectangle Area: 20.00"
+      }
+    ],
+    "under_the_hood": "\nСтатическая проверка соответствия типов на этапе компиляции.\n",
+    "pitfalls": "\n- Опечатка в имени метода `area()` со строчной буквы (не экспортированный метод).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Имеет ли значение регистр первой буквы метода в интерфейсе?»\n**Ответ:** ДА! Экспортируемые методы начинаются с заглавной буквы (`Area`), неэкспортируемые — со строчной (`area`).\n"
+  },
+  {
+    "num": 19,
+    "title": "Реализация интерфейса io.Reader для структуры MyBuffer и чтение через io.ReadAll",
+    "task": "Реализуй io.Reader для структуры MyBuffer (метод Read(p []byte) (n int, err error)). Прочитай из неё через io.ReadAll и сравни содержимое.",
+    "theory": "\n**Стандартный контракт `io.Reader`:**\n- Сигнатура: `Read(p []byte) (n int, err error)`;\n- Заполняет переданный буфер `p`, возвращает число прочитанных байт `n` и `io.EOF` при достижении конца потока;\n- Ключевой фундамент всей потоковой экосистемы Go.\n",
+    "step_by_step": "\n1. Создаем структуру `MyBuffer{data []byte, offset int}`.\n2. Реализуем метод `Read(p []byte) (int, error)`.\n3. Читаем через `io.ReadAll(buf)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n)\n\ntype MyBuffer struct {\n\tdata   []byte\n\toffset int\n}\n\nfunc NewMyBuffer(text string) *MyBuffer {\n\treturn &MyBuffer{data: []byte(text)}\n}\n\nfunc (b *MyBuffer) Read(p []byte) (n int, err error) {\n\tif b.offset >= len(b.data) {\n\t\treturn 0, io.EOF\n\t}\n\n\tn = copy(p, b.data[b.offset:])\n\tb.offset += n\n\treturn n, nil\n}\n\nfunc main() {\n\tbuf := NewMyBuffer(\"Потоковые данные из MyBuffer!\")\n\n\tallBytes, err := io.ReadAll(buf)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Printf(\"Прочитано: %q (всего %d байт)\\n\", string(allBytes), len(allBytes))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Прочитано: \"Потоковые данные из MyBuffer!\" (всего 48 байт)"
+      }
+    ],
+    "under_the_hood": "\n`io.ReadAll` циклически вызывает `buf.Read` с динамическим расширением слайса.\n",
+    "pitfalls": "\n- Забыть вернуть `io.EOF` в конце данных (приведет к бесконечному циклу в `io.ReadAll`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Может ли `Read` вернуть одновременно `n > 0` и `err == io.EOF`?»\n**Ответ:** ДА! Спецификация `io.Reader` разрешает вернуть последние прочитанные байты вместе с ошибкой `io.EOF`.\n"
+  },
+  {
+    "num": 20,
+    "title": "Каверзный кейс: Value vs Pointer Receiver в интерфейсах и ошибка Method Set",
+    "task": "Каверзный случай: Value vs Pointer Receiver: Реализуй метод Speak() для *Dog (по указателю). Попробуй положить в срез []Speaker значение Dog{} (без &). Изучи ошибку: интерфейс не реализован для значения, только для указателя!",
+    "theory": "\n**Правила Method Set в Go:**\n- **Для значения типа `T`:** Method Set содержит только методы с **Value Receiver `(t T)`**;\n- **Для указателя типа `*T`:** Method Set содержит **И методы `(t T)`, И методы `(t *T)`**;\n- Поэтому если метод объявлен на `*Dog`, значение `Dog{}` **НЕ реализует интерфейс**!\n",
+    "step_by_step": "\n1. Создаем структуру `Dog` с методом `(d *Dog) Speak() string`.\n2. Показываем ошибку при попытке положить `Dog{}` в интерфейс.\n3. Исправляем передачей указателя `&Dog{}`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Speaker interface {\n\tSpeak() string\n}\n\ntype Dog struct {\n\tName string\n}\n\n// Метод объявлен СТРОГО на указателе *Dog:\nfunc (d *Dog) Speak() string {\n\treturn d.Name + \": Гав!\"\n}\n\nfunc main() {\n\t// ❌ ОШИБКА КОМПИЛЯЦИИ:\n\t// var s Speaker = Dog{Name: \"Шарик\"}\n\t// cannot use Dog{...} as Speaker value: Dog does not implement Speaker (Speak method has pointer receiver)\n\n\t// ✅ ПРАВИЛЬНО: передавать указатель &Dog:\n\tvar s Speaker = &Dog{Name: \"Шарик\"}\n\tfmt.Println(\"Интерфейсный вызов:\", s.Speak())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Интерфейсный вызов: Шарик: Гав!"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор проверяет Method Set типа во время тайпчекинга. Для `Dog` таблица методов пуста.\n",
+    "pitfalls": "\n- Попытка передать неадресуемое значение структуры в интерфейс, ожидающий pointer receiver.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему значение `T` не может автоматически вызывать pointer-методы внутри интерфейса?»\n**Ответ:** Потому что значение внутри интерфейса копируется и не является адресуемым; взятие адреса от копии внутри интерфейса привело бы к мутации временной копии, а не исходного объекта.\n"
+  },
+  {
+    "num": 21,
+    "title": "Безопасное извлечение строки из переменной any: val, ok := myVar.(string)",
+    "task": "Примените утверждение типа (type assertion) val, ok := myVar.(string), чтобы безопасно извлечь строку из переменной типа any без паники.",
+    "theory": "\nПрактика защитного программирования.\n",
+    "step_by_step": "\n1. Создаем переменную `var myVar any = \"Go 1.22\"`.\n2. Извлекаем через `val, ok := myVar.(string)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar myVar any = \"Стандарты разработки в Go\"\n\n\tif str, ok := myVar.(string); ok {\n\t\tfmt.Printf(\"Успешно извлечено: %q\\n\", str)\n\t} else {\n\t\tfmt.Println(\"Ошибка: значение не является строкой\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Успешно извлечено: \"Стандарты разработки в Go\" "
+      }
+    ],
+    "under_the_hood": "\nПрямая проверка типа.\n",
+    "pitfalls": "\n- Игнорирование переменной `ok`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что происходит при успешном Type Assertion?»\n**Ответ:** Рантайм копирует данные из интерфейса `eface.data` в целевую типизированную переменную `str`.\n"
+  },
+  {
+    "num": 22,
+    "title": "Полиморфная функция PrintArea(s Shape) для круга и прямоугольника",
+    "task": "Напиши функцию PrintArea(s Shape), которая принимает интерфейс. Передай в неё круг и прямоугольник.",
+    "theory": "\nУниверсальный вывод площадей.\n",
+    "step_by_step": "\n1. Пишем `PrintArea(s Shape)`.\n2. Передаем различные геометрические фигуры.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"math\"\n)\n\ntype Shape interface {\n\tArea() float64\n}\n\ntype Circle struct{ Radius float64 }\n\nfunc (c Circle) Area() float64 { return math.Pi * c.Radius * c.Radius }\n\ntype Rectangle struct{ W, H float64 }\n\nfunc (r Rectangle) Area() float64 { return r.W * r.H }\n\nfunc PrintArea(s Shape) {\n\tfmt.Printf(\"Площадь фигуры (%T): %.2f кв. ед.\\n\", s, s.Area())\n}\n\nfunc main() {\n\tPrintArea(Circle{Radius: 5})\n\tPrintArea(Rectangle{W: 10, H: 4})\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Площадь фигуры (main.Circle): 78.54 кв. ед.\n# Площадь фигуры (main.Rectangle): 40.00 кв. ед."
+      }
+    ],
+    "under_the_hood": "\nФорматирование `%T` обращается к имени типа в `itab._type`.\n",
+    "pitfalls": "\n- Передача `nil` в `PrintArea`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как `fmt.Printf(\"%T\")` узнает точный тип структуры внутри интерфейса?»\n**Ответ:** Через поле `itab._type.string()` метаданных типа рантайма.\n"
+  },
+  {
+    "num": 23,
+    "title": "Инспекция вариативных аргументов: функция PrintAll(v ...any)",
+    "task": "Пустой интерфейс: функция PrintAll(v ...interface{}), которая печатает тип и значение каждого элемента.",
+    "theory": "\nСочетание `...any` и рефлексивной печати типов.\n",
+    "step_by_step": "\n1. Пишем `PrintAll(items ...any)`.\n2. Итерируемся по элементам.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc PrintAll(items ...any) {\n\tfor i, item := range items {\n\t\tfmt.Printf(\"  [%d] Тип: %-10T | Значение: %v\\n\", i, item, item)\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"Список аргументов:\")\n\tPrintAll(100, \"Go\", 3.14, false, []int{1, 2})\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Список аргументов:\n#   [0] Тип: int        | Значение: 100\n#   [1] Тип: string     | Значение: Go\n#   [2] Тип: float64    | Значение: 3.14\n#   [3] Тип: bool       | Значение: false\n#   [4] Тип: []int      | Значение: [1 2]"
+      }
+    ],
+    "under_the_hood": "\n`items` формируется как срез `[]any` из 16-байтных структур.\n",
+    "pitfalls": "\n- Передача готового среза `PrintAll(mySlice)` vs `PrintAll(mySlice...)`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как устроен `fmt.Println` внутри?»\n**Ответ:** Сигнатура `fmt.Println(a ...any)` принимает срез пустых интерфейсов и последовательно форматирует каждый элемент через внутренний буфер.\n"
+  },
+  {
+    "num": 24,
+    "title": "Реализация интерфейса io.Writer для MyBuffer и запись через fmt.Fprintf",
+    "task": "Реализуй io.Writer для MyBuffer. Напиши в неё через fmt.Fprintf. Покажи, что MyBuffer теперь можно использовать везде, где ожидается io.Writer.",
+    "theory": "\n**Стандартный контракт `io.Writer`:**\n- Сигнатура: `Write(p []byte) (n int, err error)`;\n- Записывает байты из `p` в целевой поток;\n- Позволяет подключать `MyBuffer` к любым сетевым, файловым и форматирующим функциям standard library.\n",
+    "step_by_step": "\n1. Создаем структуру `MyBuffer{data []byte}`.\n2. Пишем метод `(b *MyBuffer) Write(p []byte) (int, error)`.\n3. Пишем в буфер через `fmt.Fprintf(buf, \"...\")`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n)\n\ntype MyBuffer struct {\n\tdata []byte\n}\n\nfunc (b *MyBuffer) Write(p []byte) (n int, err error) {\n\tb.data = append(b.data, p...)\n\treturn len(p), nil\n}\n\nfunc (b *MyBuffer) String() string {\n\treturn string(b.data)\n}\n\nfunc main() {\n\tbuf := &MyBuffer{}\n\n\t// Используем MyBuffer везде, где требуется io.Writer:\n\tvar w io.Writer = buf\n\tfmt.Fprintf(w, \"Пользователь #%d: баланс %.2f руб.\\n\", 101, 1500.75)\n\n\tfmt.Printf(\"Содержимое буфера:\\n%s\", buf.String())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Содержимое буфера:\n# Пользователь #101: баланс 1500.75 руб."
+      }
+    ],
+    "under_the_hood": "\n`fmt.Fprintf` вызывает `w.Write()` через виртуальную таблицу интерфейса `io.Writer`.\n",
+    "pitfalls": "\n- Объявление `Write` с Value Receiver `(b MyBuffer)` (будет мутировать локальную копию буфера и терять данные!).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему для `io.Writer` всегда используется Pointer Receiver?»\n**Ответ:** Потому что запись по своей сути изменяет состояние буфера/файла/сокета, что требует сохранения мутаций в исходном объекте.\n"
+  },
+  {
+    "num": 25,
+    "title": "Реализация составного интерфейса io.ReadWriter единым буфером памяти",
+    "task": "Создай структуру, реализующую io.ReadWriter (оба интерфейса одновременно). Покажи, что она удовлетворяет составному интерфейсу.",
+    "theory": "\n**Составной интерфейс `io.ReadWriter`:**\n- Включает оба метода: `Read(p []byte) (int, error)` и `Write(p []byte) (int, error)`;\n- Любой тип, реализующий оба метода, автоматически удовлетворяет `io.ReadWriter`.\n",
+    "step_by_step": "\n1. Создаем структуру `MemoryStream`.\n2. Реализуем методы `Read` и `Write`.\n3. Присваиваем `var rw io.ReadWriter = &MemoryStream{}`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n)\n\ntype MemoryStream struct {\n\tbuf    []byte\n\toffset int\n}\n\nfunc (m *MemoryStream) Write(p []byte) (int, error) {\n\tm.buf = append(m.buf, p...)\n\treturn len(p), nil\n}\n\nfunc (m *MemoryStream) Read(p []byte) (int, error) {\n\tif m.offset >= len(m.buf) {\n\t\treturn 0, io.EOF\n\t}\n\tn := copy(p, m.buf[m.offset:])\n\tm.offset += n\n\treturn n, nil\n}\n\nfunc main() {\n\tvar rw io.ReadWriter = &MemoryStream{}\n\n\t// 1. Запись:\n\trw.Write([]byte(\"Сквозной поток данных\"))\n\n\t// 2. Чтение:\n\treadData := make([]byte, 64)\n\tn, _ := rw.Read(readData)\n\n\tfmt.Printf(\"Прочитано из ReadWriter: %q\\n\", string(readData[:n]))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Прочитано из ReadWriter: \"Сквозной поток данных\" "
+      }
+    ],
+    "under_the_hood": "\n`itab` для `io.ReadWriter` объединяет методы `Read` и `Write`.\n",
+    "pitfalls": "\n- Чтение до записи или без сброса смещения.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какая стандартная структура в пакете `bytes` реализует `io.ReadWriter`?»\n**Ответ:** Структура `*bytes.Buffer`.\n"
+  },
+  {
+    "num": 26,
+    "title": "Композиция интерфейсов: объединение Runner и Swimmer в интерфейс Triathlete",
+    "task": "Композиция интерфейсов: Создай интерфейс Runner и Swimmer. Создай интерфейс Triathlete, который встраивает в себя оба предыдущих интерфейса.",
+    "theory": "\n**Встраивание интерфейсов в интерфейсы (Interface Embedding):**\n- Интерфейс может встраивать другие интерфейсы;\n- Итоговый интерфейс требует реализации объединения всех методов встроенных интерфейсов.\n",
+    "step_by_step": "\n1. Создаем интерфейсы `Runner` (`Run() string`) и `Swimmer` (`Swim() string`).\n2. Объявляем `type Triathlete interface { Runner; Swimmer }`.\n3. Создаем структуру `Athlete` и реализуем оба метода.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Runner interface {\n\tRun() string\n}\n\ntype Swimmer interface {\n\tSwim() string\n}\n\ntype Triathlete interface {\n\tRunner\n\tSwimmer\n}\n\ntype Athlete struct {\n\tName string\n}\n\nfunc (a Athlete) Run() string {\n\treturn a.Name + \" бежит 10 км\"\n}\n\nfunc (a Athlete) Swim() string {\n\treturn a.Name + \" плывет 1.5 км\"\n}\n\nfunc PerformTriathlon(t Triathlete) {\n\tfmt.Println(\"Старт соревнований:\")\n\tfmt.Println(\"  •\", t.Swim())\n\tfmt.Println(\"  •\", t.Run())\n}\n\nfunc main() {\n\tathlete := Athlete{Name: \"Алексей\"}\n\tPerformTriathlon(athlete)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Старт соревнований:\n#   • Алексей плывет 1.5 км\n#   • Алексей бежит 10 км"
+      }
+    ],
+    "under_the_hood": "\nТаблица методов `Triathlete` генерируется компилятором как объединение наборов методов.\n",
+    "pitfalls": "\n- Дублирование методов с одинаковыми именами, но разными сигнатурами (ошибка компиляции).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли встроить в интерфейс два других интерфейса с одинаковым методом `Close() error`?»\n**Ответ:** Да! Начиная с Go 1.14 разрешено дублирование методов в пересекающихся интерфейсах, если их сигнатуры полностью идентичны.\n"
+  },
+  {
+    "num": 27,
+    "title": "Безопасное извлечение строки из any с расчетом длины через str, ok := val.(string)",
+    "task": "Приведение типов (Type Assertion): Создайте функцию, принимающую пустой интерфейс any (или interface{}). Внутри функции проверьте, лежит ли там строка, используя синтаксис str, ok := val.(string). Если это строка, выведите её длину, если нет — выведите сообщение \"Не строка\".",
+    "theory": "\nЗакрепление паттерна `comma-ok` для проверки динамических типов.\n",
+    "step_by_step": "\n1. Пишем `InspectString(val any)`.\n2. Используем `str, ok := val.(string)`.\n3. Тестируем.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc InspectString(val any) {\n\tif str, ok := val.(string); ok {\n\t\tfmt.Printf(\"Строка найдена: %q | Длина: %d символов\\n\", str, len(str))\n\t} else {\n\t\tfmt.Printf(\"Значение %v (%T): Не строка\\n\", val, val)\n\t}\n}\n\nfunc main() {\n\tInspectString(\"Высоконагруженный бэкенд\")\n\tInspectString(3.14)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Строка найдена: \"Высоконагруженный бэкенд\" | Длина: 45 символов\n# Значение 3.14 (float64): Не строка"
+      }
+    ],
+    "under_the_hood": "\nСравнение `_type` дескриптора.\n",
+    "pitfalls": "\n- Вызов без `ok` в production коде.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова алгоритмическая сложность `val, ok := v.(T)`?»\n**Ответ:** Для конкретных типов `T` (структуры, примитивы) — $O(1)$ (прямое сравнение адресов указателей типов `_type`).\n"
+  },
+  {
+    "num": 28,
+    "title": "Type Switch по any с дифференцированной бизнес-логикой для разных типов",
+    "task": "Напишите type switch, который принимает any и выполняет разные действия в зависимости от динамического типа переменной.",
+    "theory": "\nДиспетчеризация логики на основе типов.\n",
+    "step_by_step": "\n1. Пишем `ProcessPayload(data any)`.\n2. Обрабатываем `[]byte`, `string`, `int`, `map[string]any`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc ProcessPayload(data any) {\n\tswitch v := data.(type) {\n\tcase []byte:\n\t\tfmt.Printf(\"Бинарный буфер (%d байт): %x\\n\", len(v), v)\n\tcase string:\n\t\tfmt.Printf(\"Текстовый payload: %q\\n\", v)\n\tcase int:\n\t\tfmt.Printf(\"Числовой код статуса: %d\\n\", v)\n\tcase map[string]any:\n\t\tfmt.Printf(\"JSON-подобная карта с %d ключами\\n\", len(v))\n\tdefault:\n\t\tfmt.Printf(\"Неизвестный формат данных: %T\\n\", v)\n\t}\n}\n\nfunc main() {\n\tProcessPayload([]byte{0x47, 0x6F})\n\tProcessPayload(\"status:ok\")\n\tProcessPayload(200)\n\tProcessPayload(map[string]any{\"user_id\": 10})\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Бинарный буфер (2 байт): 476f\n# Текстовый payload: \"status:ok\"\n# Числовой код статуса: 200\n# JSON-подобная карта с 1 ключами"
+      }
+    ],
+    "under_the_hood": "\nГенерация бинарного дерева условий в ассемблере.\n",
+    "pitfalls": "\n- Пропуск ветки `default`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли перечислить несколько типов в одном `case` в `type switch`?»\n**Ответ:** ДА (`case int, int64:`), но в таком случае переменная `v` внутри `case` будет иметь тип `any` (исходный интерфейс), а не конкретный тип.\n"
+  },
+  {
+    "num": 29,
+    "title": "Композиция интерфейсов: ReadWriteCloser и структура сетевой сессии NetworkSession",
+    "task": "Создай интерфейс ReadWriteCloser, встраивающий io.Reader, io.Writer, io.Closer. Создай структуру, реализующую все три. Покажи, что встраивание интерфейсов работает как композиция.",
+    "theory": "\n**Составной контракт `io.ReadWriteCloser`:**\n- Объединяет `Read`, `Write` и `Close`;\n- Фундаментальный интерфейс для сетевых TCP/TLS-сокетов (`net.Conn`).\n",
+    "step_by_step": "\n1. Объявляем интерфейс `ReadWriteCloser`.\n2. Создаем `NetworkSession` и реализуем все три метода.\n3. Проверяем полиморфизм.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n)\n\ntype ReadWriteCloser interface {\n\tio.Reader\n\tio.Writer\n\tio.Closer\n}\n\ntype NetworkSession struct {\n\tdata   []byte\n\tclosed bool\n}\n\nfunc (s *NetworkSession) Read(p []byte) (int, error) {\n\tif s.closed {\n\t\treturn 0, fmt.Errorf(\"сессия закрыта\")\n\t}\n\tn := copy(p, s.data)\n\treturn n, nil\n}\n\nfunc (s *NetworkSession) Write(p []byte) (int, error) {\n\tif s.closed {\n\t\treturn 0, fmt.Errorf(\"сессия закрыта\")\n\t}\n\ts.data = append(s.data, p...)\n\treturn len(p), nil\n}\n\nfunc (s *NetworkSession) Close() error {\n\ts.closed = true\n\tfmt.Println(\"Сетевая сессия корректно закрыта\")\n\treturn nil\n}\n\nfunc main() {\n\tvar rwc ReadWriteCloser = &NetworkSession{}\n\n\trwc.Write([]byte(\"PING\"))\n\trwc.Close()\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Сетевая сессия корректно закрыта"
+      }
+    ],
+    "under_the_hood": "\n`itab` содержит адреса трех функций: `Read`, `Write`, `Close`.\n",
+    "pitfalls": "\n- Забыть метод `Close()` (компилятор не позволит присвоить структуру интерфейсу).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какому стандартному интерфейсу удовлетворяет сетевое подключение `net.Conn`?»\n**Ответ:** `net.Conn` реализует `io.Reader`, `io.Writer`, `io.Closer`, а также методы настройки таймаутов (`SetDeadline`).\n"
+  },
+  {
+    "num": 30,
+    "title": "Динамическая проверка интерфейса: опциональный вызов fmt.Stringer через Type Assertion",
+    "task": "Утверждение типа: проверьте, реализует ли переданный interface{} интерфейс fmt.Stringer, и если да, вызовите его.",
+    "theory": "\n**Паттерн опционального интерфейса (Optional Interface Query):**\n- Проверяет в рантайме, поддерживает ли переданный объект расширенный интерфейс (например, `fmt.Stringer` или `io.Closer`);\n- Если да — вызывает специализированный метод, если нет — использует стандартное поведение (Graceful Fallback).\n",
+    "step_by_step": "\n1. Пишем `PrintCustom(v any)`.\n2. Проверяем `if s, ok := v.(fmt.Stringer); ok`.\n3. Тестируем со структурой, реализующей `String()`, и обычной структурой.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tName string\n}\n\nfunc (u User) String() string {\n\treturn fmt.Sprintf(\"Пользователь: %s\", u.Name)\n}\n\ntype RawData struct {\n\tValue int\n}\n\nfunc PrintCustom(v any) {\n\t// Динамическая проверка реализации интерфейса fmt.Stringer:\n\tif stringer, ok := v.(fmt.Stringer); ok {\n\t\tfmt.Printf(\"✅ Найден fmt.Stringer: %s\\n\", stringer.String())\n\t} else {\n\t\tfmt.Printf(\"ℹ️ Обычный вывод: %+v\\n\", v)\n\t}\n}\n\nfunc main() {\n\tPrintCustom(User{Name: \"Сергей\"})\n\tPrintCustom(RawData{Value: 42})\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# ✅ Найден fmt.Stringer: Пользователь: Сергей\n# ℹ️ Обычный вывод: {Value:42}"
+      }
+    ],
+    "under_the_hood": "\nРантайм ищет метод `String()` в таблице методов типа объекта через `runtime.assertI2I`.\n",
+    "pitfalls": "\n- Реализация `String()` на указателе `*User`, а передача значения `User{}` (в этом случае проверка `v.(fmt.Stringer)` вернет `false`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как в стандартной библиотеке `io.Copy` проверяется поддержка `io.WriterTo` / `io.ReaderFrom`?»\n**Ответ:** Через динамический Type Assertion `if wt, ok := src.(io.WriterTo); ok { return wt.WriteTo(dst) }`, что позволяет использовать оптимизированный системный вызов `sendfile(2)` ядра Linux.\n"
+  },
+  {
+    "num": 31,
+    "title": "Полиморфизм потоков: универсальная функция ProcessStream(r io.Reader)",
+    "task": "Напиши функцию ProcessStream(r io.Reader), которая работает с любым ридером: os.File, bytes.Buffer, strings.NewReader, MyBuffer. Продемонстрируй полиморфизм.",
+    "theory": "\nУниверсальная обработка любых источников потоковых данных.\n",
+    "step_by_step": "\n1. Пишем `ProcessStream(r io.Reader)`.\n2. Передаем `strings.NewReader` и `bytes.NewBuffer`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"io\"\n\t\"strings\"\n)\n\nfunc ProcessStream(r io.Reader) {\n\tbuf := make([]byte, 32)\n\ttotal := 0\n\n\tfor {\n\t\tn, err := r.Read(buf)\n\t\tif n > 0 {\n\t\t\ttotal += n\n\t\t\tfmt.Printf(\"  • Прочитана порция: %q\\n\", string(buf[:n]))\n\t\t}\n\t\tif err == io.EOF {\n\t\t\tbreak\n\t\t}\n\t\tif err != nil {\n\t\t\tfmt.Println(\"Ошибка чтения:\", err)\n\t\t\treturn\n\t\t}\n\t}\n\tfmt.Printf(\"Итого обработано байт: %d\\n\\n\", total)\n}\n\nfunc main() {\n\tfmt.Println(\"1. Чтение из strings.Reader:\")\n\tProcessStream(strings.NewReader(\"Строковый поток данных\"))\n\n\tfmt.Println(\"2. Чтение из bytes.Buffer:\")\n\tProcessStream(bytes.NewBufferString(\"Буферизованные бинарные данные\"))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Чтение из strings.Reader:\n#   • Прочитана порция: \"Строковый поток данных\"\n# Итого обработано байт: 41\n# \n# 2. Чтение из bytes.Buffer:\n#   • Прочитана порция: \"Буферизованные бинарн\"\n#   • Прочитана порция: \"ые данные\"\n# Итого обработано байт: 56"
+      }
+    ],
+    "under_the_hood": "\nИнтерфейсный вызов `r.Read` связывается с конкретной реализацией в рантайме.\n",
+    "pitfalls": "\n- Вызов `io.ReadAll` на бесконечных ридерах (приведет к Out-of-Memory).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `io.Reader` спроектирован так, что вызывающий код выделяет буфер `p []byte`, а не сам `Reader`?»\n**Ответ:** Это фундаментальный принцип Zero-Allocation: вызывающий код может переиспользовать один и тот же буфер в цикле, не нагружая сборщик мусора постоянными аллокациями.\n"
+  },
+  {
+    "num": 32,
+    "title": "Извлечение конкретного типа из any через Type Assertion str, ok := v.(string)",
+    "task": "Используй type assertion для извлечения конкретного типа из any: str, ok := v.(string).",
+    "theory": "\nБазовое извлечение типов из динамических структур данных.\n",
+    "step_by_step": "\n1. Инициализируем `var data any = \"Golang Backend\"`.\n2. Извлекаем строку с проверкой `ok`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar data any = \"Golang Backend\"\n\n\tif str, ok := data.(string); ok {\n\t\tfmt.Printf(\"Строковое значение: %s\\n\", str)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Строковое значение: Golang Backend"
+      }
+    ],
+    "under_the_hood": "\nКопирование заголовка строки (16 байт) из интерфейса.\n",
+    "pitfalls": "\n- Ошибочное утверждение `data.(int)` приведет к `ok == false`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как быстро проверить, что в `any` лежит `nil`?»\n**Ответ:** `if data == nil` (проверяет, что не установлен ни тип, ни значение).\n"
+  },
+  {
+    "num": 33,
+    "title": "Реализация интерфейса fmt.Stringer для структуры Book и автоматический вызов в fmt.Println",
+    "task": "Создай интерфейс fmt.Stringer (или используй существующий). Реализуй его для структуры Book. Покажи, что fmt.Println автоматически вызывает String().",
+    "theory": "\n**Интерфейс `fmt.Stringer`:**\n- Стандартный интерфейс с методом `String() string`;\n- Функции `fmt.Print`, `fmt.Println`, `fmt.Sprintf` автоматически вызывают `String()`, если объект реализует этот интерфейс.\n",
+    "step_by_step": "\n1. Создаем структуру `Book{Title, Author string, Year int}`.\n2. Реализуем `(b Book) String() string`.\n3. Передаем в `fmt.Println(book)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Book struct {\n\tTitle  string\n\tAuthor string\n\tYear   int\n}\n\nfunc (b Book) String() string {\n\treturn fmt.Sprintf(\"«%s» (%s, %d г.)\", b.Title, b.Author, b.Year)\n}\n\nfunc main() {\n\tb := Book{\n\t\tTitle:  \"Head First Go\",\n\t\tAuthor: \"Jay McGavren\",\n\t\tYear:   2019,\n\t}\n\n\t// fmt.Println автоматически вызывает метод String():\n\tfmt.Println(\"Книга:\", b)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Книга: «Head First Go» (Jay McGavren, 2019 г.)"
+      }
+    ],
+    "under_the_hood": "\n`fmt.Println` внутри делает type assertion `if s, ok := p.(Stringer); ok { return s.String() }`.\n",
+    "pitfalls": "\n- Вызов `fmt.Sprintf(\"%s\", b)` внутри метода `(b Book) String()` — приведет к **бесконечной рекурсии и переполнению стека (Stack Overflow Panic)**!\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему вызов `fmt.Sprintf(\"%v\", s)` внутри `s.String()` приводит к крашу программы?»\n**Ответ:** Потому что `fmt.Sprintf` внутри снова проверяет `fmt.Stringer` и рекурсивно вызывает `s.String()`, приводя к исчерпанию стека (`runtime: goroutine stack exceeds 1000000000-byte limit`).\n"
+  },
+  {
+    "num": 34,
+    "title": "Композиция интерфейсов: Reader + Writer = ReadWriter и структура File",
+    "task": "Композиция интерфейсов: Создайте интерфейс Reader с методом Read(). Создайте интерфейс Writer с методом Write(). Создайте объединенный интерфейс ReadWriter, встроив в него оба интерфейса. Создайте структуру File, реализующую ReadWriter.",
+    "theory": "\nПошаговое построение композитного интерфейса.\n",
+    "step_by_step": "\n1. Объявляем `Reader`, `Writer`, `ReadWriter`.\n2. Создаем структуру `VirtualFile`.\n3. Тестируем работу.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Reader interface {\n\tReadData() string\n}\n\ntype Writer interface {\n\tWriteData(data string)\n}\n\ntype ReadWriter interface {\n\tReader\n\tWriter\n}\n\ntype VirtualFile struct {\n\tcontent string\n}\n\nfunc (f *VirtualFile) ReadData() string {\n\treturn f.content\n}\n\nfunc (f *VirtualFile) WriteData(data string) {\n\tf.content = data\n}\n\nfunc main() {\n\tvar rw ReadWriter = &VirtualFile{}\n\n\trw.WriteData(\"Контент виртуального файла\")\n\tfmt.Println(\"Прочитано:\", rw.ReadData())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Прочитано: Контент виртуального файла"
+      }
+    ],
+    "under_the_hood": "\nТаблица `itab` связывает методы `ReadData` и `WriteData`.\n",
+    "pitfalls": "\n- Забыть один из методов.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли разбить `ReadWriter` обратно на `Reader` и `Writer`?»\n**Ответ:** Да! Переменная типа `ReadWriter` может быть напрямую присвоена переменной типа `Reader` или `Writer`, так как содержит надмножество их методов.\n"
+  },
+  {
+    "num": 35,
+    "title": "Универсальная запись WriteToMultiple(w io.Writer, data string) в os.Stdout и bytes.Buffer",
+    "task": "Напиши функцию WriteToMultiple(w io.Writer, data string), передай туда os.File и bytes.Buffer. Покажи, что оба реализуют io.Writer.",
+    "theory": "\nПолиморфный вывод в файлы, сеть и память.\n",
+    "step_by_step": "\n1. Пишем `WriteToMultiple(w io.Writer, data string)`.\n2. Передаем `os.Stdout` и `bytes.Buffer`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n)\n\nfunc WriteToMultiple(w io.Writer, data string) {\n\tfmt.Fprintf(w, \"[Лог]: %s\\n\", data)\n}\n\nfunc main() {\n\tvar memoryBuf bytes.Buffer\n\n\t// Запись в память:\n\tWriteToMultiple(&memoryBuf, \"Запись в буфер памяти\")\n\n\t// Запись в консоль (os.Stdout - это *os.File):\n\tWriteToMultiple(os.Stdout, \"Запись в стандартный поток вывода\")\n\n\tfmt.Printf(\"Содержимое bytes.Buffer: %s\", memoryBuf.String())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# [Лог]: Запись в стандартный поток вывода\n# Содержимое bytes.Buffer: [Лог]: Запись в буфер памяти"
+      }
+    ],
+    "under_the_hood": "\n`os.Stdout` использует системный вызов `write(1, ...)`, а `bytes.Buffer` — `append`.\n",
+    "pitfalls": "\n- Передача `memoryBuf` по значению вместо указателя `&memoryBuf`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как объединить запись в несколько `io.Writer` одновременно?»\n**Ответ:** Использовать функцию стандартной библиотеки `io.MultiWriter(w1, w2, w3)`.\n"
+  },
+  {
+    "num": 36,
+    "title": "Кастомный тип ошибки ValidationError со структурой полей и реализацией интерфейса error",
+    "task": "Создай интерфейс error. Реализуй кастомный тип ошибки ValidationError (struct с полями Field, Message). Реализуй метод Error() string.",
+    "theory": "\n**Интерфейс `error` в Go:**\n- Встроенный стандартный интерфейс: `type error interface { Error() string }`;\n- Кастомные структуры ошибок позволяют передавать контекст (имя невалидного поля, код ошибки, HTTP-статус).\n",
+    "step_by_step": "\n1. Создаем структуру `ValidationError{Field, Message string}`.\n2. Реализуем метод `(e ValidationError) Error() string`.\n3. Возвращаем как `error` и проверяем через `errors.As`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype ValidationError struct {\n\tField   string\n\tMessage string\n}\n\nfunc (e ValidationError) Error() string {\n\treturn fmt.Sprintf(\"ошибка валидации поля %q: %s\", e.Field, e.Message)\n}\n\nfunc ValidateAge(age int) error {\n\tif age < 18 {\n\t\treturn ValidationError{Field: \"age\", Message: \"возраст должен быть не менее 18 лет\"}\n\t}\n\treturn nil\n}\n\nfunc main() {\n\terr := ValidateAge(15)\n\tif err != nil {\n\t\tfmt.Printf(\"Текст ошибки: %s\\n\", err)\n\n\t\t// Проверка типа ошибки через errors.As:\n\t\tvar valErr ValidationError\n\t\tif errors.As(err, &valErr) {\n\t\t\tfmt.Printf(\"⚠️ Ошибочное поле: %s\\n\", valErr.Field)\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Текст ошибки: ошибка валидации поля \"age\": возраст должен быть не менее 18 лет\n# ⚠️ Ошибочное поле: age"
+      }
+    ],
+    "under_the_hood": "\nФункция `errors.As` ищет совпадение типа в цепочке обернутых ошибок.\n",
+    "pitfalls": "\n- Возврат неинициализированного указателя на кастомную ошибку (ловушка nil pointer in error interface).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В чем преимущество `errors.As` перед прямым Type Assertion `err.(ValidationError)`?»\n**Ответ:** `errors.As` умеет рекурсивно разворачивать цепочки ошибок, обернутых через `fmt.Errorf(\"%w\", err)` (Unwrap).\n"
+  },
+  {
+    "num": 37,
+    "title": "Классический интерфейс sort.Interface (Len, Less, Swap) для сортировки среза []User",
+    "task": "Стандартный sort.Interface: Создай срез структур []User. Изучи интерфейс sort.Interface (методы Len, Less, Swap) и реализуй его для своего типа среза, чтобы отсортировать пользователей по возрасту (или используй sort.Slice с анонимной функцией, что современнее).",
+    "theory": "\n**Интерфейс `sort.Interface`:**\n- Требует 3 метода: `Len() int`, `Less(i, j int) bool`, `Swap(i, j int)`;\n- Позволяет функции `sort.Sort()` сортировать любые структуры данных.\n",
+    "step_by_step": "\n1. Создаем `type User struct { Name string; Age int }`.\n2. Создаем `type ByAge []User`.\n3. Реализуем `Len`, `Less`, `Swap` и сортируем через `sort.Sort`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sort\"\n)\n\ntype User struct {\n\tName string\n\tAge  int\n}\n\n// Пользовательский тип среза для реализации sort.Interface:\ntype ByAge []User\n\nfunc (a ByAge) Len() int           { return len(a) }\nfunc (a ByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }\nfunc (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }\n\nfunc main() {\n\tusers := []User{\n\t\t{Name: \"Иван\", Age: 30},\n\t\t{Name: \"Анна\", Age: 22},\n\t\t{Name: \"Борис\", Age: 27},\n\t}\n\n\tsort.Sort(ByAge(users))\n\n\tfmt.Println(\"Пользователи, отсортированные по возрасту:\")\n\tfor _, u := range users {\n\t\tfmt.Printf(\"  • %-10s (%d лет)\\n\", u.Name, u.Age)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Пользователи, отсортированные по возрасту:\n#   • Анна       (22 лет)\n#   • Борис      (27 лет)\n#   • Иван       (30 лет)"
+      }
+    ],
+    "under_the_hood": "\n`sort.Sort` применяет алгоритм QuickSort / InsertionSort через интерфейсные вызовы.\n",
+    "pitfalls": "\n- Забыть объявить свой тип среза `type ByAge []User`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go 1.21+ рекомендуют `slices.SortFunc` вместо `sort.Sort`?»\n**Ответ:** Потому что `slices.SortFunc` типизирован дженериками и компилируется в прямой машинный код без интерфейсного оверхеда на вызовы `Less` и `Swap`.\n"
+  },
+  {
+    "num": 38,
+    "title": "Анатомия интерфейса: Nil Interface (true) против Nil Pointer in Interface (false!)",
+    "task": "Напиши программу с nil interface: var r io.Reader = nil. Проверь r == nil (true). Затем: var p *os.File = nil; var r io.Reader = p. Проверь r == nil (false!). Объясни внутреннее устройство интерфейса (type descriptor + value).",
+    "theory": "\n**Интерфейсная ловушка номер 1 в Go (Nil Pointer in Interface):**\n- Интерфейс `iface` состоит из **двух полей**: `itab` (тип) и `data` (значение);\n- Интерфейс равен `nil` **ТОЛЬКО ТОГДА, КОГДА ОБА ПОЛЯ РАВНЫ `nil`**;\n- Если в интерфейс помещен типизированный `nil`-указатель `var p *os.File = nil`, поле `itab` получает дескриптор типа `*os.File`, поэтому `r == nil` возвращает **`false`**!\n",
+    "step_by_step": "\n1. Создаем чистый `var r1 io.Reader = nil` (равен nil).\n2. Создаем `var p *os.File = nil; var r2 io.Reader = p`.\n3. Сравниваем оба с `nil` и анализируем разницу.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n)\n\nfunc main() {\n\t// 1. Чистый nil-интерфейс:\n\tvar r1 io.Reader = nil\n\tfmt.Printf(\"1. Чистый r1 == nil:                  %t (itab=nil, data=nil)\\n\", r1 == nil)\n\n\t// 2. Типизированный nil-указатель внутри интерфейса:\n\tvar p *os.File = nil\n\tvar r2 io.Reader = p\n\tfmt.Printf(\"2. r2 == nil (с nil *os.File внутри): %t (itab=*os.File, data=nil) ❌ ЛОВУШКА!\\n\", r2 == nil)\n\n\t// Вызов метода приведет к панике nil pointer dereference:\n\t// r2.Read(make([]byte, 10))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Чистый r1 == nil:                  true (itab=nil, data=nil)\n# 2. r2 == nil (с nil *os.File внутри): false (itab=*os.File, data=nil) ❌ ЛОВУШКА!"
+      }
+    ],
+    "under_the_hood": "\nАссемблерное сравнение `CMPQ itab, $0` возвращает false, так как `itab != 0`.\n",
+    "pitfalls": "\n- Возврат `var err *CustomError = nil` из функции с типом возврата `error` (вызывающий код сочтет, что ошибка произошла!).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Когда переменная типа `error` равна `nil`?»\n**Ответ:** Только когда она содержит чистый `nil` (без информации о конкретном типе ошибки).\n"
+  },
+  {
+    "num": 39,
+    "title": "Переключатель типов Type Switch: обработка int, string, []int и default в одной функции",
+    "task": "Переключатель типов: обработайте int, string, []int и default в одной функции.",
+    "theory": "\nГруппировка обработки данных.\n",
+    "step_by_step": "\n1. Пишем функцию `HandleItem(x any)`.\n2. Обрабатываем типы.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc HandleItem(x any) {\n\tswitch v := x.(type) {\n\tcase int:\n\t\tfmt.Println(\"Число:\", v)\n\tcase string:\n\t\tfmt.Println(\"Строка:\", v)\n\tcase []int:\n\t\tfmt.Println(\"Срез чисел:\", v)\n\tdefault:\n\t\tfmt.Println(\"Другой тип:\", v)\n\t}\n}\n\nfunc main() {\n\tHandleItem(10)\n\tHandleItem(\"Go\")\n\tHandleItem([]int{1, 2, 3})\n\tHandleItem(true)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Число: 10\n# Строка: Go\n# Срез чисел: [1 2 3]\n# Другой тип: true"
+      }
+    ],
+    "under_the_hood": "\nПрямая трансляция в таблицу меток.\n",
+    "pitfalls": "\n- Забыть ветку default.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каков тип переменной `v` в ветке `default`?»\n**Ответ:** В ветке `default` переменная `v` имеет исходный интерфейсный тип `any`.\n"
+  },
+  {
+    "num": 40,
+    "title": "Конструкция switch v := x.(type) для разбора примитивов int, string, bool",
+    "task": "Используй switch v := x.(type) (type switch) для обработки различных типов внутри any (int, string, bool, default).",
+    "theory": "\nБазовый синтаксис Type Switch.\n",
+    "step_by_step": "\n1. Пишем `Classify(x any)`.\n2. Тестируем.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc Classify(x any) string {\n\tswitch v := x.(type) {\n\tcase int:\n\t\treturn fmt.Sprintf(\"Целое: %d\", v)\n\tcase string:\n\t\treturn fmt.Sprintf(\"Строка: %s\", v)\n\tcase bool:\n\t\treturn fmt.Sprintf(\"Булево: %t\", v)\n\tdefault:\n\t\treturn \"Неизвестно\"\n\t}\n}\n\nfunc main() {\n\tfmt.Println(Classify(55))\n\tfmt.Println(Classify(\"Gopher\"))\n\tfmt.Println(Classify(false))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Целое: 55\n# Строка: Gopher\n# Булево: false"
+      }
+    ],
+    "under_the_hood": "\nЭффективный type switch.\n",
+    "pitfalls": "\n- Опечатки в типах.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли использовать type switch для интерфейса с методами, а не `any`?»\n**Ответ:** ДА! Type switch работает над любым интерфейсным типом.\n"
+  },
+  {
+    "num": 41,
+    "title": "Каверзный кейс: nil interface vs nil pointer in interface и хранение информации о типе",
+    "task": "Каверзный случай: Изучите \"nil interface vs nil pointer in interface\". Создайте указатель на структуру (равный nil), присвойте его переменной интерфейса и проверьте, равно ли myInterface == nil. (Спойлер: интерфейс не будет nil, так как хранит информацию о типе!).",
+    "theory": "\nДетальный анализ внутренней структуры `iface`.\n",
+    "step_by_step": "\n1. Создаем структуру `MyStruct{}`.\n2. Создаем `var ptr *MyStruct = nil`.\n3. Присваиваем интерфейсу `var iface any = ptr`.\n4. Сравниваем `iface == nil`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Worker interface {\n\tWork()\n}\n\ntype Developer struct{}\n\nfunc (d *Developer) Work() {\n\tfmt.Println(\"Пишет код на Go\")\n}\n\nfunc main() {\n\tvar dev *Developer = nil\n\tvar w Worker = dev\n\n\tfmt.Printf(\"dev == nil: %t (указатель nil)\\n\", dev == nil)\n\tfmt.Printf(\"w == nil:   %t (ИНТЕРФЕЙС НЕ NIL, ТАК КАК СОДЕРЖИТ ТИП *Developer!)\\n\", w == nil)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# dev == nil: true (указатель nil)\n# w == nil:   false (ИНТЕРФЕЙС НЕ NIL, ТАК КАК СОДЕРЖИТ ТИП *Developer!)"
+      }
+    ],
+    "under_the_hood": "\n`w` содержит `itab` типа `*Developer`, поэтому проверка равенства нулю возвращает false.\n",
+    "pitfalls": "\n- Проверка `if w != nil` перед вызовом метода не защищает от nil-указателя внутри.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что произойдет при вызове `w.Work()`, если `w` содержит `nil *Developer`?»\n**Ответ:** Метод `Work()` будет вызван! Если метод не обращается к полям структуры (`d.Field`), он успешно выполнится. Если обращается — произойдет паника `nil pointer dereference`.\n"
+  },
+  {
+    "num": 42,
+    "title": "Универсальный детектор истинного nil: функция IsReallyNil(v any) bool через reflect",
+    "task": "Напиши функцию IsReallyNil(v interface{}) bool, которая корректно определяет \"настоящий\" nil (через reflect.ValueOf(v).IsNil() с осторожностью). Обработай panic от IsNil на non-pointer types.",
+    "theory": "\n**Безопасная детекция nil внутри интерфейсов:**\n- Метод `reflect.ValueOf(v).IsNil()` паникует, если тип не является указателем, срезом, мапой, каналом, интерфейсом или функцией;\n- Корректный детектор обязан сначала проверить `Kind()`, чтобы избежать паники.\n",
+    "step_by_step": "\n1. Пишем `IsReallyNil(v any) bool`.\n2. Проверяем `v == nil`.\n3. Проверяем допустимые `Kind()` перед вызовом `IsNil()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"reflect\"\n)\n\nfunc IsReallyNil(v any) bool {\n\tif v == nil {\n\t\treturn true\n\t}\n\n\tval := reflect.ValueOf(v)\n\tswitch val.Kind() {\n\tcase reflect.Pointer, reflect.Slice, reflect.Map, reflect.Chan, reflect.Func, reflect.Interface:\n\t\treturn val.IsNil()\n\tdefault:\n\t\treturn false\n\t}\n}\n\nfunc main() {\n\tvar cleanNil any = nil\n\tvar nilPtr *int = nil\n\tvar ifaceWithNil any = nilPtr\n\tvar number int = 0\n\n\tfmt.Printf(\"1. cleanNil:       IsReallyNil = %t\\n\", IsReallyNil(cleanNil))\n\tfmt.Printf(\"2. ifaceWithNil:   IsReallyNil = %t\\n\", IsReallyNil(ifaceWithNil))\n\tfmt.Printf(\"3. number (0):     IsReallyNil = %t\\n\", IsReallyNil(number))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. cleanNil:       IsReallyNil = true\n# 2. ifaceWithNil:   IsReallyNil = true\n# 3. number (0):     IsReallyNil = false"
+      }
+    ],
+    "under_the_hood": "\n`reflect.Value.IsNil()` проверяет внутренний указатель `val.ptr == nil`.\n",
+    "pitfalls": "\n- Вызов `reflect.ValueOf(42).IsNil()` приведет к немедленной панике: `panic: reflect: call of reflect.Value.IsNil on int Value`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Для каких `Kind` разрешен вызов `IsNil()` в пакете `reflect`?»\n**Ответ:** `Chan`, `Func`, `Interface`, `Map`, `Pointer`, `Slice`, `UnsafePointer`.\n"
+  },
+  {
+    "num": 43,
+    "title": "Главная ловушка интерфейсов: возврат nil-указателя ошибки в функции GetError() error",
+    "task": "Каверзный случай: nil интерфейс с типом: Создайте структуру MyCustomError. Создайте функцию GetError() error, которая внутри объявляет указатель на вашу структуру var err *MyCustomError = nil и возвращает его. В main проверьте if err != nil. Убедитесь, что программа считает, что ошибка есть.",
+    "theory": "\nКлассический баг на собеседованиях и в production коде.\n",
+    "step_by_step": "\n1. Создаем структуру `MyCustomError`.\n2. Пишем функцию `GetError() error`, возвращающую `var e *MyCustomError = nil`.\n3. Демонстрируем ложное срабатывание `if err != nil`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype MyCustomError struct {\n\tCode int\n}\n\nfunc (e *MyCustomError) Error() string {\n\treturn fmt.Sprintf(\"код ошибки: %d\", e.Code)\n}\n\nfunc BadGetError() error {\n\tvar err *MyCustomError = nil\n\t// ❌ ОШИБКА: возврат типизированного указателя оборачивает его в интерфейс error:\n\treturn err\n}\n\nfunc GoodGetError() error {\n\tvar err *MyCustomError = nil\n\tif err != nil {\n\t\treturn err\n\t}\n\t// ✅ ПРАВИЛЬНО: возвращать явный нетипизированный nil:\n\treturn nil\n}\n\nfunc main() {\n\terrBad := BadGetError()\n\tif errBad != nil {\n\t\tfmt.Println(\"1. BadGetError: Ошибка ЕСТЬ! (хотя внутри nil!) ❌\")\n\t}\n\n\terrGood := GoodGetError()\n\tif errGood == nil {\n\t\tfmt.Println(\"2. GoodGetError: Ошибки НЕТ! (чистый nil) ✅\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. BadGetError: Ошибка ЕСТЬ! (хотя внутри nil!) ❌\n# 2. GoodGetError: Ошибки НЕТ! (чистый nil) ✅"
+      }
+    ],
+    "under_the_hood": "\nПри `return err` рантайм создает `iface{itab: *MyCustomError, data: nil}`, что не равно `0`.\n",
+    "pitfalls": "\n- Объявление переменной кастомной ошибки `var err *MyError` в начале функции и ее безусловный возврат.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как навсегда защититься от бага `nil pointer in error interface`?»\n**Ответ:** Всегда возвращать явный литерал `return nil`, если ошибки нет, либо объявлять переменную ошибки напрямую с интерфейсным типом `var err error`.\n"
+  },
+  {
+    "num": 44,
+    "title": "Композиция интерфейсов: объединение встроенных io.Reader и io.Writer в ReadWriter",
+    "task": "Сделайте композицию интерфейсов: создайте интерфейс ReadWriter, объединив встроенные io.Reader и io.Writer.",
+    "theory": "\nСборка составных контрактов.\n",
+    "step_by_step": "\n1. Объявляем `type ReadWriter interface { io.Reader; io.Writer }`.\n2. Проверяем совместимость.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"io\"\n)\n\ntype ReadWriter interface {\n\tio.Reader\n\tio.Writer\n}\n\nfunc main() {\n\tbuf := bytes.NewBufferString(\"Данные\")\n\tvar rw ReadWriter = buf\n\n\trw.Write([]byte(\" в буфере\"))\n\n\tout := make([]byte, 64)\n\tn, _ := rw.Read(out)\n\n\tfmt.Println(\"Результат:\", string(out[:n]))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Результат: Данные в буфере"
+      }
+    ],
+    "under_the_hood": "\nКомпиляция таблицы виртуальных методов.\n",
+    "pitfalls": "\n- Неполная реализация одного из встроенных интерфейсов.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли встроить `io.ReadWriter` в другой интерфейс?»\n**Ответ:** Да, интерфейсы можно встраивать с любой степенью вложенности.\n"
+  },
+  {
+    "num": 45,
+    "title": "Принцип Postel's Law в Go: «Принимай интерфейсы, возвращай структуры» (Accept Interfaces, Return Structs)",
+    "task": "Интерфейс как возвращаемый тип (Антипаттерн): Напиши функцию, возвращающую интерфейс, и функцию, возвращающую структуру. Осознай правило Go: Принимай интерфейсы, возвращай структуры (Postel's Law в контексте Go).",
+    "theory": "\n**Архитектурный закон Go (Accept Interfaces, Return Structs):**\n- **Принимай интерфейсы:** функция должна требовать минимально необходимый контракт (`io.Reader`), что делает её максимально гибкой;\n- **Возвращай конкретные структуры:** функция должна возвращать конкретный тип `*UserStore` (не интерфейс), чтобы вызывающий код имел доступ ко всем методам и сам решал, в какой интерфейс обернуть объект.\n",
+    "step_by_step": "\n1. Демонстрируем антипаттерн возврата интерфейса.\n2. Демонстрируем идиоматичный возврат структуры `*Service`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Storage interface {\n\tSave(data string)\n}\n\ntype MemoryStorage struct {\n\titems []string\n}\n\nfunc (m *MemoryStorage) Save(data string) {\n\tm.items = append(m.items, data)\n}\n\n// ✅ ИДИОМАТИЧНО: Возвращаем конкретную структуру:\nfunc NewMemoryStorage() *MemoryStorage {\n\treturn &MemoryStorage{}\n}\n\n// ✅ ИДИОМАТИЧНО: Принимаем интерфейс:\nfunc SaveReport(s Storage, report string) {\n\ts.Save(report)\n\tfmt.Printf(\"Отчет %q сохранен!\\n\", report)\n}\n\nfunc main() {\n\tstore := NewMemoryStorage()\n\tSaveReport(store, \"Q3 Financials\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Отчет \"Q3 Financials\" сохранен!"
+      }
+    ],
+    "under_the_hood": "\nВозврат структуры избегает лишних аллокаций `iface` и позволяет компилятору инлайнить вызовы.\n",
+    "pitfalls": "\n- Создание интерфейса `Storage` заранее в том же пакете, где определен `MemoryStorage` (Interface Pollution).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Когда функция ВСЕ-ТАКИ ДОЛЖНА возвращать интерфейс?»\n**Ответ:** Только когда реализация скрыта и недоступна вызывающему коду (например, `error` или создание моков в фабриках).\n"
+  },
+  {
+    "num": 46,
+    "title": "Интерфейс fmt.Stringer: реализация метода String() для структуры User",
+    "task": "Интерфейс fmt.Stringer: Реализуйте метод String() string для вашей структуры User (поля Name, Age). Попробуйте передать объект пользователя напрямую в fmt.Println(user). Убедитесь, что Go автоматически использует ваш метод для красивого вывода.",
+    "theory": "\nКастомизация строкового представления пользователя.\n",
+    "step_by_step": "\n1. Создаем `type User struct { Name string; Age int }`.\n2. Реализуем `String() string`.\n3. Печатаем через `fmt.Println(u)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tName string\n\tAge  int\n}\n\nfunc (u User) String() string {\n\treturn fmt.Sprintf(\"Пользователь[Имя: %s, Возраст: %d]\", u.Name, u.Age)\n}\n\nfunc main() {\n\tu := User{Name: \"Дмитрий\", Age: 31}\n\tfmt.Println(u)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Пользователь[Имя: Дмитрий, Возраст: 31]"
+      }
+    ],
+    "under_the_hood": "\n`fmt.Println` форматирует строку через интерфейс `fmt.Stringer`.\n",
+    "pitfalls": "\n- Забыть метод `String()`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какой интерфейс имеет наивысший приоритет в `fmt`: `fmt.Stringer` или `fmt.Formatter`?»\n**Ответ:** `fmt.Formatter` (если он реализован, `fmt` вызывает его метод `Format()`, игнорируя `String()`).\n"
+  },
+  {
+    "num": 47,
+    "title": "Различие типов: кастомный тип type MyInt int и паника при i.(int)",
+    "task": "Создай тип MyInt int. Реализуй для него метод String() string. Присвой var i any = MyInt(5). Сделай type assertion i.(int) — получи панику. Объясни, почему MyInt и int — разные типы, хотя underlying type одинаковый.",
+    "theory": "\n**Строгая типизация Defined Types:**\n- `type MyInt int` создает **новый уникальный тип** с базовым типом `int`;\n- В интерфейсе сохраняется дескриптор типа `MyInt`, а не `int`;\n- Поэтому Type Assertion `i.(int)` выбрасывает панику!\n",
+    "step_by_step": "\n1. Объявляем `type MyInt int`.\n2. Реализуем `(m MyInt) String() string`.\n3. Показываем панику при `i.(int)` и правильный `i.(MyInt)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype MyInt int\n\nfunc (m MyInt) String() string {\n\treturn fmt.Sprintf(\"MyInt(%d)\", int(m))\n}\n\nfunc main() {\n\tvar i any = MyInt(5)\n\n\t// 1. Правильный Type Assertion к точному типу MyInt:\n\tif val, ok := i.(MyInt); ok {\n\t\tfmt.Printf(\"1. Успешное приведение к MyInt: %s\\n\", val)\n\t}\n\n\t// 2. Попытка приведения к базовому типу int (ok == false):\n\tif _, ok := i.(int); !ok {\n\t\tfmt.Println(\"2. Приведение i.(int) вернуло false, так как MyInt != int в системе типов Go!\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Успешное приведение к MyInt: MyInt(5)\n# 2. Приведение i.(int) вернуло false, так как MyInt != int в системе типов Go!"
+      }
+    ],
+    "under_the_hood": "\nДескриптор `_type` для `MyInt` имеет уникальный адрес в памяти `.rodata`.\n",
+    "pitfalls": "\n- Ожидание, что Type Assertion автоматически приводит к базовому типу (Underlying Type).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В чем отличие `type MyInt int` (defined type) от `type MyInt = int` (type alias)?»\n**Ответ:** Алиас `type MyInt = int` — это просто синоним того же самого типа `int` (Type Assertion `i.(int)` был бы успешен), а `type MyInt int` — совершенно новый самостоятельный тип.\n"
+  },
+  {
+    "num": 48,
+    "title": "Каверзный кейс: реализация интерфейса с Pointer Receiver и ошибка передачи значения",
+    "task": "[Каверзный кейс]: Реализуй интерфейс с pointer receiver. Попробуй передать значение (а не указатель) структуры в функцию, принимающую интерфейс. Поймай ошибку компиляции.",
+    "theory": "\nЗакрепление проверки Method Set компилятором.\n",
+    "step_by_step": "\n1. Создаем интерфейс `Resettable` с методом `Reset()`.\n2. Реализуем на `*Counter`.\n3. Показываем ошибку при передаче `Counter{}`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Resettable interface {\n\tReset()\n}\n\ntype Counter struct {\n\tval int\n}\n\nfunc (c *Counter) Reset() {\n\tc.val = 0\n}\n\nfunc DoReset(r Resettable) {\n\tr.Reset()\n}\n\nfunc main() {\n\tc := Counter{val: 100}\n\n\t// ❌ ОШИБКА: DoReset(c) -> Counter does not implement Resettable\n\t// ✅ ПРАВИЛЬНО: передавать указатель:\n\tDoReset(&c)\n\n\tfmt.Println(\"Счетчик после сброса:\", c.val)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Счетчик после сброса: 0"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор сверяет таблицы методов.\n",
+    "pitfalls": "\n- Забыть символ `&`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему компилятор не может сам взять адрес `&c` при передаче в функцию `DoReset(c)`?»\n**Ответ:** Потому что передача аргумента по значению создает временную копию, и взятие ее адреса изменило бы только копию, что привело бы к скрытому логическому багу.\n"
+  },
+  {
+    "num": 49,
+    "title": "Композиция интерфейсов: type ReadWriter interface { io.Reader; io.Writer } и буфер",
+    "task": "Композиция интерфейсов: type ReadWriter interface { io.Reader; io.Writer }. Создайте тип, удовлетворяющий этому интерфейсу (например, буфер в памяти).",
+    "theory": "\nКастомный потоковый буфер.\n",
+    "step_by_step": "\n1. Реализуем структуру `RingBuffer`.\n2. Реализуем `Read` и `Write`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n)\n\ntype ReadWriter interface {\n\tio.Reader\n\tio.Writer\n}\n\ntype SimpleBuffer struct {\n\tstorage []byte\n}\n\nfunc (b *SimpleBuffer) Write(p []byte) (int, error) {\n\tb.storage = append(b.storage, p...)\n\treturn len(p), nil\n}\n\nfunc (b *SimpleBuffer) Read(p []byte) (int, error) {\n\tif len(b.storage) == 0 {\n\t\treturn 0, io.EOF\n\t}\n\tn := copy(p, b.storage)\n\tb.storage = b.storage[n:]\n\treturn n, nil\n}\n\nfunc main() {\n\tvar rw ReadWriter = &SimpleBuffer{}\n\trw.Write([]byte(\"Go Data\"))\n\n\tout := make([]byte, 10)\n\tn, _ := rw.Read(out)\n\n\tfmt.Printf(\"Прочитано: %q\\n\", string(out[:n]))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Прочитано: \"Go Data\" "
+      }
+    ],
+    "under_the_hood": "\nИнтерфейсный вызов через `itab`.\n",
+    "pitfalls": "\n- Срез `b.storage[n:]` оставляет аллокацию в памяти (переиспользование памяти).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова сложность удаления из начала среза `b.storage[n:]`?»\n**Ответ:** $O(1)$ по времени, так как просто сдвигается указатель `Data` в `SliceHeader`.\n"
+  },
+  {
+    "num": 50,
+    "title": "Реализация интерфейса io.Writer для структуры CountingWriter со счетчиком записанных байт",
+    "task": "Реализуйте интерфейс io.Writer для кастомной структуры, которая просто подсчитывает количество записанных в нее байт.",
+    "theory": "\n**Паттерн метрик потока (Counting Metrics Writer):**\n- Подсчитывает объем переданного трафика без сохранения самих данных;\n- Идеально для профилирования и сбора метрик Prometheus.\n",
+    "step_by_step": "\n1. Создаем `type CountingWriter struct { Count int64 }`.\n2. Реализуем `(c *CountingWriter) Write(p []byte) (int, error)`.\n3. Тестируем с `fmt.Fprintf`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n)\n\ntype CountingWriter struct {\n\tTotalBytes int64\n}\n\nfunc (cw *CountingWriter) Write(p []byte) (int, error) {\n\tcw.TotalBytes += int64(len(p))\n\treturn len(p), nil\n}\n\nfunc main() {\n\tcounter := &CountingWriter{}\n\tvar w io.Writer = counter\n\n\tfmt.Fprintf(w, \"Строка номер 1\\n\")\n\tfmt.Fprintf(w, \"Вторая порция данных для аудита\\n\")\n\n\tfmt.Printf(\"Всего байт записано через интерфейс io.Writer: %d байт\\n\", counter.TotalBytes)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Всего байт записано через интерфейс io.Writer: 63 байт"
+      }
+    ],
+    "under_the_hood": "\n`cw.TotalBytes` инкрементируется без аллокаций.\n",
+    "pitfalls": "\n- Конкурентная запись в `CountingWriter` из нескольких горутин без `atomic.AddInt64`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как сделать `CountingWriter` потокобезопасным без мьютексов?»\n**Ответ:** Использовать атомарную операцию `atomic.AddInt64(&cw.TotalBytes, int64(len(p)))`.\n"
+  },
+  {
+    "num": 51,
+    "title": "Паттерн Адаптер для функций (Adapter Pattern / HandlerFunc) и реализация интерфейса Handler",
+    "task": "Создай тип func(string) string. Сделай так, чтобы он реализовал интерфейс Handler с методом Handle(string) string. Используй method value (adapter pattern).",
+    "theory": "\n**Паттерн Adapter для функций (в стиле `http.HandlerFunc`):**\n- Превращает обычную анонимную функцию в тип, реализующий интерфейс;\n- Исключает необходимость объявлять отдельную структуру для каждого обработчика.\n",
+    "step_by_step": "\n1. Объявляем интерфейс `Handler` с методом `Handle(req string) string`.\n2. Объявляем тип функции `type HandlerFunc func(string) string`.\n3. Реализуем метод `(f HandlerFunc) Handle(req string) string { return f(req) }`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"strings\"\n)\n\ntype Handler interface {\n\tHandle(req string) string\n}\n\ntype HandlerFunc func(string) string\n\nfunc (f HandlerFunc) Handle(req string) string {\n\treturn f(req)\n}\n\nfunc Execute(h Handler, payload string) {\n\tfmt.Println(\"Результат обработки:\", h.Handle(payload))\n}\n\nfunc main() {\n\t// Анонимная функция приводится к типу HandlerFunc:\n\tupperAdapter := HandlerFunc(func(s string) string {\n\t\treturn strings.ToUpper(s)\n\t})\n\n\tExecute(upperAdapter, \"быстрый старт microservices\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Результат обработки: БЫСТРЫЙ СТАРТ MICROSERVICES"
+      }
+    ],
+    "under_the_hood": "\nПриведение функции к типу `HandlerFunc` позволяет компилятору связать таблицу `itab` интерфейса `Handler`.\n",
+    "pitfalls": "\n- Забыть вызвать `f(req)` внутри реализации метода.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как устроен `http.HandlerFunc` в стандартном пакете `net/http`?»\n**Ответ:** `type HandlerFunc func(ResponseWriter, *Request)` реализует интерфейс `http.Handler` через метод `ServeHTTP(w, r)`, вызывающий `f(w, r)`.\n"
+  },
+  {
+    "num": 52,
+    "title": "Ловушка nil-интерфейса: почему returnsError() error возвращает err != nil == true",
+    "task": "Каверзный случай: Nil interface vs Nil pointer: Напиши func returnsError() error { var err *MyCustomError = nil; return err }. Вызови её: err := returnsError(). Проверь if err != nil. Она вернет true! Почему? Потому что интерфейс err не пуст (он содержит тип *MyCustomError, значение которого nil).",
+    "theory": "\nДетальный разбор самого популярного вопроса собеседований по Go.\n",
+    "step_by_step": "\n1. Создаем структуру `CustomErr`.\n2. Пишем функцию `returnsError() error`.\n3. Показываем, что `err != nil` дает `true`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype CustomErr struct{}\n\nfunc (c *CustomErr) Error() string {\n\treturn \"сбой кастомной логики\"\n}\n\nfunc returnsError() error {\n\tvar err *CustomErr = nil\n\t// Возвращаем типизированный указатель в интерфейс error:\n\treturn err\n}\n\nfunc main() {\n\terr := returnsError()\n\n\tif err != nil {\n\t\tfmt.Printf(\"❌ ЛОВУШКА: err != nil равен TRUE!\\n\")\n\t\tfmt.Printf(\"   Тип интерфейса:   %T\\n\", err)\n\t\tfmt.Printf(\"   Значение данных:  %v\\n\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# ❌ ЛОВУШКА: err != nil равен TRUE!\n#    Тип интерфейса:   *main.CustomErr\n#    Значение данных:  <nil>"
+      }
+    ],
+    "under_the_hood": "\nИнтерфейс `error` содержит `itab` со ссылкой на метатип `*CustomErr`.\n",
+    "pitfalls": "\n- Использование вспомогательных функций возврата ошибок с конкретным типом `*MyError`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как исправить функцию `returnsError()`, чтобы проверка `err == nil` работала корректно?»\n**Ответ:** Либо объявить переменную как `var err error = nil`, либо делать `if err != nil { return err } return nil`.\n"
+  },
+  {
+    "num": 53,
+    "title": "Статическая проверка реализации интерфейса на этапе компиляции: var _ io.Writer = (*MyStruct)(nil)",
+    "task": "Проверка реализации на этапе компиляции: Напишите специальную строчку кода (используя пустой идентификатор), которая заставит компилятор выдать ошибку прямо при сборке, если структура MyStruct вдруг перестанет реализовывать интерфейс io.Writer.",
+    "theory": "\n**Паттерн Compile-Time Interface Check:**\n- Синтаксис: `var _ InterfaceName = (*ConcreteType)(nil)`;\n- Выделяет 0 байт памяти и не выполняется в рантайме;\n- Гарантирует падение компиляции с понятной ошибкой при рефакторинге, если структура перестанет удовлетворять интерфейсу.\n",
+    "step_by_step": "\n1. Создаем структуру `AuditLogger`.\n2. Добавляем статическую проверку `var _ io.Writer = (*AuditLogger)(nil)`.\n3. Реализуем метод `Write(p []byte) (int, error)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n)\n\ntype AuditLogger struct{}\n\nfunc (a *AuditLogger) Write(p []byte) (int, error) {\n\tfmt.Printf(\"[AUDIT]: %s\", string(p))\n\treturn len(p), nil\n}\n\n// 🛡️ СТАТИЧЕСКАЯ ПРОВЕРКА НА ЭТАПЕ КОМПИЛЯЦИИ:\n// Если метод Write будет удален или сигнатура изменится, компилятор немедленно упадет при сборке!\nvar _ io.Writer = (*AuditLogger)(nil)\n\nfunc main() {\n\tlogger := &AuditLogger{}\n\tfmt.Fprintln(logger, \"Событие авторизации пользователя\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# [AUDIT]: Событие авторизации пользователя"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор проверяет типы на фазе Typecheck и оптимизирует `var _` в 0 байт ассемблера.\n",
+    "pitfalls": "\n- Написание проверки без разыменования `var _ io.Writer = AuditLogger{}` для типов с Pointer Receiver.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Зачем нужна строка `var _ Interface = (*Type)(nil)` в библиотеках?»\n**Ответ:** Для мгновенного обнаружения несовместимости типов в IDE и CI до запуска тестов и деплоя.\n"
+  },
+  {
+    "num": 54,
+    "title": "Интерфейс All (io.Reader + io.Writer + fmt.Stringer) и реализация структуры MegaBuffer",
+    "task": "Создай интерфейс All, встраивающий io.Reader, io.Writer, fmt.Stringer. Покажи, что структура, реализующая All, автоматически удовлетворяет каждому встроенному интерфейсу.",
+    "theory": "\nШирокие композитные интерфейсы и автоматическая совместимость с подмножествами.\n",
+    "step_by_step": "\n1. Объявляем `type All interface { io.Reader; io.Writer; fmt.Stringer }`.\n2. Создаем структуру `MegaBuffer`.\n3. Присваиваем каждому из встроенных интерфейсов.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"io\"\n)\n\ntype All interface {\n\tio.Reader\n\tio.Writer\n\tfmt.Stringer\n}\n\ntype MegaBuffer struct {\n\tbuf bytes.Buffer\n}\n\nfunc (m *MegaBuffer) Read(p []byte) (int, error)  { return m.buf.Read(p) }\nfunc (m *MegaBuffer) Write(p []byte) (int, error) { return m.buf.Write(p) }\nfunc (m *MegaBuffer) String() string              { return m.buf.String() }\n\nfunc main() {\n\tmb := &MegaBuffer{}\n\tvar all All = mb\n\n\t// Автоматическая совместимость со всеми подмножествами интерфейса:\n\tvar r io.Reader = all\n\tvar w io.Writer = all\n\tvar s fmt.Stringer = all\n\n\tfmt.Fprintf(w, \"MegaBuffer инициализирован!\")\n\tfmt.Printf(\"Stringer: %s\\n\", s.String())\n\n\tout := make([]byte, 10)\n\tn, _ := r.Read(out)\n\tfmt.Printf(\"Reader:   %q\\n\", string(out[:n]))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Stringer: MegaBuffer инициализирован!\n# Reader:   \"MegaBuffer\" "
+      }
+    ],
+    "under_the_hood": "\nПреобразование `All` в `io.Reader` происходит через извлечение соответствующего `itab`.\n",
+    "pitfalls": "\n- Создание слишком широких интерфейсов в публичных API.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли переменную типа `All` передать в функцию, принимающую `io.Writer`?»\n**Ответ:** ДА, поскольку набор методов `All` полностью содержит все методы `io.Writer`.\n"
+  },
+  {
+    "num": 55,
+    "title": "Функция пакетного вывода среза интерфейсов []fmt.Stringer",
+    "task": "Напишите функцию, которая принимает слайс интерфейсов fmt.Stringer и выводит их строковое представление.",
+    "theory": "\nПакетная полиморфная обработка.\n",
+    "step_by_step": "\n1. Пишем `PrintAllStringers(items []fmt.Stringer)`.\n2. Передаем разнородные структуры, реализующие `String()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype City struct{ Name string }\nfunc (c City) String() string { return \"г. \" + c.Name }\n\ntype Temperature float64\nfunc (t Temperature) String() string { return fmt.Sprintf(\"%.1f°C\", float64(t)) }\n\nfunc PrintAllStringers(items []fmt.Stringer) {\n\tfmt.Println(\"Список строковых представлений:\")\n\tfor idx, item := range items {\n\t\tfmt.Printf(\"  #%d: %s\\n\", idx+1, item.String())\n\t}\n}\n\nfunc main() {\n\tstringers := []fmt.Stringer{\n\t\tCity{Name: \"Новосибирск\"},\n\t\tTemperature(-15.5),\n\t\tCity{Name: \"Владивосток\"},\n\t}\n\n\tPrintAllStringers(stringers)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Список строковых представлений:\n#   #1: г. Новосибирск\n#   #2: -15.5°C\n#   #3: г. Владивосток"
+      }
+    ],
+    "under_the_hood": "\nСрез хранит массив дескрипторов `iface`.\n",
+    "pitfalls": "\n- Попытка передать `[]City` напрямую в `[]fmt.Stringer`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как преобразовать `[]City` в `[]fmt.Stringer`?»\n**Ответ:** Создать срез `res := make([]fmt.Stringer, len(cities))` и в цикле скопировать элементы.\n"
+  },
+  {
+    "num": 56,
+    "title": "Method Set для T и *T: асимметрия Value Receiver и Pointer Receiver в интерфейсах",
+    "task": "Создай структуру T с методом Value() string (value receiver). Покажи, что var x T удовлетворяет интерфейсу Valuer. А var p *T тоже удовлетворяет (методы value receiver доступны и для pointer). Затем создай метод PointerMethod() только для *T. Покажи, что T не удовлетворяет интерфейсу с PointerMethod, а *T — удовлетворяет.",
+    "theory": "\n**Полная матрица Method Set в Go:**\n| Тип | Доступные методы в Method Set |\n| :--- | :--- |\n| **`T`** (значение) | Только методы с **Value Receiver `(t T)`** |\n| **`*T`** (указатель) | И методы **`(t T)`**, И методы **`(t *T)`** |\n",
+    "step_by_step": "\n1. Создаем интерфейсы `Valuer` и `Mutator`.\n2. Создаем структуру `Item` с методами `(i Item) Value()` и `(i *Item) Mutate()`.\n3. Проверяем совместимость.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Valuer interface {\n\tValue() string\n}\n\ntype Mutator interface {\n\tMutate()\n}\n\ntype Item struct {\n\ttext string\n}\n\nfunc (i Item) Value() string { return i.text }\nfunc (i *Item) Mutate()       { i.text += \"_mutated\" }\n\nfunc main() {\n\tvar val Item = Item{text: \"data\"}\n\tvar ptr *Item = &Item{text: \"data\"}\n\n\t// 1. Valuer удовлетворяют И значение, И указатель:\n\tvar v1 Valuer = val // ✅ Успех\n\tvar v2 Valuer = ptr // ✅ Успех\n\tfmt.Printf(\"v1: %s | v2: %s\\n\", v1.Value(), v2.Value())\n\n\t// 2. Mutator удовлетворяет ТОЛЬКО указатель:\n\t// var m1 Mutator = val // ❌ ОШИБКА КОМПИЛЯЦИИ: Item does not implement Mutator\n\tvar m2 Mutator = ptr // ✅ Успех\n\tm2.Mutate()\n\tfmt.Printf(\"После Mutate: %s\\n\", ptr.text)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# v1: data | v2: data\n# После Mutate: data_mutated"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор автоматически генерирует враппер для вызова value-метода через указатель `(*T).Value`.\n",
+    "pitfalls": "\n- Передача значения в интерфейс, содержащий хотя бы один pointer-метод.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go нет автоматического авто-разыменования при передаче значения в интерфейс с pointer-методами?»\n**Ответ:** Потому что интерфейс копирует значение при упаковке; вызов pointer-метода изменил бы временную копию внутри интерфейса, а не исходную переменную, что нарушило бы целостность данных.\n"
+  },
+  {
+    "num": 57,
+    "title": "Тестирование и Mocking: интерфейс DB с методом Save() и тестовая заглушка MockDB",
+    "task": "Mocking (Заглушки для тестов): Создай интерфейс DB с методом Save(). Напиши функцию ProcessData(db DB). В main передай реальную базу, а для \"теста\" напиши структуру MockDB, которая просто пишет в консоль, и передай её.",
+    "theory": "\n**Паттерн Mocking в Go:**\n- Интерфейсы позволяют легко изолировать бизнес-логику от внешних инфраструктурных сервисов (БД, сетевые API, очереди Kafka);\n- В юнит-тестах вместо реальной базы передается легкий Mock-объект.\n",
+    "step_by_step": "\n1. Объявляем интерфейс `Database` с методом `Save(id int, data string) error`.\n2. Создаем `MockDB` для тестов.\n3. Пишем тестируемую функцию `RegisterUser(db Database, id int, name string)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Database interface {\n\tSave(id int, data string) error\n}\n\n// Тестовая заглушка (Mock):\ntype MockDB struct {\n\tSavedItems map[int]string\n}\n\nfunc (m *MockDB) Save(id int, data string) error {\n\tm.SavedItems[id] = data\n\tfmt.Printf(\"[MOCK DB]: Успешно сохранен ID=%d (%s)\\n\", id, data)\n\treturn nil\n}\n\nfunc RegisterUser(db Database, id int, name string) error {\n\treturn db.Save(id, name)\n}\n\nfunc main() {\n\tmock := &MockDB{SavedItems: make(map[int]string)}\n\n\t// Тестируем логику без подключения к реальной СУБД:\n\terr := RegisterUser(mock, 101, \"Константин\")\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Printf(\"Проверка состояния Mock: %+v\\n\", mock.SavedItems)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# [MOCK DB]: Успешно сохранен ID=101 (Константин)\n# Проверка состояния Mock: map[101:Константин]"
+      }
+    ],
+    "under_the_hood": "\nИнтерфейсный вызов перенаправляется на `MockDB.Save`.\n",
+    "pitfalls": "\n- Использование тяжелых глобальных синглтонов базы данных вместо передачи интерфейса через параметры.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какие инструменты для автоматической генерации моков популярны в BigTech?»\n**Ответ:** `mockery` и `uber-go/mock` (бывший `golang/mock`), генерирующие потокобезопасные моки по интерфейсам.\n"
+  },
+  {
+    "num": 58,
+    "title": "Демонстрация правил Method Set: почему T не получает методы *T автоматически",
+    "task": "Напиши программу, демонстрирующую: *T получает все методы T (value receiver), но T не получает методы *T (pointer receiver) автоматически. Объясни правила method set.",
+    "theory": "\nЗакрепление теоретических основ спецификации Go по Method Sets.\n",
+    "step_by_step": "\n1. Демонстрируем правила.\n2. Проверяем вызовы.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Reader interface{ Read() string }\ntype Writer interface{ Write(string) }\n\ntype Document struct{ text string }\n\nfunc (d Document) Read() string   { return d.text }\nfunc (d *Document) Write(s string) { d.text = s }\n\nfunc main() {\n\tdoc := Document{text: \"Hello\"}\n\tptr := &doc\n\n\t// *Document реализует И Reader, И Writer:\n\tvar r1 Reader = ptr // ✅ Успех\n\tvar w1 Writer = ptr // ✅ Успех\n\t_ = r1\n\t_ = w1\n\n\t// Document реализует ТОЛЬКО Reader:\n\tvar r2 Reader = doc // ✅ Успех\n\t_ = r2\n\t// var w2 Writer = doc // ❌ Ошибка компиляции\n\n\tfmt.Println(\"Method Set правила подтверждены!\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Method Set правила подтверждены!"
+      }
+    ],
+    "under_the_hood": "\nСпецификация языка Go (Раздел Method Sets).\n",
+    "pitfalls": "\n- Смешивание получателей без понимания Method Set.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какой method set имеет интерфейсный тип?»\n**Ответ:** Method set интерфейса — это в точности список методов, объявленных в этом интерфейсе.\n"
+  },
+  {
+    "num": 59,
+    "title": "Внедрение зависимостей (Dependency Injection): структура Service со встроенным DB интерфейсом",
+    "task": "Внедрение зависимостей (DI): Добавь DB как поле в структуру Service. Создай NewService(db DB).",
+    "theory": "\n**Dependency Injection (DI) через конструктор:**\n- Сервис зависит от интерфейса `Database`, а не конкретной реализации;\n- Позволяет легко подменять Postgres на MySQL или Mock в тестах.\n",
+    "step_by_step": "\n1. Создаем `type Service struct { db Database }`.\n2. Пишем конструктор `NewService(db Database) *Service`.\n3. Реализуем метод `(s *Service) ProcessOrder(id int)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Database interface {\n\tSave(id int, data string) error\n}\n\ntype OrderService struct {\n\tdb Database // Зависимость в виде интерфейса\n}\n\nfunc NewOrderService(db Database) *OrderService {\n\treturn &OrderService{db: db}\n}\n\nfunc (s *OrderService) CreateOrder(id int, item string) error {\n\tfmt.Println(\"Бизнес-логика: оформление заказа...\")\n\treturn s.db.Save(id, item)\n}\n\ntype PostgresDB struct{}\nfunc (p *PostgresDB) Save(id int, data string) error {\n\tfmt.Printf(\"[PostgreSQL]: Запись заказа %d: %q\\n\", id, data)\n\treturn nil\n}\n\nfunc main() {\n\tpg := &PostgresDB{}\n\tservice := NewOrderService(pg)\n\n\t_ = service.CreateOrder(5001, \"MacBook Pro M3\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Бизнес-логика: оформление заказа...\n# [PostgreSQL]: Запись заказа 5001: \"MacBook Pro M3\" "
+      }
+    ],
+    "under_the_hood": "\nПоле `s.db` хранит 16-байтный дескриптор интерфейса.\n",
+    "pitfalls": "\n- Передача `nil` в конструктор `NewOrderService(nil)`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go предпочитают явный DI через конструкторы вместо DI-фреймворков со скрытой магией?»\n**Ответ:** Явный DI прост, прозрачен, статически проверяется компилятором и не требует магии рефлексии.\n"
+  },
+  {
+    "num": 60,
+    "title": "Каверзный кейс: nil interface против интерфейса с nil-указателем структуры и защитная проверка",
+    "task": "[Каверзный кейс]: \"Nil interface\": объяви переменную типа интерфейс var s Shape. Сравни её с nil (должно быть true). Присвой ей указатель на структуру, который равен nil. Сравни снова (теперь false! Интерфейс внутри содержит тип, хотя указатель nil). Обработай эту ситуацию.",
+    "theory": "\nЗакрепление обработки nil-указателей внутри интерфейсов.\n",
+    "step_by_step": "\n1. Создаем `var s Shape = nil`.\n2. Создаем `var c *Circle = nil; s = c`.\n3. Показываем смену статуса `s == nil`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Shape interface {\n\tArea() float64\n}\n\ntype Circle struct {\n\tR float64\n}\n\nfunc (c *Circle) Area() float64 {\n\tif c == nil {\n\t\treturn 0 // Защитная проверка на nil receiver!\n\t}\n\treturn 3.14 * c.R * c.R\n}\n\nfunc main() {\n\tvar s Shape = nil\n\tfmt.Printf(\"1. Исходный интерфейс:  s == nil -> %t\\n\", s == nil)\n\n\tvar c *Circle = nil\n\ts = c\n\tfmt.Printf(\"2. После s = (*Circle)(nil): s == nil -> %t (НЕ NIL!)\\n\", s == nil)\n\n\t// Благодаря защитной проверке if c == nil внутри метода, вызов безопасен:\n\tfmt.Printf(\"3. Вызов метода s.Area(): %.2f (без паники!)\\n\", s.Area())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Исходный интерфейс:  s == nil -> true\n# 2. После s = (*Circle)(nil): s == nil -> false (НЕ NIL!)\n# 3. Вызов метода s.Area(): 0.00 (без паники!)"
+      }
+    ],
+    "under_the_hood": "\nПри вызове `s.Area()` рантайм передает `data == nil` в качестве первого аргумента метода.\n",
+    "pitfalls": "\n- Отсутствие проверки `if c == nil` внутри метода при обращении к `c.R` (приведет к панике).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Может ли метод в Go безопасно вызываться на `nil`-указателе?»\n**Ответ:** ДА! В Go `nil` является валидным получателем метода (Receiver), если тело метода не обращается к полям структуры без проверки `if recv == nil`.\n"
+  },
+  {
+    "num": 61,
+    "title": "Сравнение интерфейсов с nil: разница между чистым nil-интерфейсом и типизированным nil",
+    "task": "Сравнение интерфейсов с nil: покажите разницу между nil-интерфейсом и интерфейсом, хранящим nil-указатель на конкретный тип.",
+    "theory": "\nСравнение поведения интерфейсов.\n",
+    "step_by_step": "\n1. Иллюстрируем два состояния интерфейса.\n2. Печатаем `%v` и `%T`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Worker interface {\n\tWork()\n}\n\ntype Dev struct{}\nfunc (d *Dev) Work() {}\n\nfunc main() {\n\tvar w1 Worker = nil\n\tvar dev *Dev = nil\n\tvar w2 Worker = dev\n\n\tfmt.Printf(\"w1: значение=%v, тип=%T, w1 == nil -> %t\\n\", w1, w1, w1 == nil)\n\tfmt.Printf(\"w2: значение=%v, тип=%T, w2 == nil -> %t\\n\", w2, w2, w2 == nil)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# w1: значение=<nil>, тип=<nil>, w1 == nil -> true\n# w2: значение=<nil>, тип=*main.Dev, w2 == nil -> false"
+      }
+    ],
+    "under_the_hood": "\n`w1` — `(nil, nil)`, `w2` — `(*main.Dev, nil)`.\n",
+    "pitfalls": "\n- Ложные предположения о равенстве.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как называть интерфейс `w2`?»\n**Ответ:** «Typed nil» (типизированный nil).\n"
+  },
+  {
+    "num": 62,
+    "title": "Гибкость потоков с io.Reader: подсчет пробелов CountSpaces(r io.Reader) (int, error)",
+    "task": "Гибкость с io.Reader: Напишите функцию CountSpaces(r io.Reader) (int, error), которая подсчитывает количество пробелов в потоке данных. Продемонстрируйте её работу, передав туда сначала строку (обернутую в strings.NewReader), а затем открытый файл os.File.",
+    "theory": "\nПотоковая обработка любых объемов данных без загрузки всего файла в память.\n",
+    "step_by_step": "\n1. Пишем `CountSpaces(r io.Reader) (int, error)`.\n2. Читаем буфером 64 байта в цикле.\n3. Тестируем со `strings.NewReader` и `bytes.NewReader`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"strings\"\n)\n\nfunc CountSpaces(r io.Reader) (int, error) {\n\tbuf := make([]byte, 64)\n\tspaces := 0\n\n\tfor {\n\t\tn, err := r.Read(buf)\n\t\tif n > 0 {\n\t\t\tfor _, b := range buf[:n] {\n\t\t\t\tif b == ' ' {\n\t\t\t\t\tspaces++\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\tif err == io.EOF {\n\t\t\tbreak\n\t\t}\n\t\tif err != nil {\n\t\t\treturn spaces, err\n\t\t}\n\t}\n\treturn spaces, nil\n}\n\nfunc main() {\n\ttext := \"Go — это выразительный, лаконичный, чистый и эффективный язык.\"\n\tcount, _ := CountSpaces(strings.NewReader(text))\n\n\tfmt.Printf(\"Строка: %q\\nКоличество пробелов: %d\\n\", text, count)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Строка: \"Go — это выразительный, лаконичный, чистый и эффективный язык.\"\n# Количество пробелов: 8"
+      }
+    ],
+    "under_the_hood": "\nПотоковое чтение с фиксированным буфером памяти $O(1)$.\n",
+    "pitfalls": "\n- Выделение буфера размером со весь файл.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как обработать 100-гигабайтный файл логов с минимальным потреблением памяти?»\n**Ответ:** Использовать потоковое чтение через `bufio.Scanner` или `io.Reader` с небольшим фиксированным буфером ($4..64$ КБ).\n"
+  },
+  {
+    "num": 63,
+    "title": "Type Assertion между интерфейсами: преобразование io.Writer к io.ReadWriter",
+    "task": "Напиши программу с type assertion на interface: var w io.Writer = os.Stdout. Сделай w.(io.ReadWriter) — проверь, удастся ли. Объясни: os.Stdout — *os.File, который реализует io.Writer, но не io.ReadWriter (нет метода Read для stdout). Попробуй с файлом на чтение+запись.",
+    "theory": "\n**Динамическое приведение интерфейсов (Interface-to-Interface Assertion):**\n- Синтаксис `rw, ok := w.(io.ReadWriter)` проверяет, реализует ли динамический объект, лежащий внутри `w`, расширенный интерфейс;\n- `*os.File` реализует оба метода (`Read` и `Write`), поэтому проверка успешна.\n",
+    "step_by_step": "\n1. Инициализируем `var w io.Writer = os.Stdout`.\n2. Проверяем `w.(io.ReadWriter)`.\n3. Анализируем результат.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n)\n\nfunc main() {\n\tvar w io.Writer = os.Stdout\n\n\t// Проверяем, реализует ли лежащий внутри *os.File интерфейс io.ReadWriter:\n\tif rw, ok := w.(io.ReadWriter); ok {\n\t\tfmt.Printf(\"✅ Успех: %T реализует интерфейс io.ReadWriter!\\n\", rw)\n\t} else {\n\t\tfmt.Println(\"❌ Не реализует io.ReadWriter\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# ✅ Успех: *os.File реализует интерфейс io.ReadWriter!"
+      }
+    ],
+    "under_the_hood": "\nРантайм строит новый `itab` для целевого интерфейса `io.ReadWriter`.\n",
+    "pitfalls": "\n- Одинарное приведение без `ok` в случае несовпадения интерфейсов (паника).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова стоимость приведения одного интерфейса к другому интерфейсу `i1.(Interface2)`?»\n**Ответ:** Рантайм ищет методы в таблице `itab` и кэширует результат в глобальной хэш-таблице `itabTable` за $O(1)$ при повторных вызовах.\n"
+  },
+  {
+    "num": 64,
+    "title": "Генератор случайных букв на базе бесконечного ридера RandomLetterReader (io.Reader)",
+    "task": "Стандартный io.Reader: Напиши свой тип, который удовлетворяет интерфейсу io.Reader и генерирует бесконечный поток случайных букв при чтении.",
+    "theory": "\nГенерация бесконечных потоков данных через `io.Reader`.\n",
+    "step_by_step": "\n1. Создаем структуру `RandomLetterReader`.\n2. Реализуем метод `Read(p []byte) (int, error)`.\n3. Ограничиваем чтение через `io.LimitReader`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"math/rand\"\n)\n\ntype RandomLetterReader struct{}\n\nfunc (RandomLetterReader) Read(p []byte) (n int, err error) {\n\tletters := \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n\tfor i := range p {\n\t\tp[i] = letters[rand.Intn(len(letters))]\n\t}\n\treturn len(p), nil\n}\n\nfunc main() {\n\trandReader := RandomLetterReader{}\n\n\t// Читаем ровно 32 случайных символа с помощью io.LimitReader:\n\tlimited := io.LimitReader(randReader, 32)\n\n\tresult, err := io.ReadAll(limited)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Printf(\"Случайный токен (32 байта): %s\\n\", string(result))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Случайный токен (32 байта): WvBskrKqLpMxzTyUqZaBcDeFgHiJkLmN"
+      }
+    ],
+    "under_the_hood": "\n`io.LimitReader` оборачивает бесконечный ридер и возвращает `io.EOF` по достижении лимита.\n",
+    "pitfalls": "\n- Вызов `io.ReadAll` на бесконечном ридере без `LimitReader` (вызовет OOM-панику).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как в стандартной библиотеке устроен генератор криптографических ключей `crypto/rand.Reader`?»\n**Ответ:** Он реализован как глобальный `io.Reader`, считывающий псевдослучайные байты из `/dev/urandom` или системного вызова `getrandom(2)`.\n"
+  },
+  {
+    "num": 65,
+    "title": "Type Switch по нескольким интерфейсам: определение io.ReadWriter, io.Reader, io.Writer",
+    "task": "Напиши программу с type switch на нескольких интерфейсах: определи, является ли значение io.Reader, io.Writer, io.Closer или комбинацией. Используй case io.ReadWriter:.",
+    "theory": "\nИнспекция интерфейсных возможностей объекта.\n",
+    "step_by_step": "\n1. Пишем `InspectStream(x any)`.\n2. Используем `switch x.(type)` с интерфейсными кейсами.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"io\"\n\t\"strings\"\n)\n\nfunc InspectStream(x any) {\n\tswitch v := x.(type) {\n\tcase io.ReadWriter:\n\t\tfmt.Printf(\"1. %T: Полнодуплексный поток (io.ReadWriter)\\n\", v)\n\tcase io.Reader:\n\t\tfmt.Printf(\"2. %T: Поток только для чтения (io.Reader)\\n\", v)\n\tcase io.Writer:\n\t\tfmt.Printf(\"3. %T: Поток только для записи (io.Writer)\\n\", v)\n\tdefault:\n\t\tfmt.Printf(\"4. %T: Не является потоковым объектом\\n\", v)\n\t}\n}\n\nfunc main() {\n\tInspectStream(bytes.NewBuffer(nil))\n\tInspectStream(strings.NewReader(\"тест\"))\n\tInspectStream(42)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. *bytes.Buffer: Полнодуплексный поток (io.ReadWriter)\n# 2. *strings.Reader: Поток только для чтения (io.Reader)\n# 4. int: Не является потоковым объектом"
+      }
+    ],
+    "under_the_hood": "\nПорядок `case` важен: более специфичные интерфейсы (`io.ReadWriter`) должны идти раньше общих (`io.Reader`).\n",
+    "pitfalls": "\n- Помещение `case io.Reader` перед `case io.ReadWriter` (перехватит `*bytes.Buffer` до проверки на запись).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Влияет ли порядок `case` в `type switch` над интерфейсами на результат?»\n**Ответ:** ДА! Если тип удовлетворяет нескольким интерфейсам, выполнится первый подходящий по порядку `case`.\n"
+  },
+  {
+    "num": 66,
+    "title": "Интерфейс Validator с методом Validate() error и пакетная валидация ValidateAll",
+    "task": "Создай интерфейс Validator с методом Validate() error. Реализуй для User и Order. Напиши функцию ValidateAll(items ...Validator) []error, которая валидирует всё и возвращает слайс ошибок.",
+    "theory": "\n**Паттерн композитной валидации (Composite Validation):**\n- Единый контракт `Validator` для всех доменных моделей;\n- Функция `ValidateAll` агрегирует ошибки всех сущностей.\n",
+    "step_by_step": "\n1. Создаем `type Validator interface { Validate() error }`.\n2. Реализуем `User` и `Order`.\n3. Пишем `ValidateAll(items ...Validator) []error`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype Validator interface {\n\tValidate() error\n}\n\ntype User struct {\n\tEmail string\n}\n\nfunc (u User) Validate() error {\n\tif u.Email == \"\" {\n\t\treturn errors.New(\"email пользователя не может быть пустым\")\n\t}\n\treturn nil\n}\n\ntype Order struct {\n\tAmount float64\n}\n\nfunc (o Order) Validate() error {\n\tif o.Amount <= 0 {\n\t\treturn errors.New(\"сумма заказа должна быть строго больше 0\")\n\t}\n\treturn nil\n}\n\nfunc ValidateAll(items ...Validator) []error {\n\tvar errs []error\n\tfor _, item := range items {\n\t\tif err := item.Validate(); err != nil {\n\t\t\terrs = append(errs, err)\n\t\t}\n\t}\n\treturn errs\n}\n\nfunc main() {\n\tu1 := User{Email: \"\"}\n\tu2 := User{Email: \"dev@avito.ru\"}\n\to1 := Order{Amount: -100}\n\n\terrorsList := ValidateAll(u1, u2, o1)\n\n\tfmt.Printf(\"Обнаружено %d ошибок валидации:\\n\", len(errorsList))\n\tfor _, err := range errorsList {\n\t\tfmt.Printf(\"  • %v\\n\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Обнаружено 2 ошибок валидации:\n#   • email пользователя не может быть пустым\n#   • сумма заказа должна быть строго больше 0"
+      }
+    ],
+    "under_the_hood": "\nПолиморфный вызов методов `Validate()`.\n",
+    "pitfalls": "\n- Прерывание проверки на первой ошибке, когда требуется вернуть все ошибки формы.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как объединить срез ошибок `[]error` в одну ошибку в Go 1.20+?»\n**Ответ:** С помощью функции `errors.Join(errs...)`.\n"
+  },
+  {
+    "num": 67,
+    "title": "Сортировка среза структур по предикату через slices.SortFunc (Go 1.21+)",
+    "task": "Используй sort.Slice для сортировки среза структур по определенному полю (передав замыкание, реализующее логику less(i, j int) bool).",
+    "theory": "\nСовременная сортировка без рефлексии.\n",
+    "step_by_step": "\n1. Создаем структуру `Product{Name string, Price float64}`.\n2. Сортируем срез с помощью `slices.SortFunc`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"cmp\"\n\t\"fmt\"\n\t\"slices\"\n)\n\ntype Product struct {\n\tName  string\n\tPrice float64\n}\n\nfunc main() {\n\tproducts := []Product{\n\t\t{\"Клавиатура\", 4500},\n\t\t{\"Монитор\", 28000},\n\t\t{\"Мышь\", 2100},\n\t}\n\n\t// Сортировка по возрастанию цены:\n\tslices.SortFunc(products, func(a, b Product) int {\n\t\treturn cmp.Compare(a.Price, b.Price)\n\t})\n\n\tfmt.Println(\"Товары по возрастанию цены:\")\n\tfor _, p := range products {\n\t\tfmt.Printf(\"  • %-12s: %.0f руб.\\n\", p.Name, p.Price)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Товары по возрастанию цены:\n#   • Мышь        : 2100 руб.\n#   • Клавиатура  : 4500 руб.\n#   • Монитор     : 28000 руб."
+      }
+    ],
+    "under_the_hood": "\n`slices.SortFunc` использует быстрый алгоритм pdqsort.\n",
+    "pitfalls": "\n- Использование медленного `sort.Slice` в горячих циклах.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `slices.SortFunc` эффективнее `sort.Slice`?»\n**Ответ:** Потому что `sort.Slice` использует рефлексию `reflect.Swapper`, а `slices.SortFunc` типизирован дженериками и компилируется в прямой машинный код.\n"
+  },
+  {
+    "num": 68,
+    "title": "Цепочка Middleware для интерфейса Handler: LoggingMiddleware и AuthMiddleware",
+    "task": "Создай middleware chain для своего интерфейса Handler (метод Handle(req string) string). Напиши LoggingMiddleware, AuthMiddleware, которые оборачивают Handler и возвращают новый Handler. Покажи композицию.",
+    "theory": "\n**Паттерн Middleware Chain (Декоратор):**\n- Оборачивает базовый обработчик в цепочку слоев (логирование, аутентификация, метрики);\n- Каждый слой реализует интерфейс `Handler` и делегирует вызов следующему обработчику.\n",
+    "step_by_step": "\n1. Создаем интерфейс `Handler`.\n2. Пишем базовый `CoreHandler`.\n3. Пишем декораторы `LoggingMiddleware` и `AuthMiddleware`.\n4. Собираем цепочку и выполняем запрос.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"strings\"\n)\n\ntype Handler interface {\n\tHandle(req string) string\n}\n\ntype CoreHandler struct{}\n\nfunc (CoreHandler) Handle(req string) string {\n\treturn \"Обработано: \" + strings.ToUpper(req)\n}\n\n// Logging Middleware:\ntype LoggingMiddleware struct {\n\tnext Handler\n}\n\nfunc (l LoggingMiddleware) Handle(req string) string {\n\tfmt.Printf(\"➡️ [LOG] Входящий запрос: %q\\n\", req)\n\tresp := l.next.Handle(req)\n\tfmt.Printf(\"⬅️ [LOG] Исходящий ответ: %q\\n\", resp)\n\treturn resp\n}\n\n// Auth Middleware:\ntype AuthMiddleware struct {\n\tnext Handler\n}\n\nfunc (a AuthMiddleware) Handle(req string) string {\n\tif strings.Contains(req, \"anonymous\") {\n\t\treturn \"403 Forbidden: Доступ запрещен\"\n\t}\n\treturn a.next.Handle(req)\n}\n\nfunc main() {\n\tvar pipeline Handler = CoreHandler{}\n\tpipeline = LoggingMiddleware{next: pipeline}\n\tpipeline = AuthMiddleware{next: pipeline}\n\n\tfmt.Println(\"1. Запрос авторизованного пользователя:\")\n\t_ = pipeline.Handle(\"order_id=123\")\n\n\tfmt.Println(\"\\n2. Запрос анонима:\")\n\tresp := pipeline.Handle(\"anonymous_user\")\n\tfmt.Println(resp)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Запрос авторизованного пользователя:\n# ➡️ [LOG] Входящий запрос: \"order_id=123\"\n# ⬅️ [LOG] Исходящий ответ: \"Обработано: ORDER_ID=123\"\n# \n# 2. Запрос анонима:\n# 403 Forbidden: Доступ запрещен"
+      }
+    ],
+    "under_the_hood": "\nСтек вызовов формируется цепочкой вызовов методов `next.Handle`.\n",
+    "pitfalls": "\n- Нарушение порядка middleware (например, логирование после аутентификации не залогирует отфильтрованные запросы).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как строится HTTP Middleware в веб-фреймворках (Gin, Chi, Echo)?»\n**Ответ:** По паттерну цепочки обязанностей (Chain of Responsibility / Decorator) над интерфейсом `http.Handler` или срезом `[]HandlerFunc`.\n"
+  },
+  {
+    "num": 69,
+    "title": "Полиморфное поведение срезов: почему []Developer нельзя привести к []Worker напрямую",
+    "task": "Полиморфное поведение слайсов: Создайте интерфейс Worker с методом Work(). Создайте несколько структур-профессий. Напишите функцию, которая принимает []Worker и запускает их работу. Попробуйте передать туда срез конкретных структур []Developer напрямую и разберитесь, почему Go запрещает приведение срезов конкретных типов к срезам интерфейсов напрямую.",
+    "theory": "\n**Почему `[]ConcreteType` не приводится к `[]Interface`:**\n- Срез `[]Developer` хранит элементы по 8 или 24 байта каждый;\n- Срез `[]Worker` обязан хранить элементы по 16 байт (`itab + data`);\n- Прямое приведение нарушило бы адресацию памяти. Требуется явное создание нового среза и конвертация за $O(N)$.\n",
+    "step_by_step": "\n1. Создаем интерфейс `Worker` и структуру `Developer`.\n2. Пишем функцию `RunAll(workers []Worker)`.\n3. Демонстрируем явную конвертацию.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Worker interface {\n\tWork() string\n}\n\ntype Developer struct {\n\tName string\n}\n\nfunc (d Developer) Work() string {\n\treturn d.Name + \" разрабатывает микросервисы\"\n}\n\nfunc RunAll(workers []Worker) {\n\tfor _, w := range workers {\n\t\tfmt.Println(\"  •\", w.Work())\n\t}\n}\n\nfunc main() {\n\tdevs := []Developer{\n\t\t{Name: \"Иван\"},\n\t\t{Name: \"Мария\"},\n\t}\n\n\t// ❌ ОШИБКА: RunAll(devs)\n\t// cannot use devs (variable of type []Developer) as []Worker value in argument to RunAll\n\n\t// ✅ ПРАВИЛЬНО: явная конвертация:\n\tworkers := make([]Worker, len(devs))\n\tfor i, d := range devs {\n\t\tworkers[i] = d\n\t}\n\n\tfmt.Println(\"Запуск рабочей смены:\")\n\tRunAll(workers)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Запуск рабочей смены:\n#   • Иван разрабатывает микросервисы\n#   • Мария разрабатывает микросервисы"
+      }
+    ],
+    "under_the_hood": "\nПри упаковке каждого элемента `workers[i] = d` рантайм создает 16-байтный дескриптор `iface`.\n",
+    "pitfalls": "\n- Попытка использовать `unsafe.Pointer` для каста срезов (приведет к повреждению памяти и панике).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go не предусмотрено автоматическое неявное преобразование `[]T` в `[]any`?»\n**Ответ:** Чтобы не скрывать скрытую аллокацию памяти и цикл $O(N)$ за невинным вызовом функции. В Go все дорогостоящие операции должны быть явными.\n"
+  },
+  {
+    "num": 70,
+    "title": "Декоратор потока UpperWriter (io.Writer): перехват и трансформация в верхний регистр",
+    "task": "Стандартный io.Writer: Напиши структуру UpperWriter, которая оборачивает os.Stdout, перехватывает записываемые байты, переводит их в верхний регистр (пакет bytes) и только потом пишет в консоль. Вызови fmt.Fprintln с твоим райтером.",
+    "theory": "\nПаттерн фильтрации и трансформации потока вывода на лету.\n",
+    "step_by_step": "\n1. Создаем структуру `UpperWriter{out io.Writer}`.\n2. Реализуем `(u *UpperWriter) Write(p []byte) (int, error)`.\n3. Используем `bytes.ToUpper(p)`.\n4. Передаем в `fmt.Fprintln`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"io\"\n\t\"os\"\n)\n\ntype UpperWriter struct {\n\ttarget io.Writer\n}\n\nfunc NewUpperWriter(w io.Writer) *UpperWriter {\n\treturn &UpperWriter{target: w}\n}\n\nfunc (u *UpperWriter) Write(p []byte) (int, error) {\n\tupperData := bytes.ToUpper(p)\n\treturn u.target.Write(upperData)\n}\n\nfunc main() {\n\twriter := NewUpperWriter(os.Stdout)\n\n\tfmt.Fprintln(writer, \"высоконагруженные сервисы на go\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# ВЫСОКОНАГРУЖЕННЫЕ СЕРВИСЫ НА GO"
+      }
+    ],
+    "under_the_hood": "\n`bytes.ToUpper` трансформирует срез байт в памяти до записи в дескриптор 1 (stdout).\n",
+    "pitfalls": "\n- Мутация входящего среза `p` на месте (входящий срез может принадлежать вызывающему коду).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как реализован `gzip.Writer` в стандартной библиотеке?»\n**Ответ:** Он реализован как декоратор `io.Writer`, сжимающий байты алгоритмом DEFLATE перед передачей в нижележащий целевой `w io.Writer`.\n"
+  },
+  {
+    "num": 71,
+    "title": "Инспекция динамического типа Describe(i any) с выводом полей структуры через reflect",
+    "task": "Напишите функцию Describe(i interface{}), которая печатает динамический тип и значение, а также, если возможно, использует reflect для вывода полей структуры.",
+    "theory": "\nРефлексивный аудит произвольных типов.\n",
+    "step_by_step": "\n1. Пишем `Describe(i any)`.\n2. Извлекаем `reflect.TypeOf` и `reflect.ValueOf`.\n3. Если структура — выводим все поля.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"reflect\"\n)\n\ntype SessionInfo struct {\n\tUserID int\n\tToken  string\n}\n\nfunc Describe(i any) {\n\tif i == nil {\n\t\tfmt.Println(\"Объект равен nil\")\n\t\treturn\n\t}\n\n\tt := reflect.TypeOf(i)\n\tv := reflect.ValueOf(i)\n\n\tfmt.Printf(\"Тип: %s | Kind: %s\\n\", t.String(), t.Kind())\n\n\tif t.Kind() == reflect.Struct {\n\t\tfmt.Println(\"Поля структуры:\")\n\t\tfor idx := 0; idx < t.NumField(); idx++ {\n\t\t\tfield := t.Field(idx)\n\t\t\tval := v.Field(idx)\n\t\t\tfmt.Printf(\"  • %-10s = %v (%s)\\n\", field.Name, val.Interface(), field.Type)\n\t\t}\n\t}\n}\n\nfunc main() {\n\ts := SessionInfo{UserID: 777, Token: \"jwt_secret_token\"}\n\tDescribe(s)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Тип: main.SessionInfo | Kind: struct\n# Поля структуры:\n#   • UserID     = 777 (int)\n#   • Token      = jwt_secret_token (string)"
+      }
+    ],
+    "under_the_hood": "\nРефлексия считывает смещения полей из метаданных рантайма.\n",
+    "pitfalls": "\n- Вызов `t.NumField()` на типах, не являющихся структурами (приведет к панике).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каковы риски использования рефлексии в критическом пути высоконагруженных систем?»\n**Ответ:** Рефлексия отключает оптимизации компилятора (инлайнинг, escape-анализ), порождает лишние аллокации в куче и работает в 10–50 раз медленнее прямого машинного кода.\n"
+  },
+  {
+    "num": 72,
+    "title": "Глубокое сравнение reflect.DeepEqual: сравнение срезов, мап и сложных структур",
+    "task": "Напиши функцию DeepEqual(a, b interface{}) bool, используя reflect.DeepEqual. Покажи, когда она полезна (сравнение слайсов, мап, структур с неэкспортируемыми полями).",
+    "theory": "\n**Функция `reflect.DeepEqual`:**\n- Рекурсивно сравнивает вложенные структуры данных (срезы, мапы, указатели);\n- Незаменима в юнит-тестах для верификации сложных DTO.\n",
+    "step_by_step": "\n1. Создаем структуры с неэкспортируемыми полями и срезами.\n2. Сравниваем через `reflect.DeepEqual`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"reflect\"\n)\n\ntype Config struct {\n\tName  string\n\tPorts []int\n}\n\nfunc main() {\n\tc1 := Config{Name: \"App\", Ports: []int{80, 443}}\n\tc2 := Config{Name: \"App\", Ports: []int{80, 443}}\n\tc3 := Config{Name: \"App\", Ports: []int{80, 8080}}\n\n\t// Оператор c1 == c2 запрещен компилятором из-за среза Ports!\n\tfmt.Printf(\"DeepEqual(c1, c2): %t (полная идентичность)\\n\", reflect.DeepEqual(c1, c2))\n\tfmt.Printf(\"DeepEqual(c1, c3): %t (порты различаются)\\n\", reflect.DeepEqual(c1, c3))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# DeepEqual(c1, c2): true (полная идентичность)\n# DeepEqual(c1, c3): false (порты различаются)"
+      }
+    ],
+    "under_the_hood": "\nРекурсивный обход графа объектов в памяти.\n",
+    "pitfalls": "\n- `reflect.DeepEqual(nilSlice, emptySlice)` вернет `false`, так как `nil != []`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что используют в BigTech вместо `reflect.DeepEqual` в тестах?»\n**Ответ:** Библиотеку `github.com/google/go-cmp/cmp`, которая выводит понятный diff различий при падении теста.\n"
+  },
+  {
+    "num": 73,
+    "title": "Антипаттерн Interface Pollution: почему не нужно объявлять интерфейсы заранее",
+    "task": "Напиши программу с interface pollution антипаттерном: создай интерфейс заранее, \"на всякий случай\". Перепиши правильно: accept interfaces, return structs — создай интерфейс там, где он используется (в функции-параметре), а не в определении типа.",
+    "theory": "\n**Антипаттерн Interface Pollution:**\n- Создание интерфейса с 15 методами для единственной структуры «на всякий случай» или по привычке из Java/C#;\n- **Идиоматичный подход Go:** Пишите конкретные структуры. Создавайте интерфейс только там, где реально появляется несколько реализаций или потребность в моках для тестов.\n",
+    "step_by_step": "\n1. Показываем антипаттерн `UserServiceInterface`.\n2. Переписываем правильно: конкретная структура `UserService` и точечный интерфейс потребителя.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\n// ❌ АНТИПАТТЕРН: Гигантский интерфейс заранее для единственной структуры:\n// type UserServiceInterface interface { GetUser(); UpdateUser(); DeleteUser() ... }\n\n// ✅ ИДИОМАТИЧНЫЙ GO: Конкретная структура:\ntype UserService struct{}\n\nfunc (UserService) FetchUser(id int) string {\n\treturn fmt.Sprintf(\"User#%d\", id)\n}\n\n// ✅ Потребитель объявляет минимально необходимый интерфейс:\ntype UserFetcher interface {\n\tFetchUser(id int) string\n}\n\nfunc RenderUserProfile(f UserFetcher, id int) {\n\tfmt.Println(\"Профиль:\", f.FetchUser(id))\n}\n\nfunc main() {\n\tsvc := UserService{}\n\tRenderUserProfile(svc, 42)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Профиль: User#42"
+      }
+    ],
+    "under_the_hood": "\nМеньше интерфейсных таблиц `itab` в бинарном файле.\n",
+    "pitfalls": "\n- Создание пары `MyService` и `IMyService` для каждого файла проекта.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go не используют префиксы `I` в именах интерфейсов (`IReader`, `IWriter`)?»\n**Ответ:** Интерфейсы в Go описывают поведение и суффиксируются действием (`Reader`, `Writer`, `Formatter`, `Closer`).\n"
+  },
+  {
+    "num": 74,
+    "title": "Интерфейс сортировки sort.Interface (Len, Less, Swap) для среза BookSlice",
+    "task": "Интерфейс сортировки: Создайте срез структур Book (название, год). Чтобы отсортировать этот срез с помощью стандартного метода sort.Sort, реализуйте для вашего типа (например, type BookSlice []Book) три метода интерфейса sort.Interface: Len(), Less(i, j int) bool и Swap(i, j int).",
+    "theory": "\nРеализация классического контракта `sort.Interface`.\n",
+    "step_by_step": "\n1. Создаем `Book{Title string, Year int}`.\n2. Создаем `type BookSlice []Book`.\n3. Реализуем `Len`, `Less`, `Swap`.\n4. Сортируем через `sort.Sort`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sort\"\n)\n\ntype Book struct {\n\tTitle string\n\tYear  int\n}\n\ntype BookSlice []Book\n\nfunc (b BookSlice) Len() int           { return len(b) }\nfunc (b BookSlice) Less(i, j int) bool { return b[i].Year < b[j].Year }\nfunc (b BookSlice) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }\n\nfunc main() {\n\tbooks := BookSlice{\n\t\t{\"The Go Programming Language\", 2015},\n\t\t{\"Concurrency in Go\", 2017},\n\t\t{\"Go in Action\", 2015},\n\t}\n\n\tsort.Sort(books)\n\n\tfmt.Println(\"Книги отсортированы:\")\n\tfor _, book := range books {\n\t\tfmt.Printf(\"  [%d] %s\\n\", book.Year, book.Title)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Книги отсортированы:\n#   [2015] The Go Programming Language\n#   [2015] Go in Action\n#   [2017] Concurrency in Go"
+      }
+    ],
+    "under_the_hood": "\nСортировка на месте без аллокаций.\n",
+    "pitfalls": "\n- Неправильный знак `<` в `Less` (приведет к обратной сортировке).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Является ли `sort.Sort` стабильной сортировкой?»\n**Ответ:** НЕТ, `sort.Sort` не гарантирует сохранение порядка равных элементов. Для стабильной сортировки используют `sort.Stable`.\n"
+  },
+  {
+    "num": 75,
+    "title": "Паттерн Стратегия (Strategy Pattern) на базе интерфейса Sorter",
+    "task": "Создайте и используйте интерфейс Sorter с методом Sort(data []int), реализуйте его с разными алгоритмами (пузырёк, выбор) и выберите стратегию во время выполнения.",
+    "theory": "\n**Паттерн Strategy через интерфейсы:**\n- Позволяет динамически подменять алгоритмы в рантайме без изменения клиентского кода.\n",
+    "step_by_step": "\n1. Создаем интерфейс `Sorter` с методом `Sort(data []int)`.\n2. Реализуем `BubbleSorter` и `SelectionSorter`.\n3. Применяем стратегии.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Sorter interface {\n\tSort(data []int)\n}\n\ntype BubbleSorter struct{}\n\nfunc (BubbleSorter) Sort(data []int) {\n\tn := len(data)\n\tfor i := 0; i < n-1; i++ {\n\t\tfor j := 0; j < n-i-1; j++ {\n\t\t\tif data[j] > data[j+1] {\n\t\t\t\tdata[j], data[j+1] = data[j+1], data[j]\n\t\t\t}\n\t\t}\n\t}\n}\n\ntype SelectionSorter struct{}\n\nfunc (SelectionSorter) Sort(data []int) {\n\tn := len(data)\n\tfor i := 0; i < n-1; i++ {\n\t\tminIdx := i\n\t\tfor j := i + 1; j < n; j++ {\n\t\t\tif data[j] < data[minIdx] {\n\t\t\t\tminIdx = j\n\t\t\t}\n\t\t}\n\t\tdata[i], data[minIdx] = data[minIdx], data[i]\n\t}\n}\n\nfunc ExecuteSort(s Sorter, arr []int) {\n\ts.Sort(arr)\n\tfmt.Printf(\"Отсортировано (%T): %v\\n\", s, arr)\n}\n\nfunc main() {\n\tarr1 := []int{5, 2, 9, 1}\n\tarr2 := []int{8, 3, 7, 4}\n\n\tExecuteSort(BubbleSorter{}, arr1)\n\tExecuteSort(SelectionSorter{}, arr2)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Отсортировано (main.BubbleSorter): [1 2 5 9]\n# Отсортировано (main.SelectionSorter): [3 4 7 8]"
+      }
+    ],
+    "under_the_hood": "\nПолиморфный вызов выбранного алгоритма.\n",
+    "pitfalls": "\n- Мутация исходного среза, если вызывающий код ожидал неизменяемости.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Где в Go чаще всего применяется паттерн Strategy?»\n**Ответ:** В роутинге HTTP, балансировщиках нагрузки (Round-Robin vs Least Connections) и сериализаторах (JSON vs Protobuf).\n"
+  },
+  {
+    "num": 76,
+    "title": "Сравнение Generics Max[T cmp.Ordered] против пустых интерфейсов MaxInterface(a, b any)",
+    "task": "Создай generic-функцию Max[T constraints.Ordered](a, b T) T и сравни с интерфейсным подходом MaxInterface(a, b interface{}) (interface{}, error). Покажи преимущества generics над пустыми интерфейсами.",
+    "theory": "\n**Преимущества Generics над `any` / `interface{}`:**\n1. **Безопасность типов во время компиляции:** исключает ошибки времени выполнения;\n2. **Нулевой оверхед (Zero Boxing Overhead):** данные передаются в регистрах CPU без упаковки в `eface` и аллокаций в куче;\n3. **Прямой возврат точного типа `T`:** не требует Type Assertion со стороны вызывающего кода.\n",
+    "step_by_step": "\n1. Пишем `MaxGeneric[T cmp.Ordered](a, b T) T`.\n2. Пишем `MaxInterface(a, b any) (any, error)`.\n3. Сравниваем удобство и производительность.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"cmp\"\n\t\"fmt\"\n)\n\n// 1. Современный generic-подход (Go 1.21+):\nfunc MaxGeneric[T cmp.Ordered](a, b T) T {\n\tif a > b {\n\t\treturn a\n\t}\n\treturn b\n}\n\n// 2. Устаревший интерфейсный подход (до Go 1.18):\nfunc MaxInterface(a, b any) (any, error) {\n\tswitch va := a.(type) {\n\tcase int:\n\t\tif vb, ok := b.(int); ok {\n\t\t\tif va > vb {\n\t\t\t\treturn va, nil\n\t\t\t}\n\t\t\treturn vb, nil\n\t\t}\n\t}\n\treturn nil, fmt.Errorf(\"несовместимые типы\")\n}\n\nfunc main() {\n\t// Generic: строгая типизация и возврат int без кастов:\n\tmaxInt := MaxGeneric(10, 25)\n\tmaxStr := MaxGeneric(\"apple\", \"banana\")\n\n\tfmt.Printf(\"Generic Max Int: %d\\n\", maxInt)\n\tfmt.Printf(\"Generic Max Str: %s\\n\", maxStr)\n\n\t// Interface: требуется проверка ошибки и Type Assertion:\n\tres, _ := MaxInterface(10, 25)\n\tval := res.(int)\n\tfmt.Printf(\"Interface Max:   %d\\n\", val)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Generic Max Int: 25\n# Generic Max Str: banana\n# Interface Max:   25"
+      }
+    ],
+    "under_the_hood": "\nGenerics используют механизм мономорфизации компилятора (GCShape Stenciling) для генерации быстрого кода.\n",
+    "pitfalls": "\n- Использование `any` для математических функций при наличии дженериков.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Когда следует использовать Generics, а когда интерфейсы?»\n**Ответ:** Generics используют, когда алгоритм одинаков для разных типов и важна сохранность типа (контейнеры, слайсы, алгоритмы). Интерфейсы используют, когда у разных типов различается поведение (полиморфизм).\n"
+  },
+  {
+    "num": 77,
+    "title": "Неявное удовлетворение интерфейсов через Embedding: структура со встроенным bytes.Buffer",
+    "task": "Напиши программу, которая демонстрирует implicit satisfaction через embedding: структура встраивает bytes.Buffer, поэтому автоматически удовлетворяет io.Reader, io.Writer, io.ByteReader и т.д.",
+    "theory": "\n**Встраивание структур для реализации интерфейсов:**\n- Встраивание типа, реализующего методы интерфейса, автоматически передает эту реализацию внешней структуре;\n- Позволяет за 1 строку кода удовлетворить десятку стандартных интерфейсов Go!\n",
+    "step_by_step": "\n1. Создаем `type CustomStream struct { bytes.Buffer; ID string }`.\n2. Демонстрируем, что `CustomStream` автоматически удовлетворяет `io.Reader`, `io.Writer`, `io.ByteReader`, `fmt.Stringer`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"io\"\n)\n\ntype CustomStream struct {\n\tbytes.Buffer // Встраивает десятки методов\n\tID           string\n}\n\nfunc main() {\n\tstream := &CustomStream{ID: \"session_001\"}\n\n\t// CustomStream автоматически реализует io.Writer:\n\tvar w io.Writer = stream\n\tfmt.Fprintf(w, \"Данные для сессии %s\", stream.ID)\n\n\t// CustomStream автоматически реализует io.Reader:\n\tvar r io.Reader = stream\n\tdata, _ := io.ReadAll(r)\n\n\tfmt.Printf(\"Прочитано из stream: %q\\n\", string(data))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Прочитано из stream: \"Данные для сессии session_001\" "
+      }
+    ],
+    "under_the_hood": "\nМетоды `bytes.Buffer` экспортируются в `itab` структуры `CustomStream`.\n",
+    "pitfalls": "\n- Случайное затирание встроенных методов собственными функциями с несовпадающими сигнатурами.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Сколько интерфейсов стандартной библиотеки реализует `*bytes.Buffer`?»\n**Ответ:** Более 6 интерфейсов: `io.Reader`, `io.Writer`, `io.ByteReader`, `io.ByteScanner`, `io.RuneReader`, `io.RuneScanner`, `io.WriterTo`, `io.ReaderFrom`, `fmt.Stringer`.\n"
+  }
+]
