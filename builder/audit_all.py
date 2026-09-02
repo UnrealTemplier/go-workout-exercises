@@ -34,6 +34,9 @@ with open('builder/chapter8_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter9_data.json', 'r', encoding='utf-8') as f:
     ch9_exercises = json.load(f)
 
+with open('builder/chapter10_data.json', 'r', encoding='utf-8') as f:
+    ch10_exercises = json.load(f)
+
 all_ch1 = s1 + s2 + s3 + s4 + s5 + s6
 all_ch2 = ch2_exercises
 all_ch3 = ch3_exercises
@@ -43,19 +46,21 @@ all_ch6 = ch6_exercises
 all_ch7 = ch7_exercises
 all_ch8 = ch8_exercises
 all_ch9 = ch9_exercises
+all_ch10 = ch10_exercises
 
-total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9)
+total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10)
 
 print("=== ТЕХНИЧЕСКИЙ АУДИТ УЧЕБНИКА GO ===")
-print(f"Глава 1: {len(all_ch1)} упражнений")
-print(f"Глава 2: {len(all_ch2)} упражнений")
-print(f"Глава 3: {len(all_ch3)} упражнений")
-print(f"Глава 4: {len(all_ch4)} упражнений")
-print(f"Глава 5: {len(all_ch5)} упражнений")
-print(f"Глава 6: {len(all_ch6)} упражнений")
-print(f"Глава 7: {len(all_ch7)} упражнений")
-print(f"Глава 8: {len(all_ch8)} упражнений")
-print(f"Глава 9: {len(all_ch9)} упражнений")
+print(f"Глава 1:  {len(all_ch1)} упражнений")
+print(f"Глава 2:  {len(all_ch2)} упражнений")
+print(f"Глава 3:  {len(all_ch3)} упражнений")
+print(f"Глава 4:  {len(all_ch4)} упражнений")
+print(f"Глава 5:  {len(all_ch5)} упражнений")
+print(f"Глава 6:  {len(all_ch6)} упражнений")
+print(f"Глава 7:  {len(all_ch7)} упражнений")
+print(f"Глава 8:  {len(all_ch8)} упражнений")
+print(f"Глава 9:  {len(all_ch9)} упражнений")
+print(f"Глава 10: {len(all_ch10)} упражнений")
 print(f"Всего упражнений в учебнике: {total_ex}")
 
 issues = []
@@ -116,6 +121,8 @@ for ex in all_ch8:
     check_exercise(8, ex)
 for ex in all_ch9:
     check_exercise(9, ex)
+for ex in all_ch10:
+    check_exercise(10, ex)
 
 # Check HTML files and anchors
 html_files = [
@@ -128,6 +135,7 @@ html_files = [
     ('chapter7.html', 7, len(all_ch7)),
     ('chapter8.html', 8, len(all_ch8)),
     ('chapter9.html', 9, len(all_ch9)),
+    ('chapter10.html', 10, len(all_ch10)),
 ]
 
 for fname, ch_num, count in html_files:
@@ -152,4 +160,4 @@ if issues:
         print("  •", iss)
     exit(1)
 else:
-    print(f"\n✅ ИДЕАЛЬНО: Все {total_ex} упражнений в 9 главах успешно прошли синтаксический, структурный и HTML-аудит!")
+    print(f"\n✅ ИДЕАЛЬНО: Все {total_ex} упражнений в 10 главах успешно прошли синтаксический, структурный и HTML-аудит!")
