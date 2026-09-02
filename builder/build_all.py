@@ -45,6 +45,9 @@ with open('builder/chapter10_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter11_data.json', 'r', encoding='utf-8') as f:
     ch11_exercises = json.load(f)
 
+with open('builder/chapter12_data.json', 'r', encoding='utf-8') as f:
+    ch12_exercises = json.load(f)
+
 def format_text(txt):
     if not txt:
         return ""
@@ -131,6 +134,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             9: ('chapter9.html', '62/62'),
             10: ('chapter10.html', '100/100'),
             11: ('chapter11.html', '49/49'),
+            12: ('chapter12.html', '67/67'),
         }
         
         if num in status_map:
@@ -770,12 +774,67 @@ def build_chapter11_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter10.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 10 (Функции)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 12: Структуры (Скоро) →</a>
+            <a href="chapter12.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 12: Передача аргументов →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '11. Указатели (49/49)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter12_html(chapters):
+    sidebar_html = build_sidebar(chapters, active_chapter_num=12, current_exercises=ch12_exercises)
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">🔄 Модуль 12 • Семантика Передачи Аргументов</div>
+        <h1 class="hero-title">Передача Аргументов (По Значению vs По Ссылке) в Go</h1>
+        <p class="hero-desc">
+            Глубокое практическое исследование механизмов передачи параметров в Go: 
+            строгая семантика Pass by Value, анатомия дескрипторов срезов (SliceHeader) и ловушки `append` без возврата, 
+            ссылочное поведение хэш-таблиц (`*hmap`) и каналов (`*hchan`), иммутабельность строк (`StringHeader`), 
+            утечка состояния при поверхностном копировании структур с указателями (Pointer Aliasing) и паттерн Deep Copy, 
+            бенчмаркинг копирования 8 МБ массивов против 8-байтных указателей, транзакционная логика переводов `Transfer` 
+            и адресная арифметика в пакете `unsafe`. Все 67 упражнений решены шаг за шагом.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-val">67 из 67</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">Pass by Value</span><span class="stat-lbl">Strict Go Model</span></div>
+            <div class="stat-item"><span class="stat-val">SliceHeader</span><span class="stat-lbl">Data, Len, Cap Trap</span></div>
+            <div class="stat-item"><span class="stat-val">Deep Copy</span><span class="stat-lbl">Memory Isolation</span></div>
+        </div>
+    </section>
+    """)
+    section_groups_ch12 = [
+        (1, 23, "Раздел 1: Примитивы, Срезы vs Массивы, Мапы, Каналы, Неизменяемость Строк и Ловушки Append", "Изоляция стека, передача int, массив [3]int vs срез []int, ссылки на hmap и hchan, StringHeader (16B), ChangeName User vs *User, ловушка append без возврата, срезы s[:0], каверзный случай cap > len и реаллокация базового массива"),
+        (24, 45, "Раздел 2: Антипаттерн *any, Поверхностные Копии Структур, Escape-Анализ, Бенчмарк BigData и Разворот Списка", "Указатель на интерфейс *any, структуры со срезами Team.Members, escape analysis, aliasing в структурах с указателями, замер 8 МБ массива vs 8 байт указателя, Value Receiver, ловушка AppendAndModify, разворот связного списка ReverseList и анонимные структуры"),
+        (46, 67, "Раздел 3: Интерфейсы, Транзакционный Transfer, Защита Мап, Deep Copy Config и Адресная Арифметика unsafe", "Интерфейсы Stringer, защита от dangling pointers, *[]int с гарантией реаллокации, приватные поля, безопасный перевод денег Transfer с валидацией, попытка обнуления мап, иммутабельность массивов [5]int, Deep Copy метод Clone() и вычисление смещения unsafe.Offsetof")
+    ]
+    ex_dict = {e["num"]: e for e in ch12_exercises}
+    for start_n, end_n, title, desc in section_groups_ch12:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 12 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили механику передачи аргументов в Go: изоляцию стека, ссылочную семантику мап/каналов, ловушки срезов и глубокое копирование.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter11.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 11 (Указатели)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 13: Структуры (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '12. Передача аргументов (67/67)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -792,6 +851,7 @@ if __name__ == '__main__':
         ('chapter9.html', build_chapter9_html),
         ('chapter10.html', build_chapter10_html),
         ('chapter11.html', build_chapter11_html),
+        ('chapter12.html', build_chapter12_html),
     ]
     
     for filename, builder_fn in pages:

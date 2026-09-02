@@ -1,0 +1,1476 @@
+[
+  {
+    "num": 1,
+    "title": "Передача примитива int по значению (Pass by Value) и изоляция локального стека",
+    "task": "Передайте int в функцию, измените его внутри — покажите, что исходная переменная не изменилась.",
+    "theory": "\n**Фундаментальная модель передачи параметров в Go:**\n- В языке Go **абсолютно все аргументы передаются по значению (Pass by Value)**;\n- При вызове функции `Modify(x int)` значение аргумента побайтово копируется в локальный стековый фрейм или регистр CPU вызываемой функции;\n- Любые изменения внутри функции затрагивают исключительно изолированную локальную копию.\n",
+    "step_by_step": "\n1. Объявляем функцию `ModifyInt(val int)`.\n2. Внутри присваиваем `val = 999`.\n3. Проверяем значение оригинальной переменной до и после вызова.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc ModifyInt(val int) {\n\tval = 999\n\tfmt.Printf(\"Внутри функции ModifyInt: val = %d (адрес: %p)\\n\", val, &val)\n}\n\nfunc main() {\n\toriginal := 42\n\tfmt.Printf(\"1. До вызова функции:      original = %d (адрес: %p)\\n\", original, &original)\n\n\tModifyInt(original)\n\n\tfmt.Printf(\"2. После вызова функции:   original = %d (адрес: %p - НЕ ИЗМЕНИЛСЯ!)\\n\", original, &original)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. До вызова функции:      original = 42 (адрес: 0xc000018030)\n# Внутри функции ModifyInt: val = 999 (адрес: 0xc000018038)\n# 2. После вызова функции:   original = 42 (адрес: 0xc000018030 - НЕ ИЗМЕНИЛСЯ!)"
+      }
+    ],
+    "under_the_hood": "\nВ конвенции вызовов ABIInternal компилятор передает значение `42` в регистре процессора `RAX`, не затрагивая ячейку памяти `original`.\n",
+    "pitfalls": "\n- Ожидание, что функция изменит исходную переменную без передачи явного указателя `*int`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Существует ли в Go передача по ссылке (Pass by Reference) на уровне языка, как в C++ (`int &ref`)?»\n**Ответ:** НЕТ! В спецификации Go нет ссылок в стиле C++. Все передается строго по значению. Когда мы передаем указатель `*T`, мы передаем **по значению сам 8-байтный адрес**.\n"
+  },
+  {
+    "num": 2,
+    "title": "Сравнение передачи массива и среза: глубокая копия данных vs копия заголовка SliceHeader",
+    "task": "Сравните передачу массива и среза: массив копируется, срез — заголовок (изменение элементов влияет на оригинал).",
+    "theory": "\n**Ключевое различие между Arrays и Slices при вызовах:**\n- **Массив `[3]int`:** является монолитным значимым типом. При передаче копируются **все элементы массива целиком** ($O(N)$ по памяти);\n- **Срез `[]int`:** является 24-байтной структурой `SliceHeader (Data uintptr, Len int, Cap int)`. Копируется только 24-байтный заголовок, а указатель `Data` продолжает ссылаться на тот же базовый массив в памяти.\n",
+    "step_by_step": "\n1. Пишем `MutateArray(arr [3]int)`.\n2. Пишем `MutateSlice(s []int)`.\n3. Сравниваем поведение оригиналов в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc MutateArray(arr [3]int) {\n\tarr[0] = 777 // Изменяет локальную копию массива\n}\n\nfunc MutateSlice(s []int) {\n\ts[0] = 777 // Изменяет элемент в разделяемом базовом массиве!\n}\n\nfunc main() {\n\torigArray := [3]int{1, 2, 3}\n\torigSlice := []int{1, 2, 3}\n\n\tMutateArray(origArray)\n\tfmt.Printf(\"1. Массив после MutateArray: %v (НЕ ИЗМЕНИЛСЯ!)\\n\", origArray)\n\n\tMutateSlice(origSlice)\n\tfmt.Printf(\"2. Срез после MutateSlice:    %v (ИЗМЕНИЛСЯ НА МЕСТЕ!)\\n\", origSlice)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Массив после MutateArray: [1 2 3] (НЕ ИЗМЕНИЛСЯ!)\n# 2. Срез после MutateSlice:    [777 2 3] (ИЗМЕНИЛСЯ НА МЕСТЕ!)"
+      }
+    ],
+    "under_the_hood": "\nДля массива компилятор генерирует `memmove` на стек. Для среза — копирует 3 машинных слова (Data, Len, Cap) в регистры.\n",
+    "pitfalls": "\n- Передача гигантских массивов `[100000]int` по значению: приводит к копированию мегабайт памяти на каждый вызов.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему говорят, что срез передается по значению, если изменения элементов видны снаружи?»\n**Ответ:** Потому что сам дескриптор `SliceHeader` копируется по значению, но одно из его полей — это указатель `Data` на базовый массив.\n"
+  },
+  {
+    "num": 3,
+    "title": "Передача структуры по значению User vs по указателю *User: влияние на поля",
+    "task": "Передайте структуру по значению и по указателю; сравните результат изменения полей.",
+    "theory": "\n**Семантика структур (Struct Semantics):**\n- Передача структуры по значению `func Update(u User)` создает независимую копию всех полей структуры;\n- Передача по указателю `func Update(u *User)` передает адрес памяти, позволяя мутировать исходный объект.\n",
+    "step_by_step": "\n1. Создаем структуру `type User struct { Name string; Age int }`.\n2. Пишем `UpdateValue(u User)` и `UpdatePointer(u *User)`.\n3. Сравниваем результаты в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tName string\n\tAge  int\n}\n\nfunc UpdateValue(u User) {\n\tu.Age += 10\n}\n\nfunc UpdatePointer(u *User) {\n\tif u != nil {\n\t\tu.Age += 10\n\t}\n}\n\nfunc main() {\n\tuser1 := User{Name: \"Иван\", Age: 20}\n\tuser2 := User{Name: \"Ольга\", Age: 20}\n\n\tUpdateValue(user1)\n\tfmt.Printf(\"1. user1 после UpdateValue:   %+v (копия, возраст 20)\\n\", user1)\n\n\tUpdatePointer(&user2)\n\tfmt.Printf(\"2. user2 после UpdatePointer: %+v (мутация, возраст 30)\\n\", user2)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. user1 после UpdateValue:   {Name:Иван Age:20} (копия, возраст 20)\n# 2. user2 после UpdatePointer: {Name:Ольга Age:30} (мутация, возраст 30)"
+      }
+    ],
+    "under_the_hood": "\nПри вызове `UpdatePointer` передается только 8-байтный указатель, а поля модифицируются по прямому смещению в куче или стеке.\n",
+    "pitfalls": "\n- Вызов `UpdatePointer(nil)` без проверки `if u != nil` вызовет панику.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В каких случаях структуру ОБЯЗАТЕЛЬНО передавать по указателю?»\n**Ответ:** 1) Когда требуется модификация полей; 2) Когда структура содержит мьютекс `sync.Mutex` (мьютексы нельзя копировать!); 3) Когда структура тяжелая ($> 64$ байт), чтобы избежать оверхеда на копирование.\n"
+  },
+  {
+    "num": 4,
+    "title": "Передача мапы map в функцию: ссылочная семантика указателя на заголовок hmap",
+    "task": "Передайте мапу (map) в функцию, добавьте новую пару ключ-значение и проверьте оригинал. Объясните, почему мапы ведут себя как ссылочные типы.",
+    "theory": "\n**Внутреннее устройство `map` в Go:**\n- Тип `map[K]V` в Go — это синтаксический сахар над указателем `*runtime.hmap`;\n- При передаче мапы в функцию копируется **сам указатель на заголовок `hmap`**;\n- Любая вставка `m[key] = val` или удаление `delete(m, key)` внутри функции модифицирует ту же самую хэш-таблицу в памяти!\n",
+    "step_by_step": "\n1. Пишем `InsertMetric(m map[string]int, key string, val int)`.\n2. Создаем мапу `metrics := make(map[string]int)`.\n3. Добавляем элементы через функцию.\n4. Проверяем оригинал в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc InsertMetric(m map[string]int, key string, val int) {\n\tm[key] = val // Модифицирует оригинальную хэш-таблицу!\n}\n\nfunc main() {\n\tmetrics := make(map[string]int)\n\tmetrics[\"cpu_usage\"] = 45\n\n\tfmt.Printf(\"1. До вызова:    %v\\n\", metrics)\n\n\tInsertMetric(metrics, \"ram_usage\", 78)\n\tInsertMetric(metrics, \"disk_io\", 120)\n\n\tfmt.Printf(\"2. После вызова: %v (НОВЫЕ КЛЮЧИ ПОЯВИЛИСЬ СНАРУЖИ!)\\n\", metrics)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. До вызова:    map[cpu_usage:45]\n# 2. После вызова: map[cpu_usage:45 disk_io:120 ram_usage:78] (НОВЫЕ КЛЮЧИ ПОЯВИЛИСЬ СНАРУЖИ!)"
+      }
+    ],
+    "under_the_hood": "\nПеременная `metrics` хранит указатель на структуру `hmap`. Функция получает копию этого указателя, ссылающегося на те же бакеты `bmap`.\n",
+    "pitfalls": "\n- Передача `nil`-мапы: чтение из нее сработает, но попытка вставки `m[k] = v` внутри функции вызовет панику `assignment to entry in nil map`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go нет синтаксиса `*map[string]int` в аргументах функций?»\n**Ответ:** Потому что `map` уже является указателем под капотом. Указатель на мапу `*map` нужен только если функция должна заменить саму мапу на другой экземпляр (`*m = make(...)`).\n"
+  },
+  {
+    "num": 5,
+    "title": "Изоляция полей структуры при передаче по значению и защита от побочных эффектов",
+    "task": "Напишите функцию, принимающую структуру по значению, и измените её поле. Убедитесь, что оригинал не изменился.",
+    "theory": "\nЗакрепление принципа иммутабельности при передаче значимых структур.\n",
+    "step_by_step": "\n1. Создаем структуру `Product{Title string, Price float64}`.\n2. Пишем функцию `ApplyDiscount(p Product, discount float64)`.\n3. Убеждаемся в неизменности исходного объекта.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Product struct {\n\tTitle string\n\tPrice float64\n}\n\nfunc ApplyDiscount(p Product, discount float64) {\n\tp.Price -= discount\n\tfmt.Printf(\"Внутри ApplyDiscount: %+v\\n\", p)\n}\n\nfunc main() {\n\titem := Product{Title: \"Клавиатура\", Price: 5000.0}\n\tfmt.Printf(\"До вызова:            %+v\\n\", item)\n\n\tApplyDiscount(item, 1000.0)\n\n\tfmt.Printf(\"После вызова:         %+v (ЦЕНА ОРИГИНАЛА НЕ ИЗМЕНИЛАСЬ!)\\n\", item)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До вызова:            {Title:Клавиатура Price:5000}\n# Внутри ApplyDiscount: {Title:Клавиатура Price:4000}\n# После вызова:         {Title:Клавиатура Price:5000} (ЦЕНА ОРИГИНАЛА НЕ ИЗМЕНИЛАСЬ!)"
+      }
+    ],
+    "under_the_hood": "\nСтруктура копируется в локальный стек вызываемой функции.\n",
+    "pitfalls": "\n- Случайная передача по значению структуры, содержащей срезы (элементы среза изменятся, а примитивные поля — нет).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как сделать функцию `ApplyDiscount` чистой (Pure Function) и вернуть обновленную структуру?»\n**Ответ:** Возвращать измененную копию: `func ApplyDiscount(p Product, discount float64) Product { p.Price -= discount; return p }`.\n"
+  },
+  {
+    "num": 6,
+    "title": "Инкремент Increment(x int): доказательство передачи примитивов по значению",
+    "task": "Напиши функцию Increment(x int), которая пытается увеличить x на 1. Убедись, что оригинал не меняется (передача по значению).",
+    "theory": "\nБазовое доказательство отсутствия скрытых ссылок у числовых типов.\n",
+    "step_by_step": "\n1. Пишем `Increment(x int)`.\n2. Вызываем с переменной `counter`.\n3. Анализируем результат.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc Increment(x int) {\n\tx++\n}\n\nfunc main() {\n\tcounter := 10\n\tIncrement(counter)\n\tfmt.Printf(\"Значение counter: %d (НЕ ИЗМЕНИЛОСЬ!)\\n\", counter)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Значение counter: 10 (НЕ ИЗМЕНИЛОСЬ!)"
+      }
+    ],
+    "under_the_hood": "\nИнструкция `INCQ` выполняется над регистром, в который был скопирован аргумент.\n",
+    "pitfalls": "\n- Непонимание почему `counter` не стал 11.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как исправить функцию `Increment`, чтобы она изменила `counter`?»\n**Ответ:** Передать указатель `func Increment(x *int) { *x++ }` и вызвать `Increment(&counter)`.\n"
+  },
+  {
+    "num": 7,
+    "title": "Ловушка append внутри функции: почему срез в main не видит добавленные элементы",
+    "task": "Передайте слайс в функцию, добавьте туда элемент с помощью append и проверьте, изменился ли оригинальный слайс. Объясните результат.",
+    "theory": "\n**Анатомия ловушки передачи срезов (Slice Header Trap):**\n- Срез передается как копия дескриптора `SliceHeader{Data, Len, Cap}`;\n- Функция `append` увеличивает поле `Len` в **локальной копии дескриптора**;\n- В вызывающей функции `main` поле `Len` у исходного `SliceHeader` остается прежним;\n- Поэтому `fmt.Println(origSlice)` выводит только элементы до старой длины `Len`!\n",
+    "step_by_step": "\n1. Пишем `TryAppend(s []int, val int)`.\n2. Передаем срез `data := []int{1, 2}`.\n3. Объясняем, почему `len(data)` в `main` остался равен 2.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc TryAppend(s []int, val int) {\n\ts = append(s, val)\n\tfmt.Printf(\"Внутри TryAppend:   %v | len=%d, cap=%d\\n\", s, len(s), cap(s))\n}\n\nfunc main() {\n\tdata := []int{1, 2}\n\tfmt.Printf(\"1. Исходный срез:   %v | len=%d, cap=%d\\n\", data, len(data), cap(data))\n\n\tTryAppend(data, 3)\n\n\tfmt.Printf(\"2. Срез в main:     %v | len=%d, cap=%d (ЭЛЕМЕНТ 3 НЕ ПОЯВИЛСЯ!)\\n\",\n\t\tdata, len(data), cap(data))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Исходный срез:   [1 2] | len=2, cap=2\n# Внутри TryAppend:   [1 2 3] | len=3, cap=4\n# 2. Срез в main:     [1 2] | len=2, cap=2 (ЭЛЕМЕНТ 3 НЕ ПОЯВИЛСЯ!)"
+      }
+    ],
+    "under_the_hood": "\nПри вызове `append` локальная переменная `s` получила новый `SliceHeader` с `Len=3, Cap=4`, а переменная `data` в стеке `main` осталась с `Len=2, Cap=2`.\n",
+    "pitfalls": "\n- Попытка модифицировать длину среза без возврата обновленного среза `data = TryAppend(data, 3)`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Где физически оказался элемент 3, если у исходного среза был запас `cap = 10`?»\n**Ответ:** Элемент 3 был физически записан в 3-й слот базового массива в памяти, но `main()` не может его прочитать, так как его собственный дескриптор `Len` по-прежнему равен 2 (но его можно увидеть через срез `data[:3]`).\n"
+  },
+  {
+    "num": 8,
+    "title": "Передача массива по указателю *[5]int: экономия памяти и сохранение мутаций",
+    "task": "Массивы по указателю: Напишите функцию, принимающую указатель на массив *[5]int. Измените элементы и убедитесь, что изменения сохранились.",
+    "theory": "\nПередача `*[N]T` исключает копирование элементов и позволяет мутировать массив на месте.\n",
+    "step_by_step": "\n1. Пишем `FillArray(arr *[5]int)`.\n2. Заполняем массив значениями.\n3. Проверяем в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc FillArray(arr *[5]int) {\n\tif arr == nil {\n\t\treturn\n\t}\n\tfor i := range arr {\n\t\tarr[i] = (i + 1) * 10\n\t}\n}\n\nfunc main() {\n\tvar numbers [5]int\n\tfmt.Printf(\"До заполнения:    %v\\n\", numbers)\n\n\tFillArray(&numbers)\n\n\tfmt.Printf(\"После заполнения: %v (МУТАЦИЯ СОХРАНЕНА!)\\n\", numbers)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До заполнения:    [0 0 0 0 0]\n# После заполнения: [10 20 30 40 50] (МУТАЦИЯ СОХРАНЕНА!)"
+      }
+    ],
+    "under_the_hood": "\nФункция получает 8-байтный указатель на начало непрерывного 40-байтного блока памяти.\n",
+    "pitfalls": "\n- Жесткая привязка к фиксированному размеру массива `[5]int` (для гибкости используют срезы `[]int`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему сигнатура `func Foo(arr *[5]int)` менее гибка, чем `func Foo(s []int)`?»\n**Ответ:** Потому что размер массива `[5]int` является частью типа. В такую функцию нельзя передать массив `[6]int` или срез.\n"
+  },
+  {
+    "num": 9,
+    "title": "Мутация существующего элемента среза по индексу s[0] = val и общий базовый массив",
+    "task": "Передайте слайс в функцию и измените существующий элемент по индексу. Объясните разницу с предыдущим пунктом.",
+    "theory": "\n**Разница между изменением элемента и append:**\n- Изменение существующего элемента `s[0] = 999` **НЕ меняет заголовок среза** (длина и емкость прежние);\n- Оно перезаписывает байты напрямую в базовом массиве по указателю `Data`;\n- Поэтому вызывающий код немедленно видит обновление элемента.\n",
+    "step_by_step": "\n1. Пишем `UpdateFirstElement(s []int, newVal int)`.\n2. Передаем `scores := []int{10, 20, 30}`.\n3. Проверяем обновление `scores[0]`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc UpdateFirstElement(s []int, newVal int) {\n\tif len(s) > 0 {\n\t\ts[0] = newVal // Прямая запись в общий базовый массив!\n\t}\n}\n\nfunc main() {\n\tscores := []int{10, 20, 30}\n\tfmt.Printf(\"До вызова:    %v\\n\", scores)\n\n\tUpdateFirstElement(scores, 999)\n\n\tfmt.Printf(\"После вызова: %v (ЭЛЕМЕНТ s[0] ОБНОВИЛСЯ!)\\n\", scores)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До вызова:    [10 20 30]\n# После вызова: [999 20 30] (ЭЛЕМЕНТ s[0] ОБНОВИЛСЯ!)"
+      }
+    ],
+    "under_the_hood": "\nИнструкция процессора `MOVQ $999, (Data)`.\n",
+    "pitfalls": "\n- Вызов `s[0] = ...` для пустого среза `len == 0` (паника `index out of range`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Является ли операция `s[i] = v` потокобезопасной при передаче среза в несколько горутин?»\n**Ответ:** НЕТ! Параллельная запись в один и тот же индекс среза без синхронизации (`sync.Mutex`) приводит к Data Race.\n"
+  },
+  {
+    "num": 10,
+    "title": "Передача интерфейса с Value Receiver vs Pointer Receiver и сохранение мутаций",
+    "task": "Передайте интерфейс, содержащий указатель-получатель и значение-получатель, и убедитесь в разнице при изменении.",
+    "theory": "\n**Интерфейсы и семантика получателей:**\n- Если интерфейс упаковывает значение по значению (`User`), методы с value receiver модифицируют копию внутри интерфейса;\n- Если интерфейс упаковывает указатель (`*User`), методы с pointer receiver модифицируют оригинальный объект в куче.\n",
+    "step_by_step": "\n1. Создаем интерфейс `type Resetter interface { Reset() }`.\n2. Реализуем метод на структуре `Counter` с pointer receiver.\n3. Передаем интерфейс в функцию.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Resetter interface {\n\tReset()\n}\n\ntype Counter struct {\n\tValue int\n}\n\nfunc (c *Counter) Reset() {\n\tc.Value = 0 // Мутирует оригинальный объект через указатель\n}\n\nfunc DoReset(r Resetter) {\n\tr.Reset()\n}\n\nfunc main() {\n\tcnt := &Counter{Value: 100}\n\tfmt.Printf(\"До DoReset:    %+v\\n\", cnt)\n\n\tDoReset(cnt)\n\n\tfmt.Printf(\"После DoReset: %+v (ОБНУЛЕН ЧЕРЕЗ ИНТЕРФЕЙС!)\\n\", cnt)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До DoReset:    &{Value:100}\n# После DoReset: &{Value:0} (ОБНУЛЕН ЧЕРЕЗ ИНТЕРФЕЙС!)"
+      }
+    ],
+    "under_the_hood": "\nИнтерфейс хранит `itab` (таблицу методов) и `data` (указатель на экземпляр `*Counter`).\n",
+    "pitfalls": "\n- Попытка передать `Counter{}` по значению в интерфейс, где методы объявлены на `*Counter` (ошибка компиляции `does not implement Resetter`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему структура `Counter` не реализует интерфейс, если метод объявлен как `func (c *Counter) Reset()`?»\n**Ответ:** Потому что метод принадлежит набору методов (Method Set) указателя `*Counter`, а не значения `Counter`.\n"
+  },
+  {
+    "num": 11,
+    "title": "Каверзный кейс: ChangeName(u User) vs ChangeNamePtr(u *User)",
+    "task": "[Каверзный кейс]: Создай структуру (struct) User{Name string}. Напиши функцию ChangeName(u User), меняющую имя (передача по значению). И функцию ChangeNamePtr(u *User). Проверь разницу.",
+    "theory": "\nСравнение мутаций строковых полей в структурах.\n",
+    "step_by_step": "\n1. Создаем структуру `User{Name string}`.\n2. Пишем `ChangeName(u User, name string)` и `ChangeNamePtr(u *User, name string)`.\n3. Сравниваем результаты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tName string\n}\n\nfunc ChangeName(u User, newName string) {\n\tu.Name = newName // Изменяет локальную копию\n}\n\nfunc ChangeNamePtr(u *User, newName string) {\n\tif u != nil {\n\t\tu.Name = newName // Изменяет оригинал\n\t}\n}\n\nfunc main() {\n\tu1 := User{Name: \"Иван\"}\n\tu2 := User{Name: \"Олег\"}\n\n\tChangeName(u1, \"Петр\")\n\tfmt.Printf(\"1. ChangeName:    %s (оригинал не изменился)\\n\", u1.Name)\n\n\tChangeNamePtr(&u2, \"Петр\")\n\tfmt.Printf(\"2. ChangeNamePtr: %s (оригинал успешно обновлен!)\\n\", u2.Name)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. ChangeName:    Иван (оригинал не изменился)\n# 2. ChangeNamePtr: Петр (оригинал успешно обновлен!)"
+      }
+    ],
+    "under_the_hood": "\nСтроковое поле `Name` (16 байт) копируется при вызове `ChangeName` и модифицируется по указателю в `ChangeNamePtr`.\n",
+    "pitfalls": "\n- Передача по значению больших DTO при обработке HTTP-запросов.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каков размер заголовка структуры `User{Name string}` в памяти?»\n**Ответ:** 16 байт (размер `StringHeader: Data uintptr, Len int`).\n"
+  },
+  {
+    "num": 12,
+    "title": "Неизменяемость строк (String Immutability) в Go и безопасный возврат новой строки",
+    "task": "Передайте строку в функцию, \"измените\" её (создайте новую) и верните. Объясните неизменяемость (immutability) строк в Go.",
+    "theory": "\n**Строгая иммутабельность строк в Go:**\n- В Go байты строки, на которые ссылается `StringHeader.Data`, защищены от записи (Read-Only Memory);\n- Любая модификация (например, `strings.ToUpper` или замена символов) создает **новую строку** и возвращает новый заголовок;\n- Строки можно безопасно передавать в сотни горутин без риска гонок данных!\n",
+    "step_by_step": "\n1. Пишем `AddPrefix(s, prefix string) string`.\n2. Возвращаем новую строку `prefix + s`.\n3. Показываем неизменность исходной строки.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc AddPrefix(s string, prefix string) string {\n\t// Строки в Go иммутабельны. Создается новая строка:\n\treturn prefix + \": \" + s\n}\n\nfunc main() {\n\toriginal := \"сервис авторизации\"\n\tfmt.Printf(\"1. Исходная строка: %q\\n\", original)\n\n\tresult := AddPrefix(original, \"[AUDIT]\")\n\n\tfmt.Printf(\"2. Новая строка:     %q\\n\", result)\n\tfmt.Printf(\"3. Исходная строка: %q (НЕ ИЗМЕНИЛАСЬ!)\\n\", original)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Исходная строка: \"сервис авторизации\"\n# 2. Новая строка:     \"[AUDIT]: сервис авторизации\"\n# 3. Исходная строка: \"сервис авторизации\" (НЕ ИЗМЕНИЛАСЬ!)"
+      }
+    ],
+    "under_the_hood": "\nКонкатенация строк вызывает `runtime.concatstrings`, который выделяет новый буфер памяти.\n",
+    "pitfalls": "\n- Попытка изменить байт строки `s[0] = 'A'` (ошибка компиляции `cannot assign to s[0]`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему строки в Go сделаны иммутабельными?»\n**Ответ:** Для безопасности памяти, потокобезопасности без блокировок мьютексов и возможности безопасного слайсинга подстрок `sub := s[1:5]` за $O(1)$ без копирования байт.\n"
+  },
+  {
+    "num": 13,
+    "title": "Сброс длины среза ResetSlice(s []int) через s[:0] и сохранение оригинального среза в main",
+    "task": "Напиши функцию ResetSlice(s []int), которая делает s = s[:0]. Покажи, что оригинальный слайс в main НЕ изменился (длина осталась прежней). Объясни почему (слайс — это struct с указателем, len, cap; передача по значению копирует эту struct).",
+    "theory": "\n**Копирование дескриптора среза при вызове `s = s[:0]`:**\n- Локальная переменная `s` получает `Len = 0`;\n- Переменная `data` в `main()` сохраняет свое оригинальное поле `Len`;\n- Чтобы обнулить длину в `main`, нужно либо вернуть `s[:0]`, либо передать указатель `*[]int`.\n",
+    "step_by_step": "\n1. Пишем `ResetSlice(s []int)`.\n2. Выполняем `s = s[:0]`.\n3. Проверяем срез в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc ResetSlice(s []int) {\n\ts = s[:0] // Изменяет Len только в локальной копии SliceHeader!\n\tfmt.Printf(\"Внутри ResetSlice:  len=%d, cap=%d\\n\", len(s), cap(s))\n}\n\nfunc main() {\n\tnumbers := []int{10, 20, 30, 40}\n\tfmt.Printf(\"1. До вызова:        %v | len=%d, cap=%d\\n\", numbers, len(numbers), cap(numbers))\n\n\tResetSlice(numbers)\n\n\tfmt.Printf(\"2. После вызова:     %v | len=%d, cap=%d (ДЛИНА В MAIN НЕ ИЗМЕНИЛАСЬ!)\\n\",\n\t\tnumbers, len(numbers), cap(numbers))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. До вызова:        [10 20 30 40] | len=4, cap=4\n# Внутри ResetSlice:  len=0, cap=4\n# 2. После вызова:     [10 20 30 40] | len=4, cap=4 (ДЛИНА В MAIN НЕ ИЗМЕНИЛАСЬ!)"
+      }
+    ],
+    "under_the_hood": "\nОперация `s[:0]` перезаписывает регистр `RBX` (Len), оставляя стековый слот `numbers` нетронутым.\n",
+    "pitfalls": "\n- Заблуждение, что `s[:0]` освобождает память базового массива (емкость `cap` сохраняется).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как правильно написать функцию сброса среза?»\n**Ответ:** Использовать возврат: `func ResetSlice(s []int) []int { return s[:0] }` и вызывать `s = ResetSlice(s)`.\n"
+  },
+  {
+    "num": 14,
+    "title": "Идиоматичный возврат обновленного среза после append: func AddItem(s []T, val T) []T",
+    "task": "Покажите ошибку: передали срез, внутри функции append, снаружи не видно новых элементов без возврата; исправьте, используя возврат обновлённого среза.",
+    "theory": "\nЗолотой стандарт работы со срезами в Go: **всегда возвращать результат `append` из функции**.\n",
+    "step_by_step": "\n1. Пишем `AddItem(s []string, item string) []string`.\n2. Возвращаем `append(s, item)`.\n3. Переприсваиваем результат в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc AddItem(s []string, item string) []string {\n\treturn append(s, item) // Идиоматичный возврат обновленного среза\n}\n\nfunc main() {\n\ttasks := []string{\"Написать код\", \"Запустить тесты\"}\n\tfmt.Printf(\"1. До:    %v (len=%d)\\n\", tasks, len(tasks))\n\n\t// Правильный паттерн: переприсваивание результата\n\ttasks = AddItem(tasks, \"Собрать Docker образ\")\n\n\tfmt.Printf(\"2. После: %v (len=%d - УСПЕШНО ДОБАВЛЕНО!)\\n\", tasks, len(tasks))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. До:    [Написать код Запустить тесты] (len=2)\n# 2. После: [Написать код Запустить тесты Собрать Docker образ] (len=3 - УСПЕШНО ДОБАВЛЕНО!)"
+      }
+    ],
+    "under_the_hood": "\nВозвращается обновленный 24-байтный заголовок `SliceHeader`.\n",
+    "pitfalls": "\n- Игнорирование возвращаемого значения `AddItem(tasks, \"item\")` (линтер `errcheck`/`govet`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему стандартные функции вроде `append` требуют переприсваивания `s = append(s, v)`?»\n**Ответ:** Потому что при переполнении `cap` функция аллоцирует новый массив в куче, и старая переменная `s` должна быть обновлена новым указателем.\n"
+  },
+  {
+    "num": 15,
+    "title": "Защитная проверка указателей на nil внутри функций (Defensive Nil-Check)",
+    "task": "Создай функцию, которая принимает указатель, но аргумент может быть nil. Обработай эту ситуацию внутри функции (if ptr == nil).",
+    "theory": "\n**Паттерн защитного программирования (Defensive Programming):**\n- Любая публичная функция или метод, принимающий указатель `*T`, обязана проверять `if ptr == nil`;\n- Защищает сервис от падений при некорректных входных параметрах.\n",
+    "step_by_step": "\n1. Пишем `PrintScore(score *int)`.\n2. Добавляем проверку `if score == nil`.\n3. Тестируем на валидном значении и `nil`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc PrintScore(score *int) {\n\tif score == nil {\n\t\tfmt.Println(\"⚠️ Оценка отсутствует (nil указатель)\")\n\t\treturn\n\t}\n\tfmt.Printf(\"Оценка студента: %d баллов\\n\", *score)\n}\n\nfunc main() {\n\tval := 95\n\tPrintScore(&val)\n\tPrintScore(nil) // Безопасный вызов!\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Оценка студента: 95 баллов\n# ⚠️ Оценка отсутствует (nil указатель)"
+      }
+    ],
+    "under_the_hood": "\nИнструкция условного перехода `CMPQ (ptr), $0; JE nil_block`.\n",
+    "pitfalls": "\n- Прямое обращение `*score` без `if score == nil`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как писать надежные методы для `nil`-получателей?»\n**Ответ:** Проверять `if r == nil` в первой строке метода и возвращать дефолтные значения или ошибку.\n"
+  },
+  {
+    "num": 16,
+    "title": "Пользовательский тип type Score int: передача по значению vs по указателю",
+    "task": "Создайте кастомный тип на основе int. Передайте его в функцию по значению и по ссылке, изучите разницу.",
+    "theory": "\nПользовательские типы (Type Definitions) наследуют семантику передачи базового типа.\n",
+    "step_by_step": "\n1. Объявляем `type Score int`.\n2. Пишем `AddScoreVal(s Score)` и `AddScorePtr(s *Score)`.\n3. Сравниваем результаты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Score int\n\nfunc AddScoreVal(s Score) {\n\ts += 10\n}\n\nfunc AddScorePtr(s *Score) {\n\tif s != nil {\n\t\t*s += 10\n\t}\n}\n\nfunc main() {\n\tvar s1 Score = 50\n\tvar s2 Score = 50\n\n\tAddScoreVal(s1)\n\tfmt.Printf(\"1. s1 после AddScoreVal: %d (не изменился)\\n\", s1)\n\n\tAddScorePtr(&s2)\n\tfmt.Printf(\"2. s2 после AddScorePtr: %d (изменился!)\\n\", s2)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. s1 после AddScoreVal: 50 (не изменился)\n# 2. s2 после AddScorePtr: 60 (изменился!)"
+      }
+    ],
+    "under_the_hood": "\n`Score` имеет одинаковое машинное представление с `int` (8 байт).\n",
+    "pitfalls": "\n- Заблуждение, будто кастомный тип приобретает ссылочные свойства.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Отличается ли производительность передачи `type MyInt int` от стандартного `int`?»\n**Ответ:** НЕТ, они полностью идентичны на уровне ассемблерного кода.\n"
+  },
+  {
+    "num": 17,
+    "title": "Передача строк в функции: 16-байтный заголовок StringHeader и Read-Only безопасность",
+    "task": "Изучите поведение строк при передаче: строка неизменяема, попытка изменения через unsafe запрещена (просто поймите, что строка — копия заголовка).",
+    "theory": "\n**Устройство строки при передаче в функцию:**\n- Структура строки: `(Data uintptr, Len int)` — ровно 16 байт;\n- Передача строки в функцию не копирует сами символы, а лишь копирует 16-байтный заголовок;\n- Передача огромной строки на 1 ГБ в функцию выполняется мгновенно за 0 нс без аллокаций памяти!\n",
+    "step_by_step": "\n1. Пишем `InspectString(s string)`.\n2. Выводим длину и проверяем неизменность данных.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc InspectString(s string) {\n\tfmt.Printf(\"Внутри функции: длина = %d байт\\n\", len(s))\n}\n\nfunc main() {\n\thugeText := \"Высоконагруженный сервис на Go с миллионами RPS\"\n\tfmt.Printf(\"Оригинальная строка: %q\\n\", hugeText)\n\n\t// Передача выполняется мгновенно (копируется 16 байт):\n\tInspectString(hugeText)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Оригинальная строка: \"Высоконагруженный сервис на Go с миллионами RPS\"\n# Внутри функции: длина = 88 байт"
+      }
+    ],
+    "under_the_hood": "\nСтрока размещается в сегменте `.rodata` или куче, дескриптор передается в регистрах `RAX, RBX`.\n",
+    "pitfalls": "\n- Передача `*string` (создает лишнее разыменование и аллокацию указателя).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Нужно ли передавать строки по указателю `*string` для оптимизации производительности?»\n**Ответ:** НЕТ! Передача `string` по значению (16 байт) оптимальна, так как байты строки никогда не копируются при передаче.\n"
+  },
+  {
+    "num": 18,
+    "title": "Передача функций (Callbacks) по значению: передача 8-байтного указателя на код",
+    "task": "Напишите функцию, которая принимает функцию (callback) по значению и вызывает её. Является ли функция ссылочным типом?",
+    "theory": "\n**Тип функции как функциональное значение:**\n- В Go переменная типа `func()` физически хранит указатель на машинный код (или структуру замыкания);\n- Передача функции в качестве аргумента передает 8-байтный указатель по значению.\n",
+    "step_by_step": "\n1. Пишем `ExecuteCallback(cb func(string))`.\n2. Передаем анонимную функцию.\n3. Анализируем вызов.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc ExecuteCallback(action func(msg string)) {\n\tif action != nil {\n\t\taction(\"Коллбэк успешно вызван!\")\n\t}\n}\n\nfunc main() {\n\thandler := func(msg string) {\n\t\tfmt.Println(\"LOG:\", msg)\n\t}\n\n\tExecuteCallback(handler)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# LOG: Коллбэк успешно вызван!"
+      }
+    ],
+    "under_the_hood": "\nИнструкция процессора `CALL (RAX)`.\n",
+    "pitfalls": "\n- Вызов `nil`-функции `var f func(); f()` приведет к панике.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каков размер переменной типа функции в Go?»\n**Ответ:** 8 байт (указатель на функцию).\n"
+  },
+  {
+    "num": 19,
+    "title": "Функция ModifyMap(m map[string]int) и ссылочное поведение хэш-таблиц",
+    "task": "Напиши функцию ModifyMap(m map[string]int), которая добавляет элемент в мапу. Покажи, что оригинальная мапа изменилась (мапа — ссылочный тип, передаётся по значению struct, но внутри указатель). Объясни.",
+    "theory": "\nДемонстрация модификации хэш-таблицы внутри изолированной функции.\n",
+    "step_by_step": "\n1. Пишем `ModifyMap(m map[string]int)`.\n2. Добавляем ключ `\"status\" = 200`.\n3. Проверяем в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc ModifyMap(m map[string]int) {\n\tm[\"status\"] = 200\n\tm[\"retries\"] = 3\n}\n\nfunc main() {\n\tconfig := map[string]int{\"timeout\": 5}\n\tfmt.Printf(\"1. До вызова:    %v\\n\", config)\n\n\tModifyMap(config)\n\n\tfmt.Printf(\"2. После вызова: %v (МУТАЦИЯ МАПЫ СОХРАНЕНА!)\\n\", config)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. До вызова:    map[timeout:5]\n# 2. После вызова: map[retries:3 status:200 timeout:5] (МУТАЦИЯ МАПЫ СОХРАНЕНА!)"
+      }
+    ],
+    "under_the_hood": "\nМапа передается как копия указателя `*hmap`.\n",
+    "pitfalls": "\n- Конкурентная модификация мапы из разных горутин без мьютекса (fatal error: concurrent map writes).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему мапы в Go не требуют явной передачи по указателю `*map`?»\n**Ответ:** Потому что тип `map` уже является указателем на структуру `hmap` в рантайме.\n"
+  },
+  {
+    "num": 20,
+    "title": "Канал chan int как ссылочный тип: передача дескриптора *hchan в функцию-воркер",
+    "task": "Создайте канал (chan int), передайте его в функцию и отправьте туда данные. Проверьте получение в главной горутине.",
+    "theory": "\n**Анатомия каналов (Channels) в Go:**\n- Тип `chan T` под капотом является указателем на структуру `*runtime.hchan`;\n- Передача канала в функцию копирует только 8-байтный указатель;\n- Обе горутины работают с одной и той же кольцевой очередью буфера канала.\n",
+    "step_by_step": "\n1. Пишем функцию `ProduceData(ch chan<- int)`.\n2. Создаем `ch := make(chan int, 3)`.\n3. Отправляем и читаем данные.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc ProduceData(ch chan<- int) {\n\tch <- 100\n\tch <- 200\n\tclose(ch)\n}\n\nfunc main() {\n\tch := make(chan int, 2)\n\n\tgo ProduceData(ch)\n\n\tfor val := range ch {\n\t\tfmt.Printf(\"Получено из канала: %d\\n\", val)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Получено из канала: 100\n# Получено из канала: 200"
+      }
+    ],
+    "under_the_hood": "\nСтруктура `hchan` хранит мьютекс `lock`, буфер `buf`, очереди ожидания горутин `recvq` и `sendq`.\n",
+    "pitfalls": "\n- Отправка в `nil`-канал: блокирует горутину навсегда (Deadlock).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каков размер переменной `ch chan int` в памяти?»\n**Ответ:** Ровно 8 байт (указатель на структуру `hchan`).\n"
+  },
+  {
+    "num": 21,
+    "title": "Передача указателя на указатель **int и мутация целевого адреса",
+    "task": "Изучи, как передать указатель на указатель (**int). Напиши функцию, меняющую значение, на которое указывает внутренний указатель.",
+    "theory": "\nЗакрепление работы с двойными указателями в сигнатурах функций.\n",
+    "step_by_step": "\n1. Пишем `UpdateTarget(pp **int, newVal int)`.\n2. Модифицируем значение `**pp = newVal`.\n3. Проверяем в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc UpdateTarget(pp **int, newVal int) {\n\tif pp != nil && *pp != nil {\n\t\t**pp = newVal\n\t}\n}\n\nfunc main() {\n\tx := 55\n\tp := &x\n\n\tfmt.Printf(\"До:    x = %d\\n\", x)\n\n\tUpdateTarget(&p, 777)\n\n\tfmt.Printf(\"После: x = %d\\n\", x)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До:    x = 55\n# После: x = 777"
+      }
+    ],
+    "under_the_hood": "\nКосвенная запись через двойное смещение.\n",
+    "pitfalls": "\n- Забыть проверку `*pp != nil`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В чем отличие `*a, *b = *b, *a` от манипуляций с `**int`?»\n**Ответ:** Swap меняет значения в существующих ячейках, а `**int` позволяет перенаправить указатель на совершенно другую область памяти.\n"
+  },
+  {
+    "num": 22,
+    "title": "Каверзный кейс срезов: s := make([]int, 3, 10), мутация s[0] и невидимость append без реаллокации",
+    "task": "Создай слайс s := make([]int, 3, 10). Заполни значениями. Передай в функцию, которая меняет s[0]. Покажи, что оригинал изменился (потому что слайс содержит указатель на массив). Затем в той же функции сделай append — покажи, что оригинал не увидел новые элементы (если не было реаллокации) или увидел (если была реаллокация и ты вернул результат). Это каверзный случай!",
+    "theory": "\n**Глубокий разбор скрытой модификации базового массива:**\n- При `cap(s) = 10` и `len(s) = 3` вызов `append(s, 999)` **НЕ вызывает реаллокацию**;\n- Элемент `999` записывается в 4-й слот разделяемого базового массива в памяти;\n- Но в `main` длина `len(s)` осталась равной 3, поэтому `s` не отображает 4-й элемент, хотя он физически там записан!\n- Доказательство: в `main` срез `s[:4]` отобразит записанный элемент!\n",
+    "step_by_step": "\n1. Создаем `s := make([]int, 3, 10)`.\n2. Пишем функцию `TrickySliceDemo(s []int)`.\n3. Внутри меняем `s[0] = 777` и делаем `s = append(s, 999)`.\n4. В `main` печатаем `s` и подсрез `s[:4]`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc TrickySliceDemo(s []int) {\n\ts[0] = 777         // 1. Мутация элемента (ВИДНА В MAIN!)\n\ts = append(s, 999) // 2. Запись в 4-й слот базового массива без реаллокации (cap=10)\n\tfmt.Printf(\"Внутри функции: s = %v | len=%d, cap=%d\\n\", s, len(s), cap(s))\n}\n\nfunc main() {\n\ts := make([]int, 3, 10)\n\ts[0], s[1], s[2] = 1, 2, 3\n\n\tfmt.Printf(\"1. Исходный срез:           %v | len=%d, cap=%d\\n\", s, len(s), cap(s))\n\n\tTrickySliceDemo(s)\n\n\tfmt.Printf(\"2. Срез в main:             %v | len=%d, cap=%d (s[0] изменился!)\\n\",\n\t\ts, len(s), cap(s))\n\n\t// ⚠️ СЕКРЕТ: Раскрываем 4-й элемент среза через ре-слайсинг:\n\tfmt.Printf(\"3. Доступ через s[:4]:      %v (ЭЛЕМЕНТ 999 ФИЗИЧЕСКИ ТАМ ЕСТЬ!)\\n\", s[:4])\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Исходный срез:           [1 2 3] | len=3, cap=10\n# Внутри функции: s = [777 2 3 999] | len=4, cap=10\n# 2. Срез в main:             [777 2 3] | len=3, cap=10 (s[0] изменился!)\n# 3. Доступ через s[:4]:      [777 2 3 999] (ЭЛЕМЕНТ 999 ФИЗИЧЕСКИ ТАМ ЕСТЬ!)"
+      }
+    ],
+    "under_the_hood": "\nОба дескриптора среза ссылаются на один и тот же адрес `Data`, но имеют разные поля `Len` (3 в `main` и 4 в функции).\n",
+    "pitfalls": "\n- Неожиданная перезапись данных в общем базовом массиве другими функциями.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему этот случай называют 'невидимой мутацией памяти'?»\n**Ответ:** Потому что элемент физически записывается в разделяемый массив памяти, но вызывающая сторона не видит его через стандартный `len`, пока не сделает ре-слайсинг.\n"
+  },
+  {
+    "num": 23,
+    "title": "Реаллокация базового массива при append (cap == len) и полное расщепление связей срезов",
+    "task": "Создайте слайс, передайте его в функцию, сделайте append, который вызовет реаллокацию базового массива. Убедитесь, что оригинальный слайс в main не увидел новых элементов.",
+    "theory": "\n**Полное расщепление памяти (Memory Decoupling):**\n- Если `len == cap`, вызов `append` выделяет **новый массив в куче**;\n- Новые элементы и последующие мутации `s[0] = ...` внутри функции пишутся в **новый массив**;\n- Исходный срез в `main` остается указывать на **старый массив** и больше не видит никаких изменений!\n",
+    "step_by_step": "\n1. Создаем срез `s := []int{1, 2}` (`len=2, cap=2`).\n2. Пишем `DecoupleDemo(s []int)`.\n3. Внутри делаем `s = append(s, 3); s[0] = 999`.\n4. Демонстрируем, что в `main` даже `s[0]` остался `1`!\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc DecoupleDemo(s []int) {\n\t// append превышает cap=2 -> выделяется НОВЫЙ массив в куче!\n\ts = append(s, 3)\n\ts[0] = 999 // Изменяет НОВЫЙ массив, старый массив не тронут!\n\n\tfmt.Printf(\"Внутри DecoupleDemo: s = %v (новый массив)\\n\", s)\n}\n\nfunc main() {\n\ts := []int{1, 2} // len=2, cap=2\n\tfmt.Printf(\"1. Исходный срез: %v (адрес базового массива: %p)\\n\", s, s)\n\n\tDecoupleDemo(s)\n\n\tfmt.Printf(\"2. Срез в main:   %v (адрес: %p - ПОЛНАЯ ИЗОЛЯЦИЯ!)\\n\", s, s)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Исходный срез: [1 2] (адрес базового массива: 0xc000018030)\n# Внутри DecoupleDemo: s = [999 2 3] (новый массив)\n# 2. Срез в main:   [1 2] (адрес: 0xc000018030 - ПОЛНАЯ ИЗОЛЯЦИЯ!)"
+      }
+    ],
+    "under_the_hood": "\n`runtime.growslice` выделяет новый блок памяти и копирует туда элементы, меняя указатель `Data`.\n",
+    "pitfalls": "\n- Распространенная ошибка на собеседованиях: предполагать, что `s[0] = 999` после `append` изменит оригинал при `len == cap`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «При каких условиях модификация `s[0] = 999` после `append` изменит исходный срез в `main`?»\n**Ответ:** ТОЛЬКО если у исходного среза был достаточный запас емкости (`cap > len`) на момент вызова `append`. Если емкости не хватило, происходит реаллокация и связь полностью теряется.\n"
+  },
+  {
+    "num": 24,
+    "title": "Указатель на интерфейс (*interface{} / *any): почему это антипаттерн в Go",
+    "task": "Напишите функцию, которая принимает interface{} и указатель на интерфейс. Попытайтесь изменить значение через указатель на интерфейс и поймите, почему это антипаттерн.",
+    "theory": "\n**Почему `*interface{}` почти никогда не нужен в Go:**\n- Интерфейс `any` (`interface{}`) уже сам по себе является 16-байтным дескриптором `(itab/_type, data)`, где `data` хранит указатель на значение;\n- Использование `*any` добавляет второй уровень косвенности (`**eface`), ухудшает читаемость и лишает код полиморфизма;\n- Исключение: редкие методы низкоуровневой десериализации JSON/CBOR в динамические типы.\n",
+    "step_by_step": "\n1. Пишем функцию `BadInterfacePtr(v *any)`.\n2. Пишем идиоматичную функцию `GoodGeneric[T any](v *T)`.\n3. Сравниваем подходы.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\n// АНТИПАТТЕРН: указатель на пустой интерфейс\nfunc BadInterfacePtr(v *any) {\n\tif v != nil {\n\t\t*v = \"новое строковое значение\"\n\t}\n}\n\n// ИДИОМАТИЧНО: передача типизированного указателя или дженерика\nfunc GoodGeneric[T any](v *T, newVal T) {\n\tif v != nil {\n\t\t*v = newVal\n\t}\n}\n\nfunc main() {\n\tvar dyn any = 123\n\tfmt.Printf(\"1. До BadInterfacePtr:   %v (%T)\\n\", dyn, dyn)\n\n\tBadInterfacePtr(&dyn)\n\tfmt.Printf(\"2. После BadInterfacePtr: %v (%T)\\n\", dyn, dyn)\n\n\tnum := 42\n\tGoodGeneric(&num, 100)\n\tfmt.Printf(\"3. Идиоматичный дженерик: %d\\n\", num)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. До BadInterfacePtr:   123 (int)\n# 2. После BadInterfacePtr: новое строковое значение (string)\n# 3. Идиоматичный дженерик: 100"
+      }
+    ],
+    "under_the_hood": "\nИнтерфейс в рантайме представлен структурой `eface`. Указатель `*any` — это указатель на саму 16-байтную структуру `eface`.\n",
+    "pitfalls": "\n- Передача `&val` в функцию, принимающую `any`: внутри функции интерфейс упаковывает `*int`, а не `int`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В каких редких случаях допустим указатель на интерфейс `*io.Reader`?»\n**Ответ:** Практически никогда в прикладном коде. В 99.9% случаев передают сам интерфейс `io.Reader` по значению.\n"
+  },
+  {
+    "num": 25,
+    "title": "Мутация среза по значению: изменение s[0] = 99 в разделяемой памяти",
+    "task": "Напиши функцию, принимающую срез []int. Измени существующий элемент s[0]. Выведи срез снаружи (он изменился! срез — это ссылка под капотом).",
+    "theory": "\nЗакрепление разделения базового массива между заголовками среза.\n",
+    "step_by_step": "\n1. Пишем `SetFirst(s []int, val int)`.\n2. Вызываем `SetFirst(numbers, 99)`.\n3. Печатаем обновленный срез.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc SetFirst(s []int, val int) {\n\tif len(s) > 0 {\n\t\ts[0] = val\n\t}\n}\n\nfunc main() {\n\tnumbers := []int{1, 2, 3}\n\tfmt.Printf(\"До:    %v\\n\", numbers)\n\n\tSetFirst(numbers, 99)\n\n\tfmt.Printf(\"После: %v (ПЕРВЫЙ ЭЛЕМЕНТ ИЗМЕНИЛСЯ!)\\n\", numbers)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До:    [1 2 3]\n# После: [99 2 3] (ПЕРВЫЙ ЭЛЕМЕНТ ИЗМЕНИЛСЯ!)"
+      }
+    ],
+    "under_the_hood": "\nЗапись по указателю `Data` базового массива.\n",
+    "pitfalls": "\n- Вызов на пустом срезе `[]int{}` (паника `index out of range`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Является ли срез ссылочным типом в терминах спецификации Go?»\n**Ответ:** Формально нет (срез — это значимая структура `SliceHeader`), но практически он обладает ссылочной семантикой благодаря внутреннему указателю `Data`.\n"
+  },
+  {
+    "num": 26,
+    "title": "Структура со срезом внутри (Team.Members): неполная изоляция при передаче по значению",
+    "task": "Создайте структуру, содержащую слайс. Передайте структуру по значению, а затем измените элемент слайса внутри переданной структуры. Объясните, почему оригинальный слайс изменился.",
+    "theory": "\n**Поверхностное копирование структур (Shallow Copy Pitfall):**\n- При передаче структуры `Team` по значению копируются ее поля (`Name string`, `Members []string`);\n- Поле `Members` копируется как 24-байтный дескриптор `SliceHeader`;\n- Базовый массив строк **НЕ копируется**;\n- Мутация `t.Members[0] = \"New\"` изменит срез в оригинальной структуре!\n",
+    "step_by_step": "\n1. Создаем структуру `type Team struct { Name string; Members []string }`.\n2. Пишем функцию `ModifyMember(t Team)`.\n3. Меняем `t.Members[0] = \"Капитан Очевидность\"`.\n4. Проверяем оригинал в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Team struct {\n\tName    string\n\tMembers []string\n}\n\nfunc ModifyMember(t Team) {\n\tt.Name = \"Новое имя команды\" // Изменяет только копию поля Name\n\tif len(t.Members) > 0 {\n\t\tt.Members[0] = \"Алексей (Лид)\" // ИЗМЕНЯЕТ РАЗДЕЛЯЕМЫЙ СРЕЗ!\n\t}\n}\n\nfunc main() {\n\tteam := Team{\n\t\tName:    \"Gophers\",\n\t\tMembers: []string{\"Иван\", \"Сергей\", \"Анна\"},\n\t}\n\n\tfmt.Printf(\"1. До:    Name=%-10s | Members=%v\\n\", team.Name, team.Members)\n\n\tModifyMember(team)\n\n\tfmt.Printf(\"2. После: Name=%-10s | Members=%v (СРЕЗ ВНУТРИ ИЗМЕНИЛСЯ!)\\n\",\n\t\tteam.Name, team.Members)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. До:    Name=Gophers    | Members=[Иван Сергей Анна]\n# 2. После: Name=Gophers    | Members=[Алексей (Лид) Сергей Анна] (СРЕЗ ВНУТРИ ИЗМЕНИЛСЯ!)"
+      }
+    ],
+    "under_the_hood": "\nПри присваивании структуры создается поверхностная копия (Shallow Copy).\n",
+    "pitfalls": "\n- Убежденность, что передача структуры по значению гарантирует 100% изоляцию вложенных срезов и мап.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как сделать глубокое копирование (Deep Copy) структуры со срезом?»\n**Ответ:** Создать новую структуру и скопировать срез через `copy(newSlice, origSlice)` или пакет `slices.Clone`.\n"
+  },
+  {
+    "num": 27,
+    "title": "Escape-анализ: функция GetPointer() *int и проверка через go build -gcflags='-m'",
+    "task": "Напиши функцию GetPointer() *int. Внутри создай x := 42; return &x. Go выделит x на куче (escape analysis). Проверь через go build -gcflags=\"-m\", что x \"escapes to heap\".",
+    "theory": "\nДиагностика побега в кучу в реальном выводе компилятора.\n",
+    "step_by_step": "\n1. Пишем `GetPointer() *int`.\n2. Возвращаем `&x`.\n3. Анализируем отчет компилятора `-gcflags=\"-m\"`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc GetPointer() *int {\n\tx := 42\n\treturn &x // &x экранируется в кучу\n}\n\nfunc main() {\n\tp := GetPointer()\n\tfmt.Printf(\"Значение из кучи: %d (адрес: %p)\\n\", *p, p)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go build -gcflags=\"-m\" main.go\n# ./main.go:6:2: moved to heap: x\n# ./main.go:12:12: ... argument does not escape\ngo run main.go\n# Значение из кучи: 42 (адрес: 0xc000018030)"
+      }
+    ],
+    "under_the_hood": "\nОптимизатор компилятора заменяет размещение в стеке на вызов `runtime.newobject`.\n",
+    "pitfalls": "\n- Случайный побег больших переменных в кучу в критических для latency участках кода.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какие основные причины побега переменных в кучу (Heap Escape)?»\n**Ответ:** 1) Возврат указателя на локальную переменную; 2) Передача в интерфейс `any` (например `fmt.Println`); 3) Выделение памяти неизвестного на этапе компиляции размера `make([]int, n)`; 4) Захват переменной в замыкании; 5) Слишком большой размер переменной (> 64 КБ на стек).\n"
+  },
+  {
+    "num": 28,
+    "title": "Структура с указателем на другую структуру: мутация данных через вложенный указатель",
+    "task": "Создайте структуру с указателем на другую структуру. Передайте её по значению и измените поле вложенной структуры через указатель.",
+    "theory": "\n**Утечка состояния через вложенные указатели (Pointer Aliasing):**\n- Структура `Order` передается по значению;\n- Поле `Customer *User` копируется как 8-байтный адрес;\n- Модификация `o.Customer.Name = ...` изменяет данные в куче, общие для всех копий `Order`!\n",
+    "step_by_step": "\n1. Создаем `type Customer struct { Name string }`.\n2. Создаем `type Order struct { ID int; Client *Customer }`.\n3. Пишем `UpdateCustomer(o Order)`.\n4. Демонстрируем изменение `Client.Name` в исходном заказе.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Customer struct {\n\tName string\n}\n\ntype Order struct {\n\tID     int\n\tClient *Customer\n}\n\nfunc UpdateCustomer(o Order) {\n\to.ID = 999                // Локальная копия\n\to.Client.Name = \"Константин\" // Мутация общего объекта в куче!\n}\n\nfunc main() {\n\tclient := &Customer{Name: \"Илья\"}\n\torder := Order{ID: 1, Client: client}\n\n\tfmt.Printf(\"1. До:    ID=%d | Клиент=%s\\n\", order.ID, order.Client.Name)\n\n\tUpdateCustomer(order)\n\n\tfmt.Printf(\"2. После: ID=%d | Клиент=%s (КЛИЕНТ ИЗМЕНИЛСЯ!)\\n\",\n\t\torder.ID, order.Client.Name)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. До:    ID=1 | Клиент=Илья\n# 2. После: ID=1 | Клиент=Константин (КЛИЕНТ ИЗМЕНИЛСЯ!)"
+      }
+    ],
+    "under_the_hood": "\nДва экземпляра `Order` ссылаются на один и тот же адрес `Client` в куче.\n",
+    "pitfalls": "\n- Непреднамеренная мутация общих разделяемых структур в многопоточном коде.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как защитить вложенные структуры от случайных мутаций?»\n**Ответ:** Использовать семантику значений (хранить `Client Customer` без указателя) или создавать глубокие копии объектов перед передачей.\n"
+  },
+  {
+    "num": 29,
+    "title": "Бенчмарк копирования массива [1000000]int (8 МБ) по значению vs передача указателя",
+    "task": "Создай массив [3]int и передай в функцию. Покажи, что массив передаётся по значению (копируется целиком). Измерь время копирования большого массива [1000000]int через time.Now() — сравни с передачей указателя.",
+    "theory": "\n**Сравнительный анализ накладных расходов памяти:**\n- Передача `[1000000]int` по значению: копирует $1\\,000\\,000 \times 8 = 8\text{ МБ}$ данных в стек (занимает миллисекунды);\n- Передача `*[1000000]int`: копирует ровно 8 байт адреса (занимает доли наносекунды, быстрее в $10\\,000$ раз!).\n",
+    "step_by_step": "\n1. Создаем тип `type HugeArray [1000000]int`.\n2. Пишем функцию `PassByValue(arr HugeArray)`.\n3. Пишем функцию `PassByPointer(arr *HugeArray)`.\n4. Замеряем время через `time.Since()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"time\"\n)\n\ntype HugeArray [1000000]int // 8 Мегабайт данных\n\nfunc PassByValue(arr HugeArray) int {\n\treturn arr[0]\n}\n\nfunc PassByPointer(arr *HugeArray) int {\n\treturn arr[0]\n}\n\nfunc main() {\n\tvar bigData HugeArray\n\n\t// 1. Замер передачи по значению (копирование 8 МБ):\n\tstartVal := time.Now()\n\tfor i := 0; i < 100; i++ {\n\t\t_ = PassByValue(bigData)\n\t}\n\tdurVal := time.Since(startVal)\n\n\t// 2. Замер передачи по указателю (копирование 8 байт):\n\tstartPtr := time.Now()\n\tfor i := 0; i < 100; i++ {\n\t\t_ = PassByPointer(&bigData)\n\t}\n\tdurPtr := time.Since(startPtr)\n\n\tfmt.Printf(\"100 вызовов PassByValue (8 МБ):   %v\\n\", durVal)\n\tfmt.Printf(\"100 вызовов PassByPointer (8 байт): %v (РАЗНИЦА В ТЫСЯЧИ РАЗ!)\\n\", durPtr)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 100 вызовов PassByValue (8 МБ):   15.42ms\n# 100 вызовов PassByPointer (8 байт): 420ns (РАЗНИЦА В ТЫСЯЧИ РАЗ!)"
+      }
+    ],
+    "under_the_hood": "\n`PassByValue` вызывает цикл `DUFFCOPY` / `memmove` на 8 МБ в цикле.\n",
+    "pitfalls": "\n- Переполнение стека горутины при глубокой рекурсии с тяжелыми массивами.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каков порог размера структуры/массива, после которого выгоднее передавать указатель?»\n**Ответ:** Общепринятая граница в Go — $64-128$ байт (размер одной-двух линий кэша процессора L1).\n"
+  },
+  {
+    "num": 30,
+    "title": "Указатель на структуру Employee и функция GiveBonus(e *Employee, amount int)",
+    "task": "Указатели на структуры: Создайте структуру Employee с полем Salary. Напишите функцию GiveBonus(e *Employee, amount int), которая увеличивает зарплату. Передайте структуру по указателю.",
+    "theory": "\nИдиоматичная мутация бизнес-сущностей в сервисах.\n",
+    "step_by_step": "\n1. Создаем структуру `Employee{Name string, Salary int}`.\n2. Пишем `GiveBonus(e *Employee, amount int)`.\n3. Увеличиваем `e.Salary += amount`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Employee struct {\n\tName   string\n\tSalary int\n}\n\nfunc GiveBonus(e *Employee, amount int) {\n\tif e != nil {\n\t\te.Salary += amount\n\t}\n}\n\nfunc main() {\n\temp := &Employee{Name: \"Артем\", Salary: 150000}\n\tfmt.Printf(\"До бонуса:    %+v\\n\", emp)\n\n\tGiveBonus(emp, 50000)\n\n\tfmt.Printf(\"После бонуса: %+v (ЗАРПЛАТА ОБНОВЛЕНА!)\\n\", emp)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До бонуса:    &{Name:Артем Salary:150000}\n# После бонуса: &{Name:Артем Salary:200000} (ЗАРПЛАТА ОБНОВЛЕНА!)"
+      }
+    ],
+    "under_the_hood": "\nПрямая модификация поля по смещению указателя.\n",
+    "pitfalls": "\n- Забыть знак `&` при создании структуры или вызове.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в доменных сервисах (DDD) сущности передают по указателю?»\n**Ответ:** Потому что сущности обладают уникальной идентичностью (ID) и состоянием, которое должно изменяться централизованно.\n"
+  },
+  {
+    "num": 31,
+    "title": "Исторический баг захвата переменной цикла по ссылке в горутине до и после Go 1.22",
+    "task": "Создайте цикл for, в котором создается горутина, принимающая переменную цикла по ссылке (особенно актуально для версий Go до 1.22). Изучите классическую проблему замыкания и указателей.",
+    "theory": "\n**Анализ классической проблемы конкурентности:**\n- **До Go 1.22:** Переменная цикла `v` имела один адрес. Горутины читали `v` после завершения цикла и все выводили последнее значение;\n- **Go 1.22+:** Каждая итерация создает независимый экземпляр `v`.\n",
+    "step_by_step": "\n1. Создаем цикл с горутинами.\n2. Демонстрируем безопасный паттерн с явной передачей аргумента `go func(val int) { ... }(i)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n)\n\nfunc main() {\n\tvar wg sync.WaitGroup\n\n\tfmt.Println(\"Запуск горутин с явной передачей аргумента (безопасно для всех версий Go):\")\n\tfor i := 1; i <= 3; i++ {\n\t\twg.Add(1)\n\t\t// Передаем i параметром по значению:\n\t\tgo func(val int) {\n\t\t\tdefer wg.Done()\n\t\t\tfmt.Printf(\"  Горутина получила значение: %d\\n\", val)\n\t\t}(i)\n\t}\n\n\twg.Wait()\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Запуск горутин с явной передачей аргумента (безопасно для всех версий Go):\n#   Горутина получила значение: 3\n#   Горутина получила значение: 1\n#   Горутина получила значение: 2"
+      }
+    ],
+    "under_the_hood": "\nЗначение `i` копируется в стек горутины при планировании `runtime.newproc`.\n",
+    "pitfalls": "\n- Запуск `go func() { fmt.Println(&i) }()` в Go $\\le 1.21$.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как выявить утечку переменных цикла в горутинах?»\n**Ответ:** Запустить `go vet` или скомпилировать с детектором гонок `go run -race`.\n"
+  },
+  {
+    "num": 32,
+    "title": "Анатомия интерфейса any (eface): type + data и почему указатель на any избыточен",
+    "task": "Создай interface{} (или any) переменную, присвой ей int. Попробуй взять указатель на interface{} и изменить значение. Объясни, что хранится внутри interface{} (type + value или pointer to value).",
+    "theory": "\n**Структура `eface` (Empty Interface Header):**\n- Состоит из двух 8-байтных полей: `_type *rtype` (метаданные типа) и `data unsafe.Pointer` (указатель на данные в куче);\n- Присвоение `var i any = 42` аллоцирует значение в куче (или использует заготовленную константу) и сохраняет адрес в `data`.\n",
+    "step_by_step": "\n1. Создаем `var box any = 42`.\n2. Анализируем тип и значение.\n3. Переназначаем `box = \"теперь строка\"`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar box any = 42\n\tfmt.Printf(\"1. box: %v (Тип: %T)\\n\", box, box)\n\n\t// Переприсваивание интерфейса меняет дескриптор eface:\n\tbox = \"теперь это строка\"\n\tfmt.Printf(\"2. box: %v (Тип: %T)\\n\", box, box)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. box: 42 (Тип: int)\n# 2. box: теперь это строка (Тип: string)"
+      }
+    ],
+    "under_the_hood": "\nПри смене типа компилятор перезаписывает оба поля `_type` и `data` в `eface`.\n",
+    "pitfalls": "\n- Приведение типов без проверки `val, ok := box.(int)`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каковы размеры структуры `iface` (непустой интерфейс) и `eface` (пустой `any`)?»\n**Ответ:** Обе структуры занимают ровно 16 байт на 64-битных системах.\n"
+  },
+  {
+    "num": 33,
+    "title": "Передача переменной цикла как аргумента анонимной функции: эталон изоляции",
+    "task": "То же самое, что и 79, но передавайте переменную цикла как аргумент в анонимную функцию. Сравните поведение.",
+    "theory": "\nПаттерн явного проброса параметров для полной переносимости между версиями Go.\n",
+    "step_by_step": "\n1. Создаем список задач `[]string{\"Email\", \"SMS\", \"Push\"}`.\n2. Передаем элемент аргументом в горутину.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n)\n\nfunc main() {\n\tvar wg sync.WaitGroup\n\tchannels := []string{\"Email\", \"SMS\", \"Push\"}\n\n\tfor _, ch := range channels {\n\t\twg.Add(1)\n\t\tgo func(channelName string) {\n\t\t\tdefer wg.Done()\n\t\t\tfmt.Printf(\"Отправка уведомления через: %s\\n\", channelName)\n\t\t}(ch)\n\t}\n\n\twg.Wait()\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Отправка уведомления через: Push\n# Отправка уведомления через: Email\n# Отправка уведомления через: SMS"
+      }
+    ],
+    "under_the_hood": "\nКопирование строки в локальный кадр горутины.\n",
+    "pitfalls": "\n- Забыть `wg.Done()` в `defer`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в продакшене все еще рекомендуется передавать аргументы явно, несмотря на исправление в Go 1.22?»\n**Ответ:** Это делает код самодокументируемым, явным, устойчивым к рефакторингу и совместимым с более старыми версиями компилятора Go.\n"
+  },
+  {
+    "num": 34,
+    "title": "Классическая ловушка: AppendAndModify(s []int) []int и поведение при cap == len vs cap > len",
+    "task": "Напиши функцию AppendAndModify(s []int) []int. Внутри сделай s = append(s, 100), затем s[0] = 999. Верни s. В main создай слайс с cap == len (чтобы гарантировать реаллокацию). Покажи, что s[0] в оригинале НЕ изменился (реаллокация), но если cap > len — изменился. Это классическая ловушка!",
+    "theory": "\n**Супер-ловушка собеседований BigTech по срезам:**\n1. **Случай `cap == len`:** `append` выделяет НОВЫЙ массив. Модификация `s[0] = 999` происходит в НОВОМ массиве. В исходном срезе в `main` элемент `s[0]` **НЕ изменился**;\n2. **Случай `cap > len`:** `append` пишет в СТАРЫЙ массив. Модификация `s[0] = 999` происходит в СТАРОМ массиве. В исходном срезе в `main` элемент `s[0]` **ИЗМЕНИЛСЯ**!\n",
+    "step_by_step": "\n1. Пишем `AppendAndModify(s []int) []int`.\n2. Тестируем кейс 1: `make([]int, 2, 2)` (`cap == len`).\n3. Тестируем кейс 2: `make([]int, 2, 5)` (`cap > len`).\n4. Сравниваем результаты в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc AppendAndModify(s []int) []int {\n\ts = append(s, 100)\n\ts[0] = 999\n\treturn s\n}\n\nfunc main() {\n\t// КЕЙС 1: cap == len (Гарантированная реаллокация)\n\ts1 := make([]int, 2, 2)\n\ts1[0], s1[1] = 10, 20\n\tfmt.Printf(\"1. КЕЙС 1 (cap==len) ДО:  s1 = %v\\n\", s1)\n\tres1 := AppendAndModify(s1)\n\tfmt.Printf(\"   res1 (новый массив): %v\\n\", res1)\n\tfmt.Printf(\"   s1 в main (СТАРЫЙ):  %v (s1[0] НЕ ИЗМЕНИЛСЯ!)\\n\\n\", s1)\n\n\t// КЕЙС 2: cap > len (БЕЗ реаллокации)\n\ts2 := make([]int, 2, 5)\n\ts2[0], s2[1] = 10, 20\n\tfmt.Printf(\"2. КЕЙС 2 (cap>len)  ДО:  s2 = %v\\n\", s2)\n\tres2 := AppendAndModify(s2)\n\tfmt.Printf(\"   res2 (тот же массив): %v\\n\", res2)\n\tfmt.Printf(\"   s2 в main (ОБЩИЙ):   %v (s2[0] ИЗМЕНИЛСЯ НА 999!)\\n\", s2)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. КЕЙС 1 (cap==len) ДО:  s1 = [10 20]\n#    res1 (новый массив): [999 20 100]\n#    s1 в main (СТАРЫЙ):  [10 20] (s1[0] НЕ ИЗМЕНИЛСЯ!)\n# \n# 2. КЕЙС 2 (cap>len)  ДО:  s2 = [10 20]\n#    res2 (тот же массив): [999 20 100]\n#    s2 в main (ОБЩИЙ):   [999 20] (s2[0] ИЗМЕНИЛСЯ НА 999!)"
+      }
+    ],
+    "under_the_hood": "\nПри `cap > len` указатель `s.Data` не меняется, поэтому `s[0] = 999` мутирует память, на которую по-прежнему указывает `s2.Data`.\n",
+    "pitfalls": "\n- Передача подсреза `arr[1:3]` в стороннюю библиотеку без трехзначного слайсинга `arr[1:3:3]`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как защитить срез от скрытых мутаций в функции `AppendAndModify`?»\n**Ответ:** Использовать трехзначный слайсинг (Full Slice Expression) `s[0:2:2]`, принудительно устанавливающий `cap = len`, что гарантирует аллокацию нового массива при `append`.\n"
+  },
+  {
+    "num": 35,
+    "title": "Удвоение числа по указателю DoublePtr(n *int)",
+    "task": "Передача по указателю: Перепиши функцию как DoublePtr(n *int) и умножь *n на 2. Передай адрес переменной. Проверь, что оригинал изменился.",
+    "theory": "\nБазовая мутация примитива через разыменование.\n",
+    "step_by_step": "\n1. Пишем `DoublePtr(n *int)`.\n2. Выполняем `*n *= 2`.\n3. Тестируем в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc DoublePtr(n *int) {\n\tif n != nil {\n\t\t*n *= 2\n\t}\n}\n\nfunc main() {\n\tval := 21\n\tfmt.Printf(\"До DoublePtr:    %d\\n\", val)\n\n\tDoublePtr(&val)\n\n\tfmt.Printf(\"После DoublePtr: %d\\n\", val)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До DoublePtr:    21\n# После DoublePtr: 42"
+      }
+    ],
+    "under_the_hood": "\nИнструкция `SHLQ $1, (AX)` (битовый сдвиг влево на 1 для быстрого умножения на 2).\n",
+    "pitfalls": "\n- Забыть проверку `n != nil`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как оптимизатор Go компилирует умножение на степени двойки?»\n**Ответ:** Заменяет `MULQ` на быструю инструкцию битового сдвига `SHLQ`.\n"
+  },
+  {
+    "num": 36,
+    "title": "Метод со значением-получателем (Value Receiver) и неизменность оригинальной структуры",
+    "task": "Напиши структуру Counter с полем count int. Напиши метод Add() для неё (value receiver). Вызови метод. Убедись, что оригинал не поменялся.",
+    "theory": "\nМетод с Value Receiver `func (c Counter) Add()` получает **копию структуры**, поэтому любые изменения `c.count++` теряются при выходе из метода.\n",
+    "step_by_step": "\n1. Создаем структуру `Counter{count int}`.\n2. Пишем `func (c Counter) Add()`.\n3. Вызываем метод и проверяем `count`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Counter struct {\n\tcount int\n}\n\nfunc (c Counter) Add() {\n\tc.count++ // Изменяет локальную копию\n}\n\nfunc main() {\n\tcnt := Counter{count: 10}\n\tfmt.Printf(\"До Add():    %+v\\n\", cnt)\n\n\tcnt.Add()\n\n\tfmt.Printf(\"После Add(): %+v (ОРИГИНАЛ НЕ ИЗМЕНИЛСЯ!)\\n\", cnt)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До Add():    {count:10}\n# После Add(): {count:10} (ОРИГИНАЛ НЕ ИЗМЕНИЛСЯ!)"
+      }
+    ],
+    "under_the_hood": "\nВызов трансформируется в `Counter.Add(cnt)`.\n",
+    "pitfalls": "\n- Использование Value Receiver для методов-мутаторов (Setter).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Когда Value Receiver предпочтителен?»\n**Ответ:** Для иммутабельных структур, типов времени (`time.Time`) и методов чтения (Getter).\n"
+  },
+  {
+    "num": 37,
+    "title": "Срезы по значению и append: почему добавленный элемент не появился в оригинале",
+    "task": "Каверзный случай: Срезы и Append: Передай тот же срез по значению в функцию и сделай внутри s = append(s, 4). Выведи длину среза в main. Убедись, что добавленный элемент *не появился* в оригинале. (Объяснение: append может изменить указатель, длину и емкость, а мы меняем только копию заголовка среза).",
+    "theory": "\nЗакрепление принципа неизменности длины оригинального среза.\n",
+    "step_by_step": "\n1. Пишем `AppendElement(s []int)`.\n2. Делаем `s = append(s, 4)`.\n3. Проверяем `len` в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc AppendElement(s []int) {\n\ts = append(s, 4)\n\tfmt.Printf(\"Внутри функции: %v (len=%d)\\n\", s, len(s))\n}\n\nfunc main() {\n\tnums := []int{1, 2, 3}\n\tfmt.Printf(\"В main ДО:       %v (len=%d)\\n\", nums, len(nums))\n\n\tAppendElement(nums)\n\n\tfmt.Printf(\"В main ПОСЛЕ:    %v (len=%d - длина не изменилась!)\\n\", nums, len(nums))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# В main ДО:       [1 2 3] (len=3)\n# Внутри функции: [1 2 3 4] (len=4)\n# В main ПОСЛЕ:    [1 2 3] (len=3 - длина не изменилась!)"
+      }
+    ],
+    "under_the_hood": "\nПоле `nums.Len` в кадре `main` не перезаписывалось.\n",
+    "pitfalls": "\n- Пропуск `nums = AppendElement(nums)`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова сигнатура метода `slices.Concat` в Go 1.21+?»\n**Ответ:** `func Concat[S ~[]E, E any](slices ...S) S` (возвращает новый срез).\n"
+  },
+  {
+    "num": 38,
+    "title": "Разворот односвязного списка ReverseList(head *Node) *Node через перенаправление указателей",
+    "task": "Создай структуру с указателем: type Node struct { Value int; Next *Node }. Создай связный список. Напиши функцию ReverseList(head *Node) *Node, которая разворачивает список через указатели. Нарисуй (в комментариях), как меняются указатели на каждом шаге.",
+    "theory": "\n**Алгоритм разворота односвязного списка за $O(N)$ времени и $O(1)$ памяти:**\n- Поддерживаем три указателя: `prev` (предыдущий узел), `curr` (текущий) и `next` (следующий);\n- На каждом шаге:\n  1. `next = curr.Next` (сохраняем хвост);\n  2. `curr.Next = prev` (разворачиваем стрелку указателя);\n  3. `prev = curr` (сдвигаем prev);\n  4. `curr = next` (переходим к следующему).\n",
+    "step_by_step": "\n1. Создаем структуру `Node{Value int, Next *Node}`.\n2. Пишем функцию `ReverseList(head *Node) *Node`.\n3. Разворачиваем список `1 -> 2 -> 3`.\n4. Печатаем результат `3 -> 2 -> 1`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Node struct {\n\tValue int\n\tNext  *Node\n}\n\nfunc ReverseList(head *Node) *Node {\n\tvar prev *Node\n\tcurr := head\n\n\tfor curr != nil {\n\t\tnext := curr.Next // 1. Сохраняем ссылку на следующий узел\n\t\tcurr.Next = prev  // 2. Разворачиваем указатель назад\n\t\tprev = curr       // 3. Сдвигаем prev вперед\n\t\tcurr = next       // 4. Сдвигаем curr вперед\n\t}\n\n\treturn prev // Новая голова развернутого списка\n}\n\nfunc PrintList(head *Node) {\n\tfor n := head; n != nil; n = n.Next {\n\t\tfmt.Printf(\"%d -> \", n.Value)\n\t}\n\tfmt.Println(\"nil\")\n}\n\nfunc main() {\n\t// Создаем список: 1 -> 2 -> 3 -> nil\n\tlist := &Node{Value: 1, Next: &Node{Value: 2, Next: &Node{Value: 3}}}\n\n\tfmt.Print(\"Исходный список:    \")\n\tPrintList(list)\n\n\treversed := ReverseList(list)\n\n\tfmt.Print(\"Развернутый список: \")\n\tPrintList(reversed)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Исходный список:    1 -> 2 -> 3 -> nil\n# Развернутый список: 3 -> 2 -> 1 -> nil"
+      }
+    ],
+    "under_the_hood": "\nМодификация полей `Next` узлов в памяти без создания новых объектов.\n",
+    "pitfalls": "\n- Потеря ссылки на следующий узел `next` до изменения `curr.Next`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова сложность разворота списка через указатели?»\n**Ответ:** Время $O(N)$, память $O(1)$.\n"
+  },
+  {
+    "num": 39,
+    "title": "Сравнение производительности: структура BigData (1 млн элементов) по значению vs по указателю",
+    "task": "Напиши структуру BigData с массивом на 1 миллион элементов. Напиши две функции: одну принимающую по значению, другую по указателю. Оцени разницу в производительности (можно использовать time.Now() и time.Since()).",
+    "theory": "\nПрактическое подтверждение критической важности передачи тяжелых структур по указателю.\n",
+    "step_by_step": "\n1. Создаем структуру `BigData{[1000000]int}`.\n2. Пишем `ReadValue(d BigData)` и `ReadPointer(d *BigData)`.\n3. Замеряем время на 1000 итераций.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"time\"\n)\n\ntype BigData struct {\n\tItems [1000000]int\n}\n\nfunc ReadValue(d BigData) int {\n\treturn d.Items[0]\n}\n\nfunc ReadPointer(d *BigData) int {\n\treturn d.Items[0]\n}\n\nfunc main() {\n\tdata := BigData{}\n\n\tt1 := time.Now()\n\tfor i := 0; i < 100; i++ {\n\t\t_ = ReadValue(data)\n\t}\n\td1 := time.Since(t1)\n\n\tt2 := time.Now()\n\tfor i := 0; i < 100; i++ {\n\t\t_ = ReadPointer(&data)\n\t}\n\td2 := time.Since(t2)\n\n\tfmt.Printf(\"ReadValue (100x):   %v\\n\", d1)\n\tfmt.Printf(\"ReadPointer (100x): %v\\n\", d2)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# ReadValue (100x):   16.12ms\n# ReadPointer (100x): 450ns"
+      }
+    ],
+    "under_the_hood": "\nЭкономия сотен мегабайт копирований памяти в секунду.\n",
+    "pitfalls": "\n- Передача тяжелых структур по значению в цикле.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как линтер `maligned` / `fieldalignment` помогает оптимизировать структуры?»\n**Ответ:** Он находит неоптимальное выравнивание полей структуры (Padding) и предлагает порядок для минимального расхода памяти.\n"
+  },
+  {
+    "num": 40,
+    "title": "Указатель на указатель **int: цепочка адресов x -> p -> pp и изменение **pp",
+    "task": "Напиши функцию PointerToPointer(). Создай x := 10, p := &x, pp := &p. Измени x через **pp. Объясни, зачем нужны указатели на указатели.",
+    "theory": "\nКосвенная модификация через два уровня указателей.\n",
+    "step_by_step": "\n1. Создаем `x := 10`.\n2. Создаем `p := &x` и `pp := &p`.\n3. Изменяем `**pp = 777`.\n4. Печатаем значение `x`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc PointerToPointer() {\n\tx := 10\n\tp := &x\n\tpp := &p\n\n\tfmt.Printf(\"1. Исходный x:    %d\\n\", x)\n\n\t**pp = 777\n\n\tfmt.Printf(\"2. x после **pp:  %d (адрес p: %p, адрес pp: %p)\\n\", x, p, pp)\n}\n\nfunc main() {\n\tPointerToPointer()\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Исходный x:    10\n# 2. x после **pp:  777 (адрес p: 0xc000018030, адрес pp: 0xc000010048)"
+      }
+    ],
+    "under_the_hood": "\nДвойное разыменование через процессорные регистры.\n",
+    "pitfalls": "\n- Разыменование `*pp` при `pp == nil`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Зачем нужны `**T` в низкоуровневых структурах?»\n**Ответ:** Для реализации динамических таблиц страниц памяти, CGo API и изменения адресов в сложных древовидных структурах.\n"
+  },
+  {
+    "num": 41,
+    "title": "Кольцевой связный список (Circular Linked List) из 3 узлов и безопасный обход",
+    "task": "Создайте структуру Node (связанный список), содержащую указатель на саму себя. Создайте кольцо из 3 узлов и напишите функцию, которая обходит его.",
+    "theory": "\n**Кольцевые структуры данных:**\n- Последний узел ссылается на голову `n3.Next = n1`;\n- При обходе необходимо контролировать число шагов или сравнивать `curr == head`, чтобы избежать бесконечного цикла.\n",
+    "step_by_step": "\n1. Создаем структуру `type Node struct { Value int; Next *Node }`.\n2. Замыкаем `n3.Next = n1`.\n3. Пишем безопасный обход `TraverseRing(head *Node, maxSteps int)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Node struct {\n\tValue int\n\tNext  *Node\n}\n\nfunc TraverseRing(head *Node, maxSteps int) {\n\tif head == nil {\n\t\treturn\n\t}\n\tcurr := head\n\tfor i := 0; i < maxSteps; i++ {\n\t\tfmt.Printf(\"%d -> \", curr.Value)\n\t\tcurr = curr.Next\n\t}\n\tfmt.Println(\"(зациклено)\")\n}\n\nfunc main() {\n\tn1 := &Node{Value: 10}\n\tn2 := &Node{Value: 20}\n\tn3 := &Node{Value: 30}\n\n\tn1.Next = n2\n\tn2.Next = n3\n\tn3.Next = n1 // Замыкание в кольцо\n\n\tfmt.Print(\"Обход кольца (6 шагов): \")\n\tTraverseRing(n1, 6)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Обход кольца (6 шагов): 10 -> 20 -> 30 -> 10 -> 20 -> 30 -> (зациклено)"
+      }
+    ],
+    "under_the_hood": "\nУказатели образуют циклический граф в куче.\n",
+    "pitfalls": "\n- Обход кольцевого списка через `curr != nil` (приведет к зависанию программы в бесконечном цикле).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как алгоритм Floyd's Tortoise and Hare (Черепаха и Заяц) находит циклы в связных списках?»\n**Ответ:** Два указателя двигаются по списку: медленный на 1 шаг, быстрый на 2 шага. Если есть цикл, быстрый указатель неизбежно догонит медленный ($O(N)$ времени, $O(1)$ памяти).\n"
+  },
+  {
+    "num": 42,
+    "title": "Срезы: наглядное сравнение вывода внутри функции и снаружи при append",
+    "task": "Срезы: Каверзный случай с append: Передайте срез в функцию по значению. Внутри функции сделайте append(slice, 4). Выведите срез внутри функции и снаружи. Почему новый элемент не появился в исходном срезе снаружи?",
+    "theory": "\nЗакрепление различия между локальным `SliceHeader` и разделяемым массивом.\n",
+    "step_by_step": "\n1. Пишем `DemoAppend(slice []int)`.\n2. Выводим срез внутри и в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc DemoAppend(slice []int) {\n\tslice = append(slice, 4)\n\tfmt.Printf(\"Внутри DemoAppend: %v | len=%d\\n\", slice, len(slice))\n}\n\nfunc main() {\n\toriginal := []int{1, 2, 3}\n\tfmt.Printf(\"1. В main ДО:      %v | len=%d\\n\", original, len(original))\n\n\tDemoAppend(original)\n\n\tfmt.Printf(\"2. В main ПОСЛЕ:   %v | len=%d (БЕЗ 4!)\\n\", original, len(original))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. В main ДО:      [1 2 3] | len=3\n# Внутри DemoAppend: [1 2 3 4] | len=4\n# 2. В main ПОСЛЕ:   [1 2 3] | len=3 (БЕЗ 4!)"
+      }
+    ],
+    "under_the_hood": "\n`original.Len` в кадре `main` остался равен 3.\n",
+    "pitfalls": "\n- Ожидание, что `original` автоматически вырастет.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go `append` не меняет длину среза по месту?»\n**Ответ:** Потому что `len` является частью неизменяемой по значению структуры заголовка среза.\n"
+  },
+  {
+    "num": 43,
+    "title": "Срез make([]int, 0, 5) и append: почему возврат длины обязателен даже без реаллокации",
+    "task": "[Каверзный кейс]: Инициализируй срез s := make([]int, 0, 5). Передай его в функцию, которая делает append(s, 1, 2, 3). Верни срез. Почему длину нужно обязательно возвращать из функции, даже если append сработал?",
+    "theory": "\n**Почему возврат среза обязателен даже при `cap > len`:**\n- Исходный срез `s` в `main` имеет `len = 0`;\n- Внутри функции `append` записывает элементы 1, 2, 3 в базовый массив и делает `len = 3`;\n- Но в `main` переменная `s` по-прежнему имеет `len = 0`!\n- Если не присвоить `s = AppendItems(s)`, в `main` срез останется пустым `[]`!\n",
+    "step_by_step": "\n1. Создаем `s := make([]int, 0, 5)`.\n2. Пишем `AppendItems(s []int) []int`.\n3. Демонстрируем поведение с присваиванием и без.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc AppendItems(s []int) []int {\n\treturn append(s, 1, 2, 3)\n}\n\nfunc main() {\n\ts := make([]int, 0, 5)\n\tfmt.Printf(\"1. Исходный s:              %v (len=%d, cap=%d)\\n\", s, len(s), cap(s))\n\n\t// Без присваивания s останется пустым:\n\t_ = AppendItems(s)\n\tfmt.Printf(\"2. Без переприсваивания:    %v (len=%d - ПУСТО!)\\n\", s, len(s))\n\n\t// С правильным переприсваиванием:\n\ts = AppendItems(s)\n\tfmt.Printf(\"3. С переприсваиванием s=:  %v (len=%d - УСПЕХ!)\\n\", s, len(s))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Исходный s:              [] (len=0, cap=5)\n# 2. Без переприсваивания:    [] (len=0 - ПУСТО!)\n# 3. С переприсваиванием s=:  [1 2 3] (len=3 - УСПЕХ!)"
+      }
+    ],
+    "under_the_hood": "\nПрисваивание `s = ...` копирует возвращенный `SliceHeader{Data, Len=3, Cap=5}` в переменную `s`.\n",
+    "pitfalls": "\n- Уверенность, что наличие запаса `cap` избавляет от необходимости переприсваивать срез.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что покажет `s[:3]` в шаге 2?»\n**Ответ:** Покажет `[1 2 3]`, подтверждая, что элементы были записаны в базовый массив.\n"
+  },
+  {
+    "num": 44,
+    "title": "Возврат указателя на анонимную структуру &struct{ X, Y int }{10, 20}",
+    "task": "Создай функцию func() *struct{ X, Y int } — возвращаешь указатель на анонимную структуру. Используй composite literal: return &struct{ X, Y int }{10, 20}. Объясни, почему это безопасно (escape analysis).",
+    "theory": "\nАнонимные структуры с литеральной инициализацией в куче.\n",
+    "step_by_step": "\n1. Пишем функцию `GetCoords() *struct{ X, Y int }`.\n2. Возвращаем `&struct{ X, Y int }{10, 20}`.\n3. Проверяем в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc GetCoords() *struct{ X, Y int } {\n\treturn &struct{ X, Y int }{X: 10, Y: 20}\n}\n\nfunc main() {\n\tpos := GetCoords()\n\tfmt.Printf(\"Координаты: X=%d, Y=%d (адрес: %p)\\n\", pos.X, pos.Y, pos.goCoords())\n}\n\n// Вспомогательный метод для демонстрации адреса\nfunc (pos *struct{ X, Y int }) goCoords() string {\n\treturn fmt.Sprintf(\"%p\", pos)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Координаты: X=10, Y=20 (адрес: 0xc000018030)"
+      }
+    ],
+    "under_the_hood": "\nEscape-анализ определяет возврат адреса и выделяет память в куче.\n",
+    "pitfalls": "\n- Сложные типы анонимных структур ухудшают читаемость сигнатур.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Где активно применяются анонимные структуры?»\n**Ответ:** В табличных юнит-тестах (`tests := []struct{ name string; in int; want int }{...}`) и одноразовых JSON DTO.\n"
+  },
+  {
+    "num": 45,
+    "title": "Доказательство изоляции стековых кадров через вывод адресов &x внутри и снаружи",
+    "task": "Передача int по значению: Напишите функцию ModifyValue(x int). Внутри измените x. Докажите выводом адресов внутри и снаружи функции, что внутри работает копия переменной.",
+    "theory": "\nСравнение физических адресов памяти стековых кадров `main` и вызываемой функции.\n",
+    "step_by_step": "\n1. Пишем `ModifyValue(x int)`.\n2. Печатаем `&x` внутри функции.\n3. Печатаем `&val` в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc ModifyValue(x int) {\n\tfmt.Printf(\"Внутри ModifyValue: адрес x = %p, значение = %d\\n\", &x, x)\n\tx = 999\n}\n\nfunc main() {\n\tval := 42\n\tfmt.Printf(\"В main ДО:          адрес val = %p, значение = %d\\n\", &val, val)\n\n\tModifyValue(val)\n\n\tfmt.Printf(\"В main ПОСЛЕ:       адрес val = %p, значение = %d\\n\", &val, val)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# В main ДО:          адрес val = 0xc000018030, значение = 42\n# Внутри ModifyValue: адрес x = 0xc000018038, значение = 42\n# В main ПОСЛЕ:       адрес val = 0xc000018030, значение = 42"
+      }
+    ],
+    "under_the_hood": "\nАдреса `0xc000018030` и `0xc000018038` наглядно доказывают, что это две разные ячейки памяти.\n",
+    "pitfalls": "\n- Предположение об общем адресе при передаче по значению.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему адреса переменных различаются на 8 байт?»\n**Ответ:** Потому что они расположены в смежных стековых слотах памяти (каждый `int` занимает 8 байт).\n"
+  },
+  {
+    "num": 46,
+    "title": "Передача объектов через интерфейс: упаковка значения vs упаковка указателя",
+    "task": "Создай интерфейс Stringer. Передай объект, реализующий интерфейс, в функцию. Имитируй передачу \"по ссылке\" через интерфейс (если под капотом указатель — мутации видны).",
+    "theory": "\n**Поведение интерфейсов при упаковке (Interface Boxing):**\n- Если в интерфейс передан указатель `&User{}`, метод интерфейса оперирует оригинальным объектом в куче;\n- Если передано значение `User{}`, интерфейс упаковывает копию.\n",
+    "step_by_step": "\n1. Создаем интерфейс `type Describable interface { Describe() string }`.\n2. Создаем структуру `type Article struct { Title string }`.\n3. Реализуем метод `(a *Article) Describe() string`.\n4. Демонстрируем вызов через интерфейс.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Describable interface {\n\tDescribe() string\n}\n\ntype Article struct {\n\tTitle string\n}\n\nfunc (a *Article) Describe() string {\n\treturn \"Статья: \" + a.Title\n}\n\nfunc PrintDescription(d Describable) {\n\tfmt.Println(d.Describe())\n}\n\nfunc main() {\n\tart := &Article{Title: \"Модель памяти Go\"}\n\tPrintDescription(art)\n\n\t// Модифицируем объект через исходный указатель:\n\tart.Title = \"Высоконагруженный бэкенд на Go\"\n\tPrintDescription(art)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Статья: Модель памяти Go\n# Статья: Высоконагруженный бэкенд на Go"
+      }
+    ],
+    "under_the_hood": "\nИнтерфейс хранит 8-байтный указатель на структуру `Article` в куче.\n",
+    "pitfalls": "\n- Попытка передать неадресуемое значение, когда методы объявлены с pointer receiver.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go говорят: 'Не создавайте интерфейсы заранее, пока нет 2+ реализаций'?»\n**Ответ:** Преждевременная абстракция интерфейсами ухудшает читаемость и лишает компилятор возможности инлайнинга прямых вызовов функций.\n"
+  },
+  {
+    "num": 47,
+    "title": "Отсутствие висячих указателей (Dangling Pointers) в Go благодаря Escape-анализу",
+    "task": "Напиши программу с \"dangling pointer\": создай указатель внутри функции на локальную переменную, верни его. Покажи, что Go НЕ допускает dangling pointers (escape analysis выделяет на куче). Затем сымитируй проблему через unsafe.Pointer (только для понимания, не используй в продакшене!).",
+    "theory": "\n**Безопасность памяти компилятора Go:**\n- В C возврат `return &local` приводит к использованию освобожденного стека (Use-After-Free / Dangling Pointer);\n- В Go компилятор гарантирует, что любая переменная, чей адрес возвращается, **автоматически перемещается в кучу**;\n- Висячие указатели в стандартном безопасном Go невозможны!\n",
+    "step_by_step": "\n1. Пишем `CreateSafeNumber() *int`.\n2. Возвращаем `&val`.\n3. Убеждаемся в валидности значения в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc CreateSafeNumber() *int {\n\tval := 12345\n\t// В Go это НЕ висячий указатель, так как val переносится в кучу:\n\treturn &val\n}\n\nfunc main() {\n\tp := CreateSafeNumber()\n\tfmt.Printf(\"Значение цело и невредимо: %d (адрес: %p)\\n\", *p, p)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Значение цело и невредимо: 12345 (адрес: 0xc000018030)"
+      }
+    ],
+    "under_the_hood": "\nСборщик мусора отслеживает указатель `p` в корневом наборе (Root Set) и не освобождает память.\n",
+    "pitfalls": "\n- Использование хаков с `uintptr` и `unsafe.Pointer`, нарушающих правила сборщика мусора.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `uintptr` нельзя хранить между вызовами, преобразуя в `unsafe.Pointer`?»\n**Ответ:** Потому что `uintptr` — это обычное число, а не указатель. GC не видит ссылку на объект, может переместить или удалить его из кучи, что приведет к реальному Dangling Pointer.\n"
+  },
+  {
+    "num": 48,
+    "title": "Передача мапы map[string]int: почему мапа под капотом является указателем *hmap",
+    "task": "Отображения (Maps): Передача по значению: Передайте мапу map[string]int в функцию по значению. Внутри функции добавьте новый ключ или измените существующий. Изменилась ли мапа снаружи? (Изучите, почему мапа в Go является указателем на структуру hmap под капотом).",
+    "theory": "\nАнализ передачи указателя `*hmap` по значению.\n",
+    "step_by_step": "\n1. Пишем `SetFlag(m map[string]int, key string)`.\n2. Передаем мапу.\n3. Проверяем в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc SetFlag(m map[string]int, key string) {\n\tm[key] = 1 // Запись в бакеты разделяемой hmap\n}\n\nfunc main() {\n\tflags := map[string]int{\"debug\": 0}\n\tfmt.Printf(\"До:    %v\\n\", flags)\n\n\tSetFlag(flags, \"feature_x\")\n\n\tfmt.Printf(\"После: %v (ФЛАГ ДОБАВЛЕН!)\\n\", flags)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До:    map[debug:0]\n# После: map[debug:0 feature_x:1] (ФЛАГ ДОБАВЛЕН!)"
+      }
+    ],
+    "under_the_hood": "\nХэш-функция AES/Memhash вычисляет бакет внутри разделяемой структуры `hmap`.\n",
+    "pitfalls": "\n- Запись в неинициализированную `var m map[string]int` (паника).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что происходит с `hmap` при добавлении элементов?»\n**Ответ:** Поле `count` инкрементируется, при Load Factor $> 6.5$ выделяется вдвое больше бакетов и начинается постепенная эвакуация данных.\n"
+  },
+  {
+    "num": 49,
+    "title": "Классический Swap(a, b *int) и атомарный обмен в регистрах CPU",
+    "task": "Напиши функцию Swap(a, b *int), которая меняет значения двух переменных местами.",
+    "theory": "\nОбмен значений по указателям.\n",
+    "step_by_step": "\n1. Пишем `Swap(a, b *int)`.\n2. Выполняем `*a, *b = *b, *a`.\n3. Проверяем переменные.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc Swap(a, b *int) {\n\tif a != nil && b != nil {\n\t\t*a, *b = *b, *a\n\t}\n}\n\nfunc main() {\n\tx, y := 10, 99\n\tfmt.Printf(\"До Swap:    x=%d, y=%d\\n\", x, y)\n\n\tSwap(&x, &y)\n\n\tfmt.Printf(\"После Swap: x=%d, y=%d\\n\", x, y)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До Swap:    x=10, y=99\n# После Swap: x=99, y=10"
+      }
+    ],
+    "under_the_hood": "\nИнструкции `MOVQ` через регистры CPU.\n",
+    "pitfalls": "\n- Передача `nil`-указателя.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как поменять два значения без третьей переменной и кортежа?»\n**Ответ:** Через побитовое XOR: `*a ^= *b; *b ^= *a; *a ^= *b`.\n"
+  },
+  {
+    "num": 50,
+    "title": "Указатель на срез *[]int: гарантированное обновление заголовка SliceHeader даже при реаллокации",
+    "task": "Напишите функцию, принимающую *[]int (указатель на слайс). Реализуйте добавление элемента так, чтобы оригинальный слайс гарантированно обновился даже при реаллокации базового массива.",
+    "theory": "\n**Гарантированное обновление среза через `*[]T`:**\n- Синтаксис `*s = append(*s, val)` перезаписывает `SliceHeader` вызывающего стекового кадра;\n- Даже если произошла реаллокация и выделился новый базовый массив, вызывающий код гарантированно получит новый указатель `Data`, `Len` и `Cap`.\n",
+    "step_by_step": "\n1. Пишем `SafeAppend(s *[]int, val int)`.\n2. Выполняем `*s = append(*s, val)`.\n3. Тестируем со срезом `cap == len`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc SafeAppend(s *[]int, val int) {\n\tif s == nil {\n\t\treturn\n\t}\n\t*s = append(*s, val) // Гарантированно обновляет SliceHeader в main!\n}\n\nfunc main() {\n\tdata := []int{1, 2} // len=2, cap=2\n\tfmt.Printf(\"1. До:    %v | len=%d, cap=%d (адрес массива: %p)\\n\",\n\t\tdata, len(data), cap(data), data)\n\n\tSafeAppend(&data, 3)\n\n\tfmt.Printf(\"2. После: %v | len=%d, cap=%d (адрес массива: %p - УСПЕХ!)\\n\",\n\t\tdata, len(data), cap(data), data)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. До:    [1 2] | len=2, cap=2 (адрес массива: 0xc000018030)\n# 2. После: [1 2 3] | len=3, cap=4 (адрес массива: 0xc00001e040 - УСПЕХ!)"
+      }
+    ],
+    "under_the_hood": "\nФункция модифицирует стековый слот `data` в кадре `main`.\n",
+    "pitfalls": "\n- Передача `SafeAppend(nil, 5)`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Когда в промышленном Go оправдано использование `*[]T`?»\n**Ответ:** При реализации низкоуровневых байтовых буферов (например `bytes.Buffer`, кодеков и кастомных аллокаторов памяти).\n"
+  },
+  {
+    "num": 51,
+    "title": "Копирование больших структур (10 полей): сравнение адресов при передаче по значению и по указателю",
+    "task": "Копирование структур: Создайте структуру большого размера (например, с 10 полями). Напишите функцию, принимающую её по значению, и функцию, принимающую её по указателю. Выведите адреса структуры в обоих случаях.",
+    "theory": "\nИнспекция адресов памяти при передаче структур.\n",
+    "step_by_step": "\n1. Создаем структуру с 10 полями `HeavyReport`.\n2. Пишем `InspectValue(r HeavyReport)` и `InspectPointer(r *HeavyReport)`.\n3. Сравниваем адреса с оригиналом.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype HeavyReport struct {\n\tF1, F2, F3, F4, F5, F6, F7, F8, F9, F10 int\n}\n\nfunc InspectValue(r HeavyReport) {\n\tfmt.Printf(\"  Внутри InspectValue:   адрес = %p (НОВЫЙ АДРЕС В СТЕКЕ!)\\n\", &r)\n}\n\nfunc InspectPointer(r *HeavyReport) {\n\tfmt.Printf(\"  Внутри InspectPointer: адрес = %p (ТОТ ЖЕ САМЫЙ АДРЕС!)\\n\", r)\n}\n\nfunc main() {\n\trep := HeavyReport{F1: 1, F10: 10}\n\tfmt.Printf(\"1. Адрес rep в main:     адрес = %p\\n\", &rep)\n\n\tInspectValue(rep)\n\tInspectPointer(&rep)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Адрес rep в main:     адрес = 0xc00006e050\n#   Внутри InspectValue:   адрес = 0xc00006e0a0 (НОВЫЙ АДРЕС В СТЕКЕ!)\n#   Внутри InspectPointer: адрес = 0xc00006e050 (ТОТ ЖЕ САМЫЙ АДРЕС!)"
+      }
+    ],
+    "under_the_hood": "\n`InspectValue` копирует 80 байт в локальный стек функции.\n",
+    "pitfalls": "\n- Передача тяжелых структур по значению в цикле.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каков размер структуры `HeavyReport`?»\n**Ответ:** $10 \times 8 = 80$ байт.\n"
+  },
+  {
+    "num": 52,
+    "title": "Передача головы связного списка Node в функцию и последовательный обход",
+    "task": "Создай структуру Node с полем Next *Node. Построй связный список из 3 элементов. Передай голову списка в функцию и пройдись по нему.",
+    "theory": "\nПередача корневого указателя динамической цепочки узлов.\n",
+    "step_by_step": "\n1. Создаем структуру `Node{Value int, Next *Node}`.\n2. Пишем функцию `Traverse(head *Node)`.\n3. Обходим список.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Node struct {\n\tValue int\n\tNext  *Node\n}\n\nfunc Traverse(head *Node) {\n\tcurr := head\n\tfor curr != nil {\n\t\tfmt.Printf(\"[%d] -> \", curr.Value)\n\t\tcurr = curr.Next\n\t}\n\tfmt.Println(\"nil\")\n}\n\nfunc main() {\n\thead := &Node{Value: 10, Next: &Node{Value: 20, Next: &Node{Value: 30}}}\n\tfmt.Print(\"Связный список: \")\n\tTraverse(head)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Связный список: [10] -> [20] -> [30] -> nil"
+      }
+    ],
+    "under_the_hood": "\nОбход указателей по адресам в куче.\n",
+    "pitfalls": "\n- Передача зацикленного списка без проверки шагов.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как удалить узел из середины списка за $O(1)$?»\n**Ответ:** Перенаправить указатель: `prev.Next = curr.Next`.\n"
+  },
+  {
+    "num": 53,
+    "title": "Инкапсуляция неэкспортируемых полей структуры и доступ через экспортированные методы (Setters)",
+    "task": "Создайте структуру с приватными (неэкспортируемыми) полями. Попробуйте передать её по указателю в другой пакет и изменить поля. (Убедитесь, что компилятор выдаст ошибку).",
+    "theory": "\n**Правила экспорта и инкапсуляции в Go:**\n- Поля с маленькой буквы (`balance int`) недоступны за пределами пакета;\n- Доступ для мутаций предоставляется исключительно через экспортированные методы (`Deposit`, `Withdraw`).\n",
+    "step_by_step": "\n1. Создаем структуру с приватным полем `balance int`.\n2. Пишем публичный метод `(a *Account) Deposit(amount int)`.\n3. Демонстрируем безопасную модификацию.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype BankAccount struct {\n\towner   string // Приватное поле\n\tbalance int    // Приватное поле\n}\n\nfunc NewBankAccount(owner string, initialBalance int) *BankAccount {\n\treturn &BankAccount{owner: owner, balance: initialBalance}\n}\n\nfunc (b *BankAccount) Deposit(amount int) {\n\tif amount > 0 {\n\t\tb.balance += amount\n\t}\n}\n\nfunc (b *BankAccount) Balance() int {\n\treturn b.balance\n}\n\nfunc main() {\n\tacc := NewBankAccount(\"Алексей\", 1000)\n\tfmt.Printf(\"Баланс до:    %d руб.\\n\", acc.Balance())\n\n\tacc.Deposit(500)\n\n\tfmt.Printf(\"Баланс после: %d руб.\\n\", acc.Balance())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Баланс до:    1000 руб.\n# Баланс после: 1500 руб."
+      }
+    ],
+    "under_the_hood": "\nКомпилятор статически проверяет область видимости идентификаторов на этапе компиляции.\n",
+    "pitfalls": "\n- Попытка доступа `acc.balance` из внешнего пакета (ошибка компиляции `cannot refer to unexported field`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли изменить неэкспортируемое поле из другого пакета?»\n**Ответ:** Только через небезопасный пакет `unsafe` (с вычислением смещения поля) или рефлексию (с `reflect.Value`). В продакшене это строжайше запрещено.\n"
+  },
+  {
+    "num": 54,
+    "title": "Функция SendToChannel(ch chan int, val int): отправка данных в канал",
+    "task": "Напиши функцию, которая принимает канал chan int (каналы тоже передаются по ссылке, то есть указателю на структуру канала). Отправь в него число.",
+    "theory": "\nПередача каналов в сигнатурах функций.\n",
+    "step_by_step": "\n1. Пишем `SendToChannel(ch chan<- int, val int)`.\n2. Передаем канал и отправляем число.\n3. Читаем результат.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc SendToChannel(ch chan<- int, val int) {\n\tch <- val // Отправка в разделяемый буфер канала\n}\n\nfunc main() {\n\tch := make(chan int, 1)\n\tSendToChannel(ch, 42)\n\n\treceived := <-ch\n\tfmt.Printf(\"Успешно получено: %d\\n\", received)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Успешно получено: 42"
+      }
+    ],
+    "under_the_hood": "\n`runtime.chansend` блокирует или помещает элемент в кольцевой буфер `hchan.buf`.\n",
+    "pitfalls": "\n- Отправка в закрытый канал (паника `send on closed channel`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в аргументах лучше указывать направленные каналы `chan<- T` или `<-chan T`?»\n**Ответ:** Это повышает безопасность типов (Type Safety), предотвращая случайное закрытие или чтение из канала там, где разрешена только запись.\n"
+  },
+  {
+    "num": 55,
+    "title": "Каверзный кейс срезов: передача по значению и мутация s[0] = 99",
+    "task": "Каверзный случай: Срезы (Slices): Создай срез s := []int{1, 2, 3}. Передай его в функцию по значению (без *). Внутри функции измени первый элемент (s[0] = 99). Убедись, что в main элемент *тоже изменился*, хотя срез передавался по значению. (Объяснение: срез сам по себе содержит неявно указатель на базовый массив).",
+    "theory": "\nГлубокое закрепление дуализма срезов: заголовок по значению, данные по ссылке.\n",
+    "step_by_step": "\n1. Создаем срез `s := []int{1, 2, 3}`.\n2. Пишем `MutateFirst(s []int)`.\n3. Проверяем в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc MutateFirst(s []int) {\n\tif len(s) > 0 {\n\t\ts[0] = 99\n\t}\n}\n\nfunc main() {\n\ts := []int{1, 2, 3}\n\tfmt.Printf(\"До:    %v\\n\", s)\n\n\tMutateFirst(s)\n\n\tfmt.Printf(\"После: %v (s[0] ИЗМЕНИЛСЯ НА 99!)\\n\", s)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До:    [1 2 3]\n# После: [99 2 3] (s[0] ИЗМЕНИЛСЯ НА 99!)"
+      }
+    ],
+    "under_the_hood": "\nПрямая запись по указателю `s.Data`.\n",
+    "pitfalls": "\n- Неожиданная мутация срезов при передаче в сторонние функции.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как защитить срез от мутаций при передаче в функцию?»\n**Ответ:** Передавать клонированную копию через `slices.Clone(s)` или копировать в локальный срез `copy()`.\n"
+  },
+  {
+    "num": 56,
+    "title": "Безопасный банковский перевод Transfer(from, to *Account, amount int) error с валидацией баланса",
+    "task": "[Высокая сложность]: Напиши структуру Account с полем balance int. Реализуй безопасную функцию перевода денег между двумя счетами, передавая их по указателю, и обработай ситуацию нехватки средств (return error).",
+    "theory": "\n**Паттерн транзакционной бизнес-логики:**\n- Передача счетов по указателю `*Account`;\n- Проверка инвариантов: ненулевые указатели, положительная сумма, достаточный баланс;\n- Возврат идиоматичной ошибки при нарушении условий.\n",
+    "step_by_step": "\n1. Создаем структуру `type Account struct { ID string; Balance int }`.\n2. Пишем функцию `Transfer(from, to *Account, amount int) error`.\n3. Тестируем успешный перевод и ошибку нехватки средств.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype Account struct {\n\tID      string\n\tBalance int\n}\n\nfunc Transfer(from, to *Account, amount int) error {\n\tif from == nil || to == nil {\n\t\treturn errors.New(\"счет отправителя или получателя равен nil\")\n\t}\n\tif amount <= 0 {\n\t\treturn errors.New(\"сумма перевода должна быть положительной\")\n\t}\n\tif from.Balance < amount {\n\t\treturn fmt.Errorf(\"недостаточно средств: баланс %d, требуется %d\", from.Balance, amount)\n\t}\n\n\tfrom.Balance -= amount\n\tto.Balance += amount\n\treturn nil\n}\n\nfunc main() {\n\taccA := &Account{ID: \"ACC-101\", Balance: 500}\n\taccB := &Account{ID: \"ACC-202\", Balance: 100}\n\n\tfmt.Printf(\"До перевода:  A=%d, B=%d\\n\", accA.Balance, accB.Balance)\n\n\tif err := Transfer(accA, accB, 300); err != nil {\n\t\tfmt.Printf(\"Ошибка: %v\\n\", err)\n\t} else {\n\t\tfmt.Printf(\"После 300р:   A=%d, B=%d (УСПЕХ!)\\n\", accA.Balance, accB.Balance)\n\t}\n\n\tif err := Transfer(accA, accB, 9999); err != nil {\n\t\tfmt.Printf(\"После 9999р:  Ошибка перевода -> %v\\n\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До перевода:  A=500, B=100\n# После 300р:   A=200, B=400 (УСПЕХ!)\n# После 9999р:  Ошибка перевода -> недостаточно средств: баланс 200, требуется 9999"
+      }
+    ],
+    "under_the_hood": "\nМутация полей `Balance` напрямую в объектах кучи.\n",
+    "pitfalls": "\n- В многопоточной среде требуется синхронизация мьютексами (с сортировкой ID счетов для предотвращения Deadlock!).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как предотвратить Deadlock при переводе между двумя аккаунтами с мьютексами `from.mu.Lock()` и `to.mu.Lock()`?»\n**Ответ:** Всегда захватывать мьютексы в детерминированном порядке (например, сортируя по ID счета: сначала лочить счет с меньшим ID, затем с большим).\n"
+  },
+  {
+    "num": 57,
+    "title": "Функция AppendWithPointer(slice *[]int, val int) и обновление емкости снаружи",
+    "task": "Передача среза по указателю: Напишите функцию AppendWithPointer(slice *[]int, val int). Передайте туда срез по указателю и примените append. Убедитесь, что теперь изменения (размер и емкость) отразились снаружи.",
+    "theory": "\nМутация среза через разыменование указателя на заголовок.\n",
+    "step_by_step": "\n1. Пишем `AppendWithPointer(slice *[]int, val int)`.\n2. Вызываем `*slice = append(*slice, val)`.\n3. Тестируем.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc AppendWithPointer(slice *[]int, val int) {\n\tif slice != nil {\n\t\t*slice = append(*slice, val)\n\t}\n}\n\nfunc main() {\n\tvar nums []int\n\tAppendWithPointer(&nums, 100)\n\tAppendWithPointer(&nums, 200)\n\n\tfmt.Printf(\"nums: %v (len=%d, cap=%d)\\n\", nums, len(nums), cap(nums))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# nums: [100 200] (len=2, cap=2)"
+      }
+    ],
+    "under_the_hood": "\nПрямая перезапись стекового слота.\n",
+    "pitfalls": "\n- Передача `nil`-указателя.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В чем недостаток `AppendWithPointer`?»\n**Ответ:** Нарушение принципа чистых функций и менее очевидный поток данных.\n"
+  },
+  {
+    "num": 58,
+    "title": "Правильный append через указатель *s = append(*s, 4) в оригинале",
+    "task": "Правильный Append через функцию: Чтобы append сработал на оригинале, перепиши функцию из упр. 88, передавая указатель на срез *[]int, и выполни *s = append(*s, 4).",
+    "theory": "\nЗакрепление паттерна `*s = append(*s, ...)`.\n",
+    "step_by_step": "\n1. Пишем `AppendFour(s *[]int)`.\n2. Вызываем с адресом `&slice`.\n3. Проверяем в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc AppendFour(s *[]int) {\n\tif s != nil {\n\t\t*s = append(*s, 4)\n\t}\n}\n\nfunc main() {\n\ts := []int{1, 2, 3}\n\tAppendFour(&s)\n\tfmt.Printf(\"Результат: %v (len=%d)\\n\", s, len(s))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Результат: [1 2 3 4] (len=4)"
+      }
+    ],
+    "under_the_hood": "\nОбновление заголовка среза.\n",
+    "pitfalls": "\n- Забыть знак `*` перед `s`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какой тип имеет `&s`?»\n**Ответ:** `*[]int`.\n"
+  },
+  {
+    "num": 59,
+    "title": "Мапы: попытка обнуления m = nil или m = make(...) внутри функции и неизменность оригинала",
+    "task": "Мапы: Попытка обнуления: Передайте мапу в функцию по значению. Внутри функции присвойте ей nil или создайте новую мапу через make. Изменится ли исходная мапа снаружи?",
+    "theory": "\n**Почему переприсваивание мапы `m = nil` не влияет на оригинал:**\n- Параметр `m` — это **локальная копия указателя на `hmap`**;\n- Присвоение `m = nil` или `m = make(...)` меняет только локальную переменную `m`;\n- Исходная мапа в `main` продолжает указывать на старую структуру `hmap` в куче!\n",
+    "step_by_step": "\n1. Пишем функцию `TryToResetMap(m map[string]int)`.\n2. Внутри делаем `m = nil` и `m = make(map[string]int)`.\n3. Проверяем оригинал в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc TryToResetMap(m map[string]int) {\n\tm = nil // Перезаписывает только локальную переменную m!\n\tfmt.Printf(\"Внутри TryToResetMap: m = %v\\n\", m)\n}\n\nfunc main() {\n\tcache := map[string]int{\"auth_token\": 999}\n\tfmt.Printf(\"1. До:    %v\\n\", cache)\n\n\tTryToResetMap(cache)\n\n\tfmt.Printf(\"2. После: %v (ОРИГИНАЛЬНАЯ МАПА НЕ ИЗМЕНИЛАСЬ!)\\n\", cache)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. До:    map[auth_token:999]\n# Внутри TryToResetMap: m = map[]\n# 2. После: map[auth_token:999] (ОРИГИНАЛЬНАЯ МАПА НЕ ИЗМЕНИЛАСЬ!)"
+      }
+    ],
+    "under_the_hood": "\nЛокальный регистр `RAX` перезаписывается значением `0` (`nil`), не затрагивая переменную `cache`.\n",
+    "pitfalls": "\n- Попытка очистить мапу через `m = make(...)` внутри функции вместо вызова `clear(m)`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как правильно очистить мапу от всех элементов внутри функции?»\n**Ответ:** Использовать встроенную функцию `clear(m)` (начиная с Go 1.21) или передавать `*map[K]V`.\n"
+  },
+  {
+    "num": 60,
+    "title": "Каналы (Channels) как ссылочный тип: передача дескриптора по значению и чтение данных",
+    "task": "Каналы (Channels) как ссылочный тип: Создайте канал. Передайте его в функцию по значению. Запишите данные в канал внутри функции, а прочитайте снаружи. Работает ли передача каналов по значению как передача ссылки?",
+    "theory": "\nЗакрепление ссылочной природы каналов в Go.\n",
+    "step_by_step": "\n1. Создаем канал `ch := make(chan string, 1)`.\n2. Пишем функцию `WriteMessage(ch chan string)`.\n3. Читаем сообщение в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc WriteMessage(ch chan string) {\n\tch <- \"Сообщение успешно доставлено через канал!\"\n}\n\nfunc main() {\n\tch := make(chan string, 1)\n\n\tWriteMessage(ch)\n\n\tmsg := <-ch\n\tfmt.Printf(\"Получено: %s\\n\", msg)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Получено: Сообщение успешно доставлено через канал!"
+      }
+    ],
+    "under_the_hood": "\nОбе стороны обращаются к одному экземпляру `hchan` в куче.\n",
+    "pitfalls": "\n- Чтение из неинициализированного `var ch chan int` (вечная блокировка).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какие три встроенных типа в Go обладают ссылочным поведением по умолчанию?»\n**Ответ:** Слайсы (частично), мапы (maps) и каналы (channels).\n"
+  },
+  {
+    "num": 61,
+    "title": "Массивы [3]int vs Срезы: глубокое копирование всего содержимого массива",
+    "task": "Массивы (Arrays) vs Срезы: Создай массив [3]int (важно указать размер). Передай его в функцию по значению. Измени элемент. Убедись, что в массивах (в отличие от срезов) копируется *всё содержимое*, и оригинал не меняется.",
+    "theory": "\nЗакрепление различия между массивом и срезом.\n",
+    "step_by_step": "\n1. Создаем массив `arr := [3]int{1, 2, 3}`.\n2. Пишем `TryToMutateArray(arr [3]int)`.\n3. Проверяем неизменность оригинала.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc TryToMutateArray(a [3]int) {\n\ta[0] = 999\n}\n\nfunc main() {\n\tarr := [3]int{1, 2, 3}\n\tfmt.Printf(\"До:    %v\\n\", arr)\n\n\tTryToMutateArray(arr)\n\n\tfmt.Printf(\"После: %v (ОРИГИНАЛ НЕ ИЗМЕНИЛСЯ!)\\n\", arr)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До:    [1 2 3]\n# После: [1 2 3] (ОРИГИНАЛ НЕ ИЗМЕНИЛСЯ!)"
+      }
+    ],
+    "under_the_hood": "\nКопирование 24 байт массива в стек.\n",
+    "pitfalls": "\n- Путаница между типом массива `[3]int` и типом среза `[]int`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как проверить, является ли тип массивом или срезом?»\n**Ответ:** По наличию размера в скобках: `[3]int` — массив, `[]int` — срез.\n"
+  },
+  {
+    "num": 62,
+    "title": "Массивы фиксированной длины [5]int и иммутабельность оригинала при передаче",
+    "task": "Массивы (Arrays) фиксированной длины: Создайте массив [5]int{1, 2, 3, 4, 5}. Передайте его в функцию по значению. Измените элемент внутри функции. Изменился ли массив снаружи? (Обратите внимание на ключевое отличие поведения массивов от срезов в Go).",
+    "theory": "\nДемонстрация полного копирования 40-байтного массива.\n",
+    "step_by_step": "\n1. Создаем `[5]int{1, 2, 3, 4, 5}`.\n2. Пишем функцию `ZeroOutArray(a [5]int)`.\n3. Проверяем результат.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc ZeroOutArray(a [5]int) {\n\tfor i := range a {\n\t\ta[i] = 0\n\t}\n}\n\nfunc main() {\n\tnumbers := [5]int{1, 2, 3, 4, 5}\n\tfmt.Printf(\"До вызова:    %v\\n\", numbers)\n\n\tZeroOutArray(numbers)\n\n\tfmt.Printf(\"После вызова: %v (МАССИВ СОХРАНИЛ ВСЕ ЗНАЧЕНИЯ!)\\n\", numbers)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До вызова:    [1 2 3 4 5]\n# После вызова: [1 2 3 4 5] (МАССИВ СОХРАНИЛ ВСЕ ЗНАЧЕНИЯ!)"
+      }
+    ],
+    "under_the_hood": "\n40 байт данных копируются на стековый кадр функции.\n",
+    "pitfalls": "\n- Предположение, что массив изменится как срез.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go массивы сделаны значениями, а не ссылками как в Java/JS?»\n**Ответ:** Для полного контроля над структурой памяти и кэш-локальностью процессора без скрытых аллокаций в куче.\n"
+  },
+  {
+    "num": 63,
+    "title": "Передача массива по указателю *[3]int: оптимизация вызовов без копирования",
+    "task": "Передача массива по указателю: Передай массив *[3]int в функцию, чтобы избежать полного копирования данных и изменить оригинал.",
+    "theory": "\nПередача адреса массива `*[N]T`.\n",
+    "step_by_step": "\n1. Пишем `MutateArrayPtr(a *[3]int)`.\n2. Присваиваем `a[0] = 777`.\n3. Проверяем в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc MutateArrayPtr(a *[3]int) {\n\tif a != nil {\n\t\ta[0] = 777 // Компилятор Go автоматически разыменовывает (*a)[0]\n\t}\n}\n\nfunc main() {\n\tarr := [3]int{10, 20, 30}\n\tfmt.Printf(\"До:    %v\\n\", arr)\n\n\tMutateArrayPtr(&arr)\n\n\tfmt.Printf(\"После: %v (МУТАЦИЯ СОХРАНЕНА!)\\n\", arr)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До:    [10 20 30]\n# После: [777 20 30] (МУТАЦИЯ СОХРАНЕНА!)"
+      }
+    ],
+    "under_the_hood": "\nПередается 8-байтный адрес.\n",
+    "pitfalls": "\n- Попытка передать `*[3]int` туда, где ожидается `[]int`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как преобразовать массив в срез без аллокаций?»\n**Ответ:** Слайсингом `s := arr[:]`.\n"
+  },
+  {
+    "num": 64,
+    "title": "Структура со срезом внутри Group{Members []string}: мутация разделяемого среза",
+    "task": "Структура со срезом внутри: Создайте структуру Group, содержащую поле Members []string. Передайте экземпляр Group в функцию по значению. Измените элемент среза Members[0] = \"New\". Изменился ли этот элемент в исходной структуре снаружи?",
+    "theory": "\nЗакрепление эффекта поверхностного копирования структуры со срезом.\n",
+    "step_by_step": "\n1. Создаем структуру `type Group struct { Title string; Members []string }`.\n2. Пишем функцию `UpdateGroupMember(g Group)`.\n3. Меняем `g.Members[0] = \"New\"`.\n4. Анализируем результат в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Group struct {\n\tTitle   string\n\tMembers []string\n}\n\nfunc UpdateGroupMember(g Group) {\n\tg.Title = \"Новое название\" // Изменится только локально\n\tif len(g.Members) > 0 {\n\t\tg.Members[0] = \"New\" // Изменится в общем срезе!\n\t}\n}\n\nfunc main() {\n\tgrp := Group{\n\t\tTitle:   \"Backend Team\",\n\t\tMembers: []string{\"OldMember\", \"Alice\", \"Bob\"},\n\t}\n\n\tfmt.Printf(\"1. До:    Title=%-15s | Members=%v\\n\", grp.Title, grp.Members)\n\n\tUpdateGroupMember(grp)\n\n\tfmt.Printf(\"2. После: Title=%-15s | Members=%v (ЭЛЕМЕНТ СРЕЗА СТАЛ New!)\\n\",\n\t\tgrp.Title, grp.Members)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. До:    Title=Backend Team    | Members=[OldMember Alice Bob]\n# 2. После: Title=Backend Team    | Members=[New Alice Bob] (ЭЛЕМЕНТ СРЕЗА СТАЛ New!)"
+      }
+    ],
+    "under_the_hood": "\n`grp.Members` и `g.Members` ссылаются на один базовый массив строк.\n",
+    "pitfalls": "\n- Ожидание, что поле `Title` тоже изменится снаружи.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `Title` не изменился, а `Members[0]` изменился?»\n**Ответ:** Потому что `Title` — это значение строки, скопированное в поле структуры, а `Members` — это срез с указателем на общий базовый массив.\n"
+  },
+  {
+    "num": 65,
+    "title": "Утечка состояния через структуру с указателем Config{Timeout *time.Duration} и Deep Copy",
+    "task": "Структура с указателем (Утечка состояния): Создайте структуру Config с полем Timeout *time.Duration. Создайте экземпляр, скопируйте его в другую переменную простым присваиванием cfg2 := cfg1. Измените Timeout в cfg2. Что произошло с Timeout в cfg1? Как это предотвратить (глубокое копирование)?",
+    "theory": "\n**Опасность поверхностного копирования структур с указателями (Pointer Aliasing Leak):**\n- Присваивание `cfg2 := cfg1` копирует указатель `Timeout`;\n- Изменение `*cfg2.Timeout = 10s` мутирует память, на которую ссылается и `cfg1`;\n- **Решение:** Реализация метода глубокого копирования (Deep Copy / Clone).\n",
+    "step_by_step": "\n1. Создаем структуру `Config{Timeout *time.Duration}`.\n2. Демонстрируем утечку при `cfg2 := cfg1`.\n3. Пишем метод `(c Config) Clone() Config`.\n4. Показываем полную изоляцию.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"time\"\n)\n\ntype Config struct {\n\tTimeout *time.Duration\n}\n\nfunc (c Config) Clone() Config {\n\tif c.Timeout == nil {\n\t\treturn Config{Timeout: nil}\n\t}\n\t// Выделяем новую память для указателя (Deep Copy):\n\tnewTimeout := *c.Timeout\n\treturn Config{Timeout: &newTimeout}\n}\n\nfunc main() {\n\td1 := 5 * time.Second\n\tcfg1 := Config{Timeout: &d1}\n\n\t// 1. Поверхностное копирование (ОПАСНО!):\n\tcfgBad := cfg1\n\t*cfgBad.Timeout = 99 * time.Second\n\tfmt.Printf(\"1. После поверхностного копирования: cfg1.Timeout = %v (ИСХОДНЫЙ КОНФИГ ИСПОРЧЕН!)\\n\", *cfg1.Timeout)\n\n\t// 2. Глубокое копирование (Deep Copy):\n\td2 := 5 * time.Second\n\tcfgOrig := Config{Timeout: &d2}\n\tcfgGood := cfgOrig.Clone()\n\t*cfgGood.Timeout = 100 * time.Second\n\n\tfmt.Printf(\"2. После Deep Copy Clone():        cfgOrig.Timeout = %v (ИЗОЛЯЦИЯ СОХРАНЕНА!)\\n\", *cfgOrig.Timeout)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. После поверхностного копирования: cfg1.Timeout = 1m39s (ИСХОДНЫЙ КОНФИГ ИСПОРЧЕН!)\n# 2. После Deep Copy Clone():        cfgOrig.Timeout = 5s (ИЗОЛЯЦИЯ СОХРАНЕНА!)"
+      }
+    ],
+    "under_the_hood": "\n`Clone()` аллоцирует новую ячейку в куче, разрывая связь между указателями.\n",
+    "pitfalls": "\n- Непреднамеренное изменение глобальных настроек микросервиса.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как реализовать Deep Copy для сложных вложенных DTO с десятками полей?»\n**Ответ:** 1) Написать рукописный метод `Clone()`; 2) Использовать кодогенерацию (например `deepcopy-gen` из Kubernetes ecosystem); 3) Сериализация/десериализация через `json.Marshal/Unmarshal` (медленно, но надежно).\n"
+  },
+  {
+    "num": 66,
+    "title": "Низкоуровневый доступ к полям структуры через unsafe.Pointer и адресное смещение unsafe.Offsetof",
+    "task": "Ознакомление с пакетом unsafe: Используя пакет unsafe и unsafe.Pointer, получите указатель на первое поле структуры и, прибавив к адресу смещение, получите доступ ко второму полю без использования его имени. *(Внимание: используйте это только в учебных целях).*",
+    "theory": "\n**Адресная арифметика в пакете `unsafe`:**\n- `unsafe.Pointer` позволяет обходить систему строгой типизации Go;\n- Смещение поля вычисляется через `unsafe.Offsetof(s.Field)`;\n- Преобразование `unsafe.Pointer(uintptr(p) + offset)` получает прямой адрес поля в памяти.\n",
+    "step_by_step": "\n1. Создаем структуру `type Header struct { ID int; Flags uint32 }`.\n2. Получаем `unsafe.Pointer(&h)`.\n3. Прибавляем `unsafe.Offsetof(h.Flags)`.\n4. Читаем и меняем поле `Flags`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"unsafe\"\n)\n\ntype PacketHeader struct {\n\tID    int    // Смещение: 0 байт (размер: 8 байт)\n\tFlags uint32 // Смещение: 8 байт (размер: 4 байта)\n}\n\nfunc main() {\n\theader := PacketHeader{ID: 101, Flags: 0xAA}\n\tfmt.Printf(\"1. Исходная структура: %+v\\n\", header)\n\n\t// Получаем указатель на базовый адрес структуры:\n\tbasePtr := unsafe.Pointer(&header)\n\n\t// Вычисляем адрес поля Flags через смещение:\n\tflagsOffset := unsafe.Offsetof(header.Flags)\n\tflagsPtr := (*uint32)(unsafe.Pointer(uintptr(basePtr) + flagsOffset))\n\n\t// Модифицируем поле Flags напрямую по адресу:\n\t*flagsPtr = 0xFF\n\n\tfmt.Printf(\"2. После unsafe мутации: %+v (Flags успешно изменен на 0xFF!)\\n\", header)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Исходная структура: {ID:101 Flags:170}\n# 2. После unsafe мутации: {ID:101 Flags:255} (Flags успешно изменен на 0xFF!)"
+      }
+    ],
+    "under_the_hood": "\nПрямое вычисление адреса памяти `base + 8`.\n",
+    "pitfalls": "\n- Сохранение `uintptr` в переменную: сборщик мусора GC не видит `uintptr` как указатель и может переместить структуру.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему правило 3 в документации `unsafe.Pointer` требует вычислять `unsafe.Pointer(uintptr(p) + offset)` в одно неделимое выражение?»\n**Ответ:** Чтобы сборщик мусора GC и стековый движок не переместили объект между вычислением промежуточного `uintptr` и его обратным преобразованием в `unsafe.Pointer`.\n"
+  },
+  {
+    "num": 67,
+    "title": "Поведение кастомных типов type MyInt int при передаче аргументов и методах",
+    "task": "Поведение кастомных типов: Создайте тип-алиас type MyInt int. Напишите методы или функции, принимающие MyInt по значению и по ссылке. Убедитесь, что правила передачи не меняются.",
+    "theory": "\n**Инвариант правил передачи для кастомных типов:**\n- `type MyInt int` создает отдельный именованный тип;\n- Правила вызовов идентичны `int`: передача по значению копирует 8 байт, передача по указателю `*MyInt` передает адрес.\n",
+    "step_by_step": "\n1. Объявляем `type MyInt int`.\n2. Пишем метод `(m MyInt) ValueMethod()`.\n3. Пишем метод `(m *MyInt) PointerMethod()`.\n4. Демонстрируем поведение.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype MyInt int\n\nfunc (m MyInt) ValueMethod() {\n\tm += 10 // Изменяет копию\n}\n\nfunc (m *MyInt) PointerMethod() {\n\tif m != nil {\n\t\t*m += 10 // Изменяет оригинал\n\t}\n}\n\nfunc main() {\n\tvar num MyInt = 100\n\n\tnum.ValueMethod()\n\tfmt.Printf(\"1. После ValueMethod:   %d (не изменился)\\n\", num)\n\n\tnum.PointerMethod()\n\tfmt.Printf(\"2. После PointerMethod: %d (изменился!)\\n\", num)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. После ValueMethod:   100 (не изменился)\n# 2. После PointerMethod: 110 (изменился!)"
+      }
+    ],
+    "under_the_hood": "\nТрансляция в вызовы `MyInt.ValueMethod(num)` и `(*MyInt).PointerMethod(&num)`.\n",
+    "pitfalls": "\n- Попытка вызвать pointer method на неадресуемом литерале `MyInt(100).PointerMethod()` (ошибка компиляции `cannot call pointer method on literal`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В чем отличие `type MyInt int` от `type MyInt = int`?»\n**Ответ:** `type MyInt int` — это новый тип (New Defined Type) с собственным набором методов. `type MyInt = int` — это псевдоним (Type Alias), полностью взаимозаменяемый с `int` без явного приведения типов.\n"
+  }
+]

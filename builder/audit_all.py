@@ -40,6 +40,9 @@ with open('builder/chapter10_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter11_data.json', 'r', encoding='utf-8') as f:
     ch11_exercises = json.load(f)
 
+with open('builder/chapter12_data.json', 'r', encoding='utf-8') as f:
+    ch12_exercises = json.load(f)
+
 all_ch1 = s1 + s2 + s3 + s4 + s5 + s6
 all_ch2 = ch2_exercises
 all_ch3 = ch3_exercises
@@ -51,8 +54,9 @@ all_ch8 = ch8_exercises
 all_ch9 = ch9_exercises
 all_ch10 = ch10_exercises
 all_ch11 = ch11_exercises
+all_ch12 = ch12_exercises
 
-total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11)
+total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11) + len(all_ch12)
 
 print("=== ТЕХНИЧЕСКИЙ АУДИТ УЧЕБНИКА GO ===")
 print(f"Глава 1:  {len(all_ch1)} упражнений")
@@ -66,6 +70,7 @@ print(f"Глава 8:  {len(all_ch8)} упражнений")
 print(f"Глава 9:  {len(all_ch9)} упражнений")
 print(f"Глава 10: {len(all_ch10)} упражнений")
 print(f"Глава 11: {len(all_ch11)} упражнений")
+print(f"Глава 12: {len(all_ch12)} упражнений")
 print(f"Всего упражнений в учебнике: {total_ex}")
 
 issues = []
@@ -130,6 +135,8 @@ for ex in all_ch10:
     check_exercise(10, ex)
 for ex in all_ch11:
     check_exercise(11, ex)
+for ex in all_ch12:
+    check_exercise(12, ex)
 
 # Check HTML files and anchors
 html_files = [
@@ -144,6 +151,7 @@ html_files = [
     ('chapter9.html', 9, len(all_ch9)),
     ('chapter10.html', 10, len(all_ch10)),
     ('chapter11.html', 11, len(all_ch11)),
+    ('chapter12.html', 12, len(all_ch12)),
 ]
 
 for fname, ch_num, count in html_files:
@@ -168,4 +176,4 @@ if issues:
         print("  •", iss)
     exit(1)
 else:
-    print(f"\n✅ ИДЕАЛЬНО: Все {total_ex} упражнений в 11 главах успешно прошли синтаксический, структурный и HTML-аудит!")
+    print(f"\n✅ ИДЕАЛЬНО: Все {total_ex} упражнений в 12 главах успешно прошли синтаксический, структурный и HTML-аудит!")
