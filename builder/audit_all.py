@@ -16,15 +16,20 @@ with open('builder/chapter2_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter3_data.json', 'r', encoding='utf-8') as f:
     ch3_exercises = json.load(f)
 
+with open('builder/chapter4_data.json', 'r', encoding='utf-8') as f:
+    ch4_exercises = json.load(f)
+
 all_ch1 = s1 + s2 + s3 + s4 + s5 + s6
 all_ch2 = ch2_exercises
 all_ch3 = ch3_exercises
+all_ch4 = ch4_exercises
 
 print("=== ТЕХНИЧЕСКИЙ АУДИТ УЧЕБНИКА GO ===")
 print(f"Глава 1: {len(all_ch1)} упражнений")
 print(f"Глава 2: {len(all_ch2)} упражнений")
 print(f"Глава 3: {len(all_ch3)} упражнений")
-print(f"Всего упражнений в учебнике: {len(all_ch1) + len(all_ch2) + len(all_ch3)}")
+print(f"Глава 4: {len(all_ch4)} упражнений")
+print(f"Всего упражнений в учебнике: {len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4)}")
 
 issues = []
 
@@ -73,12 +78,15 @@ for ex in all_ch2:
     check_exercise(2, ex)
 for ex in all_ch3:
     check_exercise(3, ex)
+for ex in all_ch4:
+    check_exercise(4, ex)
 
 # Check HTML files and anchors
 html_files = [
     ('index.html', 1, len(all_ch1)),
     ('chapter2.html', 2, len(all_ch2)),
-    ('chapter3.html', 3, len(all_ch3))
+    ('chapter3.html', 3, len(all_ch3)),
+    ('chapter4.html', 4, len(all_ch4))
 ]
 
 for fname, ch_num, count in html_files:
@@ -103,4 +111,4 @@ if issues:
         print("  •", iss)
     exit(1)
 else:
-    print("\n✅ ИДЕАЛЬНО: Все 181 упражнений в 3 главах успешно прошли синтаксический, структурный и HTML-аудит!")
+    print(f"\n✅ ИДЕАЛЬНО: Все {len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4)} упражнений в 4 главах успешно прошли синтаксический, структурный и HTML-аудит!")

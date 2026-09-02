@@ -21,6 +21,9 @@ with open('builder/chapter2_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter3_data.json', 'r', encoding='utf-8') as f:
     ch3_exercises = json.load(f)
 
+with open('builder/chapter4_data.json', 'r', encoding='utf-8') as f:
+    ch4_exercises = json.load(f)
+
 def format_text(txt):
     if not txt:
         return ""
@@ -139,6 +142,21 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
                 sb.append('    <a href="chapter3.html" class="chapter-link">')
                 sb.append(f'      <span>3. {title}</span>')
                 sb.append('      <span class="status-badge done">65/65</span>')
+                sb.append('    </a>')
+        elif num == 4:
+            if active_chapter_num == 4:
+                sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
+                sb.append(f'      <span><strong>4. {title}</strong></span>')
+                sb.append('      <span class="status-badge done">111/111</span>')
+                sb.append('    </a>')
+                sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
+                for ex in current_exercises:
+                    sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
+                sb.append('    </div>')
+            else:
+                sb.append('    <a href="chapter4.html" class="chapter-link">')
+                sb.append(f'      <span>4. {title}</span>')
+                sb.append('      <span class="status-badge done">111/111</span>')
                 sb.append('    </a>')
         else:
             sb.append('    <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">')
@@ -446,14 +464,95 @@ def build_chapter3_html(chapters):
             <a href="chapter2.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
                 ← Вернуться к Главе 02 (Компиляция и сборка)
             </a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
-                Глава 04: Переменные, константы и базовые типы (Скоро) →
+            <a href="chapter4.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
+                Перейти к Главе 04: Базовые типы, переменные и константы →
             </a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '03. Пакет fmt и консольный ввод-вывод (65/65)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter4_html(chapters):
+    sidebar_html = build_sidebar(chapters, active_chapter_num=4, current_exercises=ch4_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Hero Section
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">🧬 Модуль 04 • Система Типов и Память Go</div>
+        <h1 class="hero-title">Базовые Типы, Переменные и Константы в Go</h1>
+        <p class="hero-desc">
+            Фундаментальное инженерное погружение в статическую систему типов языка Go: Zero Values, разрядная сетка процессора, 
+            стандарты IEEE 754 чисел с плавающей точкой, переполнение (Integer Overflow), выравнивание памяти (Memory Padding & Alignment), 
+            нетипизированные константы, генератор перечислений iota, битовые маски и безопасное управление иммутабельностью. 
+            Все 111 упражнений курса решены с пошаговым разбором.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-val">111 из 111</span>
+                <span class="stat-lbl">Упражнений решено</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">Zero Values</span>
+                <span class="stat-lbl">Memory Safety</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">iota & Bitmasks</span>
+                <span class="stat-lbl">State Enums</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">Padding</span>
+                <span class="stat-lbl">Memory Alignment</span>
+            </div>
+        </div>
+    </section>
+    """)
+    
+    section_groups_ch4 = [
+        (1, 20, "Раздел 1: Объявление Переменных, Zero Values, Размеры Типов и Первые Константы", "var, :=, Zero values, unsafe.Sizeof, Pi, iota, нетипизированные константы, затенение и UTF-8 руны"),
+        (21, 40, "Раздел 2: Хэш-таблицы, Комплексные Числа, Структуры, strconv и Битовые Операции", "map с comma-ok, complex128, композиция структур, strconv, побитовые &, |, ^, &^, strings и Constant Folding"),
+        (41, 60, "Раздел 3: Явное Приведение, Безопасная Арифметика, Переполнение и Области Видимости", "Приведение типов, SafeAdd с проверкой границ, множественный swap a, b = b, a, bare blocks и глобальные переменные"),
+        (61, 80, "Раздел 4: Указатели new(), Точность Float32/Float64, Лимиты math и Битовые Маски", "Выделение памяти new(int), IEEE 754 погрешности, пределы типов math.Max, KB/MB/GB на iota, типы Celsius/Fahrenheit и битовые права"),
+        (81, 95, "Раздел 5: Type Definitions, Выравнивание Памяти (Padding), Лимиты и Циклический Сдвиг", "Кастомные типы, паддинг в структурах, AlmostEqual с эпсилон, все 6 способов объявления, math.Min/Max и циклический сдвиг a, b, c = b, c, a"),
+        (96, 111, "Раздел 6: Самоссылающиеся Структуры, defer LIFO, make(), Raw Strings и Защита Иммутабельности", "Связный список Node, LIFO в defer, make() для срезов/мап/каналов, BigInt 1<<100, Raw Strings, обход отсутствия const-слайсов и Jump Table в switch")
+    ]
+    
+    ex_dict = {e["num"]: e for e in ch4_exercises}
+    for start_n, end_n, title, desc in section_groups_ch4:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div>
+                <h2>{title}</h2>
+                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
+            </div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+                
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 04 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы досконально изучили устройство типов, память, константы, iota и внутренние оптимизации компилятора Go.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
+                ← Вернуться к Главе 03 (Пакет fmt)
+            </a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
+                Глава 05: Управляющие конструкции (Скоро) →
+            </a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '04. Базовые типы, переменные и константы (111/111)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -475,3 +574,9 @@ if __name__ == '__main__':
     with open('/home/ut/work/go-workout/chapter3.html', 'w', encoding='utf-8') as f:
         f.write(ch3_html)
     print(f"Chapter 3 written to /home/ut/work/go-workout/chapter3.html ({os.path.getsize('/home/ut/work/go-workout/chapter3.html')} bytes)")
+
+    # 4. Build chapter4.html (Chapter 4)
+    ch4_html = build_chapter4_html(chapters)
+    with open('/home/ut/work/go-workout/chapter4.html', 'w', encoding='utf-8') as f:
+        f.write(ch4_html)
+    print(f"Chapter 4 written to /home/ut/work/go-workout/chapter4.html ({os.path.getsize('/home/ut/work/go-workout/chapter4.html')} bytes)")
