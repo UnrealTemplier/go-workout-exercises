@@ -67,6 +67,9 @@ with open('builder/chapter19_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter20_data.json', 'r', encoding='utf-8') as f:
     ch20_exercises = json.load(f)
 
+with open('builder/chapter21_data.json', 'r', encoding='utf-8') as f:
+    ch21_exercises = json.load(f)
+
 all_ch1 = s1 + s2 + s3 + s4 + s5 + s6
 all_ch2 = ch2_exercises
 all_ch3 = ch3_exercises
@@ -87,8 +90,9 @@ all_ch17 = ch17_exercises
 all_ch18 = ch18_exercises
 all_ch19 = ch19_exercises
 all_ch20 = ch20_exercises
+all_ch21 = ch21_exercises
 
-total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11) + len(all_ch12) + len(all_ch13) + len(all_ch14) + len(all_ch15) + len(all_ch16) + len(all_ch17) + len(all_ch18) + len(all_ch19) + len(all_ch20)
+total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11) + len(all_ch12) + len(all_ch13) + len(all_ch14) + len(all_ch15) + len(all_ch16) + len(all_ch17) + len(all_ch18) + len(all_ch19) + len(all_ch20) + len(all_ch21)
 
 print("=== ТЕХНИЧЕСКИЙ АУДИТ УЧЕБНИКА GO ===")
 print(f"Глава 1:  {len(all_ch1)} упражнений")
@@ -111,6 +115,7 @@ print(f"Глава 17: {len(all_ch17)} упражнений")
 print(f"Глава 18: {len(all_ch18)} упражнений")
 print(f"Глава 19: {len(all_ch19)} упражнений")
 print(f"Глава 20: {len(all_ch20)} упражнений")
+print(f"Глава 21: {len(all_ch21)} упражнений")
 print(f"Всего упражнений в учебнике: {total_ex}")
 
 issues = []
@@ -193,6 +198,8 @@ for ex in all_ch19:
     check_exercise(19, ex)
 for ex in all_ch20:
     check_exercise(20, ex)
+for ex in all_ch21:
+    check_exercise(21, ex)
 
 # Check HTML files and anchors
 html_files = [
@@ -216,6 +223,7 @@ html_files = [
     ('chapter18.html', 18, len(all_ch18)),
     ('chapter19.html', 19, len(all_ch19)),
     ('chapter20.html', 20, len(all_ch20)),
+    ('chapter21.html', 21, len(all_ch21)),
 ]
 
 for fname, ch_num, count in html_files:
@@ -240,4 +248,4 @@ if issues:
         print("  •", iss)
     exit(1)
 else:
-    print(f"\n✅ ИДЕАЛЬНО: Все {total_ex} упражнений в 20 главах успешно прошли синтаксический, структурный и HTML-аудит!")
+    print(f"\n✅ ИДЕАЛЬНО: Все {total_ex} упражнений в 21 главах успешно прошли синтаксический, структурный и HTML-аудит!")

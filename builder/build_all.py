@@ -65,6 +65,8 @@ with open('builder/chapter19_data.json', 'r', encoding='utf-8') as f:
     ch19_exercises = json.load(f)
 with open('builder/chapter20_data.json', 'r', encoding='utf-8') as f:
     ch20_exercises = json.load(f)
+with open('builder/chapter21_data.json', 'r', encoding='utf-8') as f:
+    ch21_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -161,6 +163,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             18: ('chapter18.html', '100/100'),
             19: ('chapter19.html', '84/84'),
             20: ('chapter20.html', '124/124'),
+            21: ('chapter21.html', '95/95'),
         }
         
         if num in status_map:
@@ -1312,12 +1315,69 @@ def build_chapter20_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter19.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 19 (Логирование)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 21: Каналы (Channels & Pipelines) (Скоро) →</a>
+            <a href="chapter21.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 21 (Каналы и select) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '20. Горутины и синхронизация (124/124)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter21_html(chapters):
+    sidebar_html = build_sidebar(chapters, 21, ch21_exercises)
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 21</div>
+        <h1 class="hero-title">Каналы и мультиплексирование select (Channels & Multiplexing)</h1>
+        <p class="hero-desc">
+            Глубокое практическое руководство по модели взаимодействующих последовательных процессов (CSP — Communicating 
+            Sequential Processes) в Go: внутренняя архитектура структуры <code>runtime.hchan</code>, небуферизованные каналы и прямое 
+            копирование со стека на стек (Rendezvous), буферизованные кольцевые очереди (FIFO) и защита от Bufferbloat, однонаправленные 
+            контракты (<code>chan&lt;-</code> / <code>&lt;-chan</code>), идиома comma-ok (<code>val, ok := &lt;-ch</code>), 
+            мультиплексирование с <code>select</code> (псевдослучайный uniform выбор, non-blocking polling через <code>default</code>, 
+            динамическое отключение веток через <code>nil</code>-каналы), паттерны отмены (Done Channel, Or-Done, Graceful Shutdown) 
+            и классические конвейеры (Pipeline, Fan-In, Fan-Out, Throttle, Debounce, Futures/Promises, Heartbeat, Rate Limiter). 
+            Все 95 упражнений от базового <code>make(chan int)</code> до уровня Senior / Staff Concurrency Engineer.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-val">95 из 95</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">CSP Architecture</span><span class="stat-lbl">runtime.hchan Internal</span></div>
+            <div class="stat-item"><span class="stat-val">select Multiplexing</span><span class="stat-lbl">Non-blocking & Random Uniform</span></div>
+            <div class="stat-item"><span class="stat-val">Concurrency Patterns</span><span class="stat-lbl">Pipeline, Fan-In, Debounce, RateLimit</span></div>
+        </div>
+    </section>
+    """)
+    section_groups_ch21 = [
+        (1, 32, "Раздел 1: Основы Каналов, Буферизация, Закрытие и Базовые Конвейеры", "Небуферизованные каналы (Rendezvous), емкость буфера и порядок FIFO, закрытие канала и comma-ok протокол, передача строк и структур, ловушка 100% CPU при чтении из закрытого канала, цепочки передачи (Pipeline Stage Square), однонаправленные контракты (chan<- и <-chan), Backpressure при заполнении буфера, функция Drain для вычитывания остатка, анатомия дедлока рантайма, генераторы потоков (Generate), sentinel-значение 'stop', паттерн слияния Merge (Fan-In), SafeClose с sync.Once, свойства nil-каналов и фильтрация Filter"),
+        (33, 64, "Раздел 2: Мультиплексирование с select, Семафоры, Таймауты и Детекция Утечек", "Ограничение параллелизма (Bounded Parallelism семафор), for range по каналам, статический контроль типов компилятора, опустошение буфера закрытого канала, паника send on closed channel, мультиплексирование потоков с разной задержкой, псевдослучайный выбор (Random Uniform), неблокирующий опрос (default в select), таймаут time.After, паттерн Heartbeat (пульс горутины), ловушка забытого close(), приоритет отмены (done vs work), Drop Overflow паттерн, Priority Select через вложенный select, предотвращение Goroutine Leak через буфер емкостью 1, защита от Busy Loop в select и Rate Limiter на тикерах"),
+        (65, 95, "Раздел 3: Продвинутые Паттерны: Debounce, Throttle, Graceful Shutdown, Or-Done и nil-каналы", "Однонаправленные типы API, паттерн Debounce с time.Timer, мультиплексор fanIn, антипаттерн закрытия канала получателем, паттерн Throttle, перехват системных сигналов OS (SIGINT/SIGTERM Graceful Shutdown), паттерн Futures/Promises, динамическое выключение веток через ch = nil, таймеры time.Tick, утечка памяти с time.After в цикле и рефакторинг на time.NewTimer/Reset, выход из select через Labeled Break, Circuit Breaker таймауты к БД, паника close(nil), Drop Pattern телеметрии, рекурсивный Or-Done Channel и широковещательная отмена воркеров (Broadcast Cancellation)")
+    ]
+    ex_dict = {e["num"]: e for e in ch21_exercises}
+    for start_n, end_n, title, desc in section_groups_ch21:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 21 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили модель каналов и мультиплексирование select в Go: внутреннее устройство runtime.hchan, безопасную передачу данных между горутинами, неблокирующие операции, отмену через Done-каналы, и полный спектр конкурентных паттернов (Pipeline, Fan-In, Debounce, Throttle, Rate Limiter).
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter20.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 20 (Горутины и синхронизация)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 22: Контекст (Context & Deadlines) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '21. Каналы и select (95/95)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1343,6 +1403,7 @@ if __name__ == '__main__':
         ('chapter18.html', build_chapter18_html),
         ('chapter19.html', build_chapter19_html),
         ('chapter20.html', build_chapter20_html),
+        ('chapter21.html', build_chapter21_html),
     ]
     
     for filename, builder_fn in pages:
