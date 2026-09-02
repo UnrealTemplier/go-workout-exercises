@@ -24,6 +24,9 @@ with open('builder/chapter3_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter4_data.json', 'r', encoding='utf-8') as f:
     ch4_exercises = json.load(f)
 
+with open('builder/chapter5_data.json', 'r', encoding='utf-8') as f:
+    ch5_exercises = json.load(f)
+
 def format_text(txt):
     if not txt:
         return ""
@@ -157,6 +160,21 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
                 sb.append('    <a href="chapter4.html" class="chapter-link">')
                 sb.append(f'      <span>4. {title}</span>')
                 sb.append('      <span class="status-badge done">111/111</span>')
+                sb.append('    </a>')
+        elif num == 5:
+            if active_chapter_num == 5:
+                sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
+                sb.append(f'      <span><strong>5. {title}</strong></span>')
+                sb.append('      <span class="status-badge done">64/64</span>')
+                sb.append('    </a>')
+                sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
+                for ex in current_exercises:
+                    sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
+                sb.append('    </div>')
+            else:
+                sb.append('    <a href="chapter5.html" class="chapter-link">')
+                sb.append(f'      <span>5. {title}</span>')
+                sb.append('      <span class="status-badge done">64/64</span>')
                 sb.append('    </a>')
         else:
             sb.append('    <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">')
@@ -545,14 +563,94 @@ def build_chapter4_html(chapters):
             <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
                 ← Вернуться к Главе 03 (Пакет fmt)
             </a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
-                Глава 05: Управляющие конструкции (Скоро) →
+            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
+                Перейти к Главе 05: Условные конструкции (if, switch) →
             </a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '04. Базовые типы, переменные и константы (111/111)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter5_html(chapters):
+    sidebar_html = build_sidebar(chapters, active_chapter_num=5, current_exercises=ch5_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Hero Section
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">🔀 Модуль 05 • Управляющие Конструкции и Ветвления</div>
+        <h1 class="hero-title">Условные Конструкции (if, switch) в Go</h1>
+        <p class="hero-desc">
+            Глубокое практическое освоение механизмов управления потоком исполнения в Go: каскадные условия if/else, 
+            изоляция переменных через if с инициализацией (short statement), плоский стиль Guard Clauses (Early Return), 
+            оптимизация ветвлений через Tagless Switch (Switch True), инспекция динамических типов в Type Switch v.(type), 
+            механика fallthrough, короткое замыкание предикатов (Short-Circuit), идиома comma-ok и построение конечных автоматов (FSM). 
+            Все 64 упражнения курса решены с пошаговым объяснением.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-val">64 из 64</span>
+                <span class="stat-lbl">Упражнений решено</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">if with init</span>
+                <span class="stat-lbl">Scope Isolation</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">Tagless Switch</span>
+                <span class="stat-lbl">Jump Table $O(1)$</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">Guard Clauses</span>
+                <span class="stat-lbl">Clean Code Pattern</span>
+            </div>
+        </div>
+    </section>
+    """)
+    
+    section_groups_ch5 = [
+        (1, 16, "Раздел 1: Базовый if, Четность, Инициализация в if, Каскады и Зодиак", "Каскадные if/else, проверка четности %, if x := init(); cond, классификация возраста, 100-балльная шкала, Divide с err, затенение в if, високосный год и булевы упрощения"),
+        (17, 32, "Раздел 2: Классический switch, Строковый switch, True Switch, Группировка и Type Switch", "Дни недели, команды CLI, tagless switch, множественные значения case 1, 2, 3:, сезоны года, Type Switch над any, сужение типов v.(type) и семантика fallthrough"),
+        (33, 48, "Раздел 3: Имитация Тернарного Оператора, Guard Clauses, Short-Circuit, for-while и Валидация Пароля", "Функция Max, каскадный fallthrough, инспекция типов, инициализация в switch, рефакторинг вложенности, break в switch, инверсия условий, битовые предикаты, FizzBuzz, for как while и поиск Min/Max"),
+        (49, 64, "Раздел 4: Comma-ok в if, Вложенный switch, goto, Права Файлов, Dispatch Table и Конечный Автомат (FSM)", "Группировка Yes/No, чтение из map, шорткаты предикатов, подсчет гласных, goto в матрицах, битовые флаги 0755, CLI-калькулятор, Dispatch Table на map[string]func(), FSM игрового NPC и меню с labeled break")
+    ]
+    
+    ex_dict = {e["num"]: e for e in ch5_exercises}
+    for start_n, end_n, title, desc in section_groups_ch5:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div>
+                <h2>{title}</h2>
+                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
+            </div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+                
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 05 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили условные ветвления, Guard Clauses, Type Switch и конечные автоматы на Go.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter4.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
+                ← Вернуться к Главе 04 (Базовые типы)
+            </a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
+                Глава 06: Циклы for (Скоро) →
+            </a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '05. Условные конструкции (64/64)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -580,3 +678,9 @@ if __name__ == '__main__':
     with open('/home/ut/work/go-workout/chapter4.html', 'w', encoding='utf-8') as f:
         f.write(ch4_html)
     print(f"Chapter 4 written to /home/ut/work/go-workout/chapter4.html ({os.path.getsize('/home/ut/work/go-workout/chapter4.html')} bytes)")
+
+    # 5. Build chapter5.html (Chapter 5)
+    ch5_html = build_chapter5_html(chapters)
+    with open('/home/ut/work/go-workout/chapter5.html', 'w', encoding='utf-8') as f:
+        f.write(ch5_html)
+    print(f"Chapter 5 written to /home/ut/work/go-workout/chapter5.html ({os.path.getsize('/home/ut/work/go-workout/chapter5.html')} bytes)")

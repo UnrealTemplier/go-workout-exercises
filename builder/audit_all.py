@@ -19,17 +19,24 @@ with open('builder/chapter3_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter4_data.json', 'r', encoding='utf-8') as f:
     ch4_exercises = json.load(f)
 
+with open('builder/chapter5_data.json', 'r', encoding='utf-8') as f:
+    ch5_exercises = json.load(f)
+
 all_ch1 = s1 + s2 + s3 + s4 + s5 + s6
 all_ch2 = ch2_exercises
 all_ch3 = ch3_exercises
 all_ch4 = ch4_exercises
+all_ch5 = ch5_exercises
+
+total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5)
 
 print("=== ТЕХНИЧЕСКИЙ АУДИТ УЧЕБНИКА GO ===")
 print(f"Глава 1: {len(all_ch1)} упражнений")
 print(f"Глава 2: {len(all_ch2)} упражнений")
 print(f"Глава 3: {len(all_ch3)} упражнений")
 print(f"Глава 4: {len(all_ch4)} упражнений")
-print(f"Всего упражнений в учебнике: {len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4)}")
+print(f"Глава 5: {len(all_ch5)} упражнений")
+print(f"Всего упражнений в учебнике: {total_ex}")
 
 issues = []
 
@@ -56,7 +63,7 @@ def check_exercise(ch_num, ex):
             
         # If it's a standalone go file, test parse/syntax check with gofmt
         if lang == 'go' and 'package main' in code:
-            if 'ОШИБКА:' in code or 'redeclared' in code or '// ОШИБКА' in code:
+            if 'ОШИБКА:' in code or 'redeclared' in code or '// ОШИБКА' in code or 'undefined: ' in code:
                 continue # Deliberate compilation error example
             if 'import "C"' in code or 'some-domain.com' in code or 'github.com/myuser' in code or 'mycompany' in code or 'v2' in code:
                 continue
@@ -80,13 +87,16 @@ for ex in all_ch3:
     check_exercise(3, ex)
 for ex in all_ch4:
     check_exercise(4, ex)
+for ex in all_ch5:
+    check_exercise(5, ex)
 
 # Check HTML files and anchors
 html_files = [
     ('index.html', 1, len(all_ch1)),
     ('chapter2.html', 2, len(all_ch2)),
     ('chapter3.html', 3, len(all_ch3)),
-    ('chapter4.html', 4, len(all_ch4))
+    ('chapter4.html', 4, len(all_ch4)),
+    ('chapter5.html', 5, len(all_ch5))
 ]
 
 for fname, ch_num, count in html_files:
@@ -111,4 +121,4 @@ if issues:
         print("  •", iss)
     exit(1)
 else:
-    print(f"\n✅ ИДЕАЛЬНО: Все {len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4)} упражнений в 4 главах успешно прошли синтаксический, структурный и HTML-аудит!")
+    print(f"\n✅ ИДЕАЛЬНО: Все {total_ex} упражнений в 5 главах успешно прошли синтаксический, структурный и HTML-аудит!")
