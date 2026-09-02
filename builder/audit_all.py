@@ -2,7 +2,6 @@ import json
 import os
 import subprocess
 import tempfile
-import sys
 
 from section1 import exercises as s1
 from section2 import exercises as s2
@@ -14,13 +13,19 @@ from section6 import exercises as s6
 with open('builder/chapter2_data.json', 'r', encoding='utf-8') as f:
     ch2_exercises = json.load(f)
 
+with open('builder/chapter3_data.json', 'r', encoding='utf-8') as f:
+    ch3_exercises = json.load(f)
+
 all_ch1 = s1 + s2 + s3 + s4 + s5 + s6
 all_ch2 = ch2_exercises
+all_ch3 = ch3_exercises
 
-print(f"Total Chapter 1 exercises: {len(all_ch1)}")
-print(f"Total Chapter 2 exercises: {len(all_ch2)}")
+print("=== ТЕХНИЧЕСКИЙ АУДИТ УЧЕБНИКА GO ===")
+print(f"Глава 1: {len(all_ch1)} упражнений")
+print(f"Глава 2: {len(all_ch2)} упражнений")
+print(f"Глава 3: {len(all_ch3)} упражнений")
+print(f"Всего упражнений в учебнике: {len(all_ch1) + len(all_ch2) + len(all_ch3)}")
 
-# Let's verify each exercise structure and check code blocks
 issues = []
 
 def check_exercise(ch_num, ex):
@@ -35,48 +40,67 @@ def check_exercise(ch_num, ex):
     bigtech = ex.get('bigtech_interview')
     
     if not title or not task or not theory or not step_by_step or not code_blocks:
-        issues.append(f"[Ch {ch_num} Ex {num}] Missing core required section")
+        issues.append(f"[Глава {ch_num} Упр {num}] Отсутствует обязательная секция")
         
     for i, cb in enumerate(code_blocks):
         fname = cb.get('filename', '')
         lang = cb.get('lang', '')
         code = cb.get('code', '')
         if not code.strip():
-            issues.append(f"[Ch {ch_num} Ex {num}] Empty code block {i} ({fname})")
+            issues.append(f"[Глава {ch_num} Упр {num}] Пустой блок кода {i} ({fname})")
             
-        # If it's a standalone go file (contains package main and func main), let's test parse/compile it
-        if lang == 'go' and 'package main' in code and 'func main()' in code:
-            # Check if it has unresolved pseudo-code or deliberate compilation errors
-            if 'ОШИБКА:' in code or 'cannot find module' in code or 'redeclared' in code or '// ОШИБКА' in code:
-                continue # Deliberate demonstration of error
-            if 'import "C"' in code:
+        # If it's a standalone go file, test parse/syntax check with gofmt
+        if lang == 'go' and 'package main' in code:
+            if 'ОШИБКА:' in code or 'redeclared' in code or '// ОШИБКА' in code:
+                continue # Deliberate compilation error example
+            if 'import "C"' in code or 'some-domain.com' in code or 'github.com/myuser' in code or 'mycompany' in code or 'v2' in code:
                 continue
-            if 'some-domain.com' in code or 'github.com/myuser' in code or 'mycompany' in code or 'v2' in code:
-                continue # Example module path requiring external replace or network
                 
-            # Write to a temp file and run `go vet` or `gofmt` to check syntax
             with tempfile.NamedTemporaryFile('w', suffix='.go', delete=False) as tf:
                 tf.write(code)
                 tf_path = tf.name
             try:
                 res = subprocess.run(['gofmt', '-e', tf_path], capture_output=True, text=True)
                 if res.returncode != 0:
-                    issues.append(f"[Ch {ch_num} Ex {num}] Go syntax error in {fname}: {res.stderr.strip()}")
+                    issues.append(f"[Глава {ch_num} Упр {num}] Ошибка синтаксиса Go в {fname}: {res.stderr.strip()}")
             finally:
                 if os.path.exists(tf_path):
                     os.remove(tf_path)
 
-print("\n--- Auditing Chapter 1 ---")
 for ex in all_ch1:
     check_exercise(1, ex)
-
-print("\n--- Auditing Chapter 2 ---")
 for ex in all_ch2:
     check_exercise(2, ex)
+for ex in all_ch3:
+    check_exercise(3, ex)
+
+# Check HTML files and anchors
+html_files = [
+    ('index.html', 1, len(all_ch1)),
+    ('chapter2.html', 2, len(all_ch2)),
+    ('chapter3.html', 3, len(all_ch3))
+]
+
+for fname, ch_num, count in html_files:
+    if not os.path.exists(fname):
+        issues.append(f"Файл {fname} не найден на диске!")
+        continue
+    with open(fname, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # Check all anchors
+    for i in range(1, count + 1):
+        if f'id="ex-{i}"' not in content:
+            issues.append(f"В файле {fname} отсутствует якорь id=\"ex-{i}\"")
+            
+    # Check no chevron icon
+    if 'chevron-icon' in content:
+        issues.append(f"В файле {fname} обнаружен запрещенный chevron-icon!")
 
 if issues:
-    print(f"\nFound {len(issues)} issues:")
+    print(f"\n❌ Обнаружено {len(issues)} проблем:")
     for iss in issues:
-        print(" - ", iss)
+        print("  •", iss)
+    exit(1)
 else:
-    print("\n✅ All exercises passed automated syntax and structural validation!")
+    print("\n✅ ИДЕАЛЬНО: Все 181 упражнений в 3 главах успешно прошли синтаксический, структурный и HTML-аудит!")

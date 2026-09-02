@@ -2,6 +2,7 @@ import html
 import json
 import os
 import re
+import sys
 
 from chapters import get_all_chapters
 from section1 import exercises as s1
@@ -16,6 +17,9 @@ ch1_exercises = s1 + s2 + s3 + s4 + s5 + s6
 
 with open('builder/chapter2_data.json', 'r', encoding='utf-8') as f:
     ch2_exercises = json.load(f)
+
+with open('builder/chapter3_data.json', 'r', encoding='utf-8') as f:
+    ch3_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -120,6 +124,21 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
                 sb.append('    <a href="chapter2.html" class="chapter-link">')
                 sb.append(f'      <span>2. {title}</span>')
                 sb.append('      <span class="status-badge done">25/25</span>')
+                sb.append('    </a>')
+        elif num == 3:
+            if active_chapter_num == 3:
+                sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
+                sb.append(f'      <span><strong>3. {title}</strong></span>')
+                sb.append('      <span class="status-badge done">65/65</span>')
+                sb.append('    </a>')
+                sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
+                for ex in current_exercises:
+                    sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
+                sb.append('    </div>')
+            else:
+                sb.append('    <a href="chapter3.html" class="chapter-link">')
+                sb.append(f'      <span>3. {title}</span>')
+                sb.append('      <span class="status-badge done">65/65</span>')
                 sb.append('    </a>')
         else:
             sb.append('    <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">')
@@ -347,14 +366,94 @@ def build_chapter2_html(chapters):
             <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
                 ← Вернуться к Главе 01 (Пакеты и модули)
             </a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
-                Глава 03: Пакет fmt и консольный ввод-вывод (Скоро) →
+            <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
+                Перейти к Главе 03: Пакет fmt и консольный ввод-вывод →
             </a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '02. Компиляция, сборка и запуск (25/25)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter3_html(chapters):
+    sidebar_html = build_sidebar(chapters, active_chapter_num=3, current_exercises=ch3_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Hero Section
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">💻 Модуль 03 • Консольный Ввод-Вывод и fmt</div>
+        <h1 class="hero-title">Пакет fmt и Консольный Ввод-Вывод в Go</h1>
+        <p class="hero-desc">
+            Глубокое практическое руководство по потоковому вводу-выводу в Go: детальный разбор всех спецификаторов пакета fmt, 
+            буферизованное чтение через bufio.Reader/Scanner, посимвольная обработка UTF-8 рун, интерфейсы fmt.Stringer и fmt.GoStringer, 
+            валидация потоков Stdin/Stdout/Stderr, создание надежных CLI REPL-интерпретаторов и цветная ANSI-стилизация. 
+            Все 65 упражнений курса решены с пошаговым объяснением.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-val">65 из 65</span>
+                <span class="stat-lbl">Упражнений решено</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">bufio</span>
+                <span class="stat-lbl">Reader & Scanner</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">fmt.Stringer</span>
+                <span class="stat-lbl">Кастомная печать</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">ANSI & TUI</span>
+                <span class="stat-lbl">Цветные терминалы</span>
+            </div>
+        </div>
+    </section>
+    """)
+    
+    section_groups_ch3 = [
+        (1, 15, "Раздел 1: Базовые функции fmt, Спецификаторы и Первые Чтения", "Print, Println, Printf, %d/%f/%s/%t, буферизованный ReadByte, выравнивание %4d, парсинг Sscanf и время"),
+        (16, 30, "Раздел 2: Потоки, Инспекция Типов, Точность Float и Stderr", "Эхо-сканер, сложение с валидацией, глагол %T, точность %.2f, экранирование %q, запись в os.Stderr и fmt.Sprintf"),
+        (31, 45, "Раздел 3: Проблема Пробелов, Scanln, Файловый Fprintf и EOF", "Механика токенизации Scan, Scanln, календарный Scanf, запись в io.Writer, обработка io.EOF и CLI-анкеты"),
+        (46, 55, "Раздел 4: Unicode Руны, Интерфейс fmt.Stringer, Stderr 2> и os.Args", "ReadRune, UTF-8 кодовые точки, Stringer/GoStringer контракты, флаги командной строки flag.Int"),
+        (56, 65, "Раздел 5: Продвинутый REPL, ScanWords, Таблицы, Прогресс-бар и ANSI", "Сравнительный анализ семейств Scan, REPL-шелл, суммирование потока ScanWords, анимация \\r и цветной вывод")
+    ]
+    
+    ex_dict = {e["num"]: e for e in ch3_exercises}
+    for start_n, end_n, title, desc in section_groups_ch3:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div>
+                <h2>{title}</h2>
+                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
+            </div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+                
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 03 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы освоили весь арсенал работы с потоками ввода-вывода, интерфейсами Stringer, форматированием и терминальной графикой.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter2.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
+                ← Вернуться к Главе 02 (Компиляция и сборка)
+            </a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
+                Глава 04: Переменные, константы и базовые типы (Скоро) →
+            </a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '03. Пакет fmt и консольный ввод-вывод (65/65)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -370,3 +469,9 @@ if __name__ == '__main__':
     with open('/home/ut/work/go-workout/chapter2.html', 'w', encoding='utf-8') as f:
         f.write(ch2_html)
     print(f"Chapter 2 written to /home/ut/work/go-workout/chapter2.html ({os.path.getsize('/home/ut/work/go-workout/chapter2.html')} bytes)")
+
+    # 3. Build chapter3.html (Chapter 3)
+    ch3_html = build_chapter3_html(chapters)
+    with open('/home/ut/work/go-workout/chapter3.html', 'w', encoding='utf-8') as f:
+        f.write(ch3_html)
+    print(f"Chapter 3 written to /home/ut/work/go-workout/chapter3.html ({os.path.getsize('/home/ut/work/go-workout/chapter3.html')} bytes)")
