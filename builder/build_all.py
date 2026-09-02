@@ -30,6 +30,9 @@ with open('builder/chapter5_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter6_data.json', 'r', encoding='utf-8') as f:
     ch6_exercises = json.load(f)
 
+with open('builder/chapter7_data.json', 'r', encoding='utf-8') as f:
+    ch7_exercises = json.load(f)
+
 def format_text(txt):
     if not txt:
         return ""
@@ -193,6 +196,21 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
                 sb.append('    <a href="chapter6.html" class="chapter-link">')
                 sb.append(f'      <span>6. {title}</span>')
                 sb.append('      <span class="status-badge done">64/64</span>')
+                sb.append('    </a>')
+        elif num == 7:
+            if active_chapter_num == 7:
+                sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
+                sb.append(f'      <span><strong>7. {title}</strong></span>')
+                sb.append('      <span class="status-badge done">32/32</span>')
+                sb.append('    </a>')
+                sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
+                for ex in current_exercises:
+                    sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
+                sb.append('    </div>')
+            else:
+                sb.append('    <a href="chapter7.html" class="chapter-link">')
+                sb.append(f'      <span>7. {title}</span>')
+                sb.append('      <span class="status-badge done">32/32</span>')
                 sb.append('    </a>')
         else:
             sb.append('    <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">')
@@ -741,14 +759,92 @@ def build_chapter6_html(chapters):
             <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
                 ← Вернуться к Главе 05 (Условные конструкции)
             </a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
-                Глава 07: Функции (Скоро) →
+            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
+                Перейти к Главе 07: Массивы (Arrays) →
             </a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '06. Циклы (64/64)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter7_html(chapters):
+    sidebar_html = build_sidebar(chapters, active_chapter_num=7, current_exercises=ch7_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Hero Section
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">📦 Модуль 07 • Структуры Данных и Память</div>
+        <h1 class="hero-title">Массивы (Arrays) и Модель Памяти в Go</h1>
+        <p class="hero-desc">
+            Глубокое практическое освоение фиксированных массивов в языке Go: семантика значений (Pass by Value & Deep Copy), 
+            непрерывное расположение в стеке (Contiguous Memory Layout), zero values, вычисление размера через unsafe.Sizeof и unsafe.Alignof, 
+            сравнение через операторы == / !=, многомерные матрицы [N][M]T, разворот In-Place через указатели *[N]T, 
+            использование массивов как ключей в hash-map и двухуровневая защита границ (Static vs Runtime Bounds Checking). 
+            Все 32 упражнения курса решены шаг за шагом.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-val">32 из 32</span>
+                <span class="stat-lbl">Упражнений решено</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">Value Semantics</span>
+                <span class="stat-lbl">Deep Copy $O(N)$</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">Comparable</span>
+                <span class="stat-lbl">Keys in map[K]V</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">Zero Overhead</span>
+                <span class="stat-lbl">0B Header Size</span>
+            </div>
+        </div>
+    </section>
+    """)
+    
+    section_groups_ch7 = [
+        (1, 16, "Раздел 1: Инициализация, Zero Values, Value Semantics, Сравнение и 2D Матрицы", "3 способа инициализации, len() константа, значимая семантика b:=a, массив строк, SumArray по значению, comparable ==, палиндром, матрица [3][4]int, синтаксис [...] и сетка 3x3"),
+        (17, 32, "Раздел 2: Указатели *[N]T, unsafe.Sizeof/Alignof, Массив как Ключ Map и Защита Границ", "Удвоение массива, Zero Values [3]bool/[2]string, мутация через *[5]int, массив указателей [3]*int, размер в памяти unsafe, Bubble Sort, экстремумы, RGB палитра map[[3]int]string, In-place reverse и Bounds Checking")
+    ]
+    
+    ex_dict = {e["num"]: e for e in ch7_exercises}
+    for start_n, end_n, title, desc in section_groups_ch7:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div>
+                <h2>{title}</h2>
+                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
+            </div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+                
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 07 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы досконально изучили массивы, передачу по значению, указатели и низкоуровневую модель памяти в Go.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter6.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
+                ← Вернуться к Главе 06 (Циклы)
+            </a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
+                Глава 08: Срезы (Slices) (Скоро) →
+            </a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '07. Массивы (32/32)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -788,3 +884,9 @@ if __name__ == '__main__':
     with open('/home/ut/work/go-workout/chapter6.html', 'w', encoding='utf-8') as f:
         f.write(ch6_html)
     print(f"Chapter 6 written to /home/ut/work/go-workout/chapter6.html ({os.path.getsize('/home/ut/work/go-workout/chapter6.html')} bytes)")
+
+    # 7. Build chapter7.html (Chapter 7)
+    ch7_html = build_chapter7_html(chapters)
+    with open('/home/ut/work/go-workout/chapter7.html', 'w', encoding='utf-8') as f:
+        f.write(ch7_html)
+    print(f"Chapter 7 written to /home/ut/work/go-workout/chapter7.html ({os.path.getsize('/home/ut/work/go-workout/chapter7.html')} bytes)")
