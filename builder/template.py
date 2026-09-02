@@ -201,6 +201,8 @@ HTML_HEAD = """<!DOCTYPE html>
             color: #38bdf8;
             font-weight: 500;
             border-left: 3px solid var(--go-cyan);
+            cursor: pointer;
+            user-select: none;
         }
 
         .status-badge {
@@ -226,6 +228,11 @@ HTML_HEAD = """<!DOCTYPE html>
             padding-left: 14px;
             margin: 4px 0 10px 8px;
             border-left: 1px solid #1e293b;
+            transition: all 0.2s ease;
+        }
+
+        .sub-exercises-list.collapsed {
+            display: none;
         }
 
         .sub-exercise-link {
@@ -646,12 +653,30 @@ HTML_FOOTER = """
             });
         });
 
+        // Active Chapter Accordion Toggle (Collapse/Expand in sidebar)
+        const activeToggle = document.getElementById('active-chapter-toggle');
+        const subList = document.getElementById('active-sub-exercises');
+        if (activeToggle && subList) {
+            activeToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                activeToggle.classList.toggle('collapsed');
+                subList.classList.toggle('collapsed');
+            });
+        }
+
         // Search Filter for exercises and chapters
         const searchInput = document.getElementById('search-input');
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
                 const query = e.target.value.toLowerCase().trim();
                 
+                // If search query exists, ensure subList is expanded so filtered exercises are visible
+                if (query && subList && subList.classList.contains('collapsed')) {
+                    subList.classList.remove('collapsed');
+                    if (activeToggle) activeToggle.classList.remove('collapsed');
+                }
+
                 // Filter sidebar exercise links
                 document.querySelectorAll('.sub-exercise-link').forEach(link => {
                     const text = link.innerText.toLowerCase();

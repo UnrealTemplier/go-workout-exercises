@@ -199,6 +199,8 @@
             color: #38bdf8;
             font-weight: 500;
             border-left: 3px solid var(--go-cyan);
+            cursor: pointer;
+            user-select: none;
         }
 
         .status-badge {
@@ -224,6 +226,11 @@
             padding-left: 14px;
             margin: 4px 0 10px 8px;
             border-left: 1px solid #1e293b;
+            transition: all 0.2s ease;
+        }
+
+        .sub-exercises-list.collapsed {
+            display: none;
         }
 
         .sub-exercise-link {
@@ -608,11 +615,11 @@
   </div>
   <nav class="sidebar-nav">
     <div class="nav-group-title">Оглавление курса (83 модуля)</div>
-    <a href="#top" class="chapter-link active">
+    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">
       <span><strong>1. Пакеты и модули</strong></span>
       <span class="status-badge done">91/91</span>
     </a>
-    <div class="sub-exercises-list">
+    <div class="sub-exercises-list" id="active-sub-exercises">
       <a href="#ex-1" class="sub-exercise-link" title="Упр 1: Первый запуск Go-программы и концепция модулей">1. Первый запуск Go-программы и концепция модулей</a>
       <a href="#ex-2" class="sub-exercise-link" title="Упр 2: Анатомия Go SDK: GOROOT, GOPATH, PATH и go version">2. Анатомия Go SDK: GOROOT, GOPATH, PATH и go version</a>
       <a href="#ex-3" class="sub-exercise-link" title="Упр 3: Многофайловый пакет main и единица компиляции в Go">3. Многофайловый пакет main и единица компиляции в Go</a>
@@ -8963,12 +8970,30 @@ func main() {
             });
         });
 
+        // Active Chapter Accordion Toggle (Collapse/Expand in sidebar)
+        const activeToggle = document.getElementById('active-chapter-toggle');
+        const subList = document.getElementById('active-sub-exercises');
+        if (activeToggle && subList) {
+            activeToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                activeToggle.classList.toggle('collapsed');
+                subList.classList.toggle('collapsed');
+            });
+        }
+
         // Search Filter for exercises and chapters
         const searchInput = document.getElementById('search-input');
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
                 const query = e.target.value.toLowerCase().trim();
                 
+                // If search query exists, ensure subList is expanded so filtered exercises are visible
+                if (query && subList && subList.classList.contains('collapsed')) {
+                    subList.classList.remove('collapsed');
+                    if (activeToggle) activeToggle.classList.remove('collapsed');
+                }
+
                 // Filter sidebar exercise links
                 document.querySelectorAll('.sub-exercise-link').forEach(link => {
                     const text = link.innerText.toLowerCase();

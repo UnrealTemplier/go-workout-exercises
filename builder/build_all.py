@@ -93,11 +93,11 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
         
         if num == 1:
             if active_chapter_num == 1:
-                sb.append('    <a href="#top" class="chapter-link active">')
+                sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
                 sb.append(f'      <span><strong>1. {title}</strong></span>')
                 sb.append('      <span class="status-badge done">91/91</span>')
                 sb.append('    </a>')
-                sb.append('    <div class="sub-exercises-list">')
+                sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
                 for ex in current_exercises:
                     sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
                 sb.append('    </div>')
@@ -108,11 +108,11 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
                 sb.append('    </a>')
         elif num == 2:
             if active_chapter_num == 2:
-                sb.append('    <a href="#top" class="chapter-link active">')
+                sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
                 sb.append(f'      <span><strong>2. {title}</strong></span>')
                 sb.append('      <span class="status-badge done">25/25</span>')
                 sb.append('    </a>')
-                sb.append('    <div class="sub-exercises-list">')
+                sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
                 for ex in current_exercises:
                     sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
                 sb.append('    </div>')
