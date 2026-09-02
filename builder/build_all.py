@@ -59,6 +59,8 @@ with open('builder/chapter16_data.json', 'r', encoding='utf-8') as f:
     ch16_exercises = json.load(f)
 with open('builder/chapter17_data.json', 'r', encoding='utf-8') as f:
     ch17_exercises = json.load(f)
+with open('builder/chapter18_data.json', 'r', encoding='utf-8') as f:
+    ch18_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -152,6 +154,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             15: ('chapter15.html', '127/127'),
             16: ('chapter16.html', '131/131'),
             17: ('chapter17.html', '58/58'),
+            18: ('chapter18.html', '100/100'),
         }
         
         if num in status_map:
@@ -1132,12 +1135,69 @@ def build_chapter17_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter16.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 16 (Дженерики)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 18: Паника и восстановление (Panic & Recover) (Скоро) →</a>
+            <a href="chapter18.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 18 (Работа с файлами) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '17. Обработка ошибок (58/58)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter18_html(chapters):
+    sidebar_html = build_sidebar(chapters, 18, ch18_exercises)
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 18</div>
+        <h1 class="hero-title">Работа с файлами (File I/O & Binary Streams)</h1>
+        <p class="hero-desc">
+            Исчерпывающее практическое руководство по работе с файловой системой, потоковым вводом-выводом и бинарными 
+            форматами данных в Go. Полный разбор пакетов <code>os</code>, <code>io</code>, <code>bufio</code>, 
+            <code>path/filepath</code>, <code>encoding/binary</code>, <code>encoding/csv</code>, <code>encoding/gob</code> 
+            и <code>encoding/json</code>. Построчное сканирование больших файлов (<code>bufio.Scanner</code>), высокоскоростная 
+            буферизованная запись (<code>bufio.Writer</code>), низкоуровневые системные вызовы (<code>Seek</code>, <code>Stat</code>, 
+            <code>Chmod</code>), рекурсивный обход каталогов (<code>filepath.WalkDir</code>), ротация логов, создание временных 
+            файлов (<code>os.CreateTemp</code>) и реализация собственных типов <code>io.Reader</code> / <code>io.Writer</code>. 
+            Все 100 упражнений от базового открытия файлов до уровня Senior BigTech.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-val">100 из 100</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">os & io.Copy</span><span class="stat-lbl">Kernel Zero-Copy I/O</span></div>
+            <div class="stat-item"><span class="stat-val">bufio Engine</span><span class="stat-lbl">Scanner & Buffered Writer</span></div>
+            <div class="stat-item"><span class="stat-val">Binary & Gob</span><span class="stat-lbl">Fixed Struct Serialization</span></div>
+        </div>
+    </section>
+    """)
+    section_groups_ch18 = [
+        (1, 33, "Раздел 1: Базовые Операции, Чтение/Запись, Буферизация и Права Доступа", "os.ReadFile, os.OpenFile (O_APPEND, O_CREATE), bufio.Scanner, бинарные int32, filepath.Walk, binary.Write/Read, os.Chmod, defer file.Close, os.CreateTemp, io.Copy, блочное копирование, fast.txt, слияние файлов, CSV, Stdout, os.Stat/os.IsNotExist, рекурсивное копирование, file.WriteString, ReadLines, os.Remove, замена слов, bufio.NewWriter.Flush, SHA256, file.Seek, os.Mkdir"),
+        (34, 66, "Раздел 2: Анализ Текста, Каталоги, Бинарные Форматы и JSON Стриминг", "Утилита wc (ScanLines/ScanWords/ScanRunes), AppendToFile, Grep, os.MkdirAll, FileMode.Perm, fmt.Fprintf, метаданные Stat, os.ReadDir, режимы O_RDONLY/O_RDWR/O_TRUNC, io.ReadAll, ручной WalkTree, create test.txt, path/filepath (Join, Dir, Base, Ext), encoding/gob, чтение raw bytes io.EOF, sed замена с бэкапом, определение MIME по magic bytes, стриминг article.txt, io.CopyBuffer, json.NewEncoder/NewDecoder, ASCII байты, экспорт структур в CSV, теги json, поиск .txt"),
+        (67, 100, "Раздел 3: Продвинутый I/O, Файловые СУБД, Ротация Логов и Кастомный Reader/Writer", "Заголовок PNG, os.RemoveAll, chmod 0755 скрипта, бинарный int32 LittleEndian, нарезка/сборка чанков (Split/Merge), CRUD файловая БД на Seek, bufio.NewReader 1024B, утилита tail на SeekEnd, io.Copy direct, пословный Scanner, мониторинг Polling, расчет размера папки, gob срезы структур, точный буфер Stat.Size, 10 000 строк Flush, ротация логов, модификация O_RDWR, data/logs/2026/07, PlayerData binary, подсчет ERROR, io.MultiWriter, CLI утилита с флагами, MemoryBuffer ReadWriter")
+    ]
+    ex_dict = {e["num"]: e for e in ch18_exercises}
+    for start_n, end_n, title, desc in section_groups_ch18:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 18 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили файловый ввод-вывод и потоковую обработку данных в Go: потоковое сканирование bufio.Scanner, высокоскоростную запись bufio.Writer, низкоуровневые системные вызовы Seek/Stat/Chmod, бинарную сериализацию binary/gob/json и проектирование кастомных io.Reader / io.Writer.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter17.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 17 (Обработка ошибок)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 19: Конкурентность и горутины (Concurrency) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '18. Работа с файлами (100/100)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1160,6 +1220,7 @@ if __name__ == '__main__':
         ('chapter15.html', build_chapter15_html),
         ('chapter16.html', build_chapter16_html),
         ('chapter17.html', build_chapter17_html),
+        ('chapter18.html', build_chapter18_html),
     ]
     
     for filename, builder_fn in pages:
