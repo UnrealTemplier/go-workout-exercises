@@ -33,6 +33,9 @@ with open('builder/chapter6_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter7_data.json', 'r', encoding='utf-8') as f:
     ch7_exercises = json.load(f)
 
+with open('builder/chapter8_data.json', 'r', encoding='utf-8') as f:
+    ch8_exercises = json.load(f)
+
 def format_text(txt):
     if not txt:
         return ""
@@ -107,110 +110,32 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
         num = ch['num']
         title = ch['title']
         
-        if num == 1:
-            if active_chapter_num == 1:
+        status_map = {
+            1: ('index.html', '91/91'),
+            2: ('chapter2.html', '25/25'),
+            3: ('chapter3.html', '65/65'),
+            4: ('chapter4.html', '111/111'),
+            5: ('chapter5.html', '64/64'),
+            6: ('chapter6.html', '64/64'),
+            7: ('chapter7.html', '32/32'),
+            8: ('chapter8.html', '74/74'),
+        }
+        
+        if num in status_map:
+            href, badge = status_map[num]
+            if active_chapter_num == num:
                 sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
-                sb.append(f'      <span><strong>1. {title}</strong></span>')
-                sb.append('      <span class="status-badge done">91/91</span>')
+                sb.append(f'      <span><strong>{num}. {title}</strong></span>')
+                sb.append(f'      <span class="status-badge done">{badge}</span>')
                 sb.append('    </a>')
                 sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
                 for ex in current_exercises:
                     sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
                 sb.append('    </div>')
             else:
-                sb.append('    <a href="index.html" class="chapter-link">')
-                sb.append(f'      <span>1. {title}</span>')
-                sb.append('      <span class="status-badge done">91/91</span>')
-                sb.append('    </a>')
-        elif num == 2:
-            if active_chapter_num == 2:
-                sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
-                sb.append(f'      <span><strong>2. {title}</strong></span>')
-                sb.append('      <span class="status-badge done">25/25</span>')
-                sb.append('    </a>')
-                sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
-                for ex in current_exercises:
-                    sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
-                sb.append('    </div>')
-            else:
-                sb.append('    <a href="chapter2.html" class="chapter-link">')
-                sb.append(f'      <span>2. {title}</span>')
-                sb.append('      <span class="status-badge done">25/25</span>')
-                sb.append('    </a>')
-        elif num == 3:
-            if active_chapter_num == 3:
-                sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
-                sb.append(f'      <span><strong>3. {title}</strong></span>')
-                sb.append('      <span class="status-badge done">65/65</span>')
-                sb.append('    </a>')
-                sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
-                for ex in current_exercises:
-                    sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
-                sb.append('    </div>')
-            else:
-                sb.append('    <a href="chapter3.html" class="chapter-link">')
-                sb.append(f'      <span>3. {title}</span>')
-                sb.append('      <span class="status-badge done">65/65</span>')
-                sb.append('    </a>')
-        elif num == 4:
-            if active_chapter_num == 4:
-                sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
-                sb.append(f'      <span><strong>4. {title}</strong></span>')
-                sb.append('      <span class="status-badge done">111/111</span>')
-                sb.append('    </a>')
-                sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
-                for ex in current_exercises:
-                    sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
-                sb.append('    </div>')
-            else:
-                sb.append('    <a href="chapter4.html" class="chapter-link">')
-                sb.append(f'      <span>4. {title}</span>')
-                sb.append('      <span class="status-badge done">111/111</span>')
-                sb.append('    </a>')
-        elif num == 5:
-            if active_chapter_num == 5:
-                sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
-                sb.append(f'      <span><strong>5. {title}</strong></span>')
-                sb.append('      <span class="status-badge done">64/64</span>')
-                sb.append('    </a>')
-                sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
-                for ex in current_exercises:
-                    sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
-                sb.append('    </div>')
-            else:
-                sb.append('    <a href="chapter5.html" class="chapter-link">')
-                sb.append(f'      <span>5. {title}</span>')
-                sb.append('      <span class="status-badge done">64/64</span>')
-                sb.append('    </a>')
-        elif num == 6:
-            if active_chapter_num == 6:
-                sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
-                sb.append(f'      <span><strong>6. {title}</strong></span>')
-                sb.append('      <span class="status-badge done">64/64</span>')
-                sb.append('    </a>')
-                sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
-                for ex in current_exercises:
-                    sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
-                sb.append('    </div>')
-            else:
-                sb.append('    <a href="chapter6.html" class="chapter-link">')
-                sb.append(f'      <span>6. {title}</span>')
-                sb.append('      <span class="status-badge done">64/64</span>')
-                sb.append('    </a>')
-        elif num == 7:
-            if active_chapter_num == 7:
-                sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
-                sb.append(f'      <span><strong>7. {title}</strong></span>')
-                sb.append('      <span class="status-badge done">32/32</span>')
-                sb.append('    </a>')
-                sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
-                for ex in current_exercises:
-                    sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
-                sb.append('    </div>')
-            else:
-                sb.append('    <a href="chapter7.html" class="chapter-link">')
-                sb.append(f'      <span>7. {title}</span>')
-                sb.append('      <span class="status-badge done">32/32</span>')
+                sb.append(f'    <a href="{href}" class="chapter-link">')
+                sb.append(f'      <span>{num}. {title}</span>')
+                sb.append(f'      <span class="status-badge done">{badge}</span>')
                 sb.append('    </a>')
         else:
             sb.append('    <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">')
@@ -298,7 +223,6 @@ def build_chapter1_html(chapters):
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
     
-    # Hero Section
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">🚀 Модуль 01 • Старт карьеры Go-разработчика</div>
@@ -373,7 +297,6 @@ def build_chapter2_html(chapters):
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
     
-    # Hero Section
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">⚡ Модуль 02 • Компиляция и Сборка Проектов</div>
@@ -453,7 +376,6 @@ def build_chapter3_html(chapters):
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
     
-    # Hero Section
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">💻 Модуль 03 • Консольный Ввод-Вывод и fmt</div>
@@ -533,7 +455,6 @@ def build_chapter4_html(chapters):
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
     
-    # Hero Section
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">🧬 Модуль 04 • Система Типов и Память Go</div>
@@ -614,7 +535,6 @@ def build_chapter5_html(chapters):
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
     
-    # Hero Section
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">🔀 Модуль 05 • Управляющие Конструкции и Ветвления</div>
@@ -694,7 +614,6 @@ def build_chapter6_html(chapters):
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
     
-    # Hero Section
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">🔄 Модуль 06 • Итерации и Управление Потоком</div>
@@ -774,7 +693,6 @@ def build_chapter7_html(chapters):
     content_parts = []
     content_parts.append('<main class="main-content" id="top">')
     
-    # Hero Section
     content_parts.append("""
     <section class="hero-section">
         <div class="hero-tag">📦 Модуль 07 • Структуры Данных и Память</div>
@@ -837,14 +755,94 @@ def build_chapter7_html(chapters):
             <a href="chapter6.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
                 ← Вернуться к Главе 06 (Циклы)
             </a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
-                Глава 08: Срезы (Slices) (Скоро) →
+            <a href="chapter8.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
+                Перейти к Главе 08: Срезы (Slices) →
             </a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '07. Массивы (32/32)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter8_html(chapters):
+    sidebar_html = build_sidebar(chapters, active_chapter_num=8, current_exercises=ch8_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">🍰 Модуль 08 • Динамические Коллекции</div>
+        <h1 class="hero-title">Срезы (Slices) и Модель Памяти в Go</h1>
+        <p class="hero-desc">
+            Фундаментальное инженерное погружение в ключевую структуру данных языка Go — Срезы (Slices): 
+            детальный разбор дескриптора SliceHeader (Data pointer, Len, Cap), механика геометрического роста append 
+            (стратегия Go 1.18+), защита данных через трехзначный слайсинг s[low:high:max], предотвращение критических утечек памяти 
+            при слайсинге больших массивов, алгоритмы фильтрации и разворота In-Place (Zero Allocations), 
+            реализация стека LIFO, тонкости сериализации nil vs empty срезов в REST/JSON API и новейший пакет slices (Go 1.21+). 
+            Все 74 упражнения курса решены шаг за шагом.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-val">74 из 74</span>
+                <span class="stat-lbl">Упражнений решено</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">SliceHeader</span>
+                <span class="stat-lbl">Data, Len, Cap (24B)</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">Zero Alloc</span>
+                <span class="stat-lbl">In-Place & Pre-alloc</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">slices (1.21+)</span>
+                <span class="stat-lbl">Generics & Fast Sort</span>
+            </div>
+        </div>
+    </section>
+    """)
+    
+    section_groups_ch8 = [
+        (1, 18, "Раздел 1: Базовый Массив, Создание Срезов, make, Рост append, Трехзначный Слайсинг и InspectSlice", "len/cap свойства, [...] vs [], окно в массив arr[1:4], make(3, 5), несравнимость [2][]int, стратегия роста append, вариативный append..., ре-слайсинг s[:cap], cap(s[1:3]), паника out of bounds, s[low:high:max], расщепление связи, безопасный copy, срез строк, утилита InspectSlice и трюк удаления"),
+        (19, 37, "Раздел 2: Ловушка Реаллокации в Функциях, Вставка со Сдвигом, Overlapping Copy, Nil vs Empty в JSON и s[:0]", "make([]int, 3), потеря мутаций в функциях, пошаговый append, вставка append+copy, InsertAt, безопасный сдвиг memmove, Filter, срез из [6]int, матрица [][]int, nil vs empty срез в REST API, переиспользование s[:0], возврат copy и запись вне len"),
+        (38, 56, "Раздел 3: Копирование Структур, DeleteByIndex, Смена Адресов &s[0], In-Place Filter, Fast Delete и Утечки Памяти", "for range по []Person, сохранение underlying array при удалении, коллизии s2[0]=99, отслеживание смены &s[0], идиоматичный возврат срезов, FilterInPlace за 0B, FastDelete за O(1), ChunkSlice, memory leak 1MB и предвыделение make(0, 100)"),
+        (57, 74, "Раздел 4: In-Place Reverse, Пакет slices (Go 1.21+), LIFO Стек, Multi-Sort, Jagged Arrays и Треугольные Срезы", "Разворот на месте, утечка в суффиксе big, s[:0] в sync.Pool, IsSorted на cmp.Ordered, стек Push/Pop, sort.Slice, O(1) vs O(N) удаление, современный пакет slices, Union без дубликатов, slices.DeleteFunc, сбор указателей []*int, slices.SortFunc и треугольный срез")
+    ]
+    
+    ex_dict = {e["num"]: e for e in ch8_exercises}
+    for start_n, end_n, title, desc in section_groups_ch8:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div>
+                <h2>{title}</h2>
+                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
+            </div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+                
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 08 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили срезы, устройство дескриптора SliceHeader, стратегию роста, In-Place фильтрацию и управление памятью.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
+                ← Вернуться к Главе 07 (Массивы)
+            </a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
+                Глава 09: Хэш-таблицы (Maps) (Скоро) →
+            </a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '08. Слайсы (74/74)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -890,3 +888,9 @@ if __name__ == '__main__':
     with open('/home/ut/work/go-workout/chapter7.html', 'w', encoding='utf-8') as f:
         f.write(ch7_html)
     print(f"Chapter 7 written to /home/ut/work/go-workout/chapter7.html ({os.path.getsize('/home/ut/work/go-workout/chapter7.html')} bytes)")
+
+    # 8. Build chapter8.html (Chapter 8)
+    ch8_html = build_chapter8_html(chapters)
+    with open('/home/ut/work/go-workout/chapter8.html', 'w', encoding='utf-8') as f:
+        f.write(ch8_html)
+    print(f"Chapter 8 written to /home/ut/work/go-workout/chapter8.html ({os.path.getsize('/home/ut/work/go-workout/chapter8.html')} bytes)")
