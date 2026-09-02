@@ -27,6 +27,9 @@ with open('builder/chapter4_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter5_data.json', 'r', encoding='utf-8') as f:
     ch5_exercises = json.load(f)
 
+with open('builder/chapter6_data.json', 'r', encoding='utf-8') as f:
+    ch6_exercises = json.load(f)
+
 def format_text(txt):
     if not txt:
         return ""
@@ -174,6 +177,21 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             else:
                 sb.append('    <a href="chapter5.html" class="chapter-link">')
                 sb.append(f'      <span>5. {title}</span>')
+                sb.append('      <span class="status-badge done">64/64</span>')
+                sb.append('    </a>')
+        elif num == 6:
+            if active_chapter_num == 6:
+                sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
+                sb.append(f'      <span><strong>6. {title}</strong></span>')
+                sb.append('      <span class="status-badge done">64/64</span>')
+                sb.append('    </a>')
+                sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
+                for ex in current_exercises:
+                    sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
+                sb.append('    </div>')
+            else:
+                sb.append('    <a href="chapter6.html" class="chapter-link">')
+                sb.append(f'      <span>6. {title}</span>')
                 sb.append('      <span class="status-badge done">64/64</span>')
                 sb.append('    </a>')
         else:
@@ -643,14 +661,94 @@ def build_chapter5_html(chapters):
             <a href="chapter4.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
                 ← Вернуться к Главе 04 (Базовые типы)
             </a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
-                Глава 06: Циклы for (Скоро) →
+            <a href="chapter6.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">
+                Перейти к Главе 06: Циклы (for, for-range) →
             </a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '05. Условные конструкции (64/64)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter6_html(chapters):
+    sidebar_html = build_sidebar(chapters, active_chapter_num=6, current_exercises=ch6_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Hero Section
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">🔄 Модуль 06 • Итерации и Управление Потоком</div>
+        <h1 class="hero-title">Циклы (for, for-range) и Итераторы в Go</h1>
+        <p class="hero-desc">
+            Исчерпывающий практический курс по итерационным алгоритмам и низкоуровневой механике циклов в Go: 
+            трехкомпонентный for, while-стиль, бесконечные REPL-серверы, алгоритмы Two Pointers (In-place $O(1)$), 
+            глубокий разбор бага замыкания Loop Variables до и после Go 1.22+, обход каналов `chan`, предотвращение утечек 
+            дескрипторов в `defer`, UTF-8 смещения рун, недетерминированная итерация по `map`, стек скобок и промышленная пагинация (Batching). 
+            Все 64 упражнения курса решены шаг за шагом.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-val">64 из 64</span>
+                <span class="stat-lbl">Упражнений решено</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">for range</span>
+                <span class="stat-lbl">Slices, Maps, Chans</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">Go 1.22+</span>
+                <span class="stat-lbl">Loopvar Per-Iteration Scope</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">Two Pointers</span>
+                <span class="stat-lbl">In-place $O(1)$ Space</span>
+            </div>
+        </div>
+    </section>
+    """)
+    
+    section_groups_ch6 = [
+        (1, 16, "Раздел 1: Простые Числа, Two Pointers, 2D Слайсы, Шаг i+=2, Степени Двойки и Анализ Строк", "Trial division с sqrt, проверка палиндрома, угадай число, таблица 2D, трехкомпонентный for, for-while, for range по map и Unicode руны"),
+        (17, 32, "Раздел 2: Бесконечные Циклы, Таблица Умножения, Loopvar Scope в Go 1.22, Labeled Break и Ловушка Defer", "Break по exit, моноширинный %4d, for x < 100, &item указатели, for i := range, Labeled Break/Continue в матрицах, рандомизация map, UTF-8 байты и изоляция defer"),
+        (33, 48, "Раздел 3: Разворот In-Place, Локальность Break, UTF-8 Привет, Каналы chan int и Паттерн Do-While", "Три способа суммирования, two pointers reverse, игнорирование параметров, break Label синтаксис, побайтовый vs посимвольный обход, ловушка копирования v*=10, range по каналу и do-while"),
+        (49, 64, "Раздел 4: Копирование Структур []Person, Массив [5]int vs Срез, Мутация Map/Slice, Скобки и Пагинация", "Копирование структур по значению, array vs slice в range, UTF-8 Привет Go!, поиск первого вхождения, мутация map во время range, опасность append в range, безопасный nil-range, стек скобок и батчинг по 10 штук")
+    ]
+    
+    ex_dict = {e["num"]: e for e in ch6_exercises}
+    for start_n, end_n, title, desc in section_groups_ch6:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div>
+                <h2>{title}</h2>
+                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div>
+            </div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+                
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 06 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили все виды циклов, Two Pointers, каналы, Labeled-метки и эффективную работу с памятью в Go.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">
+                ← Вернуться к Главе 05 (Условные конструкции)
+            </a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">
+                Глава 07: Функции (Скоро) →
+            </a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '06. Циклы (64/64)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -684,3 +782,9 @@ if __name__ == '__main__':
     with open('/home/ut/work/go-workout/chapter5.html', 'w', encoding='utf-8') as f:
         f.write(ch5_html)
     print(f"Chapter 5 written to /home/ut/work/go-workout/chapter5.html ({os.path.getsize('/home/ut/work/go-workout/chapter5.html')} bytes)")
+
+    # 6. Build chapter6.html (Chapter 6)
+    ch6_html = build_chapter6_html(chapters)
+    with open('/home/ut/work/go-workout/chapter6.html', 'w', encoding='utf-8') as f:
+        f.write(ch6_html)
+    print(f"Chapter 6 written to /home/ut/work/go-workout/chapter6.html ({os.path.getsize('/home/ut/work/go-workout/chapter6.html')} bytes)")

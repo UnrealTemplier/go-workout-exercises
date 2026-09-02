@@ -22,13 +22,17 @@ with open('builder/chapter4_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter5_data.json', 'r', encoding='utf-8') as f:
     ch5_exercises = json.load(f)
 
+with open('builder/chapter6_data.json', 'r', encoding='utf-8') as f:
+    ch6_exercises = json.load(f)
+
 all_ch1 = s1 + s2 + s3 + s4 + s5 + s6
 all_ch2 = ch2_exercises
 all_ch3 = ch3_exercises
 all_ch4 = ch4_exercises
 all_ch5 = ch5_exercises
+all_ch6 = ch6_exercises
 
-total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5)
+total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6)
 
 print("=== ТЕХНИЧЕСКИЙ АУДИТ УЧЕБНИКА GO ===")
 print(f"Глава 1: {len(all_ch1)} упражнений")
@@ -36,6 +40,7 @@ print(f"Глава 2: {len(all_ch2)} упражнений")
 print(f"Глава 3: {len(all_ch3)} упражнений")
 print(f"Глава 4: {len(all_ch4)} упражнений")
 print(f"Глава 5: {len(all_ch5)} упражнений")
+print(f"Глава 6: {len(all_ch6)} упражнений")
 print(f"Всего упражнений в учебнике: {total_ex}")
 
 issues = []
@@ -89,6 +94,8 @@ for ex in all_ch4:
     check_exercise(4, ex)
 for ex in all_ch5:
     check_exercise(5, ex)
+for ex in all_ch6:
+    check_exercise(6, ex)
 
 # Check HTML files and anchors
 html_files = [
@@ -96,7 +103,8 @@ html_files = [
     ('chapter2.html', 2, len(all_ch2)),
     ('chapter3.html', 3, len(all_ch3)),
     ('chapter4.html', 4, len(all_ch4)),
-    ('chapter5.html', 5, len(all_ch5))
+    ('chapter5.html', 5, len(all_ch5)),
+    ('chapter6.html', 6, len(all_ch6))
 ]
 
 for fname, ch_num, count in html_files:
@@ -121,4 +129,4 @@ if issues:
         print("  •", iss)
     exit(1)
 else:
-    print(f"\n✅ ИДЕАЛЬНО: Все {total_ex} упражнений в 5 главах успешно прошли синтаксический, структурный и HTML-аудит!")
+    print(f"\n✅ ИДЕАЛЬНО: Все {total_ex} упражнений в 6 главах успешно прошли синтаксический, структурный и HTML-аудит!")
