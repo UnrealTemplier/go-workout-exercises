@@ -43,6 +43,9 @@ with open('builder/chapter11_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter12_data.json', 'r', encoding='utf-8') as f:
     ch12_exercises = json.load(f)
 
+with open('builder/chapter13_data.json', 'r', encoding='utf-8') as f:
+    ch13_exercises = json.load(f)
+
 all_ch1 = s1 + s2 + s3 + s4 + s5 + s6
 all_ch2 = ch2_exercises
 all_ch3 = ch3_exercises
@@ -55,8 +58,9 @@ all_ch9 = ch9_exercises
 all_ch10 = ch10_exercises
 all_ch11 = ch11_exercises
 all_ch12 = ch12_exercises
+all_ch13 = ch13_exercises
 
-total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11) + len(all_ch12)
+total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11) + len(all_ch12) + len(all_ch13)
 
 print("=== ТЕХНИЧЕСКИЙ АУДИТ УЧЕБНИКА GO ===")
 print(f"Глава 1:  {len(all_ch1)} упражнений")
@@ -71,6 +75,7 @@ print(f"Глава 9:  {len(all_ch9)} упражнений")
 print(f"Глава 10: {len(all_ch10)} упражнений")
 print(f"Глава 11: {len(all_ch11)} упражнений")
 print(f"Глава 12: {len(all_ch12)} упражнений")
+print(f"Глава 13: {len(all_ch13)} упражнений")
 print(f"Всего упражнений в учебнике: {total_ex}")
 
 issues = []
@@ -97,7 +102,7 @@ def check_exercise(ch_num, ex):
             issues.append(f"[Глава {ch_num} Упр {num}] Пустой блок кода {i} ({fname})")
             
         if lang == 'go' and 'package main' in code:
-            if 'ОШИБКА:' in code or 'redeclared' in code or '// ОШИБКА' in code or 'undefined: ' in code or 'invalid operation' in code or 'cannot use' in code or 'invalid map key' in code or 'cannot take' in code or 'badMap' in code:
+            if 'ОШИБКА:' in code or 'redeclared' in code or '// ОШИБКА' in code or 'undefined: ' in code or 'invalid operation' in code or 'cannot use' in code or 'invalid map key' in code or 'cannot take' in code or 'badMap' in code or 'cannot assign to struct field in map' in code:
                 continue
             if 'import "C"' in code or 'some-domain.com' in code or 'github.com/myuser' in code or 'mycompany' in code or 'v2' in code:
                 continue
@@ -137,6 +142,8 @@ for ex in all_ch11:
     check_exercise(11, ex)
 for ex in all_ch12:
     check_exercise(12, ex)
+for ex in all_ch13:
+    check_exercise(13, ex)
 
 # Check HTML files and anchors
 html_files = [
@@ -152,6 +159,7 @@ html_files = [
     ('chapter10.html', 10, len(all_ch10)),
     ('chapter11.html', 11, len(all_ch11)),
     ('chapter12.html', 12, len(all_ch12)),
+    ('chapter13.html', 13, len(all_ch13)),
 ]
 
 for fname, ch_num, count in html_files:
@@ -176,4 +184,4 @@ if issues:
         print("  •", iss)
     exit(1)
 else:
-    print(f"\n✅ ИДЕАЛЬНО: Все {total_ex} упражнений в 12 главах успешно прошли синтаксический, структурный и HTML-аудит!")
+    print(f"\n✅ ИДЕАЛЬНО: Все {total_ex} упражнений в 13 главах успешно прошли синтаксический, структурный и HTML-аудит!")

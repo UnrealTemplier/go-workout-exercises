@@ -1,0 +1,1564 @@
+[
+  {
+    "num": 1,
+    "title": "Объявление базовой структуры User и способы инициализации (именованный vs позиционный)",
+    "task": "Базовая структура: Объяви структуру User с полями Name (строка) и Age (число). Инициализируй её 1) с указанием имен полей, 2) без указания имен полей (строго по порядку).",
+    "theory": "\n**Структуры (Structs) в Go:**\n- Структура — это составной пользовательский тип данных, объединяющий именованные поля;\n- **Именованная инициализация (`User{Name: \"Иван\", Age: 30}`):** промышленный стандарт Go. Порядок полей не важен, неинициализированные поля получают Zero Values, устойчива к добавлению новых полей;\n- **Позиционная инициализация (`User{\"Иван\", 30}`):** требует строгого порядка и указания ВСЕХ полей (хрупкая, ломается при изменении структуры).\n",
+    "step_by_step": "\n1. Объявляем `type User struct { Name string; Age int }`.\n2. Создаем `u1` с именованными полями.\n3. Создаем `u2` позиционным литералом.\n4. Выводим экземпляры через `fmt.Printf(\"%+v\n\")`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tName string\n\tAge  int\n}\n\nfunc main() {\n\t// 1. Именованная инициализация (рекомендуемый промышленный стандарт):\n\tu1 := User{\n\t\tName: \"Иван\",\n\t\tAge:  30,\n\t}\n\n\t// 2. Позиционная инициализация (строго по порядку всех полей):\n\tu2 := User{\"Ольга\", 25}\n\n\tfmt.Printf(\"u1 (именованный): %+v\\n\", u1)\n\tfmt.Printf(\"u2 (позиционный): %+v\\n\", u2)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# u1 (именованный): {Name:Иван Age:30}\n# u2 (позиционный): {Name:Ольга Age:25}"
+      }
+    ],
+    "under_the_hood": "\nСтруктура `User` размещается в памяти как непрерывный блок из 24 байт (16 байт строка `Name` + 8 байт число `Age`).\n",
+    "pitfalls": "\n- Использование позиционной инициализации в публичных библиотеках: добавление любого поля в структуру ломает код всех пользователей библиотеки!\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему линтеры (`golangci-lint`, `exhaustive`) запрещают позиционную инициализацию структур в production-коде?»\n**Ответ:** Потому что позиционная инициализация хрупка к рефакторингу (добавление поля ломает компиляцию, а перестановка полей одного типа `string, string` приводит к скрытым багам подстановки данных).\n"
+  },
+  {
+    "num": 2,
+    "title": "Инкапсуляция неэкспортируемых полей и публичные методы доступа (Getters/Setters)",
+    "task": "Создай структуру в отдельном пакете с неэкспортируемыми полями (имена с маленькой буквы). Попробуй обратиться к полям из main — получи ошибку компиляции. Напиши экспортируемые getter/setter методы.",
+    "theory": "\n**Инкапсуляция и видимость в Go:**\n- В Go нет ключевых слов `private/public/protected`;\n- Видимость определяется первой буквой идентификатора: заглавная буква (`Name`) — экспортируемое поле (Public), строчная (`age`) — неэкспортируемое (Private для пакета);\n- Доступ для чтения и записи с валидацией реализуется через методы `Getter` и `Setter`.\n",
+    "step_by_step": "\n1. Создаем структуру с приватными полями `name string`, `age int`.\n2. Пишем конструктор `NewAccount(name string, age int) *Account`.\n3. Пишем методы `Age() int` (геттер) и `SetAge(age int) error` (сеттер с валидацией).\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype Account struct {\n\tname string // Неэкспортируемое поле (private)\n\tage  int    // Неэкспортируемое поле (private)\n}\n\nfunc NewAccount(name string, age int) (*Account, error) {\n\tif age < 0 {\n\t\treturn nil, errors.New(\"возраст не может быть отрицательным\")\n\t}\n\treturn &Account{name: name, age: age}, nil\n}\n\n// Геттер для age (в Go идиоматично называть Age(), а не GetAge()):\nfunc (a *Account) Age() int {\n\treturn a.age\n}\n\n// Сеттер с валидацией инвариантов:\nfunc (a *Account) SetAge(age int) error {\n\tif age < 0 {\n\t\treturn errors.New(\"недопустимый возраст\")\n\t}\n\ta.age = age\n\treturn nil\n}\n\nfunc main() {\n\tacc, err := NewAccount(\"Алексей\", 28)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Printf(\"Текущий возраст: %d лет\\n\", acc.Age())\n\n\tif err := acc.SetAge(29); err != nil {\n\t\tfmt.Println(\"Ошибка:\", err)\n\t}\n\n\tfmt.Printf(\"Обновленный возраст: %d лет\\n\", acc.Age())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Текущий возраст: 28 лет\n# Обновленный возраст: 29 лет"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор проверяет границы пакета на этапе синтаксического анализа (Type Checking) и запрещает доступ к `acc.age` вне определяющего пакета.\n",
+    "pitfalls": "\n- Именование геттеров в стиле Java `GetAge()`: в Go принято называть геттер просто по имени поля `Age()`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go не рекомендуется писать тривиальные геттеры/сеттеры для всех полей подряд?»\n**Ответ:** Если поле не требует валидации и потокобезопасности, в Go принято делать его просто экспортируемым `Age int` (Keep It Simple).\n"
+  },
+  {
+    "num": 3,
+    "title": "Анонимные структуры (Anonymous Structs) для локальных DTO и конфигураций",
+    "task": "Анонимная структура: Создай структуру прямо в main без объявления типа (cfg := struct{ Host string }{ Host: \"localhost\" }). Отлично подходит для временных данных или тестов.",
+    "theory": "\n**Анонимные структуры (Anonymous / Inline Structs):**\n- Объявляются по месту без создания именованного типа `type ... struct`;\n- Идеальны для табличных юнит-тестов (Table-Driven Tests), парсинга разовых JSON-ответов и локальных DTO;\n- Не засоряют область видимости пакета.\n",
+    "step_by_step": "\n1. Создаем анонимную структуру `cfg := struct{ Host string; Port int }{...}`.\n2. Выводим поля.\n3. Демонстрируем вложенный срез анонимных структур.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\t// Анонимная структура конфигурации прямо в теле функции:\n\tcfg := struct {\n\t\tHost string\n\t\tPort int\n\t\tTLS  bool\n\t}{\n\t\tHost: \"api.company.internal\",\n\t\tPort: 8443,\n\t\tTLS:  true,\n\t}\n\n\tfmt.Printf(\"Конфигурация сервера: %s:%d (TLS=%t)\\n\", cfg.Host, cfg.Port, cfg.TLS)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Конфигурация сервера: api.company.internal:8443 (TLS=true)"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор генерирует анонимный тип с внутренним именем и рассчитывает смещение полей в локальном фрейме.\n",
+    "pitfalls": "\n- Переиспользование сложных анонимных структур в сигнатурах публичных функций (ухудшает читаемость кода).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли сравнить две переменные анонимных структур через `==`?»\n**Ответ:** ДА, если они имеют идентичный набор полей с одинаковыми именами и типами в том же порядке, и все поля являются сравнимыми (comparable).\n"
+  },
+  {
+    "num": 4,
+    "title": "Метод с указателем-получателем (Pointer Receiver): func (p *Person) Birthday()",
+    "task": "Напиши метод с pointer receiver: func (p *Person) Birthday(). Увеличь возраст на 1. Покажи, что оригинал изменился. Объясни, когда использовать pointer receiver.",
+    "theory": "\n**Pointer Receiver `(p *Person)`:**\n- Получает указатель на оригинальную структуру в памяти;\n- **Когда использовать:**\n  1. Метод должен модифицировать поля структуры (мутатор);\n  2. Структура тяжелая ($> 64$ байт), и нужно избежать копирования;\n  3. Структура содержит `sync.Mutex` (мьютексы нельзя копировать!).\n",
+    "step_by_step": "\n1. Создаем структуру `Person{Name string, Age int}`.\n2. Пишем метод `(p *Person) Birthday()`.\n3. Вызываем метод и проверяем мутацию.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n\tName string\n\tAge  int\n}\n\nfunc (p *Person) Birthday() {\n\tif p != nil {\n\t\tp.Age++ // Мутирует оригинальный объект в памяти!\n\t}\n}\n\nfunc main() {\n\tdev := Person{Name: \"Дмитрий\", Age: 25}\n\tfmt.Printf(\"До дня рождения:    %+v\\n\", dev)\n\n\t// Вызов метода автоматически берет адрес (&dev).Birthday():\n\tdev.Birthday()\n\n\tfmt.Printf(\"После дня рождения: %+v (ВОЗРАСТ УВЕЛИЧЕН!)\\n\", dev)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До дня рождения:    {Name:Дмитрий Age:25}\n# После дня рождения: {Name:Дмитрий Age:26} (ВОЗРАСТ УВЕЛИЧЕН!)"
+      }
+    ],
+    "under_the_hood": "\nПри вызове `dev.Birthday()` компилятор Go подставляет `(&dev).Birthday()`, передавая 8-байтный адрес в регистр CPU.\n",
+    "pitfalls": "\n- Смешивание Value Receiver и Pointer Receiver для методов одного типа: идиоматичный Go требует консистентности (если один метод требует `*T`, делайте все методы `*T`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что произойдет, если вызвать метод `dev.Birthday()` на `dev`, которая не является указателем?»\n**Ответ:** Компилятор Go автоматически возьмет адрес `&dev`, если переменная адресуема (Addressable).\n"
+  },
+  {
+    "num": 5,
+    "title": "Указатели на структуры: создание u := &User{} и автоматическое разыменование полей",
+    "task": "Указатели на структуры: Создай указатель u := &User{}. Измени его поле: u.Name = \"Ivan\". (В Go не нужно писать (*u).Name или u->Name, компилятор сам разыменовывает указатель на структуру).",
+    "theory": "\n**Синтаксический сахар разыменования структур в Go:**\n- В C++ для указателей используется стрелочка `u->Name`;\n- В Go компилятор определяет, что `u` — это указатель `*User`, и автоматически транслирует `u.Name` в `(*u).Name`.\n",
+    "step_by_step": "\n1. Создаем `u := &User{Name: \"Старт\", Age: 18}`.\n2. Меняем поле `u.Name = \"Ivan\"`.\n3. Печатаем результат.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tName string\n\tAge  int\n}\n\nfunc main() {\n\tu := &User{\n\t\tName: \"Аноним\",\n\t\tAge:  18,\n\t}\n\n\t// Прямой доступ к полям через точку без оператора ->:\n\tu.Name = \"Ivan\"\n\tu.Age = 22\n\n\tfmt.Printf(\"Обновленный User: %+v (тип: %T, адрес: %p)\\n\", *u, u, u)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Обновленный User: {Name:Ivan Age:22} (тип: *main.User, адрес: 0xc000010060)"
+      }
+    ],
+    "under_the_hood": "\nИнструкция процессора `MOVQ (u), RAX; MOVQ $str, (RAX)`.\n",
+    "pitfalls": "\n- Обращение `u.Name`, когда `u == nil` (паника `runtime error: nil pointer dereference`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какова стоимость автоматического разыменования `u.Name`?»\n**Ответ:** Нулевая на этапе выполнения — смещение поля вычисляется на этапе компиляции.\n"
+  },
+  {
+    "num": 6,
+    "title": "Сравнение передачи структуры: AgePerson(p Person) по значению vs AgePersonPtr(p *Person) по указателю",
+    "task": "Напиши функцию AgePerson(p Person) (value) и AgePersonPtr(p *Person) (pointer). Вызови обе с одним и тем же Person. Покажи разницу. Объясни \"copy vs reference\" на уровне структур.",
+    "theory": "\nСравнение изоляции стека и мутаций по указателю на уровне структур.\n",
+    "step_by_step": "\n1. Пишем `AgePerson(p Person)`.\n2. Пишем `AgePersonPtr(p *Person)`.\n3. Сравниваем результаты в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n\tName string\n\tAge  int\n}\n\nfunc AgePerson(p Person) {\n\tp.Age += 10 // Изменяет локальную копию\n}\n\nfunc AgePersonPtr(p *Person) {\n\tif p != nil {\n\t\tp.Age += 10 // Изменяет оригинал в памяти\n\t}\n}\n\nfunc main() {\n\tp := Person{Name: \"Максим\", Age: 20}\n\n\tAgePerson(p)\n\tfmt.Printf(\"1. После AgePerson (Value):   %+v (копия, возраст 20)\\n\", p)\n\n\tAgePersonPtr(&p)\n\tfmt.Printf(\"2. После AgePersonPtr (Ptr):  %+v (оригинал, возраст 30)\\n\", p)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. После AgePerson (Value):   {Name:Максим Age:20} (копия, возраст 20)\n# 2. После AgePersonPtr (Ptr):  {Name:Максим Age:30} (оригинал, возраст 30)"
+      }
+    ],
+    "under_the_hood": "\n`AgePerson` копирует 24 байта на стек, а `AgePersonPtr` передает 8-байтный адрес в регистре `RAX`.\n",
+    "pitfalls": "\n- Передача структур с мьютексами по значению в функции.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему копирование структуры с `sync.Mutex` ломает синхронизацию?»\n**Ответ:** Потому что копия мьютекса получит независимое состояние блокировки, и горутины будут блокировать разные мьютексы, вызывая Data Race.\n"
+  },
+  {
+    "num": 7,
+    "title": "Метод со значением-получателем (Value Receiver): func (u User) Birthday() и потеря мутаций",
+    "task": "Метод (Value receiver): Добавь типу User метод func (u User) Birthday(). Внутри увеличь возраст на 1. Вызови метод в main и выведи юзера. Убедись, что возраст не изменился (метод работал с копией).",
+    "theory": "\nValue Receiver получает полную копию структуры в момент вызова.\n",
+    "step_by_step": "\n1. Создаем структуру `User{Name string, Age int}`.\n2. Пишем метод `(u User) Birthday()`.\n3. Убеждаемся в неизменности оригинала.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tName string\n\tAge  int\n}\n\nfunc (u User) Birthday() {\n\tu.Age++\n\tfmt.Printf(\"  Внутри метода (копия): %+v\\n\", u)\n}\n\nfunc main() {\n\tu := User{Name: \"Елена\", Age: 30}\n\tfmt.Printf(\"До вызова:             %+v\\n\", u)\n\n\tu.Birthday()\n\n\tfmt.Printf(\"После вызова в main:   %+v (НЕ ИЗМЕНИЛСЯ!)\\n\", u)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До вызова:             {Name:Елена Age:30}\n#   Внутри метода (копия): {Name:Елена Age:31}\n# После вызова в main:   {Name:Елена Age:30} (НЕ ИЗМЕНИЛСЯ!)"
+      }
+    ],
+    "under_the_hood": "\nМетод транслируется в обычную функцию `User.Birthday(u)`.\n",
+    "pitfalls": "\n- Ожидание мутации состояния от метода с Value Receiver.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Когда Value Receiver предпочтителен для методов?»\n**Ответ:** Для неизменяемых объектов (Value Objects), структур малого размера ($\\le 64$ байт), когда требуется гарантия отсутствия побочных эффектов.\n"
+  },
+  {
+    "num": 8,
+    "title": "Три способа инициализации структуры Person: позиционная, именованная и new(Person)",
+    "task": "Объяви структуру Person с полями Name string, Age int. Создай экземпляр тремя способами: позиционная инициализация, именованные поля, new(Person). Выведи все три.",
+    "theory": "\nСравнение всех базовых способов создания экземпляров.\n",
+    "step_by_step": "\n1. Создаем структуру `Person{Name string, Age int}`.\n2. Инициализируем `p1`, `p2`, `p3`.\n3. Сравниваем типы и значения.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n\tName string\n\tAge  int\n}\n\nfunc main() {\n\t// Способ 1: Позиционная инициализация (значение):\n\tp1 := Person{\"Игорь\", 20}\n\n\t// Способ 2: Именованная инициализация (значение):\n\tp2 := Person{Name: \"Анна\", Age: 22}\n\n\t// Способ 3: Через встроенную функцию new() (указатель с Zero Values):\n\tp3 := new(Person)\n\tp3.Name = \"Виктор\"\n\tp3.Age = 35\n\n\tfmt.Printf(\"1. Позиционный: %+v (%T)\\n\", p1, p1)\n\tfmt.Printf(\"2. Именованный: %+v (%T)\\n\", p2, p2)\n\tfmt.Printf(\"3. new(Person): %+v (%T)\\n\", *p3, p3)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Позиционный: {Name:Игорь Age:20} (main.Person)\n# 2. Именованный: {Name:Анна Age:22} (main.Person)\n# 3. new(Person): {Name:Виктор Age:35} (*main.Person)"
+      }
+    ],
+    "under_the_hood": "\n`p1` и `p2` создаются на стеке (если не убегают), `p3` выделяет 24 зануленных байта.\n",
+    "pitfalls": "\n- Забыть разыменовать `p3` при передаче в функции, ожидающие `Person`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какой способ создания структур является самым распространенным в Go?»\n**Ответ:** Литеральное взятие адреса `p := &Person{Name: \"...\"}`.\n"
+  },
+  {
+    "num": 9,
+    "title": "Встраивание структур (Struct Embedding) и автоматическое всплытие полей (Promoted Fields)",
+    "task": "Создай структуру Address (City, Street). Встрой (embed) её в Person: type Person struct { Address; Name string }. Покажи, что поля City и Street \"продвигаются\" (promoted): p.City работает напрямую.",
+    "theory": "\n**Композиция и встраивание вместо наследования в Go:**\n- В Go нет классического ООП-наследования (`extends`);\n- Вместо этого используется **встраивание (Embedding / Composition)**: в структуру помещается анонимное поле типа `Address`;\n- Поля и методы встроенного типа автоматически **«всплывают» (Promoted)** и становятся доступны напрямую через внешнюю структуру (`p.City` $\\equiv$ `p.Address.City`).\n",
+    "step_by_step": "\n1. Создаем структуру `type Address struct { City, Street string }`.\n2. Создаем `type Person struct { Address; Name string }`.\n3. Инициализируем и проверяем прямой доступ `p.City`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Address struct {\n\tCity   string\n\tStreet string\n}\n\ntype Person struct {\n\tAddress // Встроенная структура (анонимное поле)\n\tName    string\n}\n\nfunc main() {\n\tp := Person{\n\t\tAddress: Address{City: \"Москва\", Street: \"Тверская\"},\n\t\tName:    \"Александр\",\n\t}\n\n\t// 1. Прямой доступ к продвинутым полям (Promoted Fields):\n\tfmt.Printf(\"Сотрудник: %s, Город: %s, Улица: %s\\n\", p.Name, p.City, p.Street)\n\n\t// 2. Явный доступ через имя типа:\n\tfmt.Printf(\"Полный адрес: %s, %s\\n\", p.Address.City, p.Address.Street)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Сотрудник: Александр, Город: Москва, Улица: Тверская\n# Полный адрес: Москва, Тверская"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор разрешает селектор `p.City` в `p.Address.City` на этапе компиляции без оверхеда в рантайме.\n",
+    "pitfalls": "\n- Попытка инициализировать встроенные поля на верхнем уровне литерала `Person{City: \"...\"}` — ошибка компиляции, в литерале нужно указывать имя типа `Address: Address{...}`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Является ли встраивание структур в Go подлинным наследованием?»\n**Ответ:** НЕТ! Это синтаксический сахар над композицией (Has-A, а не Is-A). Встроенная структура не знает о внешней структуре и не имеет полиморфного `vtable`.\n"
+  },
+  {
+    "num": 10,
+    "title": "Продвижение методов (Promoted Methods) при встраивании структур и интерфейс Stringer",
+    "task": "Добавь метод String() string к Address. Покажи, что он доступен через встроенную структуру: p.String() вызывает метод встроенного поля (promoted method).",
+    "theory": "\n**Всплытие методов (Method Promotion):**\n- Все методы встроенного типа автоматически становятся методами внешней структуры;\n- Если `Address` реализует `fmt.Stringer`, то и `Person` автоматически удовлетворяет интерфейсу `fmt.Stringer`!\n",
+    "step_by_step": "\n1. Добавляем `(a Address) String() string`.\n2. Вызываем `p.String()` напрямую через `Person`.\n3. Проверяем работу `fmt.Println(p)`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Address struct {\n\tCity   string\n\tStreet string\n}\n\nfunc (a Address) String() string {\n\treturn fmt.Sprintf(\"г. %s, ул. %s\", a.City, a.Street)\n}\n\ntype Person struct {\n\tAddress\n\tName string\n}\n\nfunc main() {\n\tp := Person{\n\t\tAddress: Address{City: \"Санкт-Петербург\", Street: \"Невский проспект\"},\n\t\tName:    \"Мария\",\n\t}\n\n\t// Метод String() автоматически всплыл из Address:\n\tfmt.Printf(\"1. Вызов p.String(): %s\\n\", p.String())\n\tfmt.Printf(\"2. Печать через fmt:  %s\\n\", p)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Вызов p.String(): г. Санкт-Петербург, ул. Невский проспект\n# 2. Печать через fmt:  г. Санкт-Петербург, ул. Невский проспект"
+      }
+    ],
+    "under_the_hood": "\nТаблица методов структуры `Person` расширяется сигнатурами из `Address`.\n",
+    "pitfalls": "\n- Если `Person` определит свой собственный метод `String()`, он перекроет (Shadow) метод `Address.String()`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как вызвать оригинальный метод встроенной структуры, если он был перекрыт внешним типом?»\n**Ответ:** Вызвать явно через имя встроенного типа: `p.Address.String()`.\n"
+  },
+  {
+    "num": 11,
+    "title": "Метод с Pointer Receiver: func (u *User) Birthday() и правила модификации состояния",
+    "task": "Метод (Pointer receiver): Поменяй сигнатуру на func (u *User) Birthday(). Вызови метод снова и проверь, что оригинал изменился. Правило: хочешь менять состояние — используй указатель.",
+    "theory": "\nЗакрепление золотого правила: **Любая мутация состояния объекта требует Pointer Receiver**.\n",
+    "step_by_step": "\n1. Объявляем `type User struct { Name string; Age int }`.\n2. Пишем `(u *User) Birthday()`.\n3. Проверяем сохранение нового возраста.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tName string\n\tAge  int\n}\n\nfunc (u *User) Birthday() {\n\tif u != nil {\n\t\tu.Age++\n\t}\n}\n\nfunc main() {\n\tu := User{Name: \"Кирилл\", Age: 19}\n\tfmt.Printf(\"До вызова:    %+v\\n\", u)\n\n\tu.Birthday()\n\n\tfmt.Printf(\"После вызова: %+v (СОСТОЯНИЕ УСПЕШНО ИЗМЕНЕНО!)\\n\", u)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До вызова:    {Name:Кирилл Age:19}\n# После вызова: {Name:Кирилл Age:20} (СОСТОЯНИЕ УСПЕШНО ИЗМЕНЕНО!)"
+      }
+    ],
+    "under_the_hood": "\nПрямая запись по смещению поля `Age` в памяти.\n",
+    "pitfalls": "\n- Вызов метода на неадресуемом значении `User{...}.Birthday()` (ошибка компиляции `cannot call pointer method on literal`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `User{...}.Birthday()` не компилируется?»\n**Ответ:** Потому что литерал структуры `User{...}` является временным rvalue-значением и не имеет адреса в памяти.\n"
+  },
+  {
+    "num": 12,
+    "title": "Конфликт имен при множественном встраивании (Ambiguous Selector) и явное разрешение",
+    "task": "Создай конфликт имён при встраивании: встрой Address и WorkAddress, обе имеют City. Покажи, что p.City вызывает неоднозначность (ambiguous). Исправь через явное указание p.Address.City.",
+    "theory": "\n**Коллизии имен при композиции (Ambiguity Resolution):**\n- Если две встроенные структуры содержат одинаковое поле (например `City`), компилятор Go **не может выбрать автоматически**;\n- Попытка доступа `p.City` приводит к ошибке компиляции `ambiguous selector p.City`;\n- **Решение:** Явное обращение через тип `p.HomeAddress.City` или `p.WorkAddress.City`.\n",
+    "step_by_step": "\n1. Создаем `HomeAddress{City string}` и `WorkAddress{City string}`.\n2. Встраиваем обе структуры в `Person`.\n3. Показываем ошибку неоднозначности и правильное явное обращение.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype HomeAddress struct {\n\tCity string\n}\n\ntype WorkAddress struct {\n\tCity string\n}\n\ntype Employee struct {\n\tHomeAddress\n\tWorkAddress\n\tName string\n}\n\nfunc main() {\n\temp := Employee{\n\t\tHomeAddress: HomeAddress{City: \"Химки\"},\n\t\tWorkAddress: WorkAddress{City: \"Москва\"},\n\t\tName:        \"Денис\",\n\t}\n\n\t// ❌ ОШИБКА: fmt.Println(emp.City) -> ambiguous selector emp.City\n\n\t// ✅ ПРАВИЛЬНО: явное указание встроенной структуры:\n\tfmt.Printf(\"Сотрудник:     %s\\n\", emp.Name)\n\tfmt.Printf(\"Домашний город: %s\\n\", emp.HomeAddress.City)\n\tfmt.Printf(\"Рабочий город:  %s\\n\", emp.WorkAddress.City)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Сотрудник:     Денис\n# Домашний город: Химки\n# Рабочий город:  Москва"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор строит таблицу символов с глубиной вложения. При одинаковой глубине двух совпадающих полей генерируется ошибка неоднозначности.\n",
+    "pitfalls": "\n- Случайное появление коллизий при добавлении новых полей во встроенные сторонние структуры.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что произойдет, если внешняя структура `Employee` добавит собственное поле `City string`?»\n**Ответ:** Поле `Employee.City` имеет глубину 0 и автоматически затенит (Shadow) оба встроенных поля с глубиной 1, устранив ошибку неоднозначности!\n"
+  },
+  {
+    "num": 13,
+    "title": "Инициализация структуры Book: именованные поля, позиционные аргументы и анонимная структура",
+    "task": "Инициализация структур: Создайте структуру Book с полями Title, Author, Pages и IsElectronic. Создайте экземпляр структуры тремя путями: с именованными полями, позиционными аргументами, а также создайте анонимную структуру прямо внутри функции main.",
+    "theory": "\nЗакрепление всех вариантов создания структурных типов.\n",
+    "step_by_step": "\n1. Объявляем `type Book struct { Title, Author string; Pages int; IsElectronic bool }`.\n2. Создаем `b1` (именованный), `b2` (позиционный), `b3` (анонимная структура).\n3. Выводим результаты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Book struct {\n\tTitle        string\n\tAuthor       string\n\tPages        int\n\tIsElectronic bool\n}\n\nfunc main() {\n\t// 1. Именованные поля:\n\tb1 := Book{\n\t\tTitle:        \"The Go Programming Language\",\n\t\tAuthor:       \"Alan Donovan\",\n\t\tPages:        380,\n\t\tIsElectronic: true,\n\t}\n\n\t// 2. Позиционные аргументы:\n\tb2 := Book{\"Concurrency in Go\", \"Katherine Cox-Buday\", 240, false}\n\n\t// 3. Анонимная структура прямо в main:\n\tb3 := struct {\n\t\tTitle string\n\t\tISBN  string\n\t}{\n\t\tTitle: \"Designing Data-Intensive Applications\",\n\t\tISBN:  \"978-1449373320\",\n\t}\n\n\tfmt.Printf(\"1. Именованная: %+v\\n\", b1)\n\tfmt.Printf(\"2. Позиционная: %+v\\n\", b2)\n\tfmt.Printf(\"3. Анонимная:   %+v\\n\", b3)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Именованная: {Title:The Go Programming Language Author:Alan Donovan Pages:380 IsElectronic:true}\n# 2. Позиционная: {Title:Concurrency in Go Author:Katherine Cox-Buday Pages:240 IsElectronic:false}\n# 3. Анонимная:   {Title:Designing Data-Intensive Applications ISBN:978-1449373320}"
+      }
+    ],
+    "under_the_hood": "\nВсе поля укладываются в непрерывные структуры в стековом кадре.\n",
+    "pitfalls": "\n- Пропуск одного поля в позиционной инициализации.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каков размер структуры `Book` в памяти на 64-битной архитектуре?»\n**Ответ:** 16 (Title) + 16 (Author) + 8 (Pages) + 1 (IsElectronic) + 7 (Padding) = 48 байт.\n"
+  },
+  {
+    "num": 14,
+    "title": "Методы для пользовательских типов на базе примитивов: type MyFloat float64 и метод IsPositive()",
+    "task": "Методы для примитивов: Создай свой тип type MyFloat float64. Напиши для него метод IsPositive() bool.",
+    "theory": "\n**Методы на неструктурных типах (Methods on Any Defined Type):**\n- В Go методы можно определять на **любых типах**, объявленных в текущем пакете (кроме указателей и интерфейсов);\n- Позволяет расширять числа, строки и срезы богатым доменным поведением.\n",
+    "step_by_step": "\n1. Объявляем `type MyFloat float64`.\n2. Пишем `func (f MyFloat) IsPositive() bool`.\n3. Тестируем на положительных и отрицательных значениях.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype MyFloat float64\n\nfunc (f MyFloat) IsPositive() bool {\n\treturn f > 0\n}\n\nfunc (f MyFloat) Abs() MyFloat {\n\tif f < 0 {\n\t\treturn -f\n\t}\n\treturn f\n}\n\nfunc main() {\n\tvar val1 MyFloat = 3.14\n\tvar val2 MyFloat = -10.5\n\n\tfmt.Printf(\"val1 (%.2f): IsPositive = %t\\n\", val1, val1.IsPositive())\n\tfmt.Printf(\"val2 (%.2f): IsPositive = %t | Abs = %.2f\\n\", val2, val2.IsPositive(), val2.Abs())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# val1 (3.14): IsPositive = true\n# val2 (-10.50): IsPositive = false | Abs = 10.50"
+      }
+    ],
+    "under_the_hood": "\nМетод компилируется в обычную функцию `MyFloat.IsPositive(f float64) bool`.\n",
+    "pitfalls": "\n- Попытка объявить метод для базового типа `func (f float64) IsPositive()` (ошибка компиляции `cannot define new methods on non-local type float64`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли добавить метод к типу `time.Duration` в своем пакете?»\n**Ответ:** Напрямую к `time.Duration` нельзя (он определен в пакете `time`), но можно создать свой тип `type MyDuration time.Duration` и добавить метод к нему.\n"
+  },
+  {
+    "num": 15,
+    "title": "Паттерн Fluent Interface / Method Chaining с возвратом указателя *Person",
+    "task": "Реализуй паттерн Method chaining (fluent interface): person.SetName(\"John\").SetAge(30).String(). Каждый метод возвращает *Person.",
+    "theory": "\n**Method Chaining (Fluent Builder):**\n- Каждый метод-мутатор возвращает указатель на самого себя `return p`;\n- Позволяет выстраивать лаконичные цепочки конфигурирования объектов в одну строку.\n",
+    "step_by_step": "\n1. Создаем структуру `Person{name string, age int}`.\n2. Пишем методы `SetName(name string) *Person` и `SetAge(age int) *Person`.\n3. Пишем метод `String() string`.\n4. Вызываем цепочку методов.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n\tname string\n\tage  int\n}\n\nfunc (p *Person) SetName(name string) *Person {\n\tp.name = name\n\treturn p // Возвращаем указатель для поддержки цепочки\n}\n\nfunc (p *Person) SetAge(age int) *Person {\n\tp.age = age\n\treturn p // Возвращаем указатель для поддержки цепочки\n}\n\nfunc (p *Person) String() string {\n\treturn fmt.Sprintf(\"Профиль: %s (%d лет)\", p.name, p.age)\n}\n\nfunc main() {\n\tp := new(Person)\n\n\t// Цепочка вызовов (Fluent Interface):\n\tinfo := p.SetName(\"John\").SetAge(30).String()\n\n\tfmt.Println(info)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Профиль: John (30 лет)"
+      }
+    ],
+    "under_the_hood": "\nРегистр `RAX` с адресом объекта передается из одного вызова метода в следующий.\n",
+    "pitfalls": "\n- Вызов цепочки на `nil`-указателе без проверки.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В каких популярных Go-библиотеках применяется Fluent Interface?»\n**Ответ:** В ORM `GORM` (`db.Where(...).Order(...).Find(...)`), HTTP-клиенте `resty` и логгерах `zerolog`/`zap`.\n"
+  },
+  {
+    "num": 16,
+    "title": "Сортировка среза структур []Book по числовому полю через slices.SortFunc",
+    "task": "Объявите структуру Book с полями Title, Author, Year. Создайте слайс книг и отсортируйте по году с помощью sort.Slice.",
+    "theory": "\nСортировка коллекций структур с использованием современных дженериков `cmp.Compare` и `slices.SortFunc` (Go 1.21+).\n",
+    "step_by_step": "\n1. Создаем структуру `Book{Title, Author string, Year int}`.\n2. Создаем срез `[]Book`.\n3. Сортируем с помощью `slices.SortFunc`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"cmp\"\n\t\"fmt\"\n\t\"slices\"\n)\n\ntype Book struct {\n\tTitle  string\n\tAuthor string\n\tYear   int\n}\n\nfunc main() {\n\tbooks := []Book{\n\t\t{\"The Go Programming Language\", \"Donovan\", 2015},\n\t\t{\"Clean Code\", \"Robert Martin\", 2008},\n\t\t{\"Designing Data-Intensive Applications\", \"Kleppmann\", 2017},\n\t}\n\n\t// Современная сортировка Go 1.21+ без рефлексии:\n\tslices.SortFunc(books, func(a, b Book) int {\n\t\treturn cmp.Compare(a.Year, b.Year)\n\t})\n\n\tfmt.Println(\"Книги, отсортированные по году издания:\")\n\tfor _, b := range books {\n\t\tfmt.Printf(\"  [%d] %-38s (%s)\\n\", b.Year, b.Title, b.Author)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Книги, отсортированные по году издания:\n#   [2008] Clean Code                             (Robert Martin)\n#   [2015] The Go Programming Language            (Donovan)\n#   [2017] Designing Data-Intensive Applications  (Kleppmann)"
+      }
+    ],
+    "under_the_hood": "\n`slices.SortFunc` использует быстрый алгоритм Pattern-defeating Quicksort (pdqsort).\n",
+    "pitfalls": "\n- Использование устаревшего `sort.Slice` с рефлексией в высоконагруженном коде.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `slices.SortFunc` быстрее `sort.Slice`?»\n**Ответ:** Потому что `slices.SortFunc` типизирован дженериками и инлайнится компилятором без оверхеда на рефлексию `reflect.Swapper`.\n"
+  },
+  {
+    "num": 17,
+    "title": "Локальные анонимные структуры struct{ X, Y int } для временных вычислений",
+    "task": "Создай анонимную структуру: p := struct{ X, Y int }{10, 20}. Используй для временной структуры данных внутри функции без объявления типа.",
+    "theory": "\nИзоляция одноразовых составных данных внутри тела функции.\n",
+    "step_by_step": "\n1. Создаем точку `p := struct{ X, Y int }{10, 20}`.\n2. Вычисляем сумму координат.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tpoint := struct {\n\t\tX, Y int\n\t}{\n\t\tX: 10,\n\t\tY: 20,\n\t}\n\n\tsum := point.X + point.Y\n\tfmt.Printf(\"Точка: %+v, Сумма координат: %d\\n\", point, sum)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Точка: {X:10 Y:20}, Сумма координат: 30"
+      }
+    ],
+    "under_the_hood": "\n16 байт в локальном стековом фрейме.\n",
+    "pitfalls": "\n- Попытка использовать тип анонимной структуры как тип возврата из экспортированной функции.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Где анонимные структуры являются стандартом индустрии?»\n**Ответ:** В табличных юнит-тестах: `tt := []struct{ name string; in int; want int }{...}`.\n"
+  },
+  {
+    "num": 18,
+    "title": "Композиция: структура Employee со встроенной структурой Address без имени поля",
+    "task": "Композиция (Встраивание): Создай структуру Address (City, Street). Создай Employee, внутри которого встрой структуру Address без имени поля (просто напиши Address).",
+    "theory": "\nБазовое объявление композиции через безымянные поля.\n",
+    "step_by_step": "\n1. Объявляем `Address{City, Street string}`.\n2. Объявляем `Employee{Address; Position string}`.\n3. Инициализируем и выводим.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Address struct {\n\tCity   string\n\tStreet string\n}\n\ntype Employee struct {\n\tAddress  // Анонимное встраивание\n\tPosition string\n}\n\nfunc main() {\n\temp := Employee{\n\t\tAddress:  Address{City: \"Казань\", Street: \"Баумана\"},\n\t\tPosition: \"Senior Go Developer\",\n\t}\n\n\tfmt.Printf(\"Должность: %s | Город: %s\\n\", emp.Position, emp.City)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Должность: Senior Go Developer | Город: Казань"
+      }
+    ],
+    "under_the_hood": "\nСмещение поля `City` совпадает со смещением `Address` (0 байт).\n",
+    "pitfalls": "\n- Дублирование имен встроенных структур одного типа.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какое имя имеет анонимное поле внутри структуры?»\n**Ответ:** Имя совпадает с именем типа: `emp.Address`.\n"
+  },
+  {
+    "num": 19,
+    "title": "Фабричная функция-конструктор NewBook(...) с возвратом указателя *Book",
+    "task": "Напишите функцию-конструктор NewBook(...), которая инициализирует поля и возвращает указатель на новую структуру Book.",
+    "theory": "\nПаттерн фабричного конструктора `NewT(...) *T` в Go.\n",
+    "step_by_step": "\n1. Пишем `NewBook(title, author string, year int) *Book`.\n2. Возвращаем `&Book{...}`.\n3. Проверяем в `main()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Book struct {\n\tTitle  string\n\tAuthor string\n\tYear   int\n}\n\nfunc NewBook(title, author string, year int) *Book {\n\treturn &Book{\n\t\tTitle:  title,\n\t\tAuthor: author,\n\t\tYear:   year,\n\t}\n}\n\nfunc main() {\n\tbook := NewBook(\"1984\", \"George Orwell\", 1949)\n\tfmt.Printf(\"Создана книга: %+v (тип: %T)\\n\", *book, book)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Создана книга: {Title:1984 Author:George Orwell Year:1949} (тип: *main.Book)"
+      }
+    ],
+    "under_the_hood": "\nEscape-анализ компилятора перемещает созданную структуру в кучу.\n",
+    "pitfalls": "\n- Игнорирование валидации входных аргументов в конструкторе.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Когда конструктор должен возвращать `(*T, error)`, а когда просто `*T`?»\n**Ответ:** Если создание объекта может завершиться ошибкой валидации или подключения к ресурсу — возвращают `(*T, error)`. Если создание гарантированно валидно — просто `*T`.\n"
+  },
+  {
+    "num": 20,
+    "title": "Сравнение структур через ==: правила Comparable и запрет срезов/мап в полях",
+    "task": "Сравни две структуры через ==. Покажи, что структуры comparable, если все поля comparable. Добавь поле-слайс — получи ошибку компиляции при сравнении.",
+    "theory": "\n**Правила сравнимости структур (Struct Comparability):**\n- Структура является **сравнимой (Comparable)** тогда и только тогда, когда **каждое из её полей сравнимо**;\n- Сравнимые типы: примитивы (`int`, `string`, `bool`), массивы `[3]int`, указатели, каналы;\n- Несравнимые типы: срезы `[]T`, мапы `map[K]V`, функции `func()`;\n- Наличие поля-среза делает всю структуру несравнимой через оператор `==`.\n",
+    "step_by_step": "\n1. Создаем сравнимую структуру `Point{X, Y int}`.\n2. Сравниваем `p1 == p2`.\n3. Создаем структуру со срезом `DataHolder{Tags []string}` и показываем, почему `==` запрещен.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Point struct {\n\tX, Y int\n}\n\ntype NonComparable struct {\n\tID   int\n\tTags []string // Срез делает структуру несравнимой через ==\n}\n\nfunc main() {\n\tp1 := Point{X: 10, Y: 20}\n\tp2 := Point{X: 10, Y: 20}\n\tp3 := Point{X: 5, Y: 20}\n\n\tfmt.Printf(\"p1 == p2: %t (поля идентичны)\\n\", p1 == p2)\n\tfmt.Printf(\"p1 == p3: %t (поля различаются)\\n\", p1 == p3)\n\n\tnc1 := NonComparable{ID: 1, Tags: []string{\"go\"}}\n\tnc2 := NonComparable{ID: 1, Tags: []string{\"go\"}}\n\t_ = nc1\n\t_ = nc2\n\t// ❌ ОШИБКА КОМПИЛЯЦИИ: fmt.Println(nc1 == nc2)\n\t// invalid operation: nc1 == nc2 (struct containing []string cannot be compared)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# p1 == p2: true (поля идентичны)\n# p1 == p3: false (поля различаются)"
+      }
+    ],
+    "under_the_hood": "\nДля сравнимых структур компилятор генерирует побайтовое сравнение полей через `CMPQ` или `memcmp`.\n",
+    "pitfalls": "\n- Использование структуры с полем-срезом в качестве ключа мапы `map[NonComparable]int` (ошибка компиляции).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как сравнить две структуры, содержащие срезы или мапы?»\n**Ответ:** Использовать `reflect.DeepEqual(s1, s2)` или библиотеку `github.com/google/go-cmp/cmp`.\n"
+  },
+  {
+    "num": 21,
+    "title": "Инициализация структуры по именам полей User{ID: 1, Name: 'Alice'}",
+    "task": "Инициализируй структуру по именам полей User{ID: 1, Name: \"Alice\"}.",
+    "theory": "\nБазовое упражнение на именованный литерал.\n",
+    "step_by_step": "\n1. Объявляем структуру `User{ID int, Name string}`.\n2. Создаем экземпляр.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tID   int\n\tName string\n}\n\nfunc main() {\n\tu := User{ID: 1, Name: \"Alice\"}\n\tfmt.Printf(\"User: ID=%d, Name=%s\\n\", u.ID, u.Name)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# User: ID=1, Name=Alice"
+      }
+    ],
+    "under_the_hood": "\nЗапись полей в стек.\n",
+    "pitfalls": "\n- Опечатки в именах полей.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Обязательно ли указывать все поля при именованной инициализации?»\n**Ответ:** Нет, пропущенные поля автоматически инициализируются нулевыми значениями (Zero Values).\n"
+  },
+  {
+    "num": 22,
+    "title": "Вложенные структуры (Nested Structs) и вложенная литеральная инициализация",
+    "task": "Вложенные структуры: Создайте структуру Address (город, улица) и структуру Company (название, адрес). Инициализируйте компанию вместе с её адресом в одном литерале.",
+    "theory": "\n**Вложенные именованные структуры:**\n- Поле `Addr Address` имеет явное имя (не анонимное встраивание);\n- Доступ осуществляется строго через имя поля `comp.Addr.City`.\n",
+    "step_by_step": "\n1. Объявляем `type Address struct { City, Street string }`.\n2. Объявляем `type Company struct { Name string; Addr Address }`.\n3. Инициализируем вложенным литералом.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Address struct {\n\tCity   string\n\tStreet string\n}\n\ntype Company struct {\n\tName string\n\tAddr Address // Вложенное именованное поле\n}\n\nfunc main() {\n\tcomp := Company{\n\t\tName: \"Яндекс\",\n\t\tAddr: Address{\n\t\t\tCity:   \"Москва\",\n\t\t\tStreet: \"Льва Толстого\",\n\t\t},\n\t}\n\n\tfmt.Printf(\"Компания: %s | Город: %s, Улица: %s\\n\",\n\t\tcomp.Name, comp.Addr.City, comp.Addr.Street)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Компания: Яндекс | Город: Москва, Улица: Льва Толстого"
+      }
+    ],
+    "under_the_hood": "\nПамять структуры `Address` встраивается непосредственно в тело структуры `Company`.\n",
+    "pitfalls": "\n- Попытка вызвать `comp.City` (ошибка компиляции `comp.City undefined`, так как поле `Addr` именованное).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В чем отличие именованного вложенного поля `Addr Address` от встраивания `Address`?»\n**Ответ:** Именованное поле не продвигает поля и методы на верхний уровень, требуя явного обращения `comp.Addr.City`, что предотвращает коллизии имен.\n"
+  },
+  {
+    "num": 23,
+    "title": "Продвинутые поля (Promoted Fields): доступ emp.City вместо emp.Address.City",
+    "task": "Promoted fields (Продвинутые поля): Доступ к встроенным полям. Попробуй обратиться к городу работника напрямую: emp.City, вместо emp.Address.City. Это магия композиции в Go.",
+    "theory": "\nЗакрепление прямого доступа к полям встроенной структуры.\n",
+    "step_by_step": "\n1. Создаем структуру с анонимным `Address`.\n2. Читаем и меняем `emp.City`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Address struct {\n\tCity string\n}\n\ntype Employee struct {\n\tAddress\n\tName string\n}\n\nfunc main() {\n\temp := Employee{\n\t\tAddress: Address{City: \"Новосибирск\"},\n\t\tName:    \"Роман\",\n\t}\n\n\t// Прямой доступ к всплывшему полю:\n\tfmt.Printf(\"Сотрудник: %s, Город: %s\\n\", emp.Name, emp.City)\n\n\t// Прямая мутация всплывшего поля:\n\temp.City = \"Иннополис\"\n\tfmt.Printf(\"После переезда: Город: %s\\n\", emp.City)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Сотрудник: Роман, Город: Новосибирск\n# После переезда: Город: Иннополис"
+      }
+    ],
+    "under_the_hood": "\nПрямая запись по смещению 0 байт.\n",
+    "pitfalls": "\n- Конфликт при совпадении имен.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли использовать `emp.Address.City` при наличии всплытия?»\n**Ответ:** Да, полная форма записи всегда доступна.\n"
+  },
+  {
+    "num": 24,
+    "title": "Вложенные структуры и явное обращение к вложенным полям emp.Address.City",
+    "task": "Вложенные структуры: Address внутри Employee. Выведите вложенное поле напрямую (emp.Address.City).",
+    "theory": "\nЯвное обращение через квалифицированное имя.\n",
+    "step_by_step": "\n1. Инициализируем структуру.\n2. Выводим поле через полную цепочку `emp.Address.City`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Address struct {\n\tCity   string\n\tStreet string\n}\n\ntype Employee struct {\n\tAddress\n\tSalary int\n}\n\nfunc main() {\n\temp := Employee{\n\t\tAddress: Address{City: \"Екатеринбург\", Street: \"Ленина\"},\n\t\tSalary:  200000,\n\t}\n\n\tfmt.Printf(\"Явный доступ: Город=%s, Улица=%s, Зарплата=%d\\n\",\n\t\temp.Address.City, emp.Address.Street, emp.Salary)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Явный доступ: Город=Екатеринбург, Улица=Ленина, Зарплата=200000"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор использует одинаковое смещение.\n",
+    "pitfalls": "\n- Опечатка в пути селектора.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Различаются ли ассемблерные инструкции для `emp.City` и `emp.Address.City`?»\n**Ответ:** НЕТ, генерируется абсолютно одинаковый бинарный код.\n"
+  },
+  {
+    "num": 25,
+    "title": "Теги структур struct tags: опция omitempty в json и сериализация нулевых значений",
+    "task": "Используй теги структур: json:\"name,omitempty\". Сериализуй структуру в JSON через encoding/json. Покажи, как omitempty пропускает zero value.",
+    "theory": "\n**Теги структур (Struct Tags) и `omitempty`:**\n- Теги — это строковые метаданные, прикрепленные к полям структуры в обратных кавычках: `` `json:\"key,omitempty\"` ``;\n- Опция `omitempty` указывает кодировщику `encoding/json` **пропускать поле в JSON**, если оно имеет Zero Value (`0`, `\"\"`, `false`, `nil`);\n- Исключение: для примитивов `int` значение `0` тоже считается нулевым и опускается (чтобы отправить `0`, используют указатель `*int`).\n",
+    "step_by_step": "\n1. Создаем структуру `UserProfile` с тегами `json:\"...\"`.\n2. Создаем экземпляр с заполненными и нулевыми полями.\n3. Сериализуем через `json.MarshalIndent`.\n4. Анализируем сгенерированный JSON.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n)\n\ntype UserProfile struct {\n\tID        int      `json:\"id\"`\n\tNickname  string   `json:\"nickname\"`\n\tBio       string   `json:\"bio,omitempty\"`       // Пропускается, если \"\"\n\tFollowers int      `json:\"followers,omitempty\"` // Пропускается, если 0\n\tInterests []string `json:\"interests,omitempty\"` // Пропускается, если nil или []\n}\n\nfunc main() {\n\tu := UserProfile{\n\t\tID:       101,\n\t\tNickname: \"gopher_master\",\n\t\tBio:      \"\", // Zero value -> будет исключено из JSON благодаря omitempty\n\t}\n\n\tjsonData, err := json.MarshalIndent(u, \"\", \"  \")\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Println(string(jsonData))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# {\n#   \"id\": 101,\n#   \"nickname\": \"gopher_master\"\n# }"
+      }
+    ],
+    "under_the_hood": "\nПакет `encoding/json` парсит теги через `reflect.StructTag.Get(\"json\")` при инициализации энкодера.\n",
+    "pitfalls": "\n- Написание тега с пробелами `` `json: \"name\"` `` — синтаксическая ошибка формата тегов! Пробелы внутри тегов запрещены.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как с помощью тегов принудительно исключить приватное или секретное поле из JSON?»\n**Ответ:** Использовать тег `` `json:\"-\"` ``.\n"
+  },
+  {
+    "num": 26,
+    "title": "Множественные теги структур (json, db, yaml) и чтение через reflect.StructTag",
+    "task": "Создай структуру с тегами для нескольких кодировок: json:\"user_name\" db:\"username\". Прочитай теги через reflect.TypeOf().Field().Tag и выведи.",
+    "theory": "\n**Спецификация мульти-тегов в Go:**\n- Теги могут содержать несколько пар `ключ:\"значение\"`, разделенных пробелом: `` `json:\"user_id\" db:\"id\" validate:\"required\"` ``;\n- Метод `tag.Get(\"db\")` возвращает значение для конкретного ключа.\n",
+    "step_by_step": "\n1. Создаем структуру `AccountEntity` с тегами `json`, `db`, `validate`.\n2. Получаем тип через `reflect.TypeOf(AccountEntity{})`.\n3. Итерируемся по полям и считываем теги.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"reflect\"\n)\n\ntype AccountEntity struct {\n\tID       int64  `json:\"id\" db:\"account_id\" validate:\"required\"`\n\tUsername string `json:\"user_name\" db:\"username\" validate:\"min=3\"`\n}\n\nfunc main() {\n\tt := reflect.TypeOf(AccountEntity{})\n\n\tfmt.Printf(\"Инспекция метаданных структуры %s:\\n\", t.Name())\n\tfor i := 0; i < t.NumField(); i++ {\n\t\tfield := t.Field(i)\n\t\tjsonTag := field.Tag.Get(\"json\")\n\t\tdbTag := field.Tag.Get(\"db\")\n\t\tvalTag := field.Tag.Get(\"validate\")\n\n\t\tfmt.Printf(\"  Поле %-10s | json: %-12s | db: %-12s | val: %s\\n\",\n\t\t\tfield.Name, jsonTag, dbTag, valTag)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Инспекция метаданных структуры AccountEntity:\n#   Поле ID         | json: id           | db: account_id   | val: required\n#   Поле Username   | json: user_name    | db: username     | val: min=3"
+      }
+    ],
+    "under_the_hood": "\nТеги хранятся в бинарном мета-описании типов сегмента `.rodata`.\n",
+    "pitfalls": "\n- Использование метода `tag.Lookup(\"key\")`, когда требуется отличить отсутствие тега от пустого значения.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как работают популярные валидаторы структур вроде `go-playground/validator`?»\n**Ответ:** Они парсят теги `` `validate:\"...\"` `` через рефлексию при старте приложения, кэшируют правила валидации и проверяют значения полей структур в рантайме.\n"
+  },
+  {
+    "num": 27,
+    "title": "Создание и заполнение анонимной структуры прямо в main",
+    "task": "Создай анонимную структуру прямо внутри функции main, запиши в неё данные и выведи.",
+    "theory": "\nБыстрое создание локальных контейнеров данных.\n",
+    "step_by_step": "\n1. Создаем переменную с анонимным структурным типом.\n2. Заполняем поля `Metric`, `Value`, `Timestamp`.\n3. Печатаем.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\ttelemetry := struct {\n\t\tMetric    string\n\t\tValue     float64\n\t\tTimestamp time.Time\n\t}{\n\t\tMetric:    \"cpu_temp_celsius\",\n\t\tValue:     48.5,\n\t\tTimestamp: time.Now(),\n\t}\n\n\tfmt.Printf(\"Метрика: %s = %.1f°C (зафиксировано в %s)\\n\",\n\t\ttelemetry.Metric, telemetry.Value, telemetry.Timestamp.Format(\"15:04:05\"))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Метрика: cpu_temp_celsius = 48.5°C (зафиксировано в 15:04:05)"
+      }
+    ],
+    "under_the_hood": "\nЛокальный стек функции `main`.\n",
+    "pitfalls": "\n- Попытка создать метод для анонимной структуры (методы разрешены только для именованных типов).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли объявить анонимную структуру с методами?»\n**Ответ:** НЕТ, в Go методы объявляются только для именованных типов (`type ...`). Но анонимная структура может содержать поля-функции `struct { Action func() }`.\n"
+  },
+  {
+    "num": 28,
+    "title": "Затенение полей (Field Shadowing): приоритет собственного поля структуры над встроенным",
+    "task": "Затенение полей: Добавь в Employee поле City. Какое поле выведет emp.City — из работника или из его адреса? Проверь на практике.",
+    "theory": "\n**Правило затенения (Shadowing Rule) в иерархии композиции:**\n- Поле с меньшей глубиной вложенности (глубина 0) **всегда затеняет** поле с большей глубиной (глубина 1);\n- Выражение `emp.City` обращается к `Employee.City` (глубина 0);\n- Доступ к встроенному полю сохраняется через явное квалифицированное имя `emp.Address.City` (глубина 1).\n",
+    "step_by_step": "\n1. Создаем `Address{City string}`.\n2. Создаем `Employee{Address; City string; Name string}`.\n3. Сравниваем `emp.City` и `emp.Address.City`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Address struct {\n\tCity string // Глубина 1\n}\n\ntype Employee struct {\n\tAddress        // Встроенная структура\n\tCity    string // Глубина 0 (ЗАТЕНЯЕТ Address.City!)\n\tName    string\n}\n\nfunc main() {\n\temp := Employee{\n\t\tAddress: Address{City: \"Санкт-Петербург (Адрес прописки)\"},\n\t\tCity:    \"Москва (Фактический офис)\",\n\t\tName:    \"Виктор\",\n\t}\n\n\t// 1. Прямой доступ вернет поле нулевой глубины (Employee.City):\n\tfmt.Printf(\"1. emp.City:         %s\\n\", emp.City)\n\n\t// 2. Доступ к затененному полю:\n\tfmt.Printf(\"2. emp.Address.City: %s\\n\", emp.Address.City)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. emp.City:         Москва (Фактический офис)\n# 2. emp.Address.City: Санкт-Петербург (Адрес прописки)"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор ищет селектор в таблице символов сверху вниз по уровням вложенности.\n",
+    "pitfalls": "\n- Неожиданная перезапись встроенного поля при добавлении одноименного поля во внешнюю структуру.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что произойдет, если внешняя структура затенит метод встроенного типа?»\n**Ответ:** Метод внешней структуры будет вызван по умолчанию при `obj.Method()`, а метод встроенного типа останется доступен через `obj.EmbeddedType.Method()`.\n"
+  },
+  {
+    "num": 29,
+    "title": "Фабричный конструктор NewPerson(name, age) *Person: зачем возвращать указатель",
+    "task": "Напиши конструктор NewPerson(name string, age int) *Person. Объясни, зачем возвращать указатель (чтобы избежать копирования и позволить методам с pointer receiver).",
+    "theory": "\n**Преимущества возврата `*T` из конструкторов:**\n1. **Исключение копирования:** передача объекта другим функциям занимает всего 8 байт (адрес);\n2. **Поддержка Pointer Receivers:** экземпляр сразу готов к вызову методов-мутаторов;\n3. **Единый источник истины (Single Source of Truth):** все компоненты ссылаются на один и тот же объект в памяти.\n",
+    "step_by_step": "\n1. Пишем `NewPerson(name string, age int) *Person`.\n2. Возвращаем `&Person{name: name, age: age}`.\n3. Проверяем работу.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n\tName string\n\tAge  int\n}\n\nfunc NewPerson(name string, age int) *Person {\n\treturn &Person{\n\t\tName: name,\n\t\tAge:  age,\n\t}\n}\n\nfunc main() {\n\tp := NewPerson(\"Тимофей\", 30)\n\tfmt.Printf(\"Создан объект: %+v (адрес: %p)\\n\", *p, p)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Создан объект: {Name:Тимофей Age:30} (адрес: 0xc000018030)"
+      }
+    ],
+    "under_the_hood": "\n`runtime.newobject` аллоцирует структуру в куче.\n",
+    "pitfalls": "\n- Создание конструктора для крошечных неизменяемых структур (например `Point{X, Y int}`), где возврат по значению `Point` быстрее и эффективнее для GC.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В каких случаях конструктор должен возвращать значение `T`, а не указатель `*T`?»\n**Ответ:** Для маленьких неизменяемых структур-значений (Value Objects), таких как `time.Date(...) time.Time` или `image.Point`.\n"
+  },
+  {
+    "num": 30,
+    "title": "Встраивание структур: композиция Person в Driver и всплытие полей (Field Promotion)",
+    "task": "Встраивание структур (Embedding): Создайте структуру Person с полями Name и Age. Создайте структуру Driver, встроив в неё Person анонимно (без указания имени поля), и добавив поле LicenseCategory. Продемонстрируйте прямой доступ к полю Name через экземпляр Driver (эффект \"всплытия\" полей / field promotion).",
+    "theory": "\nМоделирование ролевой модели через композицию типов.\n",
+    "step_by_step": "\n1. Создаем `type Person struct { Name string; Age int }`.\n2. Создаем `type Driver struct { Person; LicenseCategory string }`.\n3. Демонстрируем `driver.Name` и `driver.LicenseCategory`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Person struct {\n\tName string\n\tAge  int\n}\n\ntype Driver struct {\n\tPerson          // Встраивание (Field Promotion)\n\tLicenseCategory string\n}\n\nfunc main() {\n\td := Driver{\n\t\tPerson:          Person{Name: \"Владимир\", Age: 40},\n\t\tLicenseCategory: \"B, C\",\n\t}\n\n\t// Прямой доступ к всплывшим полям Person:\n\tfmt.Printf(\"Водитель: %s (%d лет) | Категория прав: %s\\n\",\n\t\td.Name, d.Age, d.LicenseCategory)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Водитель: Владимир (40 лет) | Категория прав: B, C"
+      }
+    ],
+    "under_the_hood": "\nПоля `Name` и `Age` лежат в начале структуры `Driver`.\n",
+    "pitfalls": "\n- Попытка приведения типов `var p Person = d` (ошибка компиляции — `Driver` НЕ является подтипом `Person`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли передать `Driver` в функцию, принимающую `Person`?»\n**Ответ:** НЕТ! В Go нет полиморфизма подтипов для структур. Нужно либо передавать `d.Person`, либо использовать интерфейсы.\n"
+  },
+  {
+    "num": 31,
+    "title": "Универсальная инспекция структуры PrintStructFields(v any) через рефлексию (reflect.Type)",
+    "task": "Напиши функцию PrintStructFields(v interface{}), которая через рефлексию (reflect.Type) отображает все поля структуры: имя, тип, теги, экспортированность.",
+    "theory": "\n**Рефлексивный анализ структур (`reflect.Type`):**\n- Метод `t.NumField()` возвращает количество полей;\n- Метод `t.Field(i)` возвращает дескриптор `reflect.StructField` (`Name`, `Type`, `Tag`, `PkgPath`, `IsExported()`).\n",
+    "step_by_step": "\n1. Пишем `PrintStructFields(v any)`.\n2. Извлекаем `reflect.TypeOf(v)`.\n3. Итерируемся по полям и форматируем отчет.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"reflect\"\n)\n\ntype ServerConfig struct {\n\tHost      string `json:\"host\"`\n\tPort      int    `json:\"port\"`\n\tsecretKey string // Приватное поле\n}\n\nfunc PrintStructFields(v any) {\n\tt := reflect.TypeOf(v)\n\tif t.Kind() == reflect.Pointer {\n\t\tt = t.Elem()\n\t}\n\tif t.Kind() != reflect.Struct {\n\t\tfmt.Println(\"Ошибка: ожидалась структура\")\n\t\treturn\n\t}\n\n\tfmt.Printf(\"Структура: %s (%d полей)\\n\", t.Name(), t.NumField())\n\tfor i := 0; i < t.NumField(); i++ {\n\t\tf := t.Field(i)\n\t\tfmt.Printf(\"  #%d: Имя=%-12s | Тип=%-8s | Экспорт=%-5t | Тег=%q\\n\",\n\t\t\ti+1, f.Name, f.Type.String(), f.IsExported(), f.Tag)\n\t}\n}\n\nfunc main() {\n\tcfg := ServerConfig{Host: \"0.0.0.0\", Port: 8080, secretKey: \"jwt-token\"}\n\tPrintStructFields(cfg)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Структура: ServerConfig (3 полей)\n#   #1: Имя=Host         | Тип=string   | Экспорт=true  | Тег=\"json:\\\"host\\\"\"\n#   #2: Имя=Port         | Тип=int      | Экспорт=true  | Тег=\"json:\\\"port\\\"\"\n#   #3: Имя=secretKey    | Тип=string   | Экспорт=false | Тег=\"\" "
+      }
+    ],
+    "under_the_hood": "\nМетаданные типов считываются из таблиц runtime type info.\n",
+    "pitfalls": "\n- Вызов `t.Field(i)` без проверки `t.Kind() == reflect.Struct` (приведет к панике).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как определить, является ли поле структуры экспортируемым (Public) через рефлексию?»\n**Ответ:** Через метод `f.IsExported()` (начиная с Go 1.17) или проверку `f.PkgPath == \"\"`.\n"
+  },
+  {
+    "num": 32,
+    "title": "Продвижение методов: структура Car с анонимным полем Engine и прямой вызов car.Start()",
+    "task": "Анонимные поля: структура Car с анонимным полем Engine. Покажите продвижение методов.",
+    "theory": "\nАвтоматическое всплытие методов встроенных структур.\n",
+    "step_by_step": "\n1. Создаем `type Engine struct { Horsepower int }`.\n2. Пишем метод `(e Engine) Start()`.\n3. Создаем `type Car struct { Engine; Model string }`.\n4. Вызываем `car.Start()` напрямую.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Engine struct {\n\tHorsepower int\n}\n\nfunc (e Engine) Start() {\n\tfmt.Printf(\"  Двигатель запущен! Мощность: %d л.с.\\n\", e.Horsepower)\n}\n\ntype Car struct {\n\tEngine\n\tModel string\n}\n\nfunc main() {\n\tc := Car{\n\t\tEngine: Engine{Horsepower: 249},\n\t\tModel:  \"Audi A6\",\n\t}\n\n\tfmt.Printf(\"Автомобиль: %s\\n\", c.Model)\n\n\t// Метод Start() всплыл из встроенной структуры Engine:\n\tc.Start()\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Автомобиль: Audi A6\n#   Двигатель запущен! Мощность: 249 л.с."
+      }
+    ],
+    "under_the_hood": "\nСвязывание метода происходит статически во время компиляции.\n",
+    "pitfalls": "\n- Предположение, будто метод `Start()` знает о модели `Car` (встроенный метод видит только свой собственный `Engine`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Может ли метод встроенного `Engine` обратиться к полю `Car.Model`?»\n**Ответ:** НЕТ! Встроенная структура полностью автономна и не имеет ссылки на внешнюю структуру-обертку.\n"
+  },
+  {
+    "num": 33,
+    "title": "Прямой вызов методов встроенного объекта Engine через объект Car",
+    "task": "Создайте структуру Car, которая содержит встроенную (embedded) структуру Engine. Вызовите методы Engine напрямую через объект Car.",
+    "theory": "\nЗакрепление синтаксиса вызова методов через композицию.\n",
+    "step_by_step": "\n1. Добавляем методы `Start()` и `Stop()`.\n2. Вызываем оба метода через экземпляр `Car`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Engine struct {\n\tRPM int\n}\n\nfunc (e *Engine) Accelerate() {\n\te.RPM += 1000\n\tfmt.Printf(\"Обороты двигателя: %d RPM\\n\", e.RPM)\n}\n\ntype Car struct {\n\tEngine\n\tBrand string\n}\n\nfunc main() {\n\tcar := Car{Brand: \"BMW\"}\n\tcar.Accelerate()\n\tcar.Accelerate()\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Обороты двигателя: 1000 RPM\n# Обороты двигателя: 2000 RPM"
+      }
+    ],
+    "under_the_hood": "\nМетод с pointer receiver мутирует встроенное поле `RPM`.\n",
+    "pitfalls": "\n- Вызов метода на неадресуемой структуре.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как работает неявное взятие адреса при `car.Accelerate()`?»\n**Ответ:** Компилятор подставляет `(&car.Engine).Accelerate()`.\n"
+  },
+  {
+    "num": 34,
+    "title": "Каверзный кейс: срез указателей []*Point и пакетная мутация координат в цикле",
+    "task": "[Каверзный кейс]: Создай структуру Point с полями X, Y int. В цикле создай срез указателей на структуры []*Point. Изменяй поля через указатели.",
+    "theory": "\n**Коллекции указателей на структуры `[]*T`:**\n- Каждый элемент среза — это 8-байтный указатель на отдельную структуру в куче;\n- Позволяет изменять состояние объектов без их копирования и синхронизировать изменения между несколькими коллекциями.\n",
+    "step_by_step": "\n1. Создаем `type Point struct { X, Y int }`.\n2. Создаем срез `[]*Point`.\n3. В цикле модифицируем координаты `pt.X += 10`.\n4. Печатаем результаты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Point struct {\n\tX, Y int\n}\n\nfunc main() {\n\tvar points []*Point\n\n\t// Инициализируем срез указателей:\n\tfor i := 1; i <= 3; i++ {\n\t\tpoints = append(points, &Point{X: i * 10, Y: i * 20})\n\t}\n\n\tfmt.Println(\"До модификации:\")\n\tfor idx, pt := range points {\n\t\tfmt.Printf(\"  points[%d] = %+v (адрес: %p)\\n\", idx, *pt, pt)\n\t}\n\n\t// Модифицируем поля через указатели:\n\tfor _, pt := range points {\n\t\tpt.X += 5\n\t\tpt.Y += 5\n\t}\n\n\tfmt.Println(\"После модификации:\")\n\tfor idx, pt := range points {\n\t\tfmt.Printf(\"  points[%d] = %+v\\n\", idx, *pt)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# До модификации:\n#   points[0] = {X:10 Y:20} (адрес: 0xc000018030)\n#   points[1] = {X:20 Y:40} (адрес: 0xc000018038)\n#   points[2] = {X:30 Y:60} (адрес: 0xc000018040)\n# После модификации:\n#   points[0] = {X:15 Y:25}\n#   points[1] = {X:25 Y:45}\n#   points[2] = {X:35 Y:65}"
+      }
+    ],
+    "under_the_hood": "\nСрез хранит массив 8-байтных указателей.\n",
+    "pitfalls": "\n- Наличие `nil` среди элементов среза при разыменовании `pt.X`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В чем плюс `[]Point` перед `[]*Point` для сборщика мусора?»\n**Ответ:** `[]Point` хранит все данные в одном непрерывном блоке памяти (1 аллокация, 0 указателей для сканирования GC). `[]*Point` создает $N+1$ аллокаций и нагружает GC сканированием каждого указателя.\n"
+  },
+  {
+    "num": 35,
+    "title": "Выравнивание полей в памяти (Memory Padding & Alignment) и оптимизация размера структур",
+    "task": "Оптимизируй структуру по памяти: расположи поля от большего к меньшему (int64, int32, bool, byte). Измерь unsafe.Sizeof до и после. Покажи эффект padding/alignment.",
+    "theory": "\n**Механика Memory Alignment и Padding в Go:**\n- Процессор быстрее читает данные, выровненные по границе их собственного размера (8-байтные типы выравниваются по адресу кратному 8, 4-байтные — кратному 4);\n- Компилятор вставляет пустые байты (**Padding**), чтобы выровнять поля;\n- **Правило оптимизации:** Сортировка полей от большего к меньшему размеру (`8B -> 4B -> 2B -> 1B`) минимизирует паддинг и экономит до 50% оперативной памяти!\n",
+    "step_by_step": "\n1. Создаем `BadStruct` с чередующимися типами.\n2. Создаем `GoodStruct` с полями от большего к меньшему.\n3. Сравниваем `unsafe.Sizeof`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"unsafe\"\n)\n\n// Неоптимальный порядок полей (много пустого Padding):\ntype BadStruct struct {\n\tA bool   // 1 байт + 7 байт Padding\n\tB int64  // 8 байт\n\tC bool   // 1 байт + 7 байт Padding\n}\n\n// Оптимальный порядок полей (Padding сгруппирован):\ntype GoodStruct struct {\n\tB int64  // 8 байт\n\tA bool   // 1 байт\n\tC bool   // 1 байт + 6 байт Padding\n}\n\nfunc main() {\n\tvar bad BadStruct\n\tvar good GoodStruct\n\n\tfmt.Println(\"=== СРАВНЕНИЕ ВЫРАВНИВАНИЯ ПАМЯТИ (unsafe.Sizeof) ===\")\n\tfmt.Printf(\"1. BadStruct (неупорядоченная): %2d байт\\n\", unsafe.Sizeof(bad))\n\tfmt.Printf(\"2. GoodStruct (оптимизированная): %2d байт (ЭКОНОМИЯ 33%%!)\\n\", unsafe.Sizeof(good))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# === СРАВНЕНИЕ ВЫРАВНИВАНИЯ ПАМЯТИ (unsafe.Sizeof) ===\n# 1. BadStruct (неупорядоченная): 24 байт\n# 2. GoodStruct (оптимизированная): 16 байт (ЭКОНОМИЯ 33%!)"
+      }
+    ],
+    "under_the_hood": "\n`BadStruct` содержит 14 байт неиспользуемого пустого заполнителя (Padding) из 24 байт.\n",
+    "pitfalls": "\n- Хаотичное расположение полей в структурах, которые хранятся в миллионных срезах (приводит к перерасходу гигабайт RAM).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какой линтер автоматически проверяет и оптимизирует порядок полей в структурах Go?»\n**Ответ:** `govet` с анализатором `fieldalignment` (`golangci-lint run --enable fieldalignment`).\n"
+  },
+  {
+    "num": 36,
+    "title": "Теги структур и сериализация в JSON (json.Marshal): игнорирование приватных полей",
+    "task": "Теги структур и JSON (Marshal): Добавь к полям User теги `json:\"name\"` и `json:\"age,omitempty\"`. Используй json.Marshal из пакета encoding/json, чтобы получить JSON. Обрати внимание, что приватные поля (с маленькой буквы) в JSON не попадут.",
+    "theory": "\n**Правило видимости для сериализаторов:**\n- `encoding/json` сериализует **ТОЛЬКО экспортируемые поля** (с заглавной буквы);\n- Приватные неэкспортируемые поля игнорируются автоматически, даже если к ним приписан тег!\n",
+    "step_by_step": "\n1. Создаем `type User struct { Name string; Age int; secretToken string }`.\n2. Сериализуем в JSON.\n3. Убеждаемся в отсутствии `secretToken` в выводе.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n)\n\ntype User struct {\n\tName        string `json:\"name\"`\n\tAge         int    `json:\"age,omitempty\"`\n\tsecretToken string `json:\"token\"` // Приватное поле -> ИГНОРИРУЕТСЯ энкодером!\n}\n\nfunc main() {\n\tu := User{\n\t\tName:        \"Кирилл\",\n\t\tAge:         28,\n\t\tsecretToken: \"secret_12345\",\n\t}\n\n\tdata, err := json.Marshal(u)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Printf(\"JSON: %s\\n\", string(data))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# JSON: {\"name\":\"Кирилл\",\"age\":28}"
+      }
+    ],
+    "under_the_hood": "\nРефлексия проверяет `f.PkgPath == \"\"` перед маршалингом поля.\n",
+    "pitfalls": "\n- Удивление, почему поле `json:\"token\"` не попадает в JSON (потому что имя поля `token` написано со строчной буквы).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как отправить приватное поле в JSON без его экспорта наружу?»\n**Ответ:** Реализовать кастомный интерфейс `json.Marshaler` (`func (u User) MarshalJSON() ([]byte, error)`).\n"
+  },
+  {
+    "num": 37,
+    "title": "Потокобезопасный счетчик со встроенным sync.Mutex и всплытием методов Lock/Unlock",
+    "task": "Создай структуру с встроенным sync.Mutex. Покажи, что методы Lock()/Unlock() \"продвигаются\" и доступны напрямую. Используй для потокобезопасного инкремента счётчика.",
+    "theory": "\n**Паттерн потокобезопасной структуры со встроенным Mutex:**\n- Встраивание `sync.Mutex` в структуру продвигает методы `c.Lock()` и `c.Unlock()` на верхний уровень;\n- **Важно:** Структуры со встроенным мьютексом **ОБЯЗАНЫ передаваться исключительно по указателю `*Counter`**, чтобы избежать копирования мьютекса!\n",
+    "step_by_step": "\n1. Создаем `type SafeCounter struct { sync.Mutex; value int }`.\n2. Пишем методы `Inc()` и `Value() int`.\n3. Запускаем 100 конкурентных горутин.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n)\n\ntype SafeCounter struct {\n\tsync.Mutex // Встроенный мьютекс\n\tvalue      int\n}\n\nfunc (c *SafeCounter) Inc() {\n\tc.Lock() // Прямой вызов продвинутого метода\n\tdefer c.Unlock()\n\tc.value++\n}\n\nfunc (c *SafeCounter) Value() int {\n\tc.Lock()\n\tdefer c.Unlock()\n\treturn c.value\n}\n\nfunc main() {\n\tcounter := &SafeCounter{}\n\tvar wg sync.WaitGroup\n\n\tfor i := 0; i < 100; i++ {\n\t\twg.Add(1)\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tcounter.Inc()\n\t\t}()\n\t}\n\n\twg.Wait()\n\tfmt.Printf(\"Итоговое значение счетчика: %d (ПОЛНАЯ ПОТОКОБЕЗОПАСНОСТЬ!)\\n\", counter.Value())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run -race main.go\n# Итоговое значение счетчика: 100 (ПОЛНАЯ ПОТОКОБЕЗОПАСНОСТЬ!)"
+      }
+    ],
+    "under_the_hood": "\nАтомарная блокировка через `runtime/internal/atomic` в методе `sync.Mutex.Lock()`.\n",
+    "pitfalls": "\n- Вызов `counter := SafeCounter{}` с передачей по значению (копирование заблокированного мьютекса приведет к крашу или дедлоку).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Google Style Guide иногда рекомендуют именовать мьютекс `mu sync.Mutex` вместо анонимного встраивания?»\n**Ответ:** Чтобы не раскрывать методы `Lock()` и `Unlock()` наружу в публичный API структуры (инкапсуляция механизма синхронизации внутри методов).\n"
+  },
+  {
+    "num": 38,
+    "title": "Двусторонняя сериализация/десериализация структуры User (json.Marshal и json.Unmarshal)",
+    "task": "Теги структур и JSON: Создайте структуру User с тегами для JSON (например, json:\"user_id\"). Напишите код, который сериализует структуру в JSON-строку с помощью json.Marshal, и код, который десериализует JSON-строку обратно в структуру.",
+    "theory": "\nПолный цикл преобразования Go Struct $\\leftrightarrow$ JSON Payload.\n",
+    "step_by_step": "\n1. Создаем структуру `type UserDTO struct { UserID int, Email string }`.\n2. Сериализуем объект в строку JSON.\n3. Десериализуем строку обратно в новый экземпляр `&parsedUser`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n)\n\ntype UserDTO struct {\n\tUserID int    `json:\"user_id\"`\n\tEmail  string `json:\"email\"`\n}\n\nfunc main() {\n\toriginal := UserDTO{UserID: 777, Email: \"dev@ozon.ru\"}\n\n\t// 1. Сериализация (Marshal):\n\tbytes, err := json.Marshal(original)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Printf(\"1. JSON строка:    %s\\n\", string(bytes))\n\n\t// 2. Десериализация (Unmarshal):\n\tvar restored UserDTO\n\tif err := json.Unmarshal(bytes, &restored); err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Printf(\"2. Восстановлено:  %+v\\n\", restored)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. JSON строка:    {\"user_id\":777,\"email\":\"dev@ozon.ru\"}\n# 2. Восстановлено:  {UserID:777 Email:dev@ozon.ru}"
+      }
+    ],
+    "under_the_hood": "\n`json.Unmarshal` использует рефлексию для поиска полей с соответствующими тегами и заполняет их по указателю.\n",
+    "pitfalls": "\n- Передача значения вместо указателя `json.Unmarshal(bytes, restored)` (ошибка `json: Unmarshal(non-pointer)`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `json.Unmarshal` требует передачи указателя `&restored`?»\n**Ответ:** Потому что функции в Go не могут изменить значение переменной вызывающего кода без указателя на нее.\n"
+  },
+  {
+    "num": 39,
+    "title": "Методы PrintInfo() (Value Receiver) и UpdateYear() (Pointer Receiver): почему мутация требует указатель",
+    "task": "Добавьте к структуре метод PrintInfo() с получателем по значению (value receiver) и метод UpdateYear() с получателем по указателю (pointer receiver). Объясните, почему для изменения состояния нужен указатель.",
+    "theory": "\nРазделение методов чтения (Read-Only) и методов записи (Mutators).\n",
+    "step_by_step": "\n1. Создаем `type Car struct { Model string; Year int }`.\n2. Пишем `(c Car) PrintInfo()`.\n3. Пишем `(c *Car) UpdateYear(year int)`.\n4. Демонстрируем работу.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Car struct {\n\tModel string\n\tYear  int\n}\n\n// Value Receiver для чтения:\nfunc (c Car) PrintInfo() {\n\tfmt.Printf(\"Автомобиль: %s (%d г.в.)\\n\", c.Model, c.Year)\n}\n\n// Pointer Receiver для мутации:\nfunc (c *Car) UpdateYear(newYear int) {\n\tif c != nil {\n\t\tc.Year = newYear\n\t}\n}\n\nfunc main() {\n\tcar := Car{Model: \"Lada Vesta\", Year: 2020}\n\tcar.PrintInfo()\n\n\tcar.UpdateYear(2024)\n\tcar.PrintInfo()\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Автомобиль: Lada Vesta (2020 г.в.)\n# Автомобиль: Lada Vesta (2024 г.в.)"
+      }
+    ],
+    "under_the_hood": "\n`PrintInfo` копирует 24 байта, `UpdateYear` получает адрес памяти.\n",
+    "pitfalls": "\n- Попытка мутировать `c.Year` в `PrintInfo`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какое практическое правило выбора между Value и Pointer Receiver?»\n**Ответ:** Если хотя бы один метод изменяет состояние или структура содержит мьютекс — используйте Pointer Receiver для ВСЕХ методов типа.\n"
+  },
+  {
+    "num": 40,
+    "title": "Анонимное встраивание User в Employee и прямой доступ к emp.Name",
+    "task": "Создай структуру Employee, которая анонимно встраивает (embedding) User. Обрати внимание, что поля User доступны напрямую (например, emp.Name).",
+    "theory": "\nЗакрепление синтаксиса встраивания пользователей в доменные модели.\n",
+    "step_by_step": "\n1. Объявляем `User{ID int, Name string}`.\n2. Объявляем `Employee{User; Department string}`.\n3. Проверяем прямой доступ.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tID   int\n\tName string\n}\n\ntype Employee struct {\n\tUser\n\tDepartment string\n}\n\nfunc main() {\n\temp := Employee{\n\t\tUser:       User{ID: 101, Name: \"Татьяна\"},\n\t\tDepartment: \"Platform Engineering\",\n\t}\n\n\tfmt.Printf(\"Сотрудник: %s (ID: %d) | Отдел: %s\\n\", emp.Name, emp.ID, emp.Department)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Сотрудник: Татьяна (ID: 101) | Отдел: Platform Engineering"
+      }
+    ],
+    "under_the_hood": "\nСмещение `emp.Name` рассчитывается как `emp + 8`.\n",
+    "pitfalls": "\n- Забыть структуру `User` в литерале инициализации.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как сериализуется встроенная структура в JSON по умолчанию?»\n**Ответ:** Поля встроенной структуры сериализуются на верхний уровень JSON-объекта (Flatted JSON).\n"
+  },
+  {
+    "num": 41,
+    "title": "Десериализация json.Unmarshal: обязательная передача структуры по указателю &user",
+    "task": "JSON Unmarshal: Создай строку с JSON. Используй json.Unmarshal, чтобы распарсить её в структуру User. Не забудь передать структуру по указателю!",
+    "theory": "\nПарсинг внешних JSON-ответов в типизированные структуры.\n",
+    "step_by_step": "\n1. Создаем строку с сырыми JSON-данными.\n2. Парсим через `json.Unmarshal([]byte(raw), &user)`.\n3. Обрабатываем ошибку парсинга.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n)\n\ntype User struct {\n\tName   string `json:\"name\"`\n\tRole   string `json:\"role\"`\n\tActive bool   `json:\"active\"`\n}\n\nfunc main() {\n\trawJSON := `{\"name\":\"Михаил\",\"role\":\"Admin\",\"active\":true}`\n\n\tvar user User\n\terr := json.Unmarshal([]byte(rawJSON), &user)\n\tif err != nil {\n\t\tfmt.Println(\"Ошибка парсинга JSON:\", err)\n\t\treturn\n\t}\n\n\tfmt.Printf(\"Успешно распарсено: %+v\\n\", user)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Успешно распарсено: {Name:Михаил Role:Admin Active:true}"
+      }
+    ],
+    "under_the_hood": "\nТокенизатор JSON сопоставляет ключи и заполняет поля структуры через `reflect.Value.Set`.\n",
+    "pitfalls": "\n- Передача `json.Unmarshal(data, user)` без `&` (возвращает `json.InvalidUnmarshalError`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что произойдет, если в JSON придет поле с несовместимым типом (например число вместо строки)?»\n**Ответ:** `json.Unmarshal` вернет ошибку `*json.UnmarshalTypeError`, заполнив остальные корректные поля.\n"
+  },
+  {
+    "num": 42,
+    "title": "Встраивание интерфейса io.Reader в структуру: реализация через делегирование",
+    "task": "Создай структуру, которая встраивает интерфейс io.Reader. Объясни, что это значит: структура реализует интерфейс через делегирование встроенному полю.",
+    "theory": "\n**Встраивание интерфейсов в структуры (Interface Embedding):**\n- Структура может встраивать интерфейс `io.Reader` как анонимное поле;\n- Это означает, что структура автоматически **удовлетворяет интерфейсу `io.Reader`**;\n- Любой вызов `Read()` делегируется объекту, сохраненному во встроенном поле интерфейса;\n- Мощный паттерн для создания декораторов потоков данных (Middleware / Wrappers).\n",
+    "step_by_step": "\n1. Создаем структуру `type CountingReader struct { io.Reader; TotalBytes int64 }`.\n2. Переопределяем метод `Read(p []byte) (n int, err error)`.\n3. Подсчитываем прочитанные байты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"strings\"\n)\n\ntype CountingReader struct {\n\tio.Reader // Встроенный интерфейс\n\tBytesRead int\n}\n\nfunc (cr *CountingReader) Read(p []byte) (int, error) {\n\tn, err := cr.Reader.Read(p) // Делегирование вызова\n\tcr.BytesRead += n\n\treturn n, err\n}\n\nfunc main() {\n\tsource := strings.NewReader(\"Привет, высоконагруженный мир Go!\")\n\tcounter := &CountingReader{Reader: source}\n\n\tbuf := make([]byte, 16)\n\tfor {\n\t\tn, err := counter.Read(buf)\n\t\tif n > 0 {\n\t\t\tfmt.Printf(\"Прочитано %d байт: %q\\n\", n, string(buf[:n]))\n\t\t}\n\t\tif err == io.EOF {\n\t\t\tbreak\n\t\t}\n\t}\n\n\tfmt.Printf(\"Всего прочитано байт: %d\\n\", counter.BytesRead)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Прочитано 16 байт: \"Привет, вы\"\n# Прочитано 16 байт: \"соконагруж\"\n# Прочитано 16 байт: \"енный мир \"\n# Прочитано 11 байт: \"Go!\"\n# Всего прочитано байт: 59"
+      }
+    ],
+    "under_the_hood": "\nСтруктура хранит 16-байтный интерфейсный дескриптор `itab/data`.\n",
+    "pitfalls": "\n- Вызов `Read()` на структуре с `nil`-интерфейсом внутри (паника `nil pointer dereference`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Зачем встраивать интерфейсы в тестовые мок-структуры?»\n**Ответ:** Чтобы удовлетворить гигантскому интерфейсу с 20 методами, переопределив только 1-2 нужных в тесте метода (остальные вызовы упадут с nil-паникой при обращении).\n"
+  },
+  {
+    "num": 43,
+    "title": "Теги полей json:'title,omitempty' и сериализация структур в JSON",
+    "task": "Добавьте к структуре теги полей (например, json:\"title,omitempty\") и сериализуйте структуру в JSON с помощью json.Marshal.",
+    "theory": "\nЗакрепление сериализации структур с тегами.\n",
+    "step_by_step": "\n1. Создаем структуру `Task{Title string, Done bool}`.\n2. Сериализуем через `json.Marshal`.\n3. Печатаем JSON.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n)\n\ntype Task struct {\n\tTitle string `json:\"title,omitempty\"`\n\tDone  bool   `json:\"is_completed\"`\n}\n\nfunc main() {\n\tt1 := Task{Title: \"Пройти модуль 13\", Done: true}\n\tt2 := Task{Title: \"\", Done: false}\n\n\tb1, _ := json.Marshal(t1)\n\tb2, _ := json.Marshal(t2)\n\n\tfmt.Printf(\"t1: %s\\n\", string(b1))\n\tfmt.Printf(\"t2: %s (title опущен!)\\n\", string(b2))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# t1: {\"title\":\"Пройти модуль 13\",\"is_completed\":true}\n# t2: {\"is_completed\":false} (title опущен!)"
+      }
+    ],
+    "under_the_hood": "\nБыстрая сериализация на основе AST тегов.\n",
+    "pitfalls": "\n- Опечатка `json:is_completed` (без кавычек).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как сделать так, чтобы число `ID int` сериализовалось в JSON как строка `\"123\"`?»\n**Ответ:** Использовать тег `` `json:\"id,string\"` ``.\n"
+  },
+  {
+    "num": 44,
+    "title": "Паттерн Functional Options для гибкого конфигурирования серверов NewServer(opts ...Option)",
+    "task": "Реализуй паттерн Functional Options: type Option func(*Server). Напиши WithHost(string), WithPort(int). Конструктор NewServer(opts ...Option) *Server.",
+    "theory": "\n**Паттерн Functional Options (Золотой стандарт конфигураций в Go):**\n- Решает проблему перегрузки конструкторов (в Go нет перегрузки методов);\n- Позволяет задавать дефолтные значения и гибко переопределять любые опции;\n- Чистый, расширяемый и обратно-совместимый API.\n",
+    "step_by_step": "\n1. Создаем структуру `Server{host string, port int, timeout time.Duration}`.\n2. Объявляем `type Option func(*Server)`.\n3. Пишем опции `WithHost(h string)`, `WithPort(p int)`.\n4. Пишем конструктор `NewServer(opts ...Option) *Server`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"time\"\n)\n\ntype Server struct {\n\thost    string\n\tport    int\n\ttimeout time.Duration\n}\n\ntype Option func(*Server)\n\nfunc WithHost(host string) Option {\n\treturn func(s *Server) {\n\t\ts.host = host\n\t}\n}\n\nfunc WithPort(port int) Option {\n\treturn func(s *Server) {\n\t\ts.port = port\n\t}\n}\n\nfunc WithTimeout(timeout time.Duration) Option {\n\treturn func(s *Server) {\n\t\ts.timeout = timeout\n\t}\n}\n\nfunc NewServer(opts ...Option) *Server {\n\t// Дефолтная конфигурация:\n\tsrv := &Server{\n\t\thost:    \"127.0.0.1\",\n\t\tport:    8080,\n\t\ttimeout: 30 * time.Second,\n\t}\n\n\t// Применяем пользовательские опции:\n\tfor _, opt := range opts {\n\t\topt(srv)\n\t}\n\n\treturn srv\n}\n\nfunc main() {\n\t// Сервер с дефолтными настройками:\n\ts1 := NewServer()\n\tfmt.Printf(\"1. Дефолтный сервер: %s:%d (таймаут %v)\\n\", s1.host, s1.port, s1.timeout)\n\n\t// Сервер с кастомными опциями:\n\ts2 := NewServer(\n\t\tWithHost(\"api.production.ru\"),\n\t\tWithPort(443),\n\t\tWithTimeout(5*time.Second),\n\t)\n\tfmt.Printf(\"2. Кастомный сервер: %s:%d (таймаут %v)\\n\", s2.host, s2.port, s2.timeout)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Дефолтный сервер: 127.0.0.1:8080 (таймаут 30s)\n# 2. Кастомный сервер: api.production.ru:443 (таймаут 5s)"
+      }
+    ],
+    "under_the_hood": "\nЗамыкания опций передаются как срез функциональных указателей и последовательно мутируют структуру в куче.\n",
+    "pitfalls": "\n- Применение `nil`-опции в цикле (всегда проверяйте `if opt != nil`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему паттерн Functional Options предпочтительнее передачи структуры `Config`?»\n**Ответ:** Он защищает от передачи неполных структур со случайными Zero Values, позволяет валидировать каждый параметр индивидуально и обеспечивает 100% обратную совместимость при добавлении новых опций.\n"
+  },
+  {
+    "num": 45,
+    "title": "Получатели методов: IncrementValue() (значение) vs IncrementPointer() (указатель) для Counter",
+    "task": "Получатели методов: Для структуры Counter (поле value int) напишите два метода: IncrementValue() с получателем-значением ((c Counter)) и IncrementPointer() с получателем-указателем ((c *Counter)). Вызовите оба метода и проверьте, какой из них действительно увеличивает счетчик в исходном объекте.",
+    "theory": "\nПрактическое сравнение поведения счетчиков при разных получателях.\n",
+    "step_by_step": "\n1. Создаем структуру `Counter{value int}`.\n2. Пишем `(c Counter) IncrementValue()`.\n3. Пишем `(c *Counter) IncrementPointer()`.\n4. Сравниваем результаты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Counter struct {\n\tvalue int\n}\n\nfunc (c Counter) IncrementValue() {\n\tc.value++ // Изменяет копию\n}\n\nfunc (c *Counter) IncrementPointer() {\n\tc.value++ // Изменяет оригинал\n}\n\nfunc main() {\n\tcnt := Counter{value: 10}\n\n\tcnt.IncrementValue()\n\tfmt.Printf(\"1. После IncrementValue:   %d (не изменился)\\n\", cnt.value)\n\n\tcnt.IncrementPointer()\n\tfmt.Printf(\"2. После IncrementPointer: %d (УВЕЛИЧЕН!)\\n\", cnt.value)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. После IncrementValue:   10 (не изменился)\n# 2. После IncrementPointer: 11 (УВЕЛИЧЕН!)"
+      }
+    ],
+    "under_the_hood": "\n`IncrementPointer` изменяет ячейку памяти напрямую по адресу.\n",
+    "pitfalls": "\n- Вызов метода на копии.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Может ли линтер найти ошибочный Value Receiver для мутатора?»\n**Ответ:** Да, линтер `govet` (проверка `copylocks` и `lostcancel`) и `staticcheck` предупреждают о бесполезных присваиваниях в Value Receiver.\n"
+  },
+  {
+    "num": 46,
+    "title": "Сравнение структур Point{X, Y} через == и запрет сравнения при добавлении среза Meta []string",
+    "task": "Сравнение структур: Создайте структуру Point с полями X, Y int. Сравните два экземпляра через ==. Теперь добавьте в структуру поле Meta []string (срез). Попробуйте снова сравнить структуры. Объясните поведение компилятора.",
+    "theory": "\nДетальный анализ статической проверки сравнимости типов (Type Comparability Checking).\n",
+    "step_by_step": "\n1. Создаем `Point{X, Y int}`.\n2. Сравниваем `p1 == p2`.\n3. Создаем `ExtendedPoint{X, Y int; Meta []string}`.\n4. Показываем невозможность `==` и решение через `reflect.DeepEqual`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"reflect\"\n)\n\ntype Point struct {\n\tX, Y int\n}\n\ntype ExtendedPoint struct {\n\tX, Y int\n\tMeta []string\n}\n\nfunc main() {\n\tp1 := Point{1, 2}\n\tp2 := Point{1, 2}\n\tfmt.Printf(\"Point: p1 == p2 -> %t\\n\", p1 == p2)\n\n\tep1 := ExtendedPoint{X: 1, Y: 2, Meta: []string{\"A\", \"B\"}}\n\tep2 := ExtendedPoint{X: 1, Y: 2, Meta: []string{\"A\", \"B\"}}\n\n\t// Сравнение через reflect.DeepEqual:\n\tequal := reflect.DeepEqual(ep1, ep2)\n\tfmt.Printf(\"ExtendedPoint: reflect.DeepEqual -> %t\\n\", equal)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Point: p1 == p2 -> true\n# ExtendedPoint: reflect.DeepEqual -> true"
+      }
+    ],
+    "under_the_hood": "\nСрезы содержат указатели на динамическую память, поэтому компилятор запрещает оператор `==` на этапе семантического анализа AST.\n",
+    "pitfalls": "\n- Использование `==` для структур с вложенными мапами или срезами.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go запретили оператор `==` для срезов и структур со срезами?»\n**Ответ:** Потому что семантика равенства срезов неоднозначна (сравнивать физические указатели или поэлементные значения?), и глубокое поэлементное сравнение $O(N)$ скрыло бы тяжелые вычисления под простым оператором `==`.\n"
+  },
+  {
+    "num": 47,
+    "title": "Метод Greet() для структуры User со значением-получателем (Value Receiver)",
+    "task": "Добавь метод Greet() для структуры User (value receiver).",
+    "theory": "\nБазовый метод чтения приветствия.\n",
+    "step_by_step": "\n1. Создаем структуру `User{Name string}`.\n2. Пишем метод `(u User) Greet() string`.\n3. Выводим строку приветствия.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tName string\n}\n\nfunc (u User) Greet() string {\n\treturn fmt.Sprintf(\"Здравствуйте, %s! Добро пожаловать в систему.\", u.Name)\n}\n\nfunc main() {\n\tuser := User{Name: \"Екатерина\"}\n\tfmt.Println(user.Greet())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Здравствуйте, Екатерина! Добро пожаловать в систему."
+      }
+    ],
+    "under_the_hood": "\nКопирование строки в стек метода.\n",
+    "pitfalls": "\n- Опечатки в имени метода.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какой Method Set у типа `User`?»\n**Ответ:** В Method Set значения `User` входят все методы с Value Receiver `(u User)`.\n"
+  },
+  {
+    "num": 48,
+    "title": "Структура, встраивающая несколько интерфейсов (io.Reader + io.Closer = io.ReadCloser)",
+    "task": "Создай структуру, встраивающую несколько интерфейсов. Покажи, что она удовлетворяет всем встроенным интерфейсам автоматически, если реализует все необходимые методы.",
+    "theory": "\n**Множественное встраивание интерфейсов:**\n- Встраивание `io.Reader` и `io.Closer` автоматически делает структуру совместимой с `io.ReadCloser`;\n- Позволяет собирать композитные интерфейсные контракты.\n",
+    "step_by_step": "\n1. Создаем `type SessionStream struct { io.Reader; io.Closer }`.\n2. Передаем экземпляр в функцию, ожидающую `io.ReadCloser`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"strings\"\n)\n\ntype DummyCloser struct{}\n\nfunc (DummyCloser) Close() error {\n\tfmt.Println(\"Поток успешно закрыт\")\n\treturn nil\n}\n\ntype StreamWrapper struct {\n\tio.Reader\n\tio.Closer\n}\n\nfunc ProcessStream(rc io.ReadCloser) {\n\tdefer rc.Close()\n\tbuf := make([]byte, 32)\n\tn, _ := rc.Read(buf)\n\tfmt.Printf(\"Прочитано: %q\\n\", string(buf[:n]))\n}\n\nfunc main() {\n\tstream := StreamWrapper{\n\t\tReader: strings.NewReader(\"Бинарные данные сессии\"),\n\t\tCloser: DummyCloser{},\n\t}\n\n\t// StreamWrapper автоматически реализует io.ReadCloser:\n\tProcessStream(stream)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Прочитано: \"Бинарные данные сессии\"\n# Поток успешно закрыт"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор генерирует интерфейсную таблицу `itab` для `io.ReadCloser`.\n",
+    "pitfalls": "\n- Передача структуры с незаполненными интерфейсными полями.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как в стандартной библиотеке `net/http` реализован `http.Response.Body`?»\n**Ответ:** Поле `Body` имеет тип `io.ReadCloser`, что требует от сетевого драйвера реализации методов `Read` и `Close`.\n"
+  },
+  {
+    "num": 49,
+    "title": "Структура с полем-функцией (Callback) и условный запуск обработчика",
+    "task": "Создай структуру с полем-функцией (callback). Напиши метод, который вызывает callback при определённом условии.",
+    "theory": "\n**Паттерн обратного вызова (Callback Pattern) в структурах:**\n- Поле структуры может иметь функциональный тип `OnClick func(string)`;\n- Позволяет динамически настраивать реакцию объекта на события в рантайме (паттерн Observer / Event Listener).\n",
+    "step_by_step": "\n1. Создаем `type Button struct { Label string; OnClick func(label string) }`.\n2. Пишем метод `(b *Button) Click()`.\n3. Назначаем обработчик и вызываем `Click()`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Button struct {\n\tLabel   string\n\tOnClick func(label string) // Поле-коллбэк\n}\n\nfunc (b *Button) Click() {\n\tif b.OnClick != nil {\n\t\tb.OnClick(b.Label)\n\t} else {\n\t\tfmt.Printf(\"Кнопка %q нажата, но обработчик не назначен\\n\", b.Label)\n\t}\n}\n\nfunc main() {\n\tsubmitBtn := &Button{\n\t\tLabel: \"Оплатить заказ\",\n\t\tOnClick: func(name string) {\n\t\t\tfmt.Printf(\"⚡ СОБЫТИЕ: Инициирована транзакция для кнопки %q\\n\", name)\n\t\t},\n\t}\n\n\tsubmitBtn.Click()\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# ⚡ СОБЫТИЕ: Инициирована транзакция для кнопки \"Оплатить заказ\" "
+      }
+    ],
+    "under_the_hood": "\nПоле `OnClick` хранит 8-байтный указатель на замыкание.\n",
+    "pitfalls": "\n- Вызов `b.OnClick()` без предварительной проверки `if b.OnClick != nil` (вызовет панику `nil pointer dereference`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «В чем отличие поля-функции `struct { Handler func() }` от метода структуры `func (s *Struct) Handler()`?»\n**Ответ:** Поле-функцию можно динамически подменять в рантайме для каждого конкретного экземпляра, а методы типа статичны и едины для всех экземпляров.\n"
+  },
+  {
+    "num": 50,
+    "title": "Сравнение структур User через == и ошибка компиляции при добавлении среза",
+    "task": "Сравнение структур: Создай две разные переменные структуры User с одинаковыми данными. Сравни их через ==. Затем добавь в структуру срез []string и посмотри на ошибку компиляции (структуры со ссылочными типами нельзя сравнивать через ==).",
+    "theory": "\nПовторение и закрепление правил сравнимости структур.\n",
+    "step_by_step": "\n1. Объявляем структуру `SimpleUser{ID int, Email string}`.\n2. Сравниваем два экземпляра через `==`.\n3. Анализируем ограничение ссылочных полей.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype SimpleUser struct {\n\tID    int\n\tEmail string\n}\n\nfunc main() {\n\tu1 := SimpleUser{ID: 10, Email: \"user@ya.ru\"}\n\tu2 := SimpleUser{ID: 10, Email: \"user@ya.ru\"}\n\tu3 := SimpleUser{ID: 20, Email: \"admin@ya.ru\"}\n\n\tfmt.Printf(\"u1 == u2: %t (все поля равны)\\n\", u1 == u2)\n\tfmt.Printf(\"u1 == u3: %t (ID различаются)\\n\", u1 == u3)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# u1 == u2: true (все поля равны)\n# u1 == u3: false (ID различаются)"
+      }
+    ],
+    "under_the_hood": "\nПобайтовое сравнение полей структуры на стеке.\n",
+    "pitfalls": "\n- Попытка использовать `==` на структурах с мапами или срезами.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Можно ли использовать `SimpleUser` как ключ в `map[SimpleUser]bool`?»\n**Ответ:** ДА, поскольку все поля `SimpleUser` сравнимы.\n"
+  },
+  {
+    "num": 51,
+    "title": "Строгая десериализация JSON через json.NewDecoder с запретом неизвестных полей (DisallowUnknownFields)",
+    "task": "Десериализуйте JSON-строку обратно в структуру (json.Unmarshal), обработав случай, когда JSON содержит лишние поля.",
+    "theory": "\n**Строгая валидация входящего JSON в API:**\n- По умолчанию `json.Unmarshal` просто игнорирует неизвестные поля;\n- Для предотвращения ошибок опечаток в DTO используют `decoder.DisallowUnknownFields()`, который возвращает ошибку при наличии лишних ключей.\n",
+    "step_by_step": "\n1. Создаем структуру `type CreateUserRequest struct { Username, Email string }`.\n2. Создаем `json.NewDecoder(strings.NewReader(payload))`.\n3. Включаем `dec.DisallowUnknownFields()`.\n4. Демонстрируем перехват лишнего поля.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"strings\"\n)\n\ntype CreateUserRequest struct {\n\tUsername string `json:\"username\"`\n\tEmail    string `json:\"email\"`\n}\n\nfunc ParseStrictJSON(raw string) (*CreateUserRequest, error) {\n\tdec := json.NewDecoder(strings.NewReader(raw))\n\tdec.DisallowUnknownFields() // Запрещаем любые лишние поля!\n\n\tvar req CreateUserRequest\n\tif err := dec.Decode(&req); err != nil {\n\t\treturn nil, err\n\t}\n\treturn &req, nil\n}\n\nfunc main() {\n\tvalidJSON := `{\"username\":\"alex\",\"email\":\"alex@mail.ru\"}`\n\tinvalidJSON := `{\"username\":\"alex\",\"email\":\"alex@mail.ru\",\"extra_field\":\"hack\"}`\n\n\t_, err1 := ParseStrictJSON(validJSON)\n\tfmt.Printf(\"1. Валидный JSON:  ошибка = %v\\n\", err1)\n\n\t_, err2 := ParseStrictJSON(invalidJSON)\n\tfmt.Printf(\"2. Лишнее поле:   ошибка = %v (ОТКЛОНЕНО!)\\n\", err2)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Валидный JSON:  ошибка = <nil>\n# 2. Лишнее поле:   ошибка = json: unknown field \"extra_field\" (ОТКЛОНЕНО!)"
+      }
+    ],
+    "under_the_hood": "\nПотоковый декодер сопоставляет токены JSON с набором тегов структуры и возвращает синтаксическую ошибку.\n",
+    "pitfalls": "\n- Использование стандартного `json.Unmarshal`, пропускающего опечатки в полях DTO.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Зачем включать `DisallowUnknownFields` в микросервисах?»\n**Ответ:** Для строгой защиты контрактов API: это мгновенно выявляет опечатки на стороне фронтенда или устаревшие клиенты API.\n"
+  },
+  {
+    "num": 52,
+    "title": "Глубокое копирование (Deep Copy) структуры со срезами и указателями vs поверхностное копирование (Shallow)",
+    "task": "Напиши функцию ClonePerson(p Person) Person, которая делает deep copy (для простых типов) vs shallow copy (для указателей). Объясни разницу на примере.",
+    "theory": "\n**Deep Copy vs Shallow Copy:**\n- **Shallow Copy (`p2 := p1`):** копирует адреса указателей и дескрипторы срезов. Изменения во вложенных данных отражаются на обеих структурах;\n- **Deep Copy:** выделяет новую память для каждого указателя и среза, создавая полностью независимый клон.\n",
+    "step_by_step": "\n1. Создаем `type Person struct { Name string; Skills []string; Extra *int }`.\n2. Пишем метод `(p Person) Clone() Person`.\n3. Показываем независимость клона.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"slices\"\n)\n\ntype Person struct {\n\tName   string\n\tSkills []string\n\tScore  *int\n}\n\nfunc (p Person) DeepClone() Person {\n\t// 1. Клонируем срез:\n\tnewSkills := slices.Clone(p.Skills)\n\n\t// 2. Клонируем значение по указателю:\n\tvar newScore *int\n\tif p.Score != nil {\n\t\tval := *p.Score\n\t\tnewScore = &val\n\t}\n\n\treturn Person{\n\t\tName:   p.Name,\n\t\tSkills: newSkills,\n\t\tScore:  newScore,\n\t}\n}\n\nfunc main() {\n\tinitialScore := 100\n\tp1 := Person{\n\t\tName:   \"Иван\",\n\t\tSkills: []string{\"Go\", \"Docker\"},\n\t\tScore:  &initialScore,\n\t}\n\n\tp2 := p1.DeepClone()\n\tp2.Skills[0] = \"Python\"\n\t*p2.Score = 500\n\n\tfmt.Printf(\"1. Оригинал p1: Skills=%v | Score=%d\\n\", p1.Skills, *p1.Score)\n\tfmt.Printf(\"2. Клон p2:     Skills=%v | Score=%d (ПОЛНАЯ ИЗОЛЯЦИЯ!)\\n\", p2.Skills, *p2.Score)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Оригинал p1: Skills=[Go Docker] | Score=100\n# 2. Клон p2:     Skills=[Python Docker] | Score=500 (ПОЛНАЯ ИЗОЛЯЦИЯ!)"
+      }
+    ],
+    "under_the_hood": "\n`DeepClone` выделяет новые блоки памяти в куче для среза и числа.\n",
+    "pitfalls": "\n- Забыть клонировать вложенные мапы или структуры второго уровня вложенности.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как `slices.Clone` (Go 1.21+) упрощает создание глубоких копий?»\n**Ответ:** Функция `slices.Clone(s)` делает предвыделение нового массива нужного размера и копирует туда элементы за один быстрый вызов `copy()`.\n"
+  },
+  {
+    "num": 53,
+    "title": "Структура с полем типа any (interface{}) и Type Assertion в методах",
+    "task": "Создай структуру с полем типа interface{}. Присвой разные значения. Используй type assertion в методе для работы с конкретным типом.",
+    "theory": "\nХранение динамических полезных нагрузок (Payload) в структурах.\n",
+    "step_by_step": "\n1. Создаем `type Container struct { Data any }`.\n2. Пишем метод `(c Container) AsString() (string, bool)`.\n3. Тестируем Type Assertion.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Container struct {\n\tData any\n}\n\nfunc (c Container) PrintDetails() {\n\tswitch v := c.Data.(type) {\n\tcase string:\n\t\tfmt.Printf(\"Строка длиной %d: %q\\n\", len(v), v)\n\tcase int:\n\t\tfmt.Printf(\"Числовое значение: %d (удвоенное: %d)\\n\", v, v*2)\n\tdefault:\n\t\tfmt.Printf(\"Неизвестный тип данных: %T -> %v\\n\", v, v)\n\t}\n}\n\nfunc main() {\n\tc1 := Container{Data: \"Привет, Go!\"}\n\tc2 := Container{Data: 42}\n\tc3 := Container{Data: true}\n\n\tc1.PrintDetails()\n\tc2.PrintDetails()\n\tc3.PrintDetails()\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Строка длиной 19: \"Привет, Go!\"\n# Числовое значение: 42 (удвоенное: 84)\n# Неизвестный тип данных: bool -> true"
+      }
+    ],
+    "under_the_hood": "\nType Switch над `eface._type` компилируется в эффективную таблицу переходов.\n",
+    "pitfalls": "\n- Прямое утверждение типа `c.Data.(string)` без проверки `comma-ok` (вызовет панику при несовпадении типов).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Когда вместо `any` в структуре лучше использовать дженерики `type Container[T any] struct { Data T }`?»\n**Ответ:** Практически всегда! Дженерики обеспечивают статическую безопасность типов на этапе компиляции и исключают накладные расходы на упаковку в `eface` и type assertion.\n"
+  },
+  {
+    "num": 54,
+    "title": "Сравнение структур: равенство сравнимых полей и невозможность сравнения срезов",
+    "task": "Сравнение структур: покажите, что две структуры равны, если все поля сравнимы. Что будет, если поле — слайс?",
+    "theory": "\nСравнимость структур в условиях композитных данных.\n",
+    "step_by_step": "\n1. Создаем структуру `Credential{Login, PassHash string}`.\n2. Сравниваем `c1 == c2`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Credential struct {\n\tLogin    string\n\tPassHash string\n}\n\nfunc main() {\n\tc1 := Credential{Login: \"admin\", PassHash: \"hash_abc\"}\n\tc2 := Credential{Login: \"admin\", PassHash: \"hash_abc\"}\n\n\tfmt.Printf(\"c1 == c2: %t\\n\", c1 == c2)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# c1 == c2: true"
+      }
+    ],
+    "under_the_hood": "\nПоэлементное сравнение строк через `runtime.memequal`.\n",
+    "pitfalls": "\n- Сравнение через `==` структур с полем `time.Time` (лучше использовать `t1.Equal(t2)` из-за часовых поясов!).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `time.Time` нельзя сравнивать через `==`?»\n**Ответ:** Потому что `time.Time` содержит указатель на локацию `loc *Location` и монотонный счетчик, из-за чего два момента одного и того же времени могут быть не равны по `==`. Нужно использовать `t1.Equal(t2)`.\n"
+  },
+  {
+    "num": 55,
+    "title": "Инкапсуляция: геттеры и сеттеры с валидацией Age() int и SetAge(int) error",
+    "task": "Инкапсуляция (Геттеры и Сеттеры): Помести User в отдельный пакет. Сделай поле age с маленькой буквы (приватным). Напиши публичные методы Age() int (геттер) и SetAge(int) error (сеттер с валидацией).",
+    "theory": "\nЗащита инвариантов бизнес-логики через методы доступа.\n",
+    "step_by_step": "\n1. Создаем структуру с приватным `age int`.\n2. Пишем методы `Age()` и `SetAge(newAge int) error`.\n3. Тестируем валидацию.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype Employee struct {\n\tName string\n\tage  int // Приватное поле\n}\n\nfunc (e *Employee) Age() int {\n\treturn e.age\n}\n\nfunc (e *Employee) SetAge(newAge int) error {\n\tif newAge < 18 || newAge > 75 {\n\t\treturn fmt.Errorf(\"недопустимый возраст сотрудника: %d (допустимо 18-75)\", newAge)\n\t}\n\te.age = newAge\n\treturn nil\n}\n\nfunc main() {\n\temp := &Employee{Name: \"Станислав\"}\n\n\tif err := emp.SetAge(16); err != nil {\n\t\tfmt.Println(\"Ошибка:\", err)\n\t}\n\n\tif err := emp.SetAge(32); err != nil {\n\t\tfmt.Println(\"Ошибка:\", err)\n\t}\n\n\tfmt.Printf(\"Сотрудник: %s, Возраст: %d\\n\", emp.Name, emp.Age())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Ошибка: недопустимый возраст сотрудника: 16 (допустимо 18-75)\n# Сотрудник: Станислав, Возраст: 32"
+      }
+    ],
+    "under_the_hood": "\nПроверка границ в условии `CMPL`.\n",
+    "pitfalls": "\n- Игнорирование возвращаемой ошибки сеттера `_ = emp.SetAge(...)`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каковы преимущества возврата ошибки из сеттера `SetAge(...) error`?»\n**Ответ:** Это делает обработку невалидных данных явной и позволяет вернуть клиенту осмысленный HTTP-статус 400 Bad Request.\n"
+  },
+  {
+    "num": 56,
+    "title": "Каверзный кейс: передача структуры по значению (без мутаций) vs по указателю",
+    "task": "[Каверзный кейс]: Напиши функцию, которая принимает структуру по значению и пытается изменить её поле. Убедись, что оригинал не изменился. Напиши другую функцию, принимающую указатель.",
+    "theory": "\nЗакрепление различия между передачей структуры по значению и по указателю.\n",
+    "step_by_step": "\n1. Пишем `ResetTitleVal(b Book)`.\n2. Пишем `ResetTitlePtr(b *Book)`.\n3. Сравниваем результаты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Book struct {\n\tTitle string\n}\n\nfunc ResetTitleVal(b Book) {\n\tb.Title = \"Очищено\"\n}\n\nfunc ResetTitlePtr(b *Book) {\n\tif b != nil {\n\t\tb.Title = \"Очищено\"\n\t}\n}\n\nfunc main() {\n\tb1 := Book{Title: \"Алгоритмы\"}\n\tb2 := Book{Title: \"Архитектура\"}\n\n\tResetTitleVal(b1)\n\tfmt.Printf(\"1. После ResetTitleVal: %s (НЕ ИЗМЕНИЛСЯ!)\\n\", b1.Title)\n\n\tResetTitlePtr(&b2)\n\tfmt.Printf(\"2. После ResetTitlePtr: %s (УСПЕШНО ИЗМЕНЕН!)\\n\", b2.Title)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. После ResetTitleVal: Алгоритмы (НЕ ИЗМЕНИЛСЯ!)\n# 2. После ResetTitlePtr: Очищено (УСПЕШНО ИЗМЕНЕН!)"
+      }
+    ],
+    "under_the_hood": "\nКопирование заголовка строки в стек.\n",
+    "pitfalls": "\n- Забыть знак `&` при вызове `ResetTitlePtr`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go нет синтаксиса `void Foo(const Struct &s)` как в C++?»\n**Ответ:** Потому что структуры до 64 байт дешево передавать по значению (иммутабельно), а для больших структур передают `*Struct` с конвенцией не мутировать поля.\n"
+  },
+  {
+    "num": 57,
+    "title": "Паттерн Constructor: фабричная функция NewUser(name, age) (*User, error) с валидацией",
+    "task": "Паттерн Constructor: В Go нет конструкторов. Напиши функцию NewUser(name string, age int) (*User, error), которая проверяет, что возраст > 0, и возвращает указатель на структуру или ошибку.",
+    "theory": "\nЭталонный конструктор доменной модели в Go.\n",
+    "step_by_step": "\n1. Создаем структуру `User{Name string, Age int}`.\n2. Пишем конструктор `NewUser(name string, age int) (*User, error)`.\n3. Тестируем успешное создание и валидацию.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype User struct {\n\tName string\n\tAge  int\n}\n\nfunc NewUser(name string, age int) (*User, error) {\n\tif name == \"\" {\n\t\treturn nil, errors.New(\"имя пользователя не может быть пустым\")\n\t}\n\tif age <= 0 {\n\t\treturn nil, errors.New(\"возраст должен быть строго больше 0\")\n\t}\n\n\treturn &User{Name: name, Age: age}, nil\n}\n\nfunc main() {\n\tu, err := NewUser(\"Василий\", 24)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Printf(\"Создан пользователь: %+v\\n\", *u)\n\n\t_, errInvalid := NewUser(\"\", -5)\n\tfmt.Printf(\"Невалидные данные: ошибка = %v\\n\", errInvalid)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Создан пользователь: {Name:Василий Age:24}\n# Невалидные данные: ошибка = имя пользователя не может быть пустым"
+      }
+    ],
+    "under_the_hood": "\nПри ошибке возвращается `(nil, error)` без аллокации структуры.\n",
+    "pitfalls": "\n- Игнорирование проверки ошибки конструктора.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go не предусмотрены встроенные конструкторы в стиле `User.init()`?»\n**Ответ:** Функции `NewUser(...)` более гибкие: они могут возвращать ошибку `error`, интерфейс вместо конкретной структуры и иметь разные имена (`NewUser`, `NewAdminUser`, `NewUserFromJSON`).\n"
+  },
+  {
+    "num": 58,
+    "title": "Геометрическая структура Vector2D и иммутабельные методы Add, Subtract, Scale",
+    "task": "Реализуйте структуру Vector2D (X, Y float64) с методами Add, Subtract и Scale, возвращающими новые векторы.",
+    "theory": "\n**Иммутабельные математические структуры (Value Objects):**\n- Структура `Vector2D` занимает всего 16 байт;\n- Все операции возвращают **новые экземпляры векторов** без изменения исходных;\n- Чистый функциональный подход с нулевым риском побочных эффектов.\n",
+    "step_by_step": "\n1. Объявляем `type Vector2D struct { X, Y float64 }`.\n2. Пишем методы `Add`, `Subtract`, `Scale`.\n3. Демонстрируем вычисления.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Vector2D struct {\n\tX, Y float64\n}\n\nfunc (v Vector2D) Add(other Vector2D) Vector2D {\n\treturn Vector2D{X: v.X + other.X, Y: v.Y + other.Y}\n}\n\nfunc (v Vector2D) Subtract(other Vector2D) Vector2D {\n\treturn Vector2D{X: v.X - other.X, Y: v.Y - other.Y}\n}\n\nfunc (v Vector2D) Scale(factor float64) Vector2D {\n\treturn Vector2D{X: v.X * factor, Y: v.Y * factor}\n}\n\nfunc main() {\n\tv1 := Vector2D{X: 1.0, Y: 2.0}\n\tv2 := Vector2D{X: 3.0, Y: 4.0}\n\n\tsum := v1.Add(v2)\n\tscaled := sum.Scale(2.0)\n\n\tfmt.Printf(\"v1:     %+v\\n\", v1)\n\tfmt.Printf(\"v2:     %+v\\n\", v2)\n\tfmt.Printf(\"Сумма:  %+v\\n\", sum)\n\tfmt.Printf(\"Scale:  %+v\\n\", scaled)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# v1:     {X:1 Y:2}\n# v2:     {X:3 Y:4}\n# Сумма:  {X:4 Y:6}\n# Scale:  {X:8 Y:12}"
+      }
+    ],
+    "under_the_hood": "\nВсе аргументы и возвращаемые значения передаются в регистрах FPU/SSE (`XMM0`, `XMM1`).\n",
+    "pitfalls": "\n- Передача `Vector2D` по указателю (создает лишние аллокации в куче).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему для структур размером $\\le 16$ байт с плавающей точкой Value Receiver быстрее Pointer Receiver?»\n**Ответ:** Потому что компилятор Go передает 16 байт напрямую в двух регистрах процессора без обращений к оперативной памяти и без escape-анализа.\n"
+  },
+  {
+    "num": 59,
+    "title": "Пустая структура struct{}: размер 0 байт, массив [1000]struct{} и применение в Set/Chan",
+    "task": "Пустая структура struct{}: Создайте переменную empty struct{}. Выведите её размер в байтах с помощью unsafe.Sizeof. Создайте массив из 1000 таких структур [1000]struct{} и проверьте его размер. Где это может быть полезно?",
+    "theory": "\n**Анатомия пустой структуры `struct{}` (Zero-Size Type):**\n- Занимает **ровно 0 байт памяти** (`unsafe.Sizeof(struct{}{}) == 0`);\n- Массив любого размера `[1000000]struct{}` занимает **0 байт**;\n- **Где применяется:**\n  1. Реализация множеств: `map[string]struct{}` (вместо `map[string]bool` для 100% экономии памяти на значениях);\n  2. Сигнальные каналы событий: `chan struct{}` (не передает данных, только факт события);\n  3. Маркерные интерфейсы и структуры без состояния.\n",
+    "step_by_step": "\n1. Создаем `empty := struct{}{}`.\n2. Создаем массив `var arr [1000]struct{}`.\n3. Проверяем размеры через `unsafe.Sizeof`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"unsafe\"\n)\n\nfunc main() {\n\tvar empty struct{}\n\tvar arr [1000]struct{}\n\n\tfmt.Println(\"=== ПУСТАЯ СТРУКТУРА struct{} ===\")\n\tfmt.Printf(\"1. Размер struct{}:           %d байт\\n\", unsafe.Sizeof(empty))\n\tfmt.Printf(\"2. Размер массива [1000]struct{}: %d байт\\n\", unsafe.Sizeof(arr))\n\n\t// Использование в Set:\n\tset := make(map[string]struct{})\n\tset[\"admin\"] = struct{}{}\n\tset[\"editor\"] = struct{}{}\n\n\t_, hasAdmin := set[\"admin\"]\n\tfmt.Printf(\"3. Множество Set: содержит 'admin' = %t\\n\", hasAdmin)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# === ПУСТАЯ СТРУКТУРА struct{} ===\n# 1. Размер struct{}:           0 байт\n# 2. Размер массива [1000]struct{}: 0 байт\n# 3. Множество Set: содержит 'admin' = true"
+      }
+    ],
+    "under_the_hood": "\nВсе указатели на `struct{}` в куче ссылаются на один специальный глобальный адрес рантайма `runtime.zerobase`.\n",
+    "pitfalls": "\n- Использование `map[string]bool` вместо `map[string]struct{}` в многомиллионных кэшах.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему для сигнальных каналов используют `chan struct{}`, а не `chan bool`?»\n**Ответ:** Потому что `chan struct{}` четко сообщает читателю кода о том, что передается только факт сигнала, и не тратит ни одного байта на хранение значения в буфере.\n"
+  },
+  {
+    "num": 60,
+    "title": "Иммутабельная структура (Immutable Struct) и порождающие методы WithName(name) Person",
+    "task": "Создай \"immutable\" структуру: поля неэкспортируемые, изменение только через методы, возвращающие новую копию (не меняя оригинал). Напиши WithName(name string) Person (как в Go context).",
+    "theory": "\n**Паттерн иммутабельных структур (Immutable Builder в стиле `context.Context`):**\n- Все поля неэкспортируемые;\n- Методы модификации возвращают **новую независимую структуру** `return p`;\n- Гарантирует абсолютную потокобезопасность без мьютексов.\n",
+    "step_by_step": "\n1. Создаем структуру `type ImmutableUser struct { id int; name string }`.\n2. Пишем `WithName(name string) ImmutableUser`.\n3. Проверяем сохранение старого экземпляра.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype ImmutableUser struct {\n\tid   int\n\tname string\n}\n\nfunc NewImmutableUser(id int, name string) ImmutableUser {\n\treturn ImmutableUser{id: id, name: name}\n}\n\nfunc (u ImmutableUser) WithName(newName string) ImmutableUser {\n\tu.name = newName // Модифицирует копию и возвращает ее\n\treturn u\n}\n\nfunc (u ImmutableUser) Name() string {\n\treturn u.name\n}\n\nfunc main() {\n\tu1 := NewImmutableUser(1, \"Первоначальное имя\")\n\tu2 := u1.WithName(\"Новое имя\")\n\n\tfmt.Printf(\"u1: %s (ОРИГИНАЛ НЕ ИЗМЕНИЛСЯ!)\\n\", u1.Name())\n\tfmt.Printf(\"u2: %s (НОВЫЙ ЭКЗЕМПЛЯР)\\n\", u2.Name())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# u1: Первоначальное имя (ОРИГИНАЛ НЕ ИЗМЕНИЛСЯ!)\n# u2: Новое имя (НОВЫЙ ЭКЗЕМПЛЯР)"
+      }
+    ],
+    "under_the_hood": "\nКопирование по значению на стеке.\n",
+    "pitfalls": "\n- Случайное использование Pointer Receiver, ломающее концепцию иммутабельности.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как в стандартной библиотеке Go реализован пакет `context`?»\n**Ответ:** Пакет `context` построен на цепочке иммутабельных структур (`valueCtx`, `timerCtx`, `cancelCtx`), где каждый вызов `context.WithValue` возвращает новую обертку над родительским контекстом.\n"
+  },
+  {
+    "num": 61,
+    "title": "Каверзный кейс: ошибка присвоения m['john'].Age = 30 в мапе структур и решение через map[string]*User",
+    "task": "Каверзный случай: Мапа структур: Создай map[string]User. Добавь юзера. Попробуй изменить его возраст напрямую: m[\"john\"].Age = 30. Получишь ошибку cannot assign to struct field in map. Замени мапу на map[string]*User и повтори.",
+    "theory": "\n**Почему `m[\"key\"].Field = ...` запрещено компилятором:**\n- Значения в хэш-таблице `map[string]User` **не являются адресуемыми (Not Addressable)**;\n- При росте мапы бакеты перемещаются в памяти (эвакуация), и прямой указатель на поле структуры в бакете стал бы невалидным;\n- **Решение 1:** Использовать мапу указателей `map[string]*User`;\n- **Решение 2:** Извлечь копию структуры во временную переменную, изменить и записать обратно `u := m[\"key\"]; u.Age = 30; m[\"key\"] = u`.\n",
+    "step_by_step": "\n1. Демонстрируем причину ошибки в `map[string]User`.\n2. Создаем `map[string]*User`.\n3. Мутируем поле `m[\"john\"].Age = 30`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype User struct {\n\tName string\n\tAge  int\n}\n\nfunc main() {\n\t// ❌ ОШИБКА:\n\t// mValue := map[string]User{\"john\": {Name: \"John\", Age: 20}}\n\t// mValue[\"john\"].Age = 30 // cannot assign to struct field in map\n\n\t// ✅ СПОСОБ 1: Мапа указателей map[string]*User (РЕКОМЕНДУЕТСЯ):\n\tmPtr := map[string]*User{\n\t\t\"john\": {Name: \"John\", Age: 20},\n\t}\n\tmPtr[\"john\"].Age = 30 // Успешная мутация через указатель!\n\tfmt.Printf(\"1. Через map[string]*User: %+v\\n\", *mPtr[\"john\"])\n\n\t// ✅ СПОСОБ 2: Перезапись копии:\n\tmVal := map[string]User{\"john\": {Name: \"John\", Age: 20}}\n\tu := mVal[\"john\"]\n\tu.Age = 35\n\tmVal[\"john\"] = u\n\tfmt.Printf(\"2. Через перезапись копии: %+v\\n\", mVal[\"john\"])\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Через map[string]*User: {Name:John Age:30}\n# 2. Через перезапись копии: {Name:John Age:35}"
+      }
+    ],
+    "under_the_hood": "\n`mPtr[\"john\"]` возвращает указатель, разыменование которого позволяет напрямую писать в память кучи.\n",
+    "pitfalls": "\n- Попытка взять адрес `&m[\"key\"]` (ошибка компиляции `cannot take the address of m[\"key\"]`).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему элементы среза `s[0].Age = 30` можно изменять на месте, а элементы мапы `m[\"k\"].Age = 30` нельзя?»\n**Ответ:** Потому что элементы среза непрерывно расположены в памяти и адресуемы (`&s[0]`), а элементы мапы могут менять свое физическое расположение в бакетах при рехэшировании.\n"
+  },
+  {
+    "num": 62,
+    "title": "Реализация структуры Stack на срезе: методы Push, Pop (LIFO), Peek и IsEmpty",
+    "task": "Создай структуру Stack с полем-слайсом. Напиши методы Push, Pop (LIFO), Peek, IsEmpty. Реализуй через слайс с append и s[:len(s)-1].",
+    "theory": "\nРеализация классической структуры данных LIFO (Last-In-First-Out).\n",
+    "step_by_step": "\n1. Создаем `type IntStack struct { elements []int }`.\n2. Пишем методы `Push(val int)`, `Pop() (int, bool)`, `Peek() (int, bool)`.\n3. Тестируем стек.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype IntStack struct {\n\titems []int\n}\n\nfunc (s *IntStack) Push(val int) {\n\ts.items = append(s.items, val)\n}\n\nfunc (s *IntStack) Pop() (int, bool) {\n\tif s.IsEmpty() {\n\t\treturn 0, false\n\t}\n\tlastIdx := len(s.items) - 1\n\tval := s.items[lastIdx]\n\ts.items = s.items[:lastIdx]\n\treturn val, true\n}\n\nfunc (s *IntStack) Peek() (int, bool) {\n\tif s.IsEmpty() {\n\t\treturn 0, false\n\t}\n\treturn s.items[len(s.items)-1], true\n}\n\nfunc (s *IntStack) IsEmpty() bool {\n\treturn len(s.items) == 0\n}\n\nfunc main() {\n\tstack := &IntStack{}\n\tstack.Push(10)\n\tstack.Push(20)\n\tstack.Push(30)\n\n\ttop, _ := stack.Peek()\n\tfmt.Printf(\"Вершина стека (Peek): %d\\n\", top)\n\n\tfmt.Print(\"Извлечение элементов (Pop): \")\n\tfor !stack.IsEmpty() {\n\t\tval, _ := stack.Pop()\n\t\tfmt.Printf(\"%d \", val)\n\t}\n\tfmt.Println()\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вершина стека (Peek): 30\n# Извлечение элементов (Pop): 30 20 10"
+      }
+    ],
+    "under_the_hood": "\n`s.items[:lastIdx]` уменьшает поле `Len` без реаллокации базового массива.\n",
+    "pitfalls": "\n- Вызов `Pop()` на пустом стеке без проверки `IsEmpty()`.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как предотвратить утечку памяти в generic-стеке `Stack[T any]` при вызове `Pop()`?»\n**Ответ:** Если `T` содержит указатели, перед срезом `s.items[:lastIdx]` необходимо обнулить последний элемент `var zero T; s.items[lastIdx] = zero`, чтобы GC мог освободить память.\n"
+  },
+  {
+    "num": 63,
+    "title": "Форматированный вывод структур: глаголы %+v (имена полей) и %#v (синтаксис Go)",
+    "task": "Выведи структуру с помощью fmt.Printf(\"%+v\\n\", user) (с именами полей) и %#v (синтаксис Go).",
+    "theory": "\nСпецификаторы форматирования структур в пакете `fmt`.\n",
+    "step_by_step": "\n1. Создаем структуру `type ServerInfo struct { Host string; Port int }`.\n2. Выводим через `%v`, `%+v` и `%#v`.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype ServerInfo struct {\n\tHost string\n\tPort int\n}\n\nfunc main() {\n\tsrv := ServerInfo{Host: \"localhost\", Port: 9090}\n\n\tfmt.Printf(\"1. Обычный %%v:     %v\\n\", srv)\n\tfmt.Printf(\"2. С полями %%+v:   %+v\\n\", srv)\n\tfmt.Printf(\"3. Go-синтаксис %%#v: %#v\\n\", srv)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. Обычный %v:     {localhost 9090}\n# 2. С полями %+v:   {Host:localhost Port:9090}\n# 3. Go-синтаксис %#v: main.ServerInfo{Host:\"localhost\", Port:9090}"
+      }
+    ],
+    "under_the_hood": "\nГлагол `%#v` использует `GoString()` или рефлексивно восстанавливает литерал.\n",
+    "pitfalls": "\n- Использование `%v` при отладке (не видно, какому значению принадлежит какое поле).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Какой глагол `fmt` удобнее всего использовать в логах и сообщениях об ошибках в тестах?»\n**Ответ:** Глагол `%#v` (он выводит точный Go-синтаксис со всеми типами и именами полей).\n"
+  },
+  {
+    "num": 64,
+    "title": "Односвязный список на структуре Node{Value int, Next *Node} и алгоритм обхода",
+    "task": "Создайте структуру Node для односвязного списка (Value int, Next *Node) и напишите функцию, которая обходит список и выводит значения.",
+    "theory": "\nБазовая рекурсивная и итеративная структура связных списков.\n",
+    "step_by_step": "\n1. Создаем структуру `Node`.\n2. Создаем цепочку `10 -> 20 -> 30`.\n3. Обходим список.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Node struct {\n\tValue int\n\tNext  *Node\n}\n\nfunc PrintLinkedList(head *Node) {\n\tfor curr := head; curr != nil; curr = curr.Next {\n\t\tfmt.Printf(\"%d -> \", curr.Value)\n\t}\n\tfmt.Println(\"nil\")\n}\n\nfunc main() {\n\thead := &Node{\n\t\tValue: 100,\n\t\tNext: &Node{\n\t\t\tValue: 200,\n\t\t\tNext: &Node{\n\t\t\t\tValue: 300,\n\t\t\t},\n\t\t},\n\t}\n\n\tfmt.Print(\"Связный список: \")\n\tPrintLinkedList(head)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Связный список: 100 -> 200 -> 300 -> nil"
+      }
+    ],
+    "under_the_hood": "\nУзлы связываются через 8-байтные указатели `Next`.\n",
+    "pitfalls": "\n- Попытка объявить `Next Node` по значению (рекурсивный бесконечный размер).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему `type Node struct { Next Node }` вызывает ошибку компиляции?»\n**Ответ:** Потому что размер структуры вычисляется статически, а прямая рекурсия приводит к бесконечному размеру памяти. Указатель `Next *Node` имеет фиксированный размер 8 байт.\n"
+  },
+  {
+    "num": 65,
+    "title": "Методы структуры Circle: Area() (Value Receiver) и Scale(factor) (Pointer Receiver)",
+    "task": "Методы с получателем-значением и получателем-указателем: у структуры Circle метод Area() (значение) и Scale(factor) (указатель). Продемонстрируйте вызовы и разницу.",
+    "theory": "\nРазделение геометрии и трансформаций на структуре круга.\n",
+    "step_by_step": "\n1. Создаем `type Circle struct { Radius float64 }`.\n2. Пишем `(c Circle) Area() float64`.\n3. Пишем `(c *Circle) Scale(factor float64)`.\n4. Сравниваем результаты.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"math\"\n)\n\ntype Circle struct {\n\tRadius float64\n}\n\nfunc (c Circle) Area() float64 {\n\treturn math.Pi * c.Radius * c.Radius\n}\n\nfunc (c *Circle) Scale(factor float64) {\n\tif c != nil && factor > 0 {\n\t\tc.Radius *= factor\n\t}\n}\n\nfunc main() {\n\tc := Circle{Radius: 10.0}\n\tfmt.Printf(\"Исходный круг: R=%.1f | Площадь=%.2f\\n\", c.Radius, c.Area())\n\n\tc.Scale(2.0)\n\tfmt.Printf(\"После Scale(2): R=%.1f | Площадь=%.2f\\n\", c.Radius, c.Area())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Исходный круг: R=10.0 | Площадь=314.16\n# После Scale(2): R=20.0 | Площадь=1256.64"
+      }
+    ],
+    "under_the_hood": "\n`Scale` мутирует память `Radius` по адресу `c`.\n",
+    "pitfalls": "\n- Вызов `Scale` на неадресуемом `Circle{Radius: 5}.Scale(2)` (ошибка компиляции).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Что делает компилятор при вызове `c.Scale(2)`?»\n**Ответ:** Он автоматически берет адрес `(&c).Scale(2)`.\n"
+  },
+  {
+    "num": 66,
+    "title": "Фабричный конструктор NewDatabaseConnection(host, port) (*Connection, error) с валидацией",
+    "task": "Конструкторы (Фабричные функции): Напишите функцию NewDatabaseConnection(host string, port int) (*Connection, error). Внутри функции производите валидацию порта (он должен быть от 1 до 65535). Если валидация не пройдена, возвращайте ошибку.",
+    "theory": "\nВалидация сетевых параметров при инициализации соединений к БД.\n",
+    "step_by_step": "\n1. Создаем структуру `Connection{Host string, Port int}`.\n2. Пишем конструктор с валидацией `1 <= port <= 65535`.\n3. Тестируем.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\ntype Connection struct {\n\tHost string\n\tPort int\n}\n\nfunc NewDatabaseConnection(host string, port int) (*Connection, error) {\n\tif host == \"\" {\n\t\treturn nil, fmt.Errorf(\"host не может быть пустым\")\n\t}\n\tif port < 1 || port > 65535 {\n\t\treturn nil, fmt.Errorf(\"недопустимый порт %d (допустимый диапазон 1-65535)\", port)\n\t}\n\n\treturn &Connection{Host: host, Port: port}, nil\n}\n\nfunc main() {\n\tconn1, err1 := NewDatabaseConnection(\"postgres.prod.db\", 5432)\n\tif err1 != nil {\n\t\tfmt.Println(\"Ошибка:\", err1)\n\t} else {\n\t\tfmt.Printf(\"Подключение успешно: %+v\\n\", *conn1)\n\t}\n\n\t_, err2 := NewDatabaseConnection(\"postgres.prod.db\", 70000)\n\tif err2 != nil {\n\t\tfmt.Printf(\"Ожидаемая ошибка: %v\\n\", err2)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Подключение успешно: {Host:postgres.prod.db Port:5432}\n# Ожидаемая ошибка: недопустимый порт 70000 (допустимый диапазон 1-65535)"
+      }
+    ],
+    "under_the_hood": "\nВозврат `(nil, error)` при сбое валидации.\n",
+    "pitfalls": "\n- Создание некорректного соединения через прямой литерал `Connection{Port: 99999}` в обход конструктора.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как запретить пользователям пакета создавать структуру напрямую в обход `NewDatabaseConnection`?»\n**Ответ:** Сделать саму структуру или её критические поля неэкспортируемыми (с маленькой буквы) и экспортировать интерфейс.\n"
+  },
+  {
+    "num": 67,
+    "title": "Реализация методов односвязного списка: Append(val), Print() и Find(val)",
+    "task": "Реализуйте связный список (односвязный) на структурах: добавление в конец, печать, поиск.",
+    "theory": "\nПолная инкапсуляция логики списка в структуре `LinkedList`.\n",
+    "step_by_step": "\n1. Создаем структуры `Node` и `LinkedList{head *Node}`.\n2. Пишем методы `Append(val int)`, `Print()`, `Find(val int) bool`.\n3. Тестируем методы.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Node struct {\n\tValue int\n\tNext  *Node\n}\n\ntype LinkedList struct {\n\thead *Node\n}\n\nfunc (ll *LinkedList) Append(val int) {\n\tnewNode := &Node{Value: val}\n\tif ll.head == nil {\n\t\tll.head = newNode\n\t\treturn\n\t}\n\tcurr := ll.head\n\tfor curr.Next != nil {\n\t\tcurr = curr.Next\n\t}\n\tcurr.Next = newNode\n}\n\nfunc (ll *LinkedList) Find(val int) bool {\n\tfor curr := ll.head; curr != nil; curr = curr.Next {\n\t\tif curr.Value == val {\n\t\t\treturn true\n\t\t}\n\t}\n\treturn false\n}\n\nfunc (ll *LinkedList) Print() {\n\tfor curr := ll.head; curr != nil; curr = curr.Next {\n\t\tfmt.Printf(\"%d -> \", curr.Value)\n\t}\n\tfmt.Println(\"nil\")\n}\n\nfunc main() {\n\tlist := &LinkedList{}\n\tlist.Append(10)\n\tlist.Append(20)\n\tlist.Append(30)\n\n\tfmt.Print(\"Элементы списка: \")\n\tlist.Print()\n\n\tfmt.Printf(\"Поиск 20: %t\\n\", list.Find(20))\n\tfmt.Printf(\"Поиск 99: %t\\n\", list.Find(99))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Элементы списка: 10 -> 20 -> 30 -> nil\n# Поиск 20: true\n# Поиск 99: false"
+      }
+    ],
+    "under_the_hood": "\nСвязный список в куче.\n",
+    "pitfalls": "\n- Добавление в конец за $O(N)$ (в продакшене хранят указатель на хвост `tail *Node` для вставки за $O(1)$).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как ускорить добавление в конец связного списка до $O(1)$?»\n**Ответ:** Хранить в структуре `LinkedList` указатель на последний узел: `tail *Node`.\n"
+  },
+  {
+    "num": 68,
+    "title": "Выравнивание полей в памяти (Padding): StructA (24 байта) против StructB (16 байт) через unsafe.Sizeof",
+    "task": "Выравнивание полей в памяти (Padding): Создайте две структуры с одинаковыми полями, но в разном порядке: StructA (поля: a int8, b int64, c int8) и StructB (поля: a int8, c int8, b int64). Выведите размер каждой структуры с помощью unsafe.Sizeof. Разберитесь, как порядок полей влияет на выравнивание и итоговый размер структуры в памяти.",
+    "theory": "\n**Детальная анатомия байтового выравнивания:**\n1. **`StructA` (24 байта):**\n   - `a int8`: 1 байт + 7 байт Padding (чтобы `b int64` начался с адреса кратного 8);\n   - `b int64`: 8 байт;\n   - `c int8`: 1 байт + 7 байт Padding (выравнивание общего размера структуры кратно 8);\n   - Итого: $1+7+8+1+7 = 24$ байта.\n2. **`StructB` (16 байт):**\n   - `a int8`: 1 байт;\n   - `c int8`: 1 байт + 6 байт Padding;\n   - `b int64`: 8 байт;\n   - Итого: $1+1+6+8 = 16$ байт (экономия 33% RAM!).\n",
+    "step_by_step": "\n1. Объявляем `StructA` и `StructB`.\n2. Замеряем `unsafe.Sizeof`.\n3. Анализируем байтовую раскладку.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"unsafe\"\n)\n\ntype StructA struct {\n\ta int8  // 1B + 7B pad\n\tb int64 // 8B\n\tc int8  // 1B + 7B pad\n}\n\ntype StructB struct {\n\ta int8  // 1B\n\tc int8  // 1B + 6B pad\n\tb int64 // 8B\n}\n\nfunc main() {\n\tvar a StructA\n\tvar b StructB\n\n\tfmt.Printf(\"Размер StructA: %d байт (нерациональный порядок)\\n\", unsafe.Sizeof(a))\n\tfmt.Printf(\"Размер StructB: %d байт (оптимизированный порядок)\\n\", unsafe.Sizeof(b))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Размер StructA: 24 байт (нерациональный порядок)\n# Размер StructB: 16 байт (оптимизированный порядок)"
+      }
+    ],
+    "under_the_hood": "\nABI x86-64 требует выравнивания 64-битных целых чисел по 8-байтной границе.\n",
+    "pitfalls": "\n- Случайное размещение `bool` и `int64` через один.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каков размер пустой структуры `struct{}` в конце другой структуры?»\n**Ответ:** Если `struct{}` находится в конце структуры, компилятор добавляет 1 машинное слово (8 байт) Padding, чтобы указатель на поле не указывал за пределы выделенного блока памяти!\n"
+  },
+  {
+    "num": 69,
+    "title": "Теги структуры type User struct { Name string `json:'name'` } и валидация схемы",
+    "task": "Создай структуру с тегами (struct tags) type User struct { Name string `json:\"name\"` }.",
+    "theory": "\nБазовое объявление структуры с тегами сериализации.\n",
+    "step_by_step": "\n1. Создаем структуру с тегами.\n2. Маршалим в JSON.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n)\n\ntype User struct {\n\tName string `json:\"name\"`\n}\n\nfunc main() {\n\tu := User{Name: \"Gopher\"}\n\tdata, _ := json.Marshal(u)\n\tfmt.Printf(\"JSON: %s\\n\", string(data))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# JSON: {\"name\":\"Gopher\"}"
+      }
+    ],
+    "under_the_hood": "\nТеги в метаданных типа.\n",
+    "pitfalls": "\n- Опечатки в кавычках.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Как объединить несколько тегов в одном поле?»\n**Ответ:** Через пробел: `` `json:\"name\" yaml:\"name\" db:\"name\"` ``.\n"
+  },
+  {
+    "num": 70,
+    "title": "Двоичное дерево поиска (BST) на структуре TreeNode и симметричный обход (In-Order Traversal)",
+    "task": "[Высокая сложность]: Создай структуру TreeNode для бинарного дерева (поля Value int, Left *TreeNode, Right *TreeNode). Напиши метод для обхода дерева (in-order traversal).",
+    "theory": "\n**Двоичное дерево поиска (Binary Search Tree - BST):**\n- У каждого узла `Left.Value < Value < Right.Value`;\n- **Симметричный обход (In-Order Traversal):** рекурсивно обходит `Left -> Root -> Right`;\n- Гарантирует вывод элементов дерева **в строго отсортированном порядке** за $O(N)$ времени!\n",
+    "step_by_step": "\n1. Создаем `type TreeNode struct { Value int; Left, Right *TreeNode }`.\n2. Пишем метод `Insert(val int)`.\n3. Пишем метод `InOrder(visit func(int))`.\n4. Демонстрируем сортировку.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype TreeNode struct {\n\tValue int\n\tLeft  *TreeNode\n\tRight *TreeNode\n}\n\nfunc (n *TreeNode) Insert(val int) *TreeNode {\n\tif n == nil {\n\t\treturn &TreeNode{Value: val}\n\t}\n\tif val < n.Value {\n\t\tn.Left = n.Left.Insert(val)\n\t} else if val > n.Value {\n\t\tn.Right = n.Right.Insert(val)\n\t}\n\treturn n\n}\n\nfunc (n *TreeNode) InOrder(visit func(int)) {\n\tif n == nil {\n\t\treturn\n\t}\n\tn.Left.InOrder(visit)  // 1. Левое поддерево\n\tvisit(n.Value)         // 2. Текущий узел\n\tn.Right.InOrder(visit) // 3. Правое поддерево\n}\n\nfunc main() {\n\tvar root *TreeNode\n\tnumbers := []int{50, 30, 70, 20, 40, 60, 80}\n\n\tfor _, num := range numbers {\n\t\troot = root.Insert(num)\n\t}\n\n\tfmt.Print(\"In-Order обход дерева (отсортировано): \")\n\troot.InOrder(func(val int) {\n\t\tfmt.Printf(\"%d \", val)\n\t})\n\tfmt.Println()\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# In-Order обход дерева (отсортировано): 20 30 40 50 60 70 80"
+      }
+    ],
+    "under_the_hood": "\nРекурсивные вызовы используют стек вызовов горутины.\n",
+    "pitfalls": "\n- Вырождение несбалансированного BST в связный список со сложностью $O(N)$ вместо $O(\\log N)$.\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Каковы три вида обхода бинарных деревьев и где они применяются?»\n**Ответ:** 1) In-Order (L-Root-R) — для сортировки; 2) Pre-Order (Root-L-R) — для клонирования/сериализации дерева; 3) Post-Order (L-R-Root) — для удаления дерева и вычисления математических выражений в AST.\n"
+  },
+  {
+    "num": 71,
+    "title": "Переопределение методов (Method Overriding) в Child и вызов оригинального метода Parent",
+    "task": "Переопределение методов: В структуре Parent напишите метод Greet() string. Встройте её в структуру Child. Напишите метод Greet() для Child. Вызовите метод у объекта Child и продемонстрируйте, как вызывается переопределенный метод, а также как при желании можно вызвать оригинальный метод родителя.",
+    "theory": "\n**Переопределение (Shadowing / Overriding) методов в Go:**\n- Если `Child` определяет собственный метод `Greet()`, он **затеняет** метод `Parent.Greet()`;\n- Вызов `child.Greet()` вызывает метод `Child`;\n- Вызов `child.Parent.Greet()` вызывает оригинальный метод встроенного родителя.\n",
+    "step_by_step": "\n1. Создаем `type Parent struct{}` с методом `Greet() string`.\n2. Создаем `type Child struct { Parent }` с собственным методом `Greet() string`.\n3. Сравниваем вызовы.\n",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\ntype Parent struct{}\n\nfunc (Parent) Greet() string {\n\treturn \"Приветствие от Parent структуры\"\n}\n\ntype Child struct {\n\tParent // Встраивание\n}\n\n// Переопределение метода:\nfunc (Child) Greet() string {\n\treturn \"Приветствие от Child структуры (ПЕРЕОПРЕДЕЛЕНО)\"\n}\n\nfunc main() {\n\tc := Child{}\n\n\t// 1. Вызов переопределенного метода Child:\n\tfmt.Printf(\"1. c.Greet():        %s\\n\", c.Greet())\n\n\t// 2. Явный вызов метода родителя Parent:\n\tfmt.Printf(\"2. c.Parent.Greet(): %s\\n\", c.Parent.Greet())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# 1. c.Greet():        Приветствие от Child структуры (ПЕРЕОПРЕДЕЛЕНО)\n# 2. c.Parent.Greet(): Приветствие от Parent структуры"
+      }
+    ],
+    "under_the_hood": "\nКомпилятор статически выбирает метод `Child.Greet` с глубиной 0.\n",
+    "pitfalls": "\n- Иллюзия виртуального полиморфизма (в Go встроенный `Parent` не знает о методах `Child` и не может вызывать переопределенные методы внутри себя).\n",
+    "bigtech_interview": "\n**Вопрос с собеседования:** «Почему в Go встраивание структур не поддерживает полиморфный вызов методов (динамический vtable) как `virtual` в C++?»\n**Ответ:** Потому что Go разделяет наследование состояния (композиция структур) и полиморфизм поведения (интерфейсы). Для виртуального полиморфизма в Go используются исключительно интерфейсы.\n"
+  }
+]

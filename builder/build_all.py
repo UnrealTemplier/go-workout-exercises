@@ -48,6 +48,9 @@ with open('builder/chapter11_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter12_data.json', 'r', encoding='utf-8') as f:
     ch12_exercises = json.load(f)
 
+with open('builder/chapter13_data.json', 'r', encoding='utf-8') as f:
+    ch13_exercises = json.load(f)
+
 def format_text(txt):
     if not txt:
         return ""
@@ -135,6 +138,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             10: ('chapter10.html', '100/100'),
             11: ('chapter11.html', '49/49'),
             12: ('chapter12.html', '67/67'),
+            13: ('chapter13.html', '71/71'),
         }
         
         if num in status_map:
@@ -829,12 +833,69 @@ def build_chapter12_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter11.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 11 (Указатели)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 13: Структуры (Скоро) →</a>
+            <a href="chapter13.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 13: Структуры →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '12. Передача аргументов (67/67)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter13_html(chapters):
+    sidebar_html = build_sidebar(chapters, active_chapter_num=13, current_exercises=ch13_exercises)
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">🏗️ Модуль 13 • Пользовательские Типы и Модели Данных</div>
+        <h1 class="hero-title">Структуры (Structs), Композиция и Методы в Go</h1>
+        <p class="hero-desc">
+            Глубокое практическое руководство по структурам и объектной модели в Go: 
+            именованная и позиционная инициализация, инкапсуляция неэкспортируемых полей и геттеры/сеттеры, 
+            композиция вместо наследования (Embedding), автоматическое всплытие полей (Promoted Fields) и методов, 
+            разрешение коллизий (Ambiguous Selectors), оптимизация выравнивания полей в памяти (Memory Padding & Alignment), 
+            теги структур `struct tags` (JSON `omitempty`, мульти-теги `db`/`validate`), потокобезопасные структуры с `sync.Mutex`, 
+            паттерн Functional Options, глубокое копирование (Deep Copy), пустая структура `struct{}` (0 байт), 
+            решение каверзной ошибки `cannot assign to struct field in map` и реализация двоичного дерева поиска (BST). 
+            Все 71 упражнение решено шаг за шагом.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-val">71 из 71</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">Composition</span><span class="stat-lbl">Embedding vs Inheritance</span></div>
+            <div class="stat-item"><span class="stat-val">Padding & Alignment</span><span class="stat-lbl">24B vs 16B Memory Size</span></div>
+            <div class="stat-item"><span class="stat-val">Functional Options</span><span class="stat-lbl">Clean Config Pattern</span></div>
+        </div>
+    </section>
+    """)
+    section_groups_ch13 = [
+        (1, 24, "Раздел 1: Базовые Структуры, Инкапсуляция, Встраивание, Всплытие Полей и Коллизии Имен", "Инициализация User, геттеры/сеттеры, анонимные структуры, pointer receiver, автоматическое разыменование u.Name, композиция Address в Person, Promoted Fields/Methods, разрешение коллизий ambiguous selector, конструкторы и правила comparable"),
+        (25, 48, "Раздел 2: Теги JSON/DB, Затенение, Инспекция Рефлексией, Выравнивание Памяти и Functional Options", "Теги omitempty, мульти-теги db/validate, затенение полей emp.City, срез указателей []*Point, Memory Padding 24B vs 16B, sync.Mutex в структуре, JSON Marshal/Unmarshal, встраивание io.Reader, Functional Options NewServer и дженерик-сортировка"),
+        (49, 71, "Раздел 3: Поля-Коллбэки, Strict JSON, Deep Copy, Пустая struct{}, Ловушка Map и Дерево BST", "Button с OnClick, DisallowUnknownFields, глубокое клонирование DeepClone, контейнеры any, пустая структура struct{} (0 байт), иммутабельные WithName, ошибка m['key'].Age = 30 в мапе структур, LIFO стек, дерево поиска BST и переопределение методов Parent/Child")
+    ]
+    ex_dict = {e["num"]: e for e in ch13_exercises}
+    for start_n, end_n, title, desc in section_groups_ch13:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 13 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве изучили структуры, композицию, выравнивание памяти, теги сериализации и объектные паттерны в Go.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter12.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 12 (Передача аргументов)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 14: Методы (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '13. Структуры (71/71)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -852,6 +913,7 @@ if __name__ == '__main__':
         ('chapter10.html', build_chapter10_html),
         ('chapter11.html', build_chapter11_html),
         ('chapter12.html', build_chapter12_html),
+        ('chapter13.html', build_chapter13_html),
     ]
     
     for filename, builder_fn in pages:
