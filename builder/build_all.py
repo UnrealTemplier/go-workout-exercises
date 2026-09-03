@@ -101,6 +101,8 @@ with open('builder/chapter37_data.json', 'r', encoding='utf-8') as f:
     ch37_exercises = json.load(f)
 with open('builder/chapter38_data.json', 'r', encoding='utf-8') as f:
     ch38_exercises = json.load(f)
+with open('builder/chapter39_data.json', 'r', encoding='utf-8') as f:
+    ch39_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -215,6 +217,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             36: ('chapter36.html', '130/130'),
             37: ('chapter37.html', '88/88'),
             38: ('chapter38.html', '77/77'),
+            39: ('chapter39.html', f'{len(ch39_exercises)}/{len(ch39_exercises)}'),
         }
         
         if num in status_map:
@@ -2206,12 +2209,67 @@ def build_chapter38_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter37.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 37 Apache Kafka</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 39 Метрики и мониторинг (Prometheus) (Скоро) →</a>
+            <a href="chapter39.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 39 Метрики и мониторинг (Prometheus) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '38. NATS и NATS JetStream (77/77)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter39_html(chapters):
+    active_chapter_num = 39
+    current_exercises = ch39_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 39 • Observability, Prometheus Metrics, RED/USE Methods, OpenTelemetry & Grafana in Go</div>
+      <h1 class="hero-title">Метрики и мониторинг (Prometheus)</h1>
+      <p class="hero-desc">
+        Глубокое инженерное руководство по разработке и внедрению полноценной платформы наблюдаемости (Full-Stack Observability) на Go 1.22+: архитектура pull-модели скрейпинга Prometheus, спецификация OpenMetrics, типы данных Go SDK (Counter, Gauge, Histogram, Summary), пакет client_golang и promauto, системные метрики рантайма Go (go_goroutines, go_memstats, go_gc, scheduler latency), HTTP middleware и gRPC interceptors, методологии мониторинга RED (Rate, Errors, Duration) и USE (Utilization, Saturation, Errors), защита от высокой кардинальности (High Cardinality) и очистка динамических серий через DeleteLabelValues, разработка кастомных сборщиков prometheus.Collector (Describe и Collect для PostgreSQL, Redis, RabbitMQ, Kafka), изоляция метрик через Custom Registry, встроенные декораторы promhttp, интеграция с OpenTelemetry Metrics (MeterProvider, OTLP gRPC), долговременное хранение Remote Write (Thanos, Cortex, VictoriaMetrics), Kubernetes Service Discovery (ServiceMonitor, PodMonitor CRD), правила алертинга Prometheus Alerting Rules (состояния Pending/Firing, параметр for: 5m), маршрутизация Alertmanager (группировка, ингибирование, ресиверы Slack, PagerDuty, Telegram), Prometheus Pushgateway для эфемерных batch jobs, трассировка OpenTelemetry (Exemplars, связка Logs + Traces в slog), математика надежности SRE (SLI, SLO, SLA, Error Budget в минутах, 14.4x Burn Rate, Multi-Window Multi-Burn-Rate), пробы Kubernetes (Liveness, Readiness, Startup Probes), Chaos Engineering и культура Observability-Driven Development (ODD).
+      </p>
+    </section>
+    """)
+    
+    # Sections (114 exercises)
+    sections = [
+        (1, 28, 'Раздел 1: Фундамент Prometheus, Counter, Gauge, Histogram, Summary, HTTP middleware и рантайм Go'),
+        (29, 57, 'Раздел 2: Кардинальность, кастомные Collector\'ы, мониторинг БД и кэша, Alerting Rules, Alertmanager и Pushgateway'),
+        (58, 86, 'Раздел 3: Thanos Remote Write, Grafana дашборды, методология RED/USE, Service Discovery, метрики Kafka и RabbitMQ'),
+        (87, 114, 'Раздел 4: Сквозной трейсинг в slog, SRE математика Error Budget, Kubernetes Probes, Chaos Engineering, Финальный босс и ODD'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 39 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили индустриальные стандарты метрик, мониторинга и телеметрии на Go: от базовых типов Counter и Gauge до калиброванных гистограмм, кастомных коллекторов, архитектуры Thanos Remote Write, дашбордов Grafana, методологий RED и USE, практик Google SRE (SLO, Error Budget, 14.4x Burn Rate) и культуры Observability-Driven Development.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter38.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 38 NATS и NATS JetStream</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 40 Распределенная трассировка (OpenTelemetry) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '39. Метрики и мониторинг (Prometheus) (114/114)') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2255,6 +2313,7 @@ if __name__ == '__main__':
         ('chapter36.html', build_chapter36_html),
         ('chapter37.html', build_chapter37_html),
         ('chapter38.html', build_chapter38_html),
+        ('chapter39.html', build_chapter39_html),
     ]
     
     for filename, builder_fn in pages:
