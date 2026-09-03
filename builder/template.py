@@ -17,6 +17,21 @@ HTML_HEAD = """<!DOCTYPE html>
     <!-- Prism Syntax Highlighting Dark Theme -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 
+    <!-- Immediate sidebar width restore to prevent Layout Shift (CLS) -->
+    <script>
+        (function() {
+            try {
+                const saved = localStorage.getItem('go_workout_sidebar_w');
+                if (saved) {
+                    const minW = 320;
+                    const maxW = Math.floor(window.innerWidth * 0.5);
+                    const w = Math.max(minW, Math.min(parseInt(saved, 10), maxW));
+                    document.documentElement.style.setProperty('--sidebar-width', w + 'px');
+                }
+            } catch (e) {}
+        })();
+    </script>
+
     <style>
         :root {
             --bg-body: #090d16;
@@ -92,6 +107,31 @@ HTML_HEAD = """<!DOCTYPE html>
             flex-direction: column;
             z-index: 100;
             transition: transform 0.3s ease;
+        }
+
+        /* Sidebar Resizer Splitter */
+        .sidebar-resizer {
+            position: absolute;
+            top: 0;
+            right: -3px;
+            width: 6px;
+            height: 100%;
+            cursor: col-resize;
+            z-index: 105;
+            background: transparent;
+            transition: background 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .sidebar-resizer:hover,
+        .sidebar-resizer.active {
+            background: var(--go-cyan);
+            box-shadow: 0 0 10px rgba(0, 173, 216, 0.7);
+        }
+
+        body.is-resizing {
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            cursor: col-resize !important;
         }
 
         .sidebar-header {
@@ -263,6 +303,9 @@ HTML_HEAD = """<!DOCTYPE html>
         }
 
         @media (max-width: 1024px) {
+            .sidebar-resizer {
+                display: none !important;
+            }
             .sidebar {
                 transform: translateX(-100%);
             }
@@ -751,6 +794,49 @@ HTML_FOOTER = """
                 if (!sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
                     sidebar.classList.remove('open');
                 }
+            });
+        }
+
+        // Sidebar Resizing Logic (Drag to resize from 320px up to 50vw)
+        const resizer = document.getElementById('sidebar-resizer');
+        if (resizer) {
+            let isResizing = false;
+
+            resizer.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                isResizing = true;
+                document.body.classList.add('is-resizing');
+                resizer.classList.add('active');
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+                
+                // Strict boundaries: min 320px, max 50% of page width
+                const minW = 320;
+                const maxW = Math.floor(window.innerWidth * 0.5);
+                const newW = Math.max(minW, Math.min(e.clientX, maxW));
+
+                document.documentElement.style.setProperty('--sidebar-width', newW + 'px');
+                try {
+                    localStorage.setItem('go_workout_sidebar_w', newW);
+                } catch (err) {}
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isResizing) {
+                    isResizing = false;
+                    document.body.classList.remove('is-resizing');
+                    resizer.classList.remove('active');
+                }
+            });
+
+            // Double-click resets sidebar to default 320px
+            resizer.addEventListener('dblclick', () => {
+                document.documentElement.style.setProperty('--sidebar-width', '320px');
+                try {
+                    localStorage.removeItem('go_workout_sidebar_w');
+                } catch (err) {}
             });
         }
     </script>

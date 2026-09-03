@@ -207,6 +207,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             sb.append('    </a>')
             
     sb.append('  </nav>')
+    sb.append('  <div class="sidebar-resizer" id="sidebar-resizer" title="Потяните для изменения ширины (двойной клик — сброс)"></div>')
     sb.append('</aside>')
     return '\n'.join(sb)
 
