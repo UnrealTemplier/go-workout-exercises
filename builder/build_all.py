@@ -105,6 +105,8 @@ with open('builder/chapter39_data.json', 'r', encoding='utf-8') as f:
     ch39_exercises = json.load(f)
 with open('builder/chapter40_data.json', 'r', encoding='utf-8') as f:
     ch40_exercises = json.load(f)
+with open('builder/chapter41_data.json', 'r', encoding='utf-8') as f:
+    ch41_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -221,6 +223,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             38: ('chapter38.html', '77/77'),
             39: ('chapter39.html', f'{len(ch39_exercises)}/{len(ch39_exercises)}'),
             40: ('chapter40.html', f'{len(ch40_exercises)}/{len(ch40_exercises)}'),
+            41: ('chapter41.html', f'{len(ch41_exercises)}/{len(ch41_exercises)}'),
         }
         
         if num in status_map:
@@ -2322,12 +2325,65 @@ def build_chapter40_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter39.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 39 Метрики и мониторинг (Prometheus)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 41 Профилирование и рантайм-диагностика (Скоро) →</a>
+            <a href="chapter41.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 41 Профилирование и рантайм-диагностика →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '40. Распределенная трассировка (OpenTelemetry) (79/79)') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+def build_chapter41_html(chapters):
+    active_chapter_num = 41
+    current_exercises = ch41_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 41 • CPU & Memory Profiling, Goroutine Leaks, pprof, runtime/trace, Pyroscope & FinOps in Go</div>
+      <h1 class="hero-title">Профилирование и рантайм-диагностика</h1>
+      <p class="hero-desc">
+        Глубокое инженерное руководство по профилированию, рантайм-диагностике и анализу производительности микросервисов на Go 1.22+ в условиях HighLoad: стандартный пакет net/http/pprof и архитектурный паттерн Dual-Port (полная физическая изоляция служебного порта :6060 от публичного роутера для предотвращения утечек исходного кода, дампов памяти и DoS-атак), снятие 30-секундных профилей CPU через go tool pprof с интерактивным анализом Flame Graph, команд top и list, локализация утечек памяти в куче (debug/pprof/heap) с разграничением флагов -inuse_space и -alloc_space, выявление утечек горутин (Goroutine Leaks) и обнаружение дедлоков в состояниях semacquire и chan receive, детальное профилирование аллокаций в бенчмарках (-benchmem, -memprofile), архитектура непрерывного профилирования 24/7 (Continuous Profiling через Grafana Pyroscope и Parca) для выявления регрессий релизов на ранних стадиях, дифференциальный анализ профилей (pprof -base old.prof new.prof), трассировка выполнения рантайма runtime/trace (миллисекундная хронология планировщика GMP, Stop-The-World фаз сборщика мусора GC и задержек системных вызовов Syscalls в go tool trace), прямой экспорт системной телеметрии через runtime.ReadMemStats, а также практические FinOps-стратегии планирования мощностей (Capacity Planning с линейной экстраполяцией и запасом Headroom 30%) и оптимизации стоимости инфраструктуры (Cost Optimization по метрике cost_per_request).
+      </p>
+    </section>
+    """)
+    
+    # Sections (24 exercises)
+    sections = [
+        (1, 12, 'Раздел 1: Архитектура pprof, CPU-bound нагрузка, утечки памяти и горутин, дедлоки, Pyroscope и goroutine profile'),
+        (13, 24, 'Раздел 2: Трассировка runtime/trace, alloc_objects, MemStats, защита в проде, диффы pprof -base, Capacity Planning и FinOps'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 41 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили профилирование и рантайм-диагностику в Go: от подключения изолированного pprof на порту :6060 и поиска утечек памяти в куче до работы с runtime/trace, настройки непрерывного профилирования Pyroscope, дифференциального анализа -base и управления инфраструктурной стоимостью в рамках FinOps.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter40.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 40 Распределенная трассировка (OpenTelemetry)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 42 Проектирование чистой архитектуры и DDD (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '41. Профилирование и рантайм-диагностика (24/24)') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2373,6 +2429,7 @@ if __name__ == '__main__':
         ('chapter38.html', build_chapter38_html),
         ('chapter39.html', build_chapter39_html),
         ('chapter40.html', build_chapter40_html),
+        ('chapter41.html', build_chapter41_html),
     ]
     
     for filename, builder_fn in pages:
