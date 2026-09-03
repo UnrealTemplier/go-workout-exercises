@@ -290,12 +290,6 @@ def build_chapter1_html(chapters):
             нацеленных на трудоустройство в сильные технологические компании и BigTech (Яндекс, Ozon, Авито, Т-Банк, ВК). 
             Полный пошаговый разбор всех 91 упражнений курса с глубоким анализом работы компилятора, рантайма и продакшен-практик.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">91 из 91</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">100%</span><span class="stat-lbl">Теория + Практика</span></div>
-            <div class="stat-item"><span class="stat-val">83</span><span class="stat-lbl">Главы курса</span></div>
-            <div class="stat-item"><span class="stat-val">Go 1.22+</span><span class="stat-lbl">Стандарт индустрии</span></div>
-        </div>
     </section>
     """)
     section_groups = [
@@ -324,7 +318,7 @@ def build_chapter1_html(chapters):
             Вы успешно изучили фундаментальные механизмы пакетов и модулей Go. Переходите к следующей главе!
         </p>
         <a href="chapter2.html" style="display: inline-flex; align-items: center; gap: 8px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 20px; border-radius: 8px; text-decoration: none; transition: transform 0.2s;">
-            <span>Перейти к Главе 02: Компиляция, сборка и запуск</span> →
+            <span>Глава 02 Компиляция, сборка и запуск</span> →
         </a>
     </section>
     """)
@@ -344,12 +338,6 @@ def build_chapter2_html(chapters):
             детектору гонок данных (-race), перехвату сигналов ОС (Graceful Shutdown), автоматизации сборки и 
             ультра-компактной Docker-контейнеризации (от 5 МБ Scratch). Все 25 упражнений решены шаг за шагом.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">25 из 25</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">Multi-stage</span><span class="stat-lbl">Docker Scratch</span></div>
-            <div class="stat-item"><span class="stat-val">-race</span><span class="stat-lbl">ThreadSanitizer</span></div>
-            <div class="stat-item"><span class="stat-val">-ldflags</span><span class="stat-lbl">DWARF Strip & Inject</span></div>
-        </div>
     </section>
     """)
     section_groups_ch2 = [
@@ -375,8 +363,8 @@ def build_chapter2_html(chapters):
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 02 полностью завершена!</h3>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 01</a>
-            <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 03: fmt и ввод-вывод →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 01 Пакеты и модули</a>
+            <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 03 fmt и ввод-вывод →</a>
         </div>
     </section>
     """)
@@ -392,12 +380,6 @@ def build_chapter3_html(chapters):
         <div class="hero-tag">💻 Модуль 03 • Консольный Ввод-Вывод и fmt</div>
         <h1 class="hero-title">Пакет fmt и Консольный Ввод-Вывод в Go</h1>
         <p class="hero-desc">Глубокое практическое руководство по потоковому вводу-выводу в Go: спецификаторы fmt, bufio.Reader/Scanner, UTF-8 руны, Stringer и ANSI-стилизация. 65 упражнений решено.</p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">65 из 65</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">bufio</span><span class="stat-lbl">Reader & Scanner</span></div>
-            <div class="stat-item"><span class="stat-val">fmt.Stringer</span><span class="stat-lbl">Кастомная печать</span></div>
-            <div class="stat-item"><span class="stat-val">ANSI & TUI</span><span class="stat-lbl">Цветные терминалы</span></div>
-        </div>
     </section>
     """)
     section_groups_ch3 = [
@@ -422,8 +404,8 @@ def build_chapter3_html(chapters):
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 03 полностью завершена!</h3>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter2.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 02</a>
-            <a href="chapter4.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 04: Базовые типы →</a>
+            <a href="chapter2.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 02 Компиляция, сборка и запуск</a>
+            <a href="chapter4.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 04 Базовые типы →</a>
         </div>
     </section>
     """)
@@ -439,12 +421,6 @@ def build_chapter4_html(chapters):
         <div class="hero-tag">🧬 Модуль 04 • Система Типов и Память Go</div>
         <h1 class="hero-title">Базовые Типы, Переменные и Константы в Go</h1>
         <p class="hero-desc">Zero Values, IEEE 754, переполнение, выравнивание памяти (Memory Padding & Alignment), iota и битовые маски. Все 111 упражнений решены.</p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">111 из 111</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">Zero Values</span><span class="stat-lbl">Memory Safety</span></div>
-            <div class="stat-item"><span class="stat-val">iota & Bitmasks</span><span class="stat-lbl">State Enums</span></div>
-            <div class="stat-item"><span class="stat-val">Padding</span><span class="stat-lbl">Memory Alignment</span></div>
-        </div>
     </section>
     """)
     section_groups_ch4 = [
@@ -470,8 +446,8 @@ def build_chapter4_html(chapters):
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 04 полностью завершена!</h3>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 03</a>
-            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 05: Условные конструкции →</a>
+            <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 03 Пакет fmt и консольный ввод-вывод</a>
+            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 05 Условные конструкции →</a>
         </div>
     </section>
     """)
@@ -487,12 +463,6 @@ def build_chapter5_html(chapters):
         <div class="hero-tag">🔀 Модуль 05 • Управляющие Конструкции и Ветвления</div>
         <h1 class="hero-title">Условные Конструкции (if, switch) в Go</h1>
         <p class="hero-desc">Каскадные условия if/else, if with short init, Guard Clauses, Tagless Switch, Type Switch, fallthrough, comma-ok и FSM. 64 упражнения решено.</p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">64 из 64</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">if with init</span><span class="stat-lbl">Scope Isolation</span></div>
-            <div class="stat-item"><span class="stat-val">Tagless Switch</span><span class="stat-lbl">Jump Table $O(1)$</span></div>
-            <div class="stat-item"><span class="stat-val">Guard Clauses</span><span class="stat-lbl">Clean Code Pattern</span></div>
-        </div>
     </section>
     """)
     section_groups_ch5 = [
@@ -516,8 +486,8 @@ def build_chapter5_html(chapters):
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 05 полностью завершена!</h3>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter4.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 04</a>
-            <a href="chapter6.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 06: Циклы →</a>
+            <a href="chapter4.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 04 Базовые типы</a>
+            <a href="chapter6.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 06 Циклы →</a>
         </div>
     </section>
     """)
@@ -533,12 +503,6 @@ def build_chapter6_html(chapters):
         <div class="hero-tag">🔄 Модуль 06 • Итерации и Управление Потоком</div>
         <h1 class="hero-title">Циклы (for, for-range) и Итераторы в Go</h1>
         <p class="hero-desc">Итерационные алгоритмы, Two Pointers (In-place $O(1)$), Loopvar Scope Go 1.22+, каналы chan, defer в циклах, недетерминированный map и батчинг. 64 упражнения решено.</p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">64 из 64</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">for range</span><span class="stat-lbl">Slices, Maps, Chans</span></div>
-            <div class="stat-item"><span class="stat-val">Go 1.22+</span><span class="stat-lbl">Loopvar Per-Iteration Scope</span></div>
-            <div class="stat-item"><span class="stat-val">Two Pointers</span><span class="stat-lbl">In-place $O(1)$ Space</span></div>
-        </div>
     </section>
     """)
     section_groups_ch6 = [
@@ -562,8 +526,8 @@ def build_chapter6_html(chapters):
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 06 полностью завершена!</h3>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 05</a>
-            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 07: Массивы →</a>
+            <a href="chapter5.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 05 Условные конструкции</a>
+            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 07 Массивы →</a>
         </div>
     </section>
     """)
@@ -579,12 +543,6 @@ def build_chapter7_html(chapters):
         <div class="hero-tag">📦 Модуль 07 • Структуры Данных и Память</div>
         <h1 class="hero-title">Массивы (Arrays) и Модель Памяти в Go</h1>
         <p class="hero-desc">Фиксированные массивы в Go: семантика значений (Pass by Value & Deep Copy), непрерывное расположение в стеке, unsafe.Sizeof/Alignof, ключи в map и static bounds check. 32 упражнения решено.</p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">32 из 32</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">Value Semantics</span><span class="stat-lbl">Deep Copy $O(N)$</span></div>
-            <div class="stat-item"><span class="stat-val">Comparable</span><span class="stat-lbl">Keys in map[K]V</span></div>
-            <div class="stat-item"><span class="stat-val">Zero Overhead</span><span class="stat-lbl">0B Header Size</span></div>
-        </div>
     </section>
     """)
     section_groups_ch7 = [
@@ -606,8 +564,8 @@ def build_chapter7_html(chapters):
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 07 полностью завершена!</h3>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter6.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 06</a>
-            <a href="chapter8.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 08: Срезы (Slices) →</a>
+            <a href="chapter6.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 06 Циклы</a>
+            <a href="chapter8.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 08 Слайсы →</a>
         </div>
     </section>
     """)
@@ -623,12 +581,6 @@ def build_chapter8_html(chapters):
         <div class="hero-tag">🍰 Модуль 08 • Динамические Коллекции</div>
         <h1 class="hero-title">Срезы (Slices) и Модель Памяти в Go</h1>
         <p class="hero-desc">Дескриптор SliceHeader (Data, Len, Cap), геометрический рост append, трехзначный слайсинг s[low:high:max], предотвращение утечек памяти, In-Place фильтрация и пакет slices. 74 упражнения решено.</p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">74 из 74</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">SliceHeader</span><span class="stat-lbl">Data, Len, Cap (24B)</span></div>
-            <div class="stat-item"><span class="stat-val">Zero Alloc</span><span class="stat-lbl">In-Place & Pre-alloc</span></div>
-            <div class="stat-item"><span class="stat-val">slices (1.21+)</span><span class="stat-lbl">Generics & Fast Sort</span></div>
-        </div>
     </section>
     """)
     section_groups_ch8 = [
@@ -652,8 +604,8 @@ def build_chapter8_html(chapters):
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 08 полностью завершена!</h3>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 07</a>
-            <a href="chapter9.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 09: Хэш-таблицы (Maps) →</a>
+            <a href="chapter7.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 07 Массивы</a>
+            <a href="chapter9.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 09 Мапы →</a>
         </div>
     </section>
     """)
@@ -676,12 +628,6 @@ def build_chapter9_html(chapters):
             устранение скрытых утечек памяти при массовых удалениях, мемоизация и пакет `maps` (Go 1.21+). 
             Все 62 упражнения курса решены шаг за шагом.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">62 из 62</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">hmap & bmap</span><span class="stat-lbl">8 слотов на бакет</span></div>
-            <div class="stat-item"><span class="stat-val">Set struct{}</span><span class="stat-lbl">Zero-Byte Overhead</span></div>
-            <div class="stat-item"><span class="stat-val">maps (1.21+)</span><span class="stat-lbl">Clone, Copy, Equal</span></div>
-        </div>
     </section>
     """)
     section_groups_ch9 = [
@@ -708,8 +654,8 @@ def build_chapter9_html(chapters):
             Вы в совершенстве освоили хэш-таблицы, устройство бакетов hmap, потокобезопасность с мьютексами и предотвращение утечек памяти.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter8.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 08 (Слайсы)</a>
-            <a href="chapter10.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 10: Функции →</a>
+            <a href="chapter8.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 08 Слайсы</a>
+            <a href="chapter10.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 10 Функции →</a>
         </div>
     </section>
     """)
@@ -731,12 +677,6 @@ def build_chapter10_html(chapters):
             паттерн Декоратор (Middleware), функции высшего порядка (Map/Filter/Reduce), оптимизация рекурсии через мемоизацию за $O(N)$ 
             и параметрический полиморфизм (Дженерики `cmp.Ordered`). Все 100 упражнений решены шаг за шагом.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">100 из 100</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">Closures</span><span class="stat-lbl">Heap Escape</span></div>
-            <div class="stat-item"><span class="stat-val">defer & recover</span><span class="stat-lbl">Zero-Cost LIFO</span></div>
-            <div class="stat-item"><span class="stat-val">cmp.Ordered</span><span class="stat-lbl">Type Parameters</span></div>
-        </div>
     </section>
     """)
     section_groups_ch10 = [
@@ -763,8 +703,8 @@ def build_chapter10_html(chapters):
             Вы в совершенстве изучили все вариации функций в Go: замыкания, стек defer, перехват паник через recover, функции высшего порядка и дженерики.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter9.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 09 (Мапы)</a>
-            <a href="chapter11.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 11: Указатели →</a>
+            <a href="chapter9.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 09 Мапы</a>
+            <a href="chapter11.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 11 Указатели →</a>
         </div>
     </section>
     """)
@@ -787,12 +727,6 @@ def build_chapter11_html(chapters):
             двойные указатели `**T`, защита от `nil pointer dereference`, паттерны опциональных полей (Nullable DTO) 
             и инвариант 8-байтных указателей в `unsafe.Sizeof`. Все 49 упражнений решены шаг за шагом.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">49 из 49</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">Escape Analysis</span><span class="stat-lbl">Stack vs Heap</span></div>
-            <div class="stat-item"><span class="stat-val">Nil Safety</span><span class="stat-lbl">Guard Clauses</span></div>
-            <div class="stat-item"><span class="stat-val">unsafe.Sizeof</span><span class="stat-lbl">8-Byte Pointer Invariant</span></div>
-        </div>
     </section>
     """)
     section_groups_ch11 = [
@@ -817,8 +751,8 @@ def build_chapter11_html(chapters):
             Вы в совершенстве освоили работу с указателями, управление памятью, Escape-анализ и безопасное разыменование в Go.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter10.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 10 (Функции)</a>
-            <a href="chapter12.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 12: Передача аргументов →</a>
+            <a href="chapter10.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 10 Функции</a>
+            <a href="chapter12.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 12 Передача аргументов →</a>
         </div>
     </section>
     """)
@@ -841,12 +775,6 @@ def build_chapter12_html(chapters):
             бенчмаркинг копирования 8 МБ массивов против 8-байтных указателей, транзакционная логика переводов `Transfer` 
             и адресная арифметика в пакете `unsafe`. Все 67 упражнений решены шаг за шагом.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">67 из 67</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">Pass by Value</span><span class="stat-lbl">Strict Go Model</span></div>
-            <div class="stat-item"><span class="stat-val">SliceHeader</span><span class="stat-lbl">Data, Len, Cap Trap</span></div>
-            <div class="stat-item"><span class="stat-val">Deep Copy</span><span class="stat-lbl">Memory Isolation</span></div>
-        </div>
     </section>
     """)
     section_groups_ch12 = [
@@ -872,8 +800,8 @@ def build_chapter12_html(chapters):
             Вы в совершенстве освоили механику передачи аргументов в Go: изоляцию стека, ссылочную семантику мап/каналов, ловушки срезов и глубокое копирование.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter11.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 11 (Указатели)</a>
-            <a href="chapter13.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 13: Структуры →</a>
+            <a href="chapter11.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 11 Указатели</a>
+            <a href="chapter13.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 13 Структуры →</a>
         </div>
     </section>
     """)
@@ -898,12 +826,6 @@ def build_chapter13_html(chapters):
             решение каверзной ошибки `cannot assign to struct field in map` и реализация двоичного дерева поиска (BST). 
             Все 71 упражнение решено шаг за шагом.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">71 из 71</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">Composition</span><span class="stat-lbl">Embedding vs Inheritance</span></div>
-            <div class="stat-item"><span class="stat-val">Padding & Alignment</span><span class="stat-lbl">24B vs 16B Memory Size</span></div>
-            <div class="stat-item"><span class="stat-val">Functional Options</span><span class="stat-lbl">Clean Config Pattern</span></div>
-        </div>
     </section>
     """)
     section_groups_ch13 = [
@@ -929,8 +851,8 @@ def build_chapter13_html(chapters):
             Вы в совершенстве изучили структуры, композицию, выравнивание памяти, теги сериализации и объектные паттерны в Go.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter12.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 12 (Передача аргументов)</a>
-            <a href="chapter14.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 14: Интерфейсы →</a>
+            <a href="chapter12.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 12 Передача аргументов</a>
+            <a href="chapter14.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 14 Интерфейсы →</a>
         </div>
     </section>
     """)
@@ -957,12 +879,6 @@ def build_chapter14_html(chapters):
             статическая проверка реализации на этапе компиляции `var _ io.Writer = (*Type)(nil)` 
             и сравнение пустых интерфейсов с Generics (`cmp.Ordered`). Все 77 упражнений решены шаг за шагом.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">77 из 77</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">Duck Typing</span><span class="stat-lbl">Implicit Satisfaction</span></div>
-            <div class="stat-item"><span class="stat-val">iface & eface</span><span class="stat-lbl">itab + data Layout</span></div>
-            <div class="stat-item"><span class="stat-val">Postel\'s Law</span><span class="stat-lbl">Accept IFace, Return Struct</span></div>
-        </div>
     </section>
     """)
     section_groups_ch14 = [
@@ -988,8 +904,8 @@ def build_chapter14_html(chapters):
             Вы в совершенстве освоили интерфейсы в Go: модель iface/eface, обработку nil interface, полиморфизм потоков io, паттерны DI и статические проверки.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter13.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 13 (Структуры)</a>
-            <a href="chapter15.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #0f172a; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 15 (ООП в Go: 127 упр.) →</a>
+            <a href="chapter13.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 13 Структуры</a>
+            <a href="chapter15.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #0f172a; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 15 ООП в Go →</a>
         </div>
     </section>
     """)
@@ -1015,12 +931,6 @@ def build_chapter15_html(chapters):
             Decorator, Adapter, State Machine, Object Pool, Unit of Work) и построение сервисов по Clean Architecture. 
             Все 127 упражнений решены от базовых концепций до уровня Middle/Senior BigTech.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">127 из 127</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">Composition</span><span class="stat-lbl">Embedding & Promotion</span></div>
-            <div class="stat-item"><span class="stat-val">Method Sets</span><span class="stat-lbl">Value vs Pointer Receivers</span></div>
-            <div class="stat-item"><span class="stat-val">Clean Arch</span><span class="stat-lbl">GoF Patterns & DIP</span></div>
-        </div>
     </section>
     """)
     section_groups_ch15 = [
@@ -1047,8 +957,8 @@ def build_chapter15_html(chapters):
             Вы в совершенстве освоили объектно-ориентированный Go: композицию и всплытие методов, разрешение конфликтов селекторов, nil-ресиверы, Method Values/Expressions, паттерны GoF и принципы Clean Architecture.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter14.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 14 (Интерфейсы)</a>
-            <a href="chapter16.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 16 (Дженерики) →</a>
+            <a href="chapter14.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 14 Интерфейсы</a>
+            <a href="chapter16.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 16 Дженерики →</a>
         </div>
     </section>
     """)
@@ -1071,12 +981,6 @@ def build_chapter16_html(chapters):
             BST, PriorityQueue, SafeMap, Graph), паттернов Fan-In / Concurrency, и глубокого сравнения дженериков с интерфейсами на уровне 
             рантайма (GC Shape Stenciling + Dictionaries). Все 131 упражнение с нуля до уровня Senior/Staff BigTech.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">131 из 131</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">Type Sets</span><span class="stat-lbl">Constraints & ~ Unions</span></div>
-            <div class="stat-item"><span class="stat-val">GC Shape</span><span class="stat-lbl">Stenciling & Dictionaries</span></div>
-            <div class="stat-item"><span class="stat-val">Go 1.21+</span><span class="stat-lbl">cmp, slices, maps</span></div>
-        </div>
     </section>
     """)
     section_groups_ch16 = [
@@ -1103,8 +1007,8 @@ def build_chapter16_html(chapters):
             Вы в совершенстве освоили обобщенное программирование (Generics) в Go: Type Sets, аппроксимацию типов (~), Constraint Type Inference, реализацию обобщенных коллекций и понимание мономорфизации рантайма (GC Shape Stenciling).
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter15.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 15 (ООП в Go)</a>
-            <a href="chapter17.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 17 (Обработка ошибок) →</a>
+            <a href="chapter15.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 15 ООП в Go</a>
+            <a href="chapter17.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 17 Обработка ошибок →</a>
         </div>
     </section>
     """)
@@ -1127,12 +1031,6 @@ def build_chapter17_html(chapters):
             конкурентного сбора ошибок из горутин и устранения антипаттерна Log-and-Return. Все 58 упражнений от базовых концепций 
             до уровня Senior/Lead BigTech.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">58 из 58</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">errors.Is / As</span><span class="stat-lbl">Deep Unwrap Chains</span></div>
-            <div class="stat-item"><span class="stat-val">errors.Join</span><span class="stat-lbl">Go 1.20+ Multi-Errors</span></div>
-            <div class="stat-item"><span class="stat-val">Panic & Recover</span><span class="stat-lbl">Fault Tolerance & Defer</span></div>
-        </div>
     </section>
     """)
     section_groups_ch17 = [
@@ -1158,8 +1056,8 @@ def build_chapter17_html(chapters):
             Вы в совершенстве освоили идиоматичную обработку ошибок в Go: цепочки оборачивания с %w, рекурсивные проверки через errors.Is/As, древовидную агрегацию через errors.Join, паттерны Must и Deferred Rollback, а также безопасную изоляцию паник через recover.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter16.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 16 (Дженерики)</a>
-            <a href="chapter18.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 18 (Работа с файлами) →</a>
+            <a href="chapter16.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 16 Дженерики</a>
+            <a href="chapter18.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 18 Работа с файлами →</a>
         </div>
     </section>
     """)
@@ -1184,12 +1082,6 @@ def build_chapter18_html(chapters):
             файлов (<code>os.CreateTemp</code>) и реализация собственных типов <code>io.Reader</code> / <code>io.Writer</code>. 
             Все 100 упражнений от базового открытия файлов до уровня Senior BigTech.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">100 из 100</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">os & io.Copy</span><span class="stat-lbl">Kernel Zero-Copy I/O</span></div>
-            <div class="stat-item"><span class="stat-val">bufio Engine</span><span class="stat-lbl">Scanner & Buffered Writer</span></div>
-            <div class="stat-item"><span class="stat-val">Binary & Gob</span><span class="stat-lbl">Fixed Struct Serialization</span></div>
-        </div>
     </section>
     """)
     section_groups_ch18 = [
@@ -1215,8 +1107,8 @@ def build_chapter18_html(chapters):
             Вы в совершенстве освоили файловый ввод-вывод и потоковую обработку данных в Go: потоковое сканирование bufio.Scanner, высокоскоростную запись bufio.Writer, низкоуровневые системные вызовы Seek/Stat/Chmod, бинарную сериализацию binary/gob/json и проектирование кастомных io.Reader / io.Writer.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter17.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 17 (Обработка ошибок)</a>
-            <a href="chapter19.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 19 (Логирование) →</a>
+            <a href="chapter17.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 17 Обработка ошибок</a>
+            <a href="chapter19.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 19 Логирование →</a>
         </div>
     </section>
     """)
@@ -1241,12 +1133,6 @@ def build_chapter19_html(chapters):
             очередей на каналах, ротации логов на диске (lumberjack) и интеграции с Grafana Loki (LogQL) и ELK. Все 84 упражнения 
             от базового <code>log.Println</code> до уровня Senior SRE / Staff Engineer.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">84 из 84</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">log/slog</span><span class="stat-lbl">Structured JSON Engine</span></div>
-            <div class="stat-item"><span class="stat-val">slog.LevelVar</span><span class="stat-lbl">Dynamic Runtime Tuning</span></div>
-            <div class="stat-item"><span class="stat-val">OpenTelemetry</span><span class="stat-lbl">Trace-to-Log Correlation</span></div>
-        </div>
     </section>
     """)
     section_groups_ch19 = [
@@ -1272,8 +1158,8 @@ def build_chapter19_html(chapters):
             Вы в совершенстве освоили структурированное логирование и основы Cloud-Native Observability в Go: современный пакет log/slog, динамическое управление уровнями через LevelVar, OpenTelemetry распределенную трассировку, маскирование PII-данных (152-ФЗ/GDPR), log sampling, интеграцию с Grafana Loki (LogQL) и проектирование отказоустойчивых асинхронных конвейеров.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter18.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 18 (Работа с файлами)</a>
-            <a href="chapter20.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 20 (Горутины и синхронизация) →</a>
+            <a href="chapter18.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 18 Работа с файлами</a>
+            <a href="chapter20.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 20 Горутины и синхронизация →</a>
         </div>
     </section>
     """)
@@ -1298,12 +1184,6 @@ def build_chapter20_html(chapters):
             CAS-лупы, Memory Ordering, защита от False Sharing). Все 124 упражнения от базового <code>go func()</code> до уровня 
             Senior / Staff Concurrency Engineer.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">124 из 124</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">GMP Scheduler</span><span class="stat-lbl">M:N Lightweight Threads</span></div>
-            <div class="stat-item"><span class="stat-val">sync & atomic</span><span class="stat-lbl">Lock-Free & Memory Model</span></div>
-            <div class="stat-item"><span class="stat-val">Race Detector</span><span class="stat-lbl">ThreadSanitizer Protected</span></div>
-        </div>
     </section>
     """)
     section_groups_ch20 = [
@@ -1329,8 +1209,8 @@ def build_chapter20_html(chapters):
             Вы в совершенстве освоили базовую модель конкурентности и примитивы синхронизации в Go: планировщик GMP, безопасную работу с горутинами, пакеты <code>sync</code> (WaitGroup, Mutex, RWMutex, Once, Pool, Cond, Map), библиотеку <code>errgroup</code>, и низкоуровневые Lock-Free алгоритмы на <code>sync/atomic</code>.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter19.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 19 (Логирование)</a>
-            <a href="chapter21.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 21 (Каналы и select) →</a>
+            <a href="chapter19.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 19 Логирование</a>
+            <a href="chapter21.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 21 Каналы и select →</a>
         </div>
     </section>
     """)
@@ -1355,12 +1235,6 @@ def build_chapter21_html(chapters):
             и классические конвейеры (Pipeline, Fan-In, Fan-Out, Throttle, Debounce, Futures/Promises, Heartbeat, Rate Limiter). 
             Все 95 упражнений от базового <code>make(chan int)</code> до уровня Senior / Staff Concurrency Engineer.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">95 из 95</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">CSP Architecture</span><span class="stat-lbl">runtime.hchan Internal</span></div>
-            <div class="stat-item"><span class="stat-val">select Multiplexing</span><span class="stat-lbl">Non-blocking & Random Uniform</span></div>
-            <div class="stat-item"><span class="stat-val">Concurrency Patterns</span><span class="stat-lbl">Pipeline, Fan-In, Debounce, RateLimit</span></div>
-        </div>
     </section>
     """)
     section_groups_ch21 = [
@@ -1386,8 +1260,8 @@ def build_chapter21_html(chapters):
             Вы в совершенстве освоили модель каналов и мультиплексирование select в Go: внутреннее устройство runtime.hchan, безопасную передачу данных между горутинами, неблокирующие операции, отмену через Done-каналы, и полный спектр конкурентных паттернов (Pipeline, Fan-In, Debounce, Throttle, Rate Limiter).
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter20.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 20 (Горутины и синхронизация)</a>
-            <a href="chapter22.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 22 (Пакет context) →</a>
+            <a href="chapter20.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 20 Горутины и синхронизация</a>
+            <a href="chapter22.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 22 Пакет context →</a>
         </div>
     </section>
     """)
@@ -1412,12 +1286,6 @@ def build_chapter22_html(chapters):
             (<code>context.AfterFunc</code>, <code>context.WithoutCancel</code>). Все 52 упражнения с полным разбором низкоуровневых 
             структур (<code>emptyCtx</code>, <code>cancelCtx</code>, <code>timerCtx</code>, <code>valueCtx</code>) и практик BigTech-инженерии.
         </p>
-        <div class="hero-stats">
-            <div class="stat-item"><span class="stat-val">52 из 52</span><span class="stat-lbl">Упражнений решено</span></div>
-            <div class="stat-item"><span class="stat-val">Context Lifecycle</span><span class="stat-lbl">WithCancel, Timeout, Deadline</span></div>
-            <div class="stat-item"><span class="stat-val">Request-Scoped Data</span><span class="stat-lbl">WithValue & Type Safety</span></div>
-            <div class="stat-item"><span class="stat-val">Go 1.21+ Features</span><span class="stat-lbl">AfterFunc & NotifyContext</span></div>
-        </div>
     </section>
     """)
     section_groups_ch22 = [
@@ -1442,8 +1310,8 @@ def build_chapter22_html(chapters):
             Вы в совершенстве освоили пакет <code>context</code> в Go: управление жизненным циклом горутин, каскадную отмену, дедлайны и таймауты, типобезопасные метаданные WithValue, Graceful Shutdown, а также новые функции Go 1.21+ (AfterFunc и WithoutCancel).
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter21.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 21 (Каналы и select)</a>
-            <a href="chapter23.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #080c14; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 23 (Паттерны конкурентности) →</a>
+            <a href="chapter21.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 21 Каналы и select</a>
+            <a href="chapter23.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #080c14; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 23 Паттерны конкурентности →</a>
         </div>
     </section>
     """)
@@ -1466,24 +1334,6 @@ def build_chapter23_html(chapters):
       <p class="hero-desc">
         Исчерпывающее инженерное руководство по конкурентному программированию в Go: проектирование высокопроизводительных конвейеров (Pipelines), масштабируемых пулов воркеров (Worker Pools), алгоритмов ограничения частоты (Token Bucket & Leaky Bucket), паттернов Singleflight, Debounce, Throttle, K-Way Merge, шардированных кэшей с TTL, выявления и устранения Data Races, дедлоков и утечек горутин, а также промышленного Graceful Shutdown микросервисов.
       </p>
-      <div class="hero-stats">
-        <div class="stat-card">
-          <div class="stat-number">132</div>
-          <div class="stat-label">Упражнения (100% задачника)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">30+</div>
-          <div class="stat-label">Архитектурных паттернов</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">0 Races</div>
-          <div class="stat-label">Детекция и устранение гонок (-race)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">Go 1.22+</div>
-          <div class="stat-label">Промышленный стандарт BigTech</div>
-        </div>
-      </div>
     </section>
     """)
     
@@ -1513,8 +1363,8 @@ def build_chapter23_html(chapters):
             Вы в совершенстве освоили все ключевые паттерны конкурентности и тонкие нюансы рантайма Go: от многостадийных конвейеров и пулов воркеров до ликвидации утечек памяти, шардирования мьютексов и реализации отказоустойчивых HighLoad микросервисов.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter22.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 22 (Пакет context)</a>
-            <a href="chapter24.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #080c14; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 24 (Низкоуровневая сеть TCP и UDP) →</a>
+            <a href="chapter22.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 22 Пакет context</a>
+            <a href="chapter24.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #080c14; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 24 Низкоуровневая сеть TCP и UDP →</a>
         </div>
     </section>
     """)
@@ -1537,24 +1387,6 @@ def build_chapter24_html(chapters):
       <p class="hero-desc">
         Исчерпывающее инженерное руководство по сетевому программированию сокетов в Go: архитектура TCP/IP и UDP стека, системные сокеты net.Listen и net.Dial, асинхронный Netpoller (epoll/kqueue) рантайма, решение проблемы TCP stream framing (Length-Prefixed и TLV бинарные протоколы), построчные протоколы команд, полнодуплексные TCP-прокси и широковещательные чаты, многопоточные сканеры портов, тюнинг сокетов (TCP_NODELAY, Keep-Alive, буферы SO_RCVBUF/SO_SNDBUF), DNS-резолюция, протокол Reliable UDP с подтверждениями и in-memory тестирование через net.Pipe.
       </p>
-      <div class="hero-stats">
-        <div class="stat-card">
-          <div class="stat-number">63</div>
-          <div class="stat-label">Упражнения (100% задачника)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">L4 / POSIX</div>
-          <div class="stat-label">Низкоуровневые сокеты TCP и UDP</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">Netpoller</div>
-          <div class="stat-label">Асинхронный epoll/kqueue в Go</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">Go 1.22+</div>
-          <div class="stat-label">Сетевой стек BigTech</div>
-        </div>
-      </div>
     </section>
     """)
     
@@ -1583,8 +1415,8 @@ def build_chapter24_html(chapters):
             Вы в совершенстве освоили низкоуровневое сетевое программирование на Go: работу с TCP и UDP сокетами, управление тайм-аутами и дедлайнами, создание кастомных бинарных TLV протоколов, реализацию масштабируемых прокси и сетевых демонов.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter23.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 23 (Паттерны конкурентности)</a>
-            <a href="chapter25.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #080c14; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 25 (HTTP-клиент) →</a>
+            <a href="chapter23.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 23 Паттерны конкурентности</a>
+            <a href="chapter25.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #080c14; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 25 HTTP-клиент →</a>
         </div>
     </section>
     """)
@@ -1607,24 +1439,6 @@ def build_chapter25_html(chapters):
       <p class="hero-desc">
         Исчерпывающее инженерное руководство по работе с HTTP-клиентом в Go: архитектура net/http, безопасная инициализация http.Client с таймаутами, глубокий тюнинг http.Transport и пула Keep-Alive сокетов для HighLoad (MaxIdleConnsPerHost), отправка GET/POST/HEAD запросов, потоковая передача JSON (json.NewDecoder) и файлов через io.Copy, безопасная сборка URL в net/url, загрузка файлов multipart/form-data, сессионные CookieJar, клиентские Middleware на базе http.RoundTripper, паттерны ретраев с Exponential Backoff и контекстной отменой.
       </p>
-      <div class="hero-stats">
-        <div class="stat-card">
-          <div class="stat-number">45</div>
-          <div class="stat-label">Упражнений (100% задачника)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">net/http</div>
-          <div class="stat-label">HTTP/1.1 и HTTP/2 клиентский стек</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">Keep-Alive</div>
-          <div class="stat-label">Тюнинг пула сокетов и RoundTripper</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">Go 1.22+</div>
-          <div class="stat-label">Сетевые паттерны BigTech</div>
-        </div>
-      </div>
     </section>
     """)
     
@@ -1653,8 +1467,8 @@ def build_chapter25_html(chapters):
             Вы в совершенстве освоили клиентский HTTP-стек в Go: от базовых запросов и управления дедлайнами до тюнинга Keep-Alive пулов, реализации отказоустойчивых ретраев и кастомных клиентских Middleware на RoundTripper.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter24.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 24 (Низкоуровневая сеть TCP и UDP)</a>
-            <a href="chapter26.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #080c14; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 26 (HTTP-сервер и REST API) →</a>
+            <a href="chapter24.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 24 Низкоуровневая сеть TCP и UDP</a>
+            <a href="chapter26.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #080c14; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 26 HTTP-сервер и REST API →</a>
         </div>
     </section>
     """)
@@ -1678,24 +1492,6 @@ def build_chapter26_html(chapters):
       <p class="hero-desc">
         Полное руководство по разработке масштабируемых веб-сервисов и REST API на Go: стандартная библиотека net/http, новая маршрутизация Go 1.22+ с методами и PathValue, луковая архитектура Middleware (декораторы, структурированное логирование, аутентификация Bearer, rate limiting на токенах, перехват паник Recovery), потоковая передача данных (NDJSON, SSE через http.Flusher), загрузка и отдача файлов (multipart/form-data), полнодуплексные WebSocket-соединения (эхо, чат-румы, Hub/Broker с мьютексами), запуск защищенных HTTPS и Mutual TLS (mTLS) серверов с генерацией X.509 сертификатов, gRPC сервисы и Protobuf контракты, балансировка нагрузки (Round-Robin на ReverseProxy), паттерн Circuit Breaker, Single Page Application (SPA fallback) и промышленный Graceful Shutdown.
       </p>
-      <div class="hero-stats">
-        <div class="stat-card">
-          <div class="stat-number">158</div>
-          <div class="stat-label">Упражнений (100% задачника)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">Go 1.22+</div>
-          <div class="stat-label">Роутинг, PathValue & REST API</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">Middleware</div>
-          <div class="stat-label">Onion Chain, Auth & CORS</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">HighLoad</div>
-          <div class="stat-label">WebSockets, mTLS, Gateway & CB</div>
-        </div>
-      </div>
     </section>
     """)
     
@@ -1726,8 +1522,8 @@ def build_chapter26_html(chapters):
             Вы в совершенстве освоили серверное веб-программирование на Go: от современной маршрутизации Go 1.22 и проектирования REST API до луковой архитектуры Middleware, полнодуплексных WebSockets, взаимной аутентификации mTLS, gRPC микросервисов и построения надежных HighLoad шлюзов API Gateway.
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="chapter25.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 25 (HTTP-клиент)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 27 (SQL и PostgreSQL) (Скоро) →</a>
+            <a href="chapter25.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 25 HTTP-клиент</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 27 SQL и PostgreSQL (Скоро) →</a>
         </div>
     </section>
     """)
