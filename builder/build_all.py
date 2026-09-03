@@ -75,6 +75,8 @@ with open('builder/chapter24_data.json', 'r', encoding='utf-8') as f:
     ch24_exercises = json.load(f)
 with open('builder/chapter25_data.json', 'r', encoding='utf-8') as f:
     ch25_exercises = json.load(f)
+with open('builder/chapter26_data.json', 'r', encoding='utf-8') as f:
+    ch26_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -176,6 +178,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             23: ('chapter23.html', '132/132'),
             24: ('chapter24.html', '63/63'),
             25: ('chapter25.html', '45/45'),
+            26: ('chapter26.html', '158/158'),
         }
         
         if num in status_map:
@@ -1651,12 +1654,85 @@ def build_chapter25_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter24.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 24 (Низкоуровневая сеть TCP и UDP)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 26 (HTTP-сервер и REST API) (Скоро) →</a>
+            <a href="chapter26.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #080c14; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 26 (HTTP-сервер и REST API) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '25. HTTP-клиент (45/45)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+
+def build_chapter26_html(chapters):
+    active_chapter_num = 26
+    current_exercises = ch26_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 26 • HTTP Server, REST API & WebSockets</div>
+      <h1 class="hero-title">HTTP-сервер, REST API и Middleware</h1>
+      <p class="hero-desc">
+        Полное руководство по разработке масштабируемых веб-сервисов и REST API на Go: стандартная библиотека net/http, новая маршрутизация Go 1.22+ с методами и PathValue, луковая архитектура Middleware (декораторы, структурированное логирование, аутентификация Bearer, rate limiting на токенах, перехват паник Recovery), потоковая передача данных (NDJSON, SSE через http.Flusher), загрузка и отдача файлов (multipart/form-data), полнодуплексные WebSocket-соединения (эхо, чат-румы, Hub/Broker с мьютексами), запуск защищенных HTTPS и Mutual TLS (mTLS) серверов с генерацией X.509 сертификатов, gRPC сервисы и Protobuf контракты, балансировка нагрузки (Round-Robin на ReverseProxy), паттерн Circuit Breaker, Single Page Application (SPA fallback) и промышленный Graceful Shutdown.
+      </p>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-number">158</div>
+          <div class="stat-label">Упражнений (100% задачника)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">Go 1.22+</div>
+          <div class="stat-label">Роутинг, PathValue & REST API</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">Middleware</div>
+          <div class="stat-label">Onion Chain, Auth & CORS</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">HighLoad</div>
+          <div class="stat-label">WebSockets, mTLS, Gateway & CB</div>
+        </div>
+      </div>
+    </section>
+    """)
+    
+    # Sections
+    sections = [
+        (1, 40, 'Раздел 1: Основы HTTP-сервера, маршрутизация Go 1.22+ и базовые Middleware'),
+        (41, 80, 'Раздел 2: Защита сервисов: Rate Limiting, CORS, таймауты и юнит-тестирование'),
+        (81, 120, 'Раздел 3: Продвинутые сетевые протоколы: WebSockets, HTTPS, mTLS и gRPC'),
+        (121, 158, 'Раздел 4: Архитектура HighLoad: API Gateway, Балансировщики, Circuit Breaker и Graceful Shutdown'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 26 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили серверное веб-программирование на Go: от современной маршрутизации Go 1.22 и проектирования REST API до луковой архитектуры Middleware, полнодуплексных WebSockets, взаимной аутентификации mTLS, gRPC микросервисов и построения надежных HighLoad шлюзов API Gateway.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter25.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 25 (HTTP-клиент)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 27 (SQL и PostgreSQL) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '26. HTTP-сервер, REST API и Middleware (158/158)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1687,6 +1763,7 @@ if __name__ == '__main__':
         ('chapter23.html', build_chapter23_html),
         ('chapter24.html', build_chapter24_html),
         ('chapter25.html', build_chapter25_html),
+        ('chapter26.html', build_chapter26_html),
     ]
     
     for filename, builder_fn in pages:
