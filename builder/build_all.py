@@ -77,6 +77,8 @@ with open('builder/chapter25_data.json', 'r', encoding='utf-8') as f:
     ch25_exercises = json.load(f)
 with open('builder/chapter26_data.json', 'r', encoding='utf-8') as f:
     ch26_exercises = json.load(f)
+with open('builder/chapter27_data.json', 'r', encoding='utf-8') as f:
+    ch27_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -179,6 +181,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             24: ('chapter24.html', '63/63'),
             25: ('chapter25.html', '45/45'),
             26: ('chapter26.html', '158/158'),
+            27: ('chapter27.html', '163/163'),
         }
         
         if num in status_map:
@@ -1523,12 +1526,66 @@ def build_chapter26_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter25.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 25 HTTP-клиент</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 27 SQL и PostgreSQL (Скоро) →</a>
+            <a href="chapter27.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 27 Реляционные базы данных SQL и PostgreSQL →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '26. HTTP-сервер, REST API и Middleware (158/158)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter27_html(chapters):
+    active_chapter_num = 27
+    current_exercises = ch27_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 27 • Relational Databases, PostgreSQL & SQL in Go</div>
+      <h1 class="hero-title">Реляционные базы данных (SQL и PostgreSQL)</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по взаимодействию с реляционными СУБД в Go на примере PostgreSQL: стандартный пакет database/sql и архитектура пула соединений (*sql.DB), параметризованные запросы и защита от SQL Injection, транзакции ACID, уровни изоляции и retry-политики при serialization failure, пессимистичные и оптимистичные блокировки, нативный драйвер pgx/v5 (pgxpool, конвейеризация pgx.Batch, стриминг pgx.CopyFrom, реактивный LISTEN/NOTIFY), библиотека sqlx (Get, Select, NamedExec), генератор типобезопасного кода sqlc без рантайм-рефлексии, построитель запросов squirrel, версионирование схемы с golang-migrate, полуструктурированные данные JSONB, полнотекстовый поиск FTS и паттерны тестирования с Testcontainers и go-sqlmock.
+      </p>
+    </section>
+    """)
+    
+    # Sections
+    sections = [
+        (1, 40, 'Раздел 1: Основы database/sql, параметризация, CRUD-операции и управление транзакциями'),
+        (41, 80, 'Раздел 2: Тюнинг пула соединений, протокол COPY, блокировки и продвинутые типы PostgreSQL'),
+        (81, 120, 'Раздел 3: Библиотеки sqlx, нативный драйвер pgx/v5, миграции golang-migrate и генератор sqlc'),
+        (121, 163, 'Раздел 4: Чистая архитектура Repository, оптимизация индексов, Testcontainers и HighLoad паттерны'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 27 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили работу с реляционными базами данных в Go: от пула соединений database/sql и нативного pgxpool до продвинутых транзакций ACID, блокировок SKIP LOCKED, потокового импорта pgx.CopyFrom, кодогенерации sqlc, миграций схемы и паттернов надежного HighLoad бэкенда.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter26.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 26 HTTP-сервер, REST API и Middleware</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 28 Базы данных NoSQL и кэширование Redis (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '27. Реляционные базы данных (SQL и PostgreSQL) (163/163)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1560,6 +1617,7 @@ if __name__ == '__main__':
         ('chapter24.html', build_chapter24_html),
         ('chapter25.html', build_chapter25_html),
         ('chapter26.html', build_chapter26_html),
+        ('chapter27.html', build_chapter27_html),
     ]
     
     for filename, builder_fn in pages:
