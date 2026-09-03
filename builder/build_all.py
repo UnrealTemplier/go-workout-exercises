@@ -85,6 +85,8 @@ with open('builder/chapter29_data.json', 'r', encoding='utf-8') as f:
     ch29_exercises = json.load(f)
 with open('builder/chapter30_data.json', 'r', encoding='utf-8') as f:
     ch30_exercises = json.load(f)
+with open('builder/chapter31_data.json', 'r', encoding='utf-8') as f:
+    ch31_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -191,6 +193,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             28: ('chapter28.html', '115/115'),
             29: ('chapter29.html', '96/96'),
             30: ('chapter30.html', '107/107'),
+            31: ('chapter31.html', '120/120'),
         }
         
         if num in status_map:
@@ -1750,12 +1753,65 @@ def build_chapter30_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter29.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 29 Модульное тестирование Unit Testing и Assertions</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 31 Бенчмарки фаззинг и продвинутые методы тестирования (Скоро) →</a>
+            <a href="chapter31.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 31 Бенчмарки, фаззинг и продвинутые методы тестирования →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '30. Мокирование и интеграционное тестирование (107/107)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter31_html(chapters):
+    active_chapter_num = 31
+    current_exercises = ch31_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 31 • Benchmarks, Fuzzing & Advanced Testing in Go</div>
+      <h1 class="hero-title">Бенчмарки, фаззинг и продвинутые методы тестирования</h1>
+      <p class="hero-desc">
+        Глубокое инженерное руководство по исследованию производительности и устойчивости систем на Go: микро- и макро-бенчмаркинг с testing.B, циклы калибровки b.N и новый синтаксис Go 1.24 b.Loop(), контроль таймеров b.ResetTimer/b.StopTimer/b.StartTimer, аудит расхода оперативной памяти (-benchmem, allocs/op, B/op), кастомные метрики b.ReportMetric, параллельный бенчмаркинг b.RunParallel, статистический анализ ускорений и дельт через benchstat (p-value, U-тест Манна-Уитни), встроенный coverage-guided фаззинг с testing.F, синтез и минимизация контрпримеров (Shrinking), обнаружение повреждений кодировок UTF-8 и целочисленных переполнений, тестирование инвариантов и математических свойств (Property-Based Testing с testing/quick), профилирование pprof (CPU, heap, block, mutex профили) и построение интерактивных графов вызовов/Flame Graphs, детектор гонок ThreadSanitizer (-race) и локализация Data Races, виртуальные часы и Mock Clock для моментального тестирования таймаутов, каналов и TTL-кэша, снимки состояния Golden Files с поддержкой флага -update, паттерн Test Helpers с t.Helper(), изоляция замыканий в параллельных тестах t.Parallel(), организация TestMain и построение production-ready CI/CD пайплайнов с автоматическим контролем Quality Gate.
+      </p>
+    </section>
+    """)
+    
+    # Sections
+    sections = [
+        (1, 40, 'Раздел 1: Микробенчмарки, калибровка b.N, аллокации, Go 1.24 b.Loop, benchstat и базовый фаззинг'),
+        (41, 80, 'Раздел 2: Fuzzing-инварианты, профилирование pprof, гонки данных, Worker Pool и Property-Based тесты'),
+        (81, 120, 'Раздел 3: Mock Clock, TestMain, Golden Files, параллелизм t.Parallel, нагрузочные тесты и TDD босс'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 31 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили бенчмарки, фаззинг и передовые инженерные практики тестирования в Go: от микробенчмаркинга с b.N и Go 1.24 b.Loop() до статистического анализа через benchstat, фаззинга граничных условий с coverage-guided мутациями, профилирования pprof, устранения гонок данных с -race, работы с виртуальным временем и Golden Files.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter30.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 30 Мокирование и интеграционное тестирование</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 32 Protocol Buffers и gRPC (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '31. Бенчмарки, фаззинг и продвинутые методы тестирования (120/120)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1791,6 +1847,7 @@ if __name__ == '__main__':
         ('chapter28.html', build_chapter28_html),
         ('chapter29.html', build_chapter29_html),
         ('chapter30.html', build_chapter30_html),
+        ('chapter31.html', build_chapter31_html),
     ]
     
     for filename, builder_fn in pages:
