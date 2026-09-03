@@ -71,6 +71,8 @@ with open('builder/chapter22_data.json', 'r', encoding='utf-8') as f:
     ch22_exercises = json.load(f)
 with open('builder/chapter23_data.json', 'r', encoding='utf-8') as f:
     ch23_exercises = json.load(f)
+with open('builder/chapter24_data.json', 'r', encoding='utf-8') as f:
+    ch24_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -170,6 +172,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             21: ('chapter21.html', '95/95'),
             22: ('chapter22.html', '52/52'),
             23: ('chapter23.html', '132/132'),
+            24: ('chapter24.html', '63/63'),
         }
         
         if num in status_map:
@@ -1505,12 +1508,82 @@ def build_chapter23_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter22.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 22 (Пакет context)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 24 (Тестирование и бенчмарки) (Скоро) →</a>
+            <a href="chapter24.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #080c14; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 24 (Низкоуровневая сеть TCP и UDP) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '23. Паттерны конкурентности (132/132)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter24_html(chapters):
+    active_chapter_num = 24
+    current_exercises = ch24_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 24 • Low-Level Networking & Sockets</div>
+      <h1 class="hero-title">Низкоуровневая сеть (TCP и UDP)</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по сетевому программированию сокетов в Go: архитектура TCP/IP и UDP стека, системные сокеты net.Listen и net.Dial, асинхронный Netpoller (epoll/kqueue) рантайма, решение проблемы TCP stream framing (Length-Prefixed и TLV бинарные протоколы), построчные протоколы команд, полнодуплексные TCP-прокси и широковещательные чаты, многопоточные сканеры портов, тюнинг сокетов (TCP_NODELAY, Keep-Alive, буферы SO_RCVBUF/SO_SNDBUF), DNS-резолюция, протокол Reliable UDP с подтверждениями и in-memory тестирование через net.Pipe.
+      </p>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-number">63</div>
+          <div class="stat-label">Упражнения (100% задачника)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">L4 / POSIX</div>
+          <div class="stat-label">Низкоуровневые сокеты TCP и UDP</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">Netpoller</div>
+          <div class="stat-label">Асинхронный epoll/kqueue в Go</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">Go 1.22+</div>
+          <div class="stat-label">Сетевой стек BigTech</div>
+        </div>
+      </div>
+    </section>
+    """)
+    
+    # Sections
+    sections = [
+        (1, 32, 'Раздел 1: Фундамент сетевых сокетов: TCP Listen/Accept, Echo-серверы, Горутины, Таймауты и Проксирование'),
+        (33, 63, 'Раздел 2: Промышленные сетевые протоколы: Мультиплексирование, TLV, Broadcast, DNS, Reliable UDP и net.Pipe'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 24 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили низкоуровневое сетевое программирование на Go: работу с TCP и UDP сокетами, управление тайм-аутами и дедлайнами, создание кастомных бинарных TLV протоколов, реализацию масштабируемых прокси и сетевых демонов.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter23.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 23 (Паттерны конкурентности)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 25 (HTTP-клиент) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '24. Низкоуровневая сеть (63/63)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1539,6 +1612,7 @@ if __name__ == '__main__':
         ('chapter21.html', build_chapter21_html),
         ('chapter22.html', build_chapter22_html),
         ('chapter23.html', build_chapter23_html),
+        ('chapter24.html', build_chapter24_html),
     ]
     
     for filename, builder_fn in pages:
