@@ -99,6 +99,8 @@ with open('builder/chapter36_data.json', 'r', encoding='utf-8') as f:
     ch36_exercises = json.load(f)
 with open('builder/chapter37_data.json', 'r', encoding='utf-8') as f:
     ch37_exercises = json.load(f)
+with open('builder/chapter38_data.json', 'r', encoding='utf-8') as f:
+    ch38_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -212,6 +214,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             35: ('chapter35.html', '78/78'),
             36: ('chapter36.html', '130/130'),
             37: ('chapter37.html', '88/88'),
+            38: ('chapter38.html', '77/77'),
         }
         
         if num in status_map:
@@ -2148,12 +2151,67 @@ def build_chapter37_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter36.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 36 RabbitMQ</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 38 NATS и NATS JetStream (Скоро) →</a>
+            <a href="chapter38.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 38 NATS и NATS JetStream →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '37. Apache Kafka (88/88)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter38_html(chapters):
+    active_chapter_num = 38
+    current_exercises = ch38_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 38 • Ultra-Low Latency Messaging, Pub/Sub & JetStream Persistence in Go</div>
+      <h1 class="hero-title">NATS и NATS JetStream</h1>
+      <p class="hero-desc">
+        Глубокое инженерное руководство по разработке, масштабированию и оптимизации высокопроизводительных микросервисных систем на Go 1.22+ с использованием NATS и NATS JetStream: архитектура Core NATS (in-memory Fire-and-Forget, субмиллисекундная задержка), паттерны One-to-Many Pub/Sub и One-to-One Queue Groups, иерархическая маршрутизация тем и подстановочные знаки (* и >), синхронный RPC-протокол Request/Reply (замена HTTP/gRPC без Envoy и Consul), устойчивость соединения (Connection Resilience, автореконнект, Backoff Jitter), метаданные и трассировка в NATS Headers (HPUB/HMSG), безопасное завершение nc.Drain() vs nc.Close(), персистентный движок JetStream на консенсусе Raft (Zero-ZooKeeper), политики хранения (LimitsPolicy, InterestPolicy, WorkQueuePolicy), сравнительный анализ Push и Pull консьюмеров, пакетное чтение (Batch Fetching) и управление темпом (Backpressure), семантика доставки At-Least-Once и Exactly-Once с дедупликацией по Nats-Msg-Id, обработка ошибок и жизненный цикл сообщений (Ack, Nak, Term, InProgress), изоляция отравленных сообщений (Dead Letter Queues), распределенное хранилище Key-Value (CAS-блокировки, реактивные вотчеры Watch), хранилище больших файлов Object Store (чанкинг >1 МБ), Service Discovery на базе KV с TTL, событийно-ориентированная архитектура (CQRS, Event Sourcing, Transactional Outbox, Saga Orchestrator), телеметрия Prometheus (:8222/varz, /connz), многоарендность (NATS 2.0 Accounts, JWT) и мульти-облачные мосты CloudEvents.
+      </p>
+    </section>
+    """)
+    
+    # Sections (77 exercises)
+    sections = [
+        (1, 19, 'Раздел 1: Основы NATS Core, Pub/Sub, Queue Groups, иерархия тем (* и >), Request/Reply и устойчивость соединения'),
+        (20, 38, 'Раздел 2: Движок JetStream, политики хранения, Push vs Pull консьюмеры, сигналы Ack/Nak/Term, дедупликация и кластеризация Raft'),
+        (39, 58, 'Раздел 3: JetStream Key-Value, Object Store, Финальный босс, распределенный лок, Outbox, Saga Orchestrator и CQRS'),
+        (59, 77, 'Раздел 4: Продвинутые шаблоны, бенчмарк 100K msg/s, Hot Reload конфигураций, пайплайн 1M IoT, CloudEvents и Cross-Cloud Bridge'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 38 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили сверхбыструю систему сообщений NATS и персистентную платформу JetStream на Go: от субмикросекундного in-memory обмена Core NATS и синхронного Request/Reply до распределенного консенсуса Raft, надежных очередей WorkQueue, встроенных хранилищ Key-Value и Object Store, паттернов Outbox, Saga и построения высоконагруженных платформ уровня BigTech.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter37.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 37 Apache Kafka</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 39 Метрики и мониторинг (Prometheus) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '38. NATS и NATS JetStream (77/77)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2196,6 +2254,7 @@ if __name__ == '__main__':
         ('chapter35.html', build_chapter35_html),
         ('chapter36.html', build_chapter36_html),
         ('chapter37.html', build_chapter37_html),
+        ('chapter38.html', build_chapter38_html),
     ]
     
     for filename, builder_fn in pages:
