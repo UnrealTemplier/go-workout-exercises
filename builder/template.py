@@ -345,7 +345,8 @@ HTML_HEAD = """<!DOCTYPE html>
         .hero-desc {
             font-size: 1.05rem;
             color: var(--text-secondary);
-            max-width: 860px;
+            max-width: 100%;
+            width: 100%;
             line-height: 1.7;
         }
 
