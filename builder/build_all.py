@@ -87,6 +87,8 @@ with open('builder/chapter30_data.json', 'r', encoding='utf-8') as f:
     ch30_exercises = json.load(f)
 with open('builder/chapter31_data.json', 'r', encoding='utf-8') as f:
     ch31_exercises = json.load(f)
+with open('builder/chapter32_data.json', 'r', encoding='utf-8') as f:
+    ch32_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -194,6 +196,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             29: ('chapter29.html', '96/96'),
             30: ('chapter30.html', '107/107'),
             31: ('chapter31.html', '120/120'),
+            32: ('chapter32.html', '189/189'),
         }
         
         if num in status_map:
@@ -1806,12 +1809,66 @@ def build_chapter31_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter30.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 30 Мокирование и интеграционное тестирование</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 32 Protocol Buffers и gRPC (Скоро) →</a>
+            <a href="chapter32.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 32 Protocol Buffers и gRPC →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '31. Бенчмарки, фаззинг и продвинутые методы тестирования (120/120)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter32_html(chapters):
+    active_chapter_num = 32
+    current_exercises = ch32_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 32 • Protocol Buffers & gRPC Architecture in Go</div>
+      <h1 class="hero-title">Protocol Buffers и gRPC</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по высокопроизводительным межсервисным коммуникациям на базе Protocol Buffers v3 и gRPC в Go 1.22+: синтаксис схем proto3, числовые теги полей и Wire Types (Varint, Fixed64, Length-Delimited), WKT (Well-Known Types: Timestamp, Duration, Any, Empty), кодогенерация с protoc и Buf CLI, компиляция pb.go и _grpc.pb.go, все четыре типа RPC (Unary, Server Streaming, Client Streaming, Bidirectional Streaming), управление жизненным циклом соединений через Context, Deadlines и таймауты grpc-timeout, низкоуровневая архитектура фреймов HTTP/2 (HEADERS, DATA, RST_STREAM, GOAWAY, WINDOW_UPDATE) и мультиплексирование потоков через единый сокет, Flow Control и Backpressure, сквозная безопасность с TLS 1.3 и двусторонней аутентификацией mTLS (RequireAndVerifyClientCert), передача метаданных (Metadata headers и trailers), каноническая обработка ошибок gRPC (16 кодов) и стандарты Google Rich Errors (errdetails.BadRequest, FieldViolations, RetryInfo, QuotaFailure), многослойные интерцепторы Unary и Stream (Recovery, Tracing W3C TraceContext, Prometheus Metrics, Access Logging, Token Bucket Rate Limiting, RBAC авторизация), интроспекция API через Server Reflection и grpcurl/grpcui, балансировка нагрузки Client-Side Load Balancing (round_robin, DNS resolver, headless-сервисы), трансляция REST JSON в gRPC через gRPC-Gateway и аннотации google.api.http, мультиплексирование портов cmux, тестирование на виртуальных сокетах bufconn, паттерны распределенных систем (Saga оркестрация, Transactional Outbox, Circuit Breaker, Service Mesh) и эксплуатационные практики HighLoad (pprof оптимизации, zero-allocation сериализация, Blue-Green деплой и Disaster Recovery).
+      </p>
+    </section>
+    """)
+    
+    # Sections
+    sections = [
+        (1, 47, 'Раздел 1: Синтаксис Proto3, скалярные типы, теги, protoc тулчейн, enum, oneof, WKT и базовые RPC'),
+        (48, 95, 'Раздел 2: Потоковая передача (Streaming), дедлайны, контекст, HTTP/2 фреймы и безопасность TLS/mTLS'),
+        (96, 142, 'Раздел 3: Архитектура интерцепторов (Auth, Logging, Metrics, Tracing, Rate Limiting), Rich Errors и gRPC-Gateway'),
+        (143, 189, 'Раздел 4: In-Memory тестирование (bufconn), оркестрация Saga, Service Mesh, HighLoad оптимизации и аудит'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 32 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили Protocol Buffers и gRPC в Go: от составления схем proto3, типизации и кодогенерации до всех видов потоковой передачи, многослойных интерцепторов, сквозной безопасности mTLS, трансляции gRPC-Gateway, тестирования на in-memory сокетах и архитектуры высоконагруженных распределенных микросервисов.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter31.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 31 Бенчмарки, фаззинг и продвинутые методы тестирования</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 33 Микросервисная архитектура и паттерны (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '32. Protocol Buffers и gRPC (189/189)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1848,6 +1905,7 @@ if __name__ == '__main__':
         ('chapter29.html', build_chapter29_html),
         ('chapter30.html', build_chapter30_html),
         ('chapter31.html', build_chapter31_html),
+        ('chapter32.html', build_chapter32_html),
     ]
     
     for filename, builder_fn in pages:
