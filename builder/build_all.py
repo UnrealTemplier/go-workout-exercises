@@ -109,6 +109,8 @@ with open('builder/chapter41_data.json', 'r', encoding='utf-8') as f:
     ch41_exercises = json.load(f)
 with open('builder/chapter42_data.json', 'r', encoding='utf-8') as f:
     ch42_exercises = json.load(f)
+with open('builder/chapter43_data.json', 'r', encoding='utf-8') as f:
+    ch43_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -227,6 +229,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             40: ('chapter40.html', f'{len(ch40_exercises)}/{len(ch40_exercises)}'),
             41: ('chapter41.html', f'{len(ch41_exercises)}/{len(ch41_exercises)}'),
             42: ('chapter42.html', f'{len(ch42_exercises)}/{len(ch42_exercises)}'),
+            43: ('chapter43.html', f'{len(ch43_exercises)}/{len(ch43_exercises)}'),
         }
         
         if num in status_map:
@@ -2436,12 +2439,70 @@ def build_chapter42_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter41.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 41 Профилирование и рантайм-диагностика</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 43 Шаблоны проектирования распределенных и enterprise-систем (Скоро) →</a>
+            <a href="chapter43.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 43 Шаблоны проектирования распределенных и enterprise-систем →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'42. Проектирование чистой архитектуры и DDD ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+def build_chapter43_html(chapters):
+    active_chapter_num = 43
+    current_exercises = ch43_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 43</div>
+      <h1 class="hero-title">Шаблоны проектирования распределенных и enterprise-систем</h1>
+      <p class="hero-desc">
+        Фундаментальное руководство по паттернам проектирования современных распределенных, высоконадежных и корпоративных систем на Go: архитектура API Gateway и Backend-for-Frontend (BFF), Apollo GraphQL Federation, gRPC-Gateway, Sidecar прокси и Service Mesh (Istio/Envoy), паттерн Database-per-Service, распределенные саги с Transactional Outbox и Inbox, Change Data Capture (CDC Debezium), Polyglot Persistence, шардирование с Consistent Hashing, CQRS и множественные проекции Event Sourcing, синхронный gRPC против асинхронного обмена событиями, Circuit Breaker с Fallback, Bulkhead изоляция пулов горутин, Retry с Exponential Backoff и Full Jitter, ключи идемпотентности, мультитенантность (Shared Schema с RLS, Separate Schemas и Separate Databases), безопасность Zero Trust с взаимным mTLS, W3C Distributed Tracing, соблюдение регуляторных требований (GDPR, HIPAA, PCI DSS), канареечные релизы, автоматический откат, инженерия хаоса, Patroni HA, Singleflight Cache Stampede, а также практический системный дизайн платформ E-commerce, Banking Core, Real-Time Bidding, IoT Platform, Collaborative Editing CRDT, Social Network и AI/ML Platform.
+      </p>
+    </section>
+    """)
+    
+    # Sections (112 exercises)
+    sections = [
+        (1, 28, 'Раздел 1: Сетевые шлюзы, BFF, хранилища Database-per-Service, надежность транзакций и основы мультитенантности'),
+        (29, 56, 'Раздел 2: Безопасность Zero Trust, шифрование PII, аудит, идемпотентность API, RBAC/ABAC и стандарты Compliance'),
+        (57, 84, 'Раздел 3: Канареечные релизы, инженерия хаоса, высокая доступность Patroni, Singleflight, GitOps и отраслевые кейсы'),
+        (85, 112, 'Раздел 4: Мультикластерный Service Mesh, FinOps, Active-Active репликация, неблокирующий аудит и системный дизайн Enterprise-платформ')
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 43!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве изучили архитектурные паттерны распределенных и enterprise-систем на Go: от проектирования шлюзов, изоляции хранилищ и саг с Outbox/Inbox до мультитенантности, Zero Trust, канареечных релизов, Patroni HA и системного дизайна высоконагруженных платформ e-commerce, финтеха, RTB и AI/ML.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter42.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 42 Проектирование чистой архитектуры и DDD</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 44 Проектирование высоконагруженных и отказоустойчивых систем (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'43. Шаблоны проектирования распределенных и enterprise-систем ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2489,6 +2550,7 @@ if __name__ == '__main__':
         ('chapter40.html', build_chapter40_html),
         ('chapter41.html', build_chapter41_html),
         ('chapter42.html', build_chapter42_html),
+        ('chapter43.html', build_chapter43_html),
     ]
     
     for filename, builder_fn in pages:
