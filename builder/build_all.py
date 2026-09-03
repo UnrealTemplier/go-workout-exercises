@@ -83,6 +83,8 @@ with open('builder/chapter28_data.json', 'r', encoding='utf-8') as f:
     ch28_exercises = json.load(f)
 with open('builder/chapter29_data.json', 'r', encoding='utf-8') as f:
     ch29_exercises = json.load(f)
+with open('builder/chapter30_data.json', 'r', encoding='utf-8') as f:
+    ch30_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -188,6 +190,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             27: ('chapter27.html', '163/163'),
             28: ('chapter28.html', '115/115'),
             29: ('chapter29.html', '96/96'),
+            30: ('chapter30.html', '107/107'),
         }
         
         if num in status_map:
@@ -1694,12 +1697,65 @@ def build_chapter29_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter28.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 28 Базы данных NoSQL и кэширование Redis</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 30 Мокирование и интеграционное тестирование (Скоро) →</a>
+            <a href="chapter30.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 30 Мокирование и интеграционное тестирование →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '29. Модульное тестирование (Unit Testing) и Assertions (96/96)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter30_html(chapters):
+    active_chapter_num = 30
+    current_exercises = ch30_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 30 • Mocking, Test Doubles & Integration Testing in Go</div>
+      <h1 class="hero-title">Мокирование и интеграционное тестирование</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по мокированию и интеграционному тестированию в Go: архитектура тестовых дублеров (Dummy, Stub, Spy, Mock, Fake), принципы чистой и гексагональной архитектуры (Ports &amp; Adapters), кодогенерация с mockgen (go.uber.org/mock) и mockery, декларативные ассерты с testify/mock и testify/suite, тестирование HTTP-слоя через net/http/httptest (ResponseRecorder, NewServer, NewTLSServer) и кастомный RoundTripper, изоляция базы данных через DATA-DOG/go-sqlmock и транзакционные откаты (Transaction Rollback), легковесный in-memory Redis с miniredis, подъем реальной контейнерной инфраструктуры (PostgreSQL, Redis, Kafka, MinIO) через testcontainers-go со стратегиями ожидания и переиспользования (WithReuse), миграции схемы через golang-migrate, виртуальная файловая система с testing/fstest и spf13/afero, снимочное тестирование (Golden Files &amp; Approval Tests), детекция утечек горутин с go.uber.org/goleak, расчет перцентилей задержки (p50, p95, p99) и тестирование устойчивости к хаосу (Chaos Engineering).
+      </p>
+    </section>
+    """)
+    
+    # Sections
+    sections = [
+        (1, 36, 'Раздел 1: Ручные моки, Dependency Injection, gomock, testify/mock и тестирование HTTP'),
+        (37, 72, 'Раздел 2: Мокирование БД (go-sqlmock), miniredis, откаты транзакций и основы Testcontainers'),
+        (73, 107, 'Раздел 3: Testcontainers в продакшене, Golden Files, детекция утечек goleak, деградация и CLI тестирование'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 30 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили мокирование и интеграционное тестирование в Go: от ручных моков, шпионов вызовов и кодогенерации gomock/mockery до тестирования HTTP через httptest, мокирования БД с go-sqlmock, виртуализации файловой системы с afero и запуска реальных Docker-контейнеров с testcontainers-go.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter29.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 29 Модульное тестирование Unit Testing и Assertions</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 31 Бенчмарки фаззинг и продвинутые методы тестирования (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '30. Мокирование и интеграционное тестирование (107/107)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1734,6 +1790,7 @@ if __name__ == '__main__':
         ('chapter27.html', build_chapter27_html),
         ('chapter28.html', build_chapter28_html),
         ('chapter29.html', build_chapter29_html),
+        ('chapter30.html', build_chapter30_html),
     ]
     
     for filename, builder_fn in pages:
