@@ -107,6 +107,8 @@ with open('builder/chapter40_data.json', 'r', encoding='utf-8') as f:
     ch40_exercises = json.load(f)
 with open('builder/chapter41_data.json', 'r', encoding='utf-8') as f:
     ch41_exercises = json.load(f)
+with open('builder/chapter42_data.json', 'r', encoding='utf-8') as f:
+    ch42_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -224,6 +226,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             39: ('chapter39.html', f'{len(ch39_exercises)}/{len(ch39_exercises)}'),
             40: ('chapter40.html', f'{len(ch40_exercises)}/{len(ch40_exercises)}'),
             41: ('chapter41.html', f'{len(ch41_exercises)}/{len(ch41_exercises)}'),
+            42: ('chapter42.html', f'{len(ch42_exercises)}/{len(ch42_exercises)}'),
         }
         
         if num in status_map:
@@ -2378,12 +2381,67 @@ def build_chapter41_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter40.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 40 Распределенная трассировка (OpenTelemetry)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 42 Проектирование чистой архитектуры и DDD (Скоро) →</a>
+            <a href="chapter42.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 42 Проектирование чистой архитектуры и DDD →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '41. Профилирование и рантайм-диагностика (24/24)') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+def build_chapter42_html(chapters):
+    active_chapter_num = 42
+    current_exercises = ch42_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 42 • Clean Architecture, DDD, Hexagonal (Ports & Adapters), CQRS, Event Sourcing & Sagas in Go</div>
+      <h1 class="hero-title">Проектирование чистой архитектуры и DDD</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по чистой архитектуре, Domain-Driven Design (DDD) и распределенным архитектурным паттернам в Go 1.22+ для HighLoad бэкенда: плоская и слоистая структура проектов (Flat Layout, Package by Layer vs Package by Feature, стандарт golang-standards/project-layout), принцип инверсии зависимостей (Dependency Inversion Principle, DIP: объявление узких интерфейсов на стороне потребителя), 4 канонических слоя Clean Architecture Uncle Bob (Entities, Use Cases, Interface Adapters, Frameworks & Drivers) и правило центростремительных зависимостей (Dependency Rule), гексагональная архитектура Алистера Кокберна (Hexagonal Architecture / Ports & Adapters: Inbound и Outbound порты), тактический дизайн DDD (богатые сущности Rich Domain Model против анемичных моделей, неизменяемые объекты-значения Value Objects, границы транзакций Aggregate Roots, доменные сервисы Domain Services и спецификации Specification Pattern), Anti-Corruption Layer (ACL) для безопасной интеграции с legacy-монолитами, распределенные транзакции (Saga Orchestration через конечные автоматы и Saga Choreography с компенсирующими действиями), Event Sourcing с воспроизведением (Replay) из Append-Only лога событий и материализованными представлениями (Materialized Views), архитектура CQRS с разделением потоков Command Bus и Query Bus, паттерны Unit of Work и Transactional Outbox, защита периметра API Gateway (Token Bucket Rate Limiting, Circuit Breaker, Idempotency Keys), инкрементальная миграция Strangler Fig и разработка API-First со сквозным дипломным HighLoad-проектом сервиса коротких ссылок.
+      </p>
+    </section>
+    """)
+    
+    # Sections (98 exercises)
+    sections = [
+        (1, 25, 'Раздел 1: Архитектурные стили Go, Clean & Hexagonal Architecture, DIP, Composition Root, Monolith First и Bounded Contexts'),
+        (26, 50, 'Раздел 2: Anti-Corruption Layer, Rich Entities, Aggregate Roots, Domain Events, Saga Orchestration, CQRS и Event Sourcing'),
+        (51, 74, 'Раздел 3: Модульный монолит, BFF, Circuit Breaker, трансляция ошибок, Unit of Work и Idempotency Keys'),
+        (75, 98, 'Раздел 4: Value Objects, Спецификации, Transactional Outbox, Google Wire, Sharding, Backpressure и HighLoad Shortener'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 42 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили проектирование чистой архитектуры и предметно-ориентированное проектирование (DDD) в Go: от организации слоев и инверсии зависимостей DIP до тактических шаблонов Aggregate Roots, Value Objects, распределенных саг с компенсацией, Event Sourcing, CQRS, Transactional Outbox и создания масштабируемого HighLoad сервиса коротких ссылок.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter41.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 41 Профилирование и рантайм-диагностика</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 43 Шаблоны проектирования распределенных и enterprise-систем (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'42. Проектирование чистой архитектуры и DDD ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2430,6 +2488,7 @@ if __name__ == '__main__':
         ('chapter39.html', build_chapter39_html),
         ('chapter40.html', build_chapter40_html),
         ('chapter41.html', build_chapter41_html),
+        ('chapter42.html', build_chapter42_html),
     ]
     
     for filename, builder_fn in pages:
