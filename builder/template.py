@@ -186,7 +186,7 @@ HTML_HEAD = """<!DOCTYPE html>
             padding: 8px 10px;
             margin-bottom: 2px;
             border-radius: 6px;
-            color: var(--text-secondary);
+            color: #e2e8f0;
             text-decoration: none;
             font-size: 0.88rem;
             transition: all 0.15s ease;
@@ -194,7 +194,7 @@ HTML_HEAD = """<!DOCTYPE html>
 
         .chapter-link:hover {
             background-color: rgba(56, 189, 248, 0.08);
-            color: var(--text-primary);
+            color: #ffffff;
         }
 
         .chapter-link.active {
@@ -240,7 +240,7 @@ HTML_HEAD = """<!DOCTYPE html>
             display: block;
             padding: 4px 8px;
             font-size: 0.8rem;
-            color: var(--text-muted);
+            color: #cbd5e1;
             text-decoration: none;
             border-radius: 4px;
             white-space: nowrap;
@@ -251,7 +251,7 @@ HTML_HEAD = """<!DOCTYPE html>
 
         .sub-exercise-link:hover {
             color: #38bdf8;
-            background-color: rgba(56, 189, 248, 0.05);
+            background-color: rgba(56, 189, 248, 0.08);
         }
 
         /* Main Content */
