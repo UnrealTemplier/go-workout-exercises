@@ -91,6 +91,8 @@ with open('builder/chapter32_data.json', 'r', encoding='utf-8') as f:
     ch32_exercises = json.load(f)
 with open('builder/chapter33_data.json', 'r', encoding='utf-8') as f:
     ch33_exercises = json.load(f)
+with open('builder/chapter34_data.json', 'r', encoding='utf-8') as f:
+    ch34_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -200,6 +202,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             31: ('chapter31.html', '120/120'),
             32: ('chapter32.html', '189/189'),
             33: ('chapter33.html', '89/89'),
+            34: ('chapter34.html', '78/78'),
         }
         
         if num in status_map:
@@ -1919,12 +1922,65 @@ def build_chapter33_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter32.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 32 Protocol Buffers и gRPC</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 34 GraphQL (Скоро) →</a>
+            <a href="chapter34.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 34 GraphQL →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '33. Микросервисная архитектура и паттерны (89/89)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter34_html(chapters):
+    active_chapter_num = 34
+    current_exercises = ch34_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 34 • GraphQL APIs & gqlgen in Go</div>
+      <h1 class="hero-title">GraphQL</h1>
+      <p class="hero-desc">
+        Глубокое инженерное руководство по проектированию, разработке и оптимизации GraphQL API на Go 1.22+: парадигма Schema-First и кодогенерация на базе gqlgen, строгая типизация SDL (скаляры, перечисления Enum, Non-Null типы, Input Objects, Interfaces, Unions), архитектура многоуровневых резолверов (Query, Mutation, Subscription), решение проблемы N+1 запросов через DataLoaders (батчинг, мемоизация, окно задержки, dataloadgen на дженериках), эффективная пагинация (Offset-based и Relay Cursor Connections), безопасность и защита от DoS (анализ сложности Query Complexity, глубина вложенности Depth Limiting, автоматические персистентные запросы APQ по SHA-256 хэшу), декларативная безопасность через директивы (@auth, @constraint, @deprecated), потоковая передача в реальном времени (Subscriptions по WebSocket протоколу graphql-ws на Go-каналах), распределенный трейсинг OpenTelemetry, Apollo Federation v2 и построение высокопроизводительных гибридных платформ GraphQL BFF + gRPC бэкенд.
+      </p>
+    </section>
+    """)
+    
+    # Sections
+    sections = [
+        (1, 25, 'Раздел 1: Основы GraphQL, Schema-First, кодогенерация gqlgen, скаляры, Enums и мутации'),
+        (26, 50, 'Раздел 2: Проблема N+1, вложенные резолверы, DataLoaders, пагинация и оптимизация запросов'),
+        (51, 78, 'Раздел 3: Кастомные скаляры, директивы, Subscriptions (WebSockets), Apollo Federation и гибридная платформа'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 34 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили GraphQL и кодогенерацию на Go: от строгой типизации SDL схем и написания надежных резолверов до ликвидации проблемы N+1 с помощью DataLoaders, Relay Cursor пагинации, защиты от атак через Query Complexity, масштабирования подписок в реальном времени и федеративной микросервисной архитектуры Apollo Federation.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter33.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 33 Микросервисная архитектура и паттерны</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 35 WebSockets и Real-time (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '34. GraphQL (78/78)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1963,6 +2019,7 @@ if __name__ == '__main__':
         ('chapter31.html', build_chapter31_html),
         ('chapter32.html', build_chapter32_html),
         ('chapter33.html', build_chapter33_html),
+        ('chapter34.html', build_chapter34_html),
     ]
     
     for filename, builder_fn in pages:

@@ -106,6 +106,9 @@ with open('builder/chapter32_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter33_data.json', 'r', encoding='utf-8') as f:
     ch33_exercises = json.load(f)
 
+with open('builder/chapter34_data.json', 'r', encoding='utf-8') as f:
+    ch34_exercises = json.load(f)
+
 all_ch1 = s1 + s2 + s3 + s4 + s5 + s6
 all_ch2 = ch2_exercises
 all_ch3 = ch3_exercises
@@ -139,8 +142,9 @@ all_ch30 = ch30_exercises
 all_ch31 = ch31_exercises
 all_ch32 = ch32_exercises
 all_ch33 = ch33_exercises
+all_ch34 = ch34_exercises
 
-total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11) + len(all_ch12) + len(all_ch13) + len(all_ch14) + len(all_ch15) + len(all_ch16) + len(all_ch17) + len(all_ch18) + len(all_ch19) + len(all_ch20) + len(all_ch21) + len(all_ch22) + len(all_ch23) + len(all_ch24) + len(all_ch25) + len(all_ch26) + len(all_ch27) + len(all_ch28) + len(all_ch29) + len(all_ch30) + len(all_ch31) + len(all_ch32) + len(all_ch33)
+total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11) + len(all_ch12) + len(all_ch13) + len(all_ch14) + len(all_ch15) + len(all_ch16) + len(all_ch17) + len(all_ch18) + len(all_ch19) + len(all_ch20) + len(all_ch21) + len(all_ch22) + len(all_ch23) + len(all_ch24) + len(all_ch25) + len(all_ch26) + len(all_ch27) + len(all_ch28) + len(all_ch29) + len(all_ch30) + len(all_ch31) + len(all_ch32) + len(all_ch33) + len(all_ch34)
 
 print("=== ТЕХНИЧЕСКИЙ АУДИТ УЧЕБНИКА GO ===")
 print(f"Глава 1:  {len(all_ch1)} упражнений")
@@ -176,6 +180,7 @@ print(f"Глава 30: {len(all_ch30)} упражнений")
 print(f"Глава 31: {len(all_ch31)} упражнений")
 print(f"Глава 32: {len(all_ch32)} упражнений")
 print(f"Глава 33: {len(all_ch33)} упражнений")
+print(f"Глава 34: {len(all_ch34)} упражнений")
 print(f"Всего упражнений в учебнике: {total_ex}")
 
 issues = []
@@ -284,6 +289,8 @@ for ex in all_ch32:
     check_exercise(32, ex)
 for ex in all_ch33:
     check_exercise(33, ex)
+for ex in all_ch34:
+    check_exercise(34, ex)
 
 # Check HTML files and anchors
 html_files = [
@@ -320,6 +327,7 @@ html_files = [
     ('chapter31.html', 31, len(all_ch31)),
     ('chapter32.html', 32, len(all_ch32)),
     ('chapter33.html', 33, len(all_ch33)),
+    ('chapter34.html', 34, len(all_ch34)),
 ]
 
 for fname, ch_num, count in html_files:
