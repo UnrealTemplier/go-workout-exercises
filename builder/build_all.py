@@ -97,6 +97,8 @@ with open('builder/chapter35_data.json', 'r', encoding='utf-8') as f:
     ch35_exercises = json.load(f)
 with open('builder/chapter36_data.json', 'r', encoding='utf-8') as f:
     ch36_exercises = json.load(f)
+with open('builder/chapter37_data.json', 'r', encoding='utf-8') as f:
+    ch37_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -209,6 +211,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             34: ('chapter34.html', '78/78'),
             35: ('chapter35.html', '78/78'),
             36: ('chapter36.html', '130/130'),
+            37: ('chapter37.html', '88/88'),
         }
         
         if num in status_map:
@@ -2090,12 +2093,67 @@ def build_chapter36_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter35.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 35 WebSockets и Real-time</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 37 Apache Kafka (Скоро) →</a>
+            <a href="chapter37.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 37 Apache Kafka →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '36. RabbitMQ (130/130)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter37_html(chapters):
+    active_chapter_num = 37
+    current_exercises = ch37_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 37 • High-Throughput Distributed Commit Log & Event Streaming with Apache Kafka in Go</div>
+      <h1 class="hero-title">Apache Kafka</h1>
+      <p class="hero-desc">
+        Глубокое инженерное руководство по разработке, масштабированию и оптимизации распределенных событийно-ориентированных систем на Go 1.22+ с использованием Apache Kafka: архитектура распределенного журнала (Commit Log) и режим KRaft (Zero-ZooKeeper), клиенты segmentio/kafka-go и twmb/franz-go, детерминированное партиционирование по ключу (Murmur2/FNV-1a) и строгое сохранение порядка событий (Ordering Guarantee), управление консьюмер-группами (Consumer Groups, Group Coordinator) и современные протоколы ребалансировки (Cooperative Sticky Assignor), ручной контроль смещений (Manual Offset Commit) и семантика At-Least-Once, пакетная буферизация (Batching) и сжатие трафика (Snappy, Zstd, Gzip), отказоустойчивые топологии кластера (RF=3, min.insync.replicas=2), сквозная семантика Exactly-Once (Idempotent Producer, Transactional Coordinator, isolation.level=read_committed), изоляция отравленных сообщений (Retry & Dead Letter Queues), компактизация журнала (Log Compaction, KTable, Tombstones), Change Data Capture (PostgreSQL WAL, Debezium Connect), паттерн Transactional Outbox, управление контрактами через Confluent Schema Registry (Avro, Protobuf, Backward/Forward Compatibility), мульти-региональная репликация MirrorMaker 2, Follower Fetching, потоковая обработка (Goka, Windowing, HyperLogLog) и сквозной трейсинг OpenTelemetry.
+      </p>
+    </section>
+    """)
+    
+    # Sections (88 exercises)
+    sections = [
+        (1, 25, 'Раздел 1: Протокол Kafka, клиенты Go, детерминированное партиционирование, Consumer Groups, ручной коммит и Retry/DLQ'),
+        (26, 50, 'Раздел 2: Log Compaction, мониторинг Lag, политики хранения (Retention), транзакции, Goka Streams и Debezium CDC'),
+        (51, 70, 'Раздел 3: Observability брокера (JMX/Prometheus), Graceful Shutdown, Interactive Queries, Финальный босс и Schema Registry'),
+        (71, 88, 'Раздел 4: Schema Evolution, Kafka Connect, Multi-region и Follower Fetch, безопасность TLS/ACL, CQRS, OTel и GDPR Crypto-Shredding'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 37 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили распределенный брокер Apache Kafka и стриминговую архитектуру на Go: от низкоуровневых фреймов сетевого протокола и детерминированного партиционирования по ключу до транзакционного Exactly-Once процессинга, Change Data Capture (Debezium), эволюции схем Avro/Protobuf через Confluent Schema Registry, оконной аналитики 100K RPS и построения отказоустойчивых платформ уровня BigTech.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter36.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 36 RabbitMQ</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 38 NATS и NATS JetStream (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '37. Apache Kafka (88/88)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2137,6 +2195,7 @@ if __name__ == '__main__':
         ('chapter34.html', build_chapter34_html),
         ('chapter35.html', build_chapter35_html),
         ('chapter36.html', build_chapter36_html),
+        ('chapter37.html', build_chapter37_html),
     ]
     
     for filename, builder_fn in pages:
