@@ -81,6 +81,8 @@ with open('builder/chapter27_data.json', 'r', encoding='utf-8') as f:
     ch27_exercises = json.load(f)
 with open('builder/chapter28_data.json', 'r', encoding='utf-8') as f:
     ch28_exercises = json.load(f)
+with open('builder/chapter29_data.json', 'r', encoding='utf-8') as f:
+    ch29_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -185,6 +187,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             26: ('chapter26.html', '158/158'),
             27: ('chapter27.html', '163/163'),
             28: ('chapter28.html', '115/115'),
+            29: ('chapter29.html', '96/96'),
         }
         
         if num in status_map:
@@ -1638,12 +1641,65 @@ def build_chapter28_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter27.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 27 Реляционные базы данных SQL и PostgreSQL</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 29 Очереди сообщений и брокеры (RabbitMQ и Kafka) (Скоро) →</a>
+            <a href="chapter29.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 29 Модульное тестирование Unit Testing и Assertions →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '28. Базы данных NoSQL и кэширование (Redis) (115/115)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter29_html(chapters):
+    active_chapter_num = 29
+    current_exercises = ch29_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 29 • Unit Testing, Testable Examples & Assertions in Go</div>
+      <h1 class="hero-title">Модульное тестирование (Unit Testing) и Assertions</h1>
+      <p class="hero-desc">
+        Глубокое инженерное руководство по модульному тестированию на Go: стандартный фреймворк testing и анатомия *testing.T, соглашения об именовании, стратегии Errorf vs Fatalf, отказоустойчивые табличные тесты (Table-Driven Tests) с изолированными подтестами t.Run, параллельное тестирование t.Parallel() и эволюция семантики переменных цикла в Go 1.22, детекция гонок с флагом -race, надежное управление ресурсами через t.Cleanup, t.TempDir, t.Setenv и t.Chdir, тестирование паник (defer/recover), запуск тестов по шаблонам (-run, -short, -count, -failfast), библиотека testify (пакеты assert, require, suite, mock), анализ и визуализация покрытия кода (-cover, -covermode=atomic, go tool cover -html), самопроверяющиеся примеры (Testable Examples) с директивой // Output: как живая документация и настройка CI/CD в GitHub Actions.
+      </p>
+    </section>
+    """)
+    
+    # Sections
+    sections = [
+        (1, 32, 'Раздел 1: Основы testing.T, команды go test, Table-Driven подход, параллелизм и t.Cleanup'),
+        (33, 64, 'Раздел 2: Покрытие кода (-cover), библиотека testify/assert, обработка ошибок и фикстуры testdata'),
+        (65, 96, 'Раздел 3: testify/suite, мокирование mock.Mock, Testable Examples, httptest и автоматизация в CI/CD'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 29 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили модульное тестирование в Go: от базовых соглашений тестирования и Table-Driven архитектуры до параллелизма, детекции гонок с -race, библиотеки testify, мокирования зависимостей, самопроверяющихся Testable Examples и построения надежных CI/CD пайплайнов.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter28.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 28 Базы данных NoSQL и кэширование Redis</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 30 Мокирование и интеграционное тестирование (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '29. Модульное тестирование (Unit Testing) и Assertions (96/96)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1677,6 +1733,7 @@ if __name__ == '__main__':
         ('chapter26.html', build_chapter26_html),
         ('chapter27.html', build_chapter27_html),
         ('chapter28.html', build_chapter28_html),
+        ('chapter29.html', build_chapter29_html),
     ]
     
     for filename, builder_fn in pages:
