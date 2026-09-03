@@ -67,6 +67,8 @@ with open('builder/chapter20_data.json', 'r', encoding='utf-8') as f:
     ch20_exercises = json.load(f)
 with open('builder/chapter21_data.json', 'r', encoding='utf-8') as f:
     ch21_exercises = json.load(f)
+with open('builder/chapter22_data.json', 'r', encoding='utf-8') as f:
+    ch22_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -164,6 +166,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             19: ('chapter19.html', '84/84'),
             20: ('chapter20.html', '124/124'),
             21: ('chapter21.html', '95/95'),
+            22: ('chapter22.html', '52/52'),
         }
         
         if num in status_map:
@@ -1372,12 +1375,68 @@ def build_chapter21_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter20.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 20 (Горутины и синхронизация)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 22: Контекст (Context & Deadlines) (Скоро) →</a>
+            <a href="chapter22.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 22 (Пакет context) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '21. Каналы и select (95/95)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter22_html(chapters):
+    sidebar_html = build_sidebar(chapters, 22, ch22_exercises)
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    content_parts.append("""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 22</div>
+        <h1 class="hero-title">Пакет context (Жизненный цикл горутин, дедлайны и метаданные)</h1>
+        <p class="hero-desc">
+            Исчерпывающее инженерное руководство по пакету <code>context</code> в Go: управление жизненным циклом горутин, 
+            кооперативная отмена операций (Cooperative Cancellation), иерархические деревья контекстов (Context Trees) и однонаправленная 
+            пропагация отмены, дедлайны и таймауты (<code>WithTimeout</code>, <code>WithDeadline</code>, <code>context.DeadlineExceeded</code>), 
+            безопасная передача сквозных метаданных запроса (<code>WithValue</code>, типизированные приватные ключи <code>ctxKey</code>, 
+            предотвращение утечек памяти и коллизий), интеграция с сетевым стеком (<code>net/http.RequestWithContext</code>, <code>req.Context()</code>, 
+            Server <code>readLoop</code>), системными сигналами ОС (<code>signal.NotifyContext</code>) и новыми возможностями Go 1.21+ 
+            (<code>context.AfterFunc</code>, <code>context.WithoutCancel</code>). Все 52 упражнения с полным разбором низкоуровневых 
+            структур (<code>emptyCtx</code>, <code>cancelCtx</code>, <code>timerCtx</code>, <code>valueCtx</code>) и практик BigTech-инженерии.
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-val">52 из 52</span><span class="stat-lbl">Упражнений решено</span></div>
+            <div class="stat-item"><span class="stat-val">Context Lifecycle</span><span class="stat-lbl">WithCancel, Timeout, Deadline</span></div>
+            <div class="stat-item"><span class="stat-val">Request-Scoped Data</span><span class="stat-lbl">WithValue & Type Safety</span></div>
+            <div class="stat-item"><span class="stat-val">Go 1.21+ Features</span><span class="stat-lbl">AfterFunc & NotifyContext</span></div>
+        </div>
+    </section>
+    """)
+    section_groups_ch22 = [
+        (1, 26, "Раздел 1: Основы Контекста, Ручная Отмена, Таймауты и Пропагация в Дереве", "Ручная отмена (WithCancel), таймауты операций (WithTimeout), передача метаданных (WithValue), проверка ctx.Err() в цикле, генераторы с защитой от утечек, семантика Background() vs TODO(), дерево контекстов и однонаправленная отмена, идиома первого аргумента ctx, сквозной RequestID, массовая широковещательная остановка, обязательный defer cancel(), функция Or() для слияния каналов отмены, абсолютный WithDeadline vs относительный WithTimeout, детекция Context Leak через runtime.NumGoroutine(), интеграция с HTTP-клиентом (NewRequestWithContext) и Graceful Shutdown с signal.NotifyContext"),
+        (27, 52, "Раздел 2: Безопасность Метаданных, Worker Pool, AfterFunc и Серверная Интеграция", "Неэкспортируемые типы ключей contextKey, отменяемый сон SleepWithContext, антипаттерны бизнес-данных в контексте, Worker Pool с контекстной отменой, серверные обработчики с req.Context(), параллельный опрос реплик (Parallel Fetch), разделение ошибок DeadlineExceeded vs Canceled, каскадное закрытие Parent->Child->SubChild, автоматические колбэки context.AfterFunc (Go 1.21+), гарантированный Safe Cleanup при отмене, пирамида дедлайнов, принудительный опрос в CPU-bound циклах, защита от горутин-зомби и серверная отмена при закрытии соединения клиентом")
+    ]
+    ex_dict = {e["num"]: e for e in ch22_exercises}
+    for start_n, end_n, title, desc in section_groups_ch22:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <div><h2>{title}</h2><div style="color: #94a3b8; font-size: 0.9rem; margin-top: 4px;">{desc}</div></div>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 22 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили пакет <code>context</code> в Go: управление жизненным циклом горутин, каскадную отмену, дедлайны и таймауты, типобезопасные метаданные WithValue, Graceful Shutdown, а также новые функции Go 1.21+ (AfterFunc и WithoutCancel).
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter21.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 21 (Каналы и select)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 23: Тестирование (Testing & Benchmarks) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '22. Пакет context (52/52)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1404,6 +1463,7 @@ if __name__ == '__main__':
         ('chapter19.html', build_chapter19_html),
         ('chapter20.html', build_chapter20_html),
         ('chapter21.html', build_chapter21_html),
+        ('chapter22.html', build_chapter22_html),
     ]
     
     for filename, builder_fn in pages:

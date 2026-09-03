@@ -1,0 +1,1146 @@
+[
+  {
+    "num": 1,
+    "title": "Ручная отмена контекста через context.WithCancel и сигнал <-ctx.Done()",
+    "task": "**Ручная отмена (`context.WithCancel`)**: Создайте контекст с возможностью отмены. Запустите фоновую горутину, которая в цикле `for` выполняет фоновую работу (например, раз в секунду). Горутина должна проверять канал `<-ctx.Done()`. В основной горутине подождите 3 секунды и вызовите функцию `cancel()`. Убедитесь, что фоновая горутина корректно завершила работу.",
+    "theory": "Пакет `context` — стандартный механизм управления жизненным циклом горутин, передачи дедлайнов и метаданных запроса в Go. Функция `context.WithCancel(parent)` возвращает производный контекст `ctx` и функцию отмены `cancel()`. Вызов `cancel()` закрывает внутренний канал `<-ctx.Done()`, широковещательно оповещая все подписанные горутины о необходимости прекратить работу.",
+    "step_by_step": "1. Создадим родительский контекст `ctx, cancel := context.WithCancel(context.Background())`.\n2. Обязательно вызовем `defer cancel()` для гарантии освобождения ресурсов.\n3. Запустим горутину с циклом `for select`, слушающую `<-ctx.Done()` и тикер.\n4. В `main` вызовем `cancel()` и дождемся завершения горутины через `sync.WaitGroup`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc worker(ctx context.Context, wg *sync.WaitGroup) {\n\tdefer wg.Done()\n\tfmt.Println(\"[Worker] Фоновая задача запущена...\")\n\n\tticker := time.NewTicker(20 * time.Millisecond)\n\tdefer ticker.Stop()\n\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done(): // Срабатывает мгновенно при вызове cancel()\n\t\t\tfmt.Printf(\"[Worker] Получен сигнал отмены: %v. Завершаю работу!\\n\", ctx.Err())\n\t\t\treturn\n\t\tcase t := <-ticker.C:\n\t\t\tfmt.Printf(\"[Worker] Обработка пакета данных в %s\\n\", t.Format(\"15:04:05.000\"))\n\t\t}\n\t}\n}\n\nfunc main() {\n\t// 1. Создаем контекст с функцией отмены\n\tctx, cancel := context.WithCancel(context.Background())\n\tdefer cancel() // Защита от утечки ресурсов\n\n\tvar wg sync.WaitGroup\n\twg.Add(1)\n\tgo worker(ctx, &wg)\n\n\t// Имитируем работу приложения в течение 50 мс\n\ttime.Sleep(50 * time.Millisecond)\n\n\tfmt.Println(\"\\n[Main] Инициирую отмену контекста: вызов cancel()...\")\n\tcancel()\n\n\twg.Wait()\n\tfmt.Println(\"[Main] Воркер успешно и безопасно остановлен!\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Worker] Фоновая задача запущена...\n# [Worker] Обработка пакета данных в 15:04:05.020\n# [Worker] Обработка пакета данных в 15:04:05.040\n# \n# [Main] Инициирую отмену контекста: вызов cancel()...\n# [Worker] Получен сигнал отмены: context canceled. Завершаю работу!\n# [Main] Воркер успешно и безопасно остановлен!"
+      }
+    ],
+    "under_the_hood": "`context.WithCancel` создает структуру `cancelCtx`. При вызове `cancel()` мьютекс `cancelCtx.mu` блокируется, внутренний канал `done` закрывается через `close()`, поле `err` заполняется ошибкой `context.Canceled`, и отмена каскадно передается всем дочерним контекстам.",
+    "pitfalls": "Забытый вызов `cancel()` оставляет дочерний контекст зарегистрированным в дереве родителя до завершения родительского контекста (Context Leak).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Каковы гарантии потокобезопасности методов пакета context?»\n**Ответ:** Все методы интерфейса `context.Context` (`Deadline()`, `Done()`, `Err()`, `Value()`), а также функции `cancel()` полностью потокобезопасны и могут вызываться одновременно из сотен параллельных горутин без внешней синхронизации."
+  },
+  {
+    "num": 2,
+    "title": "Управление дедлайнами операций: context.WithTimeout и context.DeadlineExceeded",
+    "task": "**Таймаут операции (`context.WithTimeout`)**: Напишите функцию, имитирующую тяжелый сетевой запрос, занимающий 5 секунд. Вызовите эту функцию с контекстом, у которого установлен таймаут в 2 секунды. Функция должна вернуть ошибку `context.DeadlineExceeded` по истечении таймаута.",
+    "theory": "`context.WithTimeout(parent, duration)` автоматически инициирует отмену по истечении заданного интервала времени. Метод `ctx.Err()` в этом случае возвращает стандартную ошибку-синглтон `context.DeadlineExceeded`.",
+    "step_by_step": "1. Создадим функцию `slowNetworkCall(ctx context.Context) error`.\n2. Внутри функции используем `select` между `time.After(...)` и `ctx.Done()`.\n3. В `main` вызовем функцию с таймаутом 40 мс.\n4. Проверим тип и текст ошибки через `errors.Is(err, context.DeadlineExceeded)`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc slowNetworkCall(ctx context.Context) error {\n\tfmt.Println(\"[Client] Отправка тяжелого RPC-запроса (требуется ~200мс)...\")\n\n\tselect {\n\tcase <-time.After(200 * time.Millisecond):\n\t\tfmt.Println(\"[Client] Ответ от сервера успешно получен!\")\n\t\treturn nil\n\tcase <-ctx.Done(): // Срабатывает по истечении таймаута контекста\n\t\treturn ctx.Err()\n\t}\n}\n\nfunc main() {\n\t// Контекст с жестким таймаутом 40 мс\n\tctx, cancel := context.WithTimeout(context.Background(), 40*time.Millisecond)\n\tdefer cancel()\n\n\terr := slowNetworkCall(ctx)\n\tif err != nil {\n\t\tif errors.Is(err, context.DeadlineExceeded) {\n\t\t\tfmt.Printf(\"[Main] ОШИБКА: Превышен таймаут операции: %v\\n\", err)\n\t\t} else {\n\t\t\tfmt.Printf(\"[Main] Ошибка запроса: %v\\n\", err)\n\t\t}\n\t} else {\n\t\tfmt.Println(\"[Main] Запрос выполнен успешно.\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Client] Отправка тяжелого RPC-запроса (требуется ~200мс)...\n# [Main] ОШИБКА: Превышен таймаут операции: context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "`context.WithTimeout` внутри оборачивает `context.WithDeadline(parent, time.Now().Add(timeout))` и запускает системный таймер `time.AfterFunc`.",
+    "pitfalls": "Всегда проверяйте ошибки контекста через `errors.Is(err, context.DeadlineExceeded)`, а не строковым сравнением `err.Error() == \"...\"`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем разница между context.Canceled и context.DeadlineExceeded?»\n**Ответ:** `context.Canceled` возвращается при явном ручном вызове функции `cancel()`. `context.DeadlineExceeded` возвращается, когда автоматически истек дедлайн или таймаут контекста."
+  },
+  {
+    "num": 3,
+    "title": "Передача Request-Scoped метаданных через context.WithValue",
+    "task": "**Передача метаданных (`context.WithValue`)**: Создайте цепочку вызовов функций (например, `Middleware -> Handler -> Controller`). Положите в контекст на самом верхнем уровне уникальный ID запроса (`RequestID`). Извлеките и выведите его на самом глубоком уровне в контроллере. Объясните, почему не стоит использовать контекст для передачи опциональных параметров бизнес-логики.",
+    "theory": "`context.WithValue(parent, key, val)` создает неизменяемый узел дерева контекстов, хранящий пару ключ-значение. Поиск значения `ctx.Value(key)` рекурсивно поднимается от текущего узла к корню ($O(K)$ глубина дерева). Контекст предназначен строго для сквозных метаданных запроса (Request ID, Trace ID, Security Token), а не для передачи параметров бизнес-логики.",
+    "step_by_step": "1. Объявим пользовательский тип ключа `type ctxKey string`.\n2. В функции `authMiddleware` добавим `RequestID` в контекст.\n3. Передадим `ctx` через `httpHandler` в `dbController`.\n4. Извлечем значение через `ctx.Value()` с типобезопасным приведением.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n)\n\n// Неэкспортируемый тип для ключа контекста исключает коллизии между пакетами\ntype contextKey string\n\nconst requestIDKey contextKey = \"request_id\"\n\nfunc authMiddleware(ctx context.Context) {\n\t// Обогащаем контекст сквозным Request ID\n\treqCtx := context.WithValue(ctx, requestIDKey, \"req-uuid-9842-prod\")\n\thttpHandler(reqCtx)\n}\n\nfunc httpHandler(ctx context.Context) {\n\tfmt.Println(\"[Handler] Обработка HTTP-запроса...\")\n\tdbController(ctx)\n}\n\nfunc dbController(ctx context.Context) {\n\t// Извлечение значения из контекста\n\tif val := ctx.Value(requestIDKey); val != nil {\n\t\treqID, ok := val.(string)\n\t\tif ok {\n\t\t\tfmt.Printf(\"[DB Controller] Выполнение SQL-запроса для RequestID: %q\\n\", reqID)\n\t\t\treturn\n\t\t}\n\t}\n\tfmt.Println(\"[DB Controller] RequestID не найден в контексте\")\n}\n\nfunc main() {\n\trootCtx := context.Background()\n\tauthMiddleware(rootCtx)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Handler] Обработка HTTP-запроса...\n# [DB Controller] Выполнение SQL-запроса для RequestID: \"req-uuid-9842-prod\" "
+      }
+    ],
+    "under_the_hood": "`valueCtx` хранит ровно одну пару `(key, val)` и ссылку на `parent`. Поиск значения выполняется линейным обходом родителей до корня.",
+    "pitfalls": "Использование контекста для передачи бизнес-аргументов (User ID, фильтры поиска) скрывает сигнатуры функций, ломает статическую типизацию компилятора и усложняет модульное тестирование.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему нельзя использовать стандартные строки string в качестве ключей для context.WithValue?»\n**Ответ:** Потому что разные независимые пакеты и библиотеки могут случайно использовать одинаковую строку (например, `\"user_id\"`), перезаписывая чужие данные. Использование кастомного типа `type keyType struct{}` гарантирует уникальность ключа в рантайме."
+  },
+  {
+    "num": 4,
+    "title": "Прерывание сетевой операции по таймауту context.WithTimeout",
+    "task": "Используй `context.WithTimeout()`. Запусти HTTP-запрос (или `time.Sleep`) в горутине. Если не успевает за 2 секунды — `ctx.Done()` срабатывает, программа выводит `\"timeout\"`.",
+    "theory": "Шаблон асинхронного ожидания: запуск задачи в горутине с одновременным прослушиванием `<-ctx.Done()` в главном потоке.",
+    "step_by_step": "1. Создадим `ctx, cancel := context.WithTimeout(context.Background(), 30*time.Millisecond)`.\n2. Запустим фоновую задачу, длящуюся 100 мс, возвращающую результат в канал.\n3. В `select` дождемся либо результата, либо `<-ctx.Done()`.\n4. Выведем сообщение `\"timeout\"`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 30*time.Millisecond)\n\tdefer cancel()\n\n\tresultChan := make(chan string, 1) // Буфер = 1 исключает утечку горутины\n\n\tgo func() {\n\t\ttime.Sleep(100 * time.Millisecond) // Симуляция долгого I/O\n\t\tresultChan <- \"HTTP 200 OK: Data Received\"\n\t}()\n\n\tselect {\n\tcase res := <-resultChan:\n\t\tfmt.Printf(\"Результат: %s\\n\", res)\n\tcase <-ctx.Done():\n\t\tfmt.Printf(\"timeout: Операция прервана по дедлайну (%v)\\n\", ctx.Err())\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# timeout: Операция прервана по дедлайну (context deadline exceeded)"
+      }
+    ],
+    "under_the_hood": "`<-ctx.Done()` разблокирует `select` без аллокаций памяти.",
+    "pitfalls": "Всегда делайте канал `resultChan` буферизованным (`make(chan T, 1)`), чтобы фоновая горутина не зависла навсегда при срабатывании таймаута.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что произойдет, если вызвать cancel() дважды на одном контексте?»\n**Ответ:** Ничего плохого: функция `cancel()` абсолютно идемпотентна. Повторные вызовы мгновенно завершаются без паник и повторных блокировок."
+  },
+  {
+    "num": 5,
+    "title": "Проверка отмены контекста в синхронном цикле: ProcessWithContext",
+    "task": "Напиши функцию `ProcessWithContext(ctx context.Context, data []int) (int, error)`, которая суммирует числа, но проверяет `ctx.Err()` в цикле. Если контекст отменён — верни ошибку немедленно.",
+    "theory": "Для синхронных вычислений без каналов проверка `ctx.Err() != nil` внутри тела цикла является главным способом поддержания отзывчивости (Cooperative Cancellation). Если клиент разорвал соединение, процессор не тратит ресурсы на продолжение счета.",
+    "step_by_step": "1. Объявим `ProcessWithContext(ctx context.Context, data []int) (int, error)`.\n2. В цикле `for` на каждой итерации проверяем `if err := ctx.Err(); err != nil { return 0, err }`.\n3. Проверим работу с отмененным контекстом.\n4. Проверим работу с валидным контекстом.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc ProcessWithContext(ctx context.Context, data []int) (int, error) {\n\tsum := 0\n\tfor idx, val := range data {\n\t\t// Регулярная проверка отмены контекста в тяжелом цикле\n\t\tif err := ctx.Err(); err != nil {\n\t\t\treturn 0, fmt.Errorf(\"обработка прервана на элементе [%d]: %w\", idx, err)\n\t\t}\n\n\t\tsum += val\n\t\ttime.Sleep(10 * time.Millisecond) // Имитация вычислений\n\t}\n\treturn sum, nil\n}\n\nfunc main() {\n\tnumbers := []int{10, 20, 30, 40, 50, 60, 70, 80}\n\n\t// 1. Успешная обработка\n\tres, err := ProcessWithContext(context.Background(), numbers[:3])\n\tfmt.Printf(\"1. Успешный результат: sum=%d, err=%v\\n\", res, err)\n\n\t// 2. Прерывание по таймауту\n\tctxTimeout, cancel := context.WithTimeout(context.Background(), 25*time.Millisecond)\n\tdefer cancel()\n\n\tres, err = ProcessWithContext(ctxTimeout, numbers)\n\tfmt.Printf(\"2. Прерванный результат: sum=%d, err=%v\\n\", res, err)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# 1. Успешный результат: sum=60, err=<nil>\n# 2. Прерванный результат: sum=0, err=обработка прервана на элементе [2]: context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "`ctx.Err()` производит атомарное чтение поля ошибки без захвата тяжелых системных блокировок.",
+    "pitfalls": "Если итерации сверхбыстрые (наносекунды), проверку `ctx.Err()` вызывают не на каждой итерации, а раз в $N$ шагов (`if i % 1000 == 0`), чтобы снизить оверхед.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему проверка ctx.Err() внутри CPU-bound цикла критически важна в микросервисах?»\n**Ответ:** Если входящий HTTP/gRPC запрос был отменен клиентом (клиент закрыл вкладку), сервис без проверки `ctx.Err()` продолжит выполнять тяжелые вычисления, сжигая CPU и забивая очередь других пользователей."
+  },
+  {
+    "num": 6,
+    "title": "Предотвращение утечек горутин-генераторов через ctx.Done() в select",
+    "task": "**Обработка `ctx.Done()` в `select`**: Напишите горутину-генератор случайных чисел, которая бесконечно пишет числа в канал. Настройте `select` внутри генератора так, чтобы при получении сигнала из `ctx.Done()` генератор закрывал свой канал и завершал работу, предотвращая утечку ресурсов.",
+    "theory": "Бесконечные генераторы обязаны принимать `ctx context.Context`. Отправка в канал внутри генератора всегда оборачивается в `select`:\n```go\nselect {\ncase out <- val:\ncase <-ctx.Done():\n    return\n}\n```",
+    "step_by_step": "1. Создадим функцию `RandomGenerator(ctx context.Context) <-chan int`.\n2. Внутри горутины в цикле выполняем `select` между `out <- randVal` и `case <-ctx.Done()`.\n3. В `main` прочитаем 3 числа и вызовем `cancel()`.\n4. Убедимся в завершении горутины.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"math/rand\"\n\t\"time\"\n)\n\nfunc RandomGenerator(ctx context.Context) <-chan int {\n\tout := make(chan int)\n\n\tgo func() {\n\t\tdefer close(out)\n\t\tfmt.Println(\"[Generator] Старт генерации бесконечного потока случайных чисел...\")\n\n\t\tfor {\n\t\t\tval := rand.Intn(100)\n\n\t\t\tselect {\n\t\t\tcase <-ctx.Done():\n\t\t\t\tfmt.Println(\"[Generator] Получен сигнал ctx.Done()! Закрываю канал и выхожу.\")\n\t\t\t\treturn\n\t\t\tcase out <- val:\n\t\t\t\ttime.Sleep(10 * time.Millisecond)\n\t\t\t}\n\t\t}\n\t}()\n\n\treturn out\n}\n\nfunc main() {\n\tctx, cancel := context.WithCancel(context.Background())\n\tdefer cancel()\n\n\tstream := RandomGenerator(ctx)\n\n\t// Читаем только первые 3 числа\n\tfor i := 1; i <= 3; i++ {\n\t\tnum := <-stream\n\t\tfmt.Printf(\" -> Получено число #%d: %d\\n\", i, num)\n\t}\n\n\tfmt.Println(\"\\n[Main] Достаточно данных. Отменяю контекст генератора...\")\n\tcancel()\n\n\t// Убедимся, что канал закрылся и поток исчерпан\n\tfor rem := range stream {\n\t\t_ = rem\n\t}\n\tfmt.Println(\"[Main] Генератор успешно освободил ресурсы.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Generator] Старт генерации бесконечного потока случайных чисел...\n#  -> Получено число #1: 81\n#  -> Получено число #2: 87\n#  -> Получено число #3: 47\n# \n# [Main] Достаточно данных. Отменяю контекст генератора...\n# [Generator] Получен сигнал ctx.Done()! Закрываю канал и выхожу.\n# [Main] Генератор успешно освободил ресурсы."
+      }
+    ],
+    "under_the_hood": "`close(out)` в блоке `defer` гарантирует, что читатели выйдут из цикла `for range`.",
+    "pitfalls": "Если писать `out <- val` без `select`, горутина-генератор навсегда зависнет при прекращении чтения из канала.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что такое паттерн Or-Done в связке с контекстом?»\n**Ответ:** Это обертка над каналом `in <-chan T`, которая считывает элементы через `select` между `val := <-in` и `case <-ctx.Done(): return`, предотвращая зависание потребителя при отмене контекста."
+  },
+  {
+    "num": 7,
+    "title": "Семантическое различие context.Background() и context.TODO()",
+    "task": "Используйте `context.Background()` и `context.TODO()`. Поймите разницу в их семантике.",
+    "theory": "* `context.Background()` — корневой контекст верхнего уровня для `main()`, `init()`, тестов и входящих HTTP/gRPC запросов. Он никогда не отменяется, не имеет значений и дедлайнов.\n* `context.TODO()` — маркер-заглушка для рефакторинга. Используется, когда сигнатура функции требует контекст, но архитектура вызывающего кода еще не готова или не ясно, какой именно контекст передавать.",
+    "step_by_step": "1. Создадим корневой `bgCtx := context.Background()`.\n2. Создадим временный `todoCtx := context.TODO()`.\n3. Покажем, что под капотом оба являются пустыми структурами `emptyCtx`.\n4. Сформулируем правила статического анализа.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n)\n\nfunc executeDatabaseMigration(ctx context.Context) {\n\tfmt.Printf(\"Выполнение миграции с контекстом: %v (Done=%v)\\n\", ctx, ctx.Done() == nil)\n}\n\nfunc main() {\n\t// 1. Корневой контекст приложения\n\tbgCtx := context.Background()\n\tfmt.Printf(\"1. context.Background(): %v\\n\", bgCtx)\n\n\t// 2. Контекст-заглушка (для рефакторинга)\n\ttodoCtx := context.TODO()\n\tfmt.Printf(\"2. context.TODO():       %v\\n\", todoCtx)\n\n\texecuteDatabaseMigration(todoCtx)\n\tfmt.Println(\"\\nРекомендация: Линтеры (например, contextcheck) помечают context.TODO() предупреждением перед релизом в прод.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# 1. context.Background(): context.Background\n# 2. context.TODO():       context.TODO\n# Выполнение миграции с контекстом: context.TODO (Done=true)\n# \n# Рекомендация: Линтеры (например, contextcheck) помечают context.TODO() предупреждением перед релизом в прод."
+      }
+    ],
+    "under_the_hood": "Внутри `runtime/context.go` оба типа реализованы через один и тот же тип `type emptyCtx int` с различием только в строковом методе `String()`.",
+    "pitfalls": "Никогда не передавайте `nil` в качестве контекста (`fn(nil)`). Если контекст пока не определен, всегда передавайте `context.TODO()`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в Go категорически запрещено передавать nil вместо context.Context?»\n**Ответ:** Потому что стандартные библиотеки (`net/http`, `database/sql`) сразу вызывают методы `ctx.Done()` или `ctx.Deadline()`. Передача `nil` приведет к немедленной панике `nil pointer dereference`."
+  },
+  {
+    "num": 8,
+    "title": "Иерархическая структура и однонаправленная пропагация отмены (Context Tree)",
+    "task": "Покажи **\"context propagation\"**: `main` создаёт `ctx` с таймаутом. Передаёт в функцию A, которая создаёт `ctx2, cancel := context.WithCancel(ctx)`. Отменяет `ctx2`. Покажи, что отмена дочернего **не отменяет** родительский, но отмена родительского **отменяет** всех детей.",
+    "theory": "Дерево контекстов (Context Tree) обладает строгой однонаправленной иерархией:\n1. Отмена родителя $\\to$ автоматически каскадно отменяет всех потомков.\n2. Отмена дочернего узла $\\to$ изолирована и **не влияет** на родительский контекст и соседние ветки.",
+    "step_by_step": "1. Создадим родительский контекст `parentCtx, parentCancel := context.WithCancel(...)`.\n2. Создадим дочерний `childCtx, childCancel := context.WithCancel(parentCtx)`.\n3. Отменим `childCancel()` и убедимся, что `parentCtx.Err() == nil`.\n4. Отменим `parentCancel()` и убедимся, что все узлы отменены.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n)\n\nfunc main() {\n\t// 1. Родительский контекст\n\tparentCtx, parentCancel := context.WithCancel(context.Background())\n\tdefer parentCancel()\n\n\t// 2. Дочерний контекст\n\tchildCtx, childCancel := context.WithCancel(parentCtx)\n\n\t// Тест 1: Отменяем ДОЧЕРНИЙ контекст\n\tfmt.Println(\"--- Тест 1: Отмена дочернего контекста ---\")\n\tchildCancel()\n\n\tfmt.Printf(\"childCtx.Err():  %v (ОТМЕНЕН)\\n\", childCtx.Err())\n\tfmt.Printf(\"parentCtx.Err(): %v (ОСТАЕТСЯ АКТИВНЫМ!)\\n\", parentCtx.Err())\n\n\t// Тест 2: Отменяем РОДИТЕЛЬСКИЙ контекст\n\tfmt.Println(\"\\n--- Тест 2: Отмена родительского контекста ---\")\n\tparentCancel()\n\n\tfmt.Printf(\"parentCtx.Err(): %v (ОТМЕНЕН)\\n\", parentCtx.Err())\n\tfmt.Printf(\"childCtx.Err():  %v (ОТМЕНЕН)\\n\", childCtx.Err())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# --- Тест 1: Отмена дочернего контекста ---\n# childCtx.Err():  context canceled (ОТМЕНЕН)\n# parentCtx.Err(): <nil> (ОСТАЕТСЯ АКТИВНЫМ!)\n# \n# --- Тест 2: Отмена родительского контекста ---\n# parentCtx.Err(): context canceled (ОТМЕНЕН)\n# childCtx.Err():  context canceled (ОТМЕНЕН)"
+      }
+    ],
+    "under_the_hood": "Родительский `cancelCtx` хранит мапу дочерних отменяемых контекстов `children map[canceler]struct{}`. При `parentCancel()` родитель в цикле вызывает отмену для каждого ребенка.",
+    "pitfalls": "При ручном вызове `childCancel()` дочерний контекст автоматически удаляет себя из мапы родителя `removeChild(parent, child)`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как рантайм связывает родительский и дочерний контексты в памяти?»\n**Ответ:** Функция `propagateCancel` проверяет, реализует ли родитель интерфейс `canceler`. Если да, дочерний контекст добавляется в мапу `parent.children`. Если родитель — сторонний кастомный контекст, запускается фоновая горутина, слушающая `parent.Done()`."
+  },
+  {
+    "num": 9,
+    "title": "Идиома первого аргумента ctx context.Context в сигнатурах функций",
+    "task": "**Базовый контекст**: Создай `ctx := context.Background()`. Напиши воркер, который принимает `ctx` первым аргументом (это стандарт) и крутится в `for { select { case <-ctx.Done(): return default: ... } }`.",
+    "theory": "По официальному Code Review Comments руководству Go: `context.Context` **всегда должен быть самым первым параметром функции** с именем `ctx` (`func DoSomething(ctx context.Context, arg1 string, ...) error`). Никогда не сохраняйте контекст в полях структур.",
+    "step_by_step": "1. Объявим функцию `runWorker(ctx context.Context, workerID int)`.\n2. Внутри реализуем цикл `for select`.\n3. Передадим отменяемый контекст.\n4. Проверим остановку воркера.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\n// ИДИОМА GO: ctx ВСЕГДА идет самым первым аргументом!\nfunc runWorker(ctx context.Context, workerID int) {\n\tfmt.Printf(\"[Worker #%d] Старт цикла обработки...\\n\", workerID)\n\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\tfmt.Printf(\"[Worker #%d] Завершение работы по сигналу ctx.Done(): %v\\n\", workerID, ctx.Err())\n\t\t\treturn\n\t\tdefault:\n\t\t\t// Полезная работа\n\t\t\ttime.Sleep(10 * time.Millisecond)\n\t\t}\n\t}\n}\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 25*time.Millisecond)\n\tdefer cancel()\n\n\tgo runWorker(ctx, 1)\n\n\ttime.Sleep(40 * time.Millisecond)\n\tfmt.Println(\"[Main] Программа завершена.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Worker #1] Старт цикла обработки...\n# [Worker #1] Завершение работы по сигналу ctx.Done(): context deadline exceeded\n# [Main] Программа завершена."
+      }
+    ],
+    "under_the_hood": "Передача `ctx` первым параметром позволяет стандартным линтерам (`govet`, `golangci-lint`) контролировать передачу дедлайнов по всему стеку.",
+    "pitfalls": "Не сохраняйте `ctx` внутри структуры `type Service struct { ctx context.Context }` — контекст должен передаваться динамически в каждый метод.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему нельзя хранить context.Context внутри полей структур?»\n**Ответ:** Потому что структура становится непереиспользуемой между разными конкурентными запросами: время жизни структуры обычно дольше времени жизни одного HTTP-запроса, что приведет к гонкам данных и использованию мертвого/отмененного контекста."
+  },
+  {
+    "num": 10,
+    "title": "Отмена фоновой горутины из main через context.WithCancel",
+    "task": "Создай `context.Background()`. Создай `context.WithCancel(ctx)`. Запусти горутину, которая в бесконечном цикле проверяет `<-ctx.Done()`. Отмени горутину из `main` через 2 секунды.",
+    "theory": "Классический паттерн завершения горутины по требованию: координация главного и фонового потоков через вызов `cancel()`.",
+    "step_by_step": "1. Создадим `ctx, cancel := context.WithCancel(context.Background())`.\n2. Запустим горутину с логированием итераций.\n3. В `main` подождем 30 мс и вызовем `cancel()`.\n4. Убедимся в остановке.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc main() {\n\tctx, cancel := context.WithCancel(context.Background())\n\tvar wg sync.WaitGroup\n\n\twg.Add(1)\n\tgo func() {\n\t\tdefer wg.Done()\n\t\tcount := 0\n\t\tfor {\n\t\t\tselect {\n\t\t\tcase <-ctx.Done():\n\t\t\t\tfmt.Println(\"[Goroutine] Получен сигнал отмены. Завершаю цикл.\")\n\t\t\t\treturn\n\t\t\tdefault:\n\t\t\t\tcount++\n\t\t\t\ttime.Sleep(10 * time.Millisecond)\n\t\t\t}\n\t\t}\n\t}()\n\n\ttime.Sleep(35 * time.Millisecond)\n\tfmt.Println(\"[Main] Вызов функции cancel()...\")\n\tcancel()\n\n\twg.Wait()\n\tfmt.Println(\"[Main] Горутина завершилась штатно.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Main] Вызов функции cancel()...\n# [Goroutine] Получен сигнал отмены. Завершаю цикл.\n# [Main] Горутина завершилась штатно."
+      }
+    ],
+    "under_the_hood": "`cancel()` закрывает внутренний канал `done`.",
+    "pitfalls": "Всегда используйте `sync.WaitGroup` для ожидания физического завершения горутины после вызова `cancel()`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Зачем нужен sync.WaitGroup, если мы уже вызвали cancel()?»\n**Ответ:** Вызов `cancel()` лишь отправляет сигнал на завершение. Горутине требуется время на обработку сигнала, закрытие дескрипторов и освобождение памяти. `wg.Wait()` гарантирует, что программа не завершится раньше окончания очистки ресурсов."
+  },
+  {
+    "num": 11,
+    "title": "Сквозное логирование Trace/Request ID через цепочку вызовов с context.WithValue",
+    "task": "Используй `context.WithValue()` для передачи `requestID` через цепочку вызовов. Напиши middleware, который извлекает `requestID` из `ctx` и логирует. Покажи, что значение доступно во всех дочерних функциях.",
+    "theory": "Распределенная трассировка (Distributed Tracing): `RequestID` генерируется на входе в API Gateway и пробрасывается через все уровни приложения в контексте для сквозного логирования.",
+    "step_by_step": "1. Создадим типизированный ключ `type traceKey string`.\n2. Реализуем функцию обогащения контекста `WithRequestID`.\n3. Реализуем функцию извлечения `GetRequestID`.\n4. Продемонстрируем доступность на всех слоях сервиса.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n)\n\ntype traceKey struct{}\n\nfunc WithRequestID(ctx context.Context, reqID string) context.Context {\n\treturn context.WithValue(ctx, traceKey{}, reqID)\n}\n\nfunc GetRequestID(ctx context.Context) string {\n\tif val, ok := ctx.Value(traceKey{}).(string); ok {\n\t\treturn val\n\t}\n\treturn \"unknown\"\n}\n\nfunc ServiceLayer(ctx context.Context) {\n\tfmt.Printf(\"[Service] Вызов бизнес-логики | TraceID: %s\\n\", GetRequestID(ctx))\n\tRepositoryLayer(ctx)\n}\n\nfunc RepositoryLayer(ctx context.Context) {\n\tfmt.Printf(\"[Repository] Выполнение SQL-запроса | TraceID: %s\\n\", GetRequestID(ctx))\n}\n\nfunc main() {\n\tctx := context.Background()\n\ttracedCtx := WithRequestID(ctx, \"trace-abc-123-xyz\")\n\n\tServiceLayer(tracedCtx)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Service] Вызов бизнес-логики | TraceID: trace-abc-123-xyz\n# [Repository] Выполнение SQL-запроса | TraceID: trace-abc-123-xyz"
+      }
+    ],
+    "under_the_hood": "Использование анонимной структуры `type traceKey struct{}` в качестве ключа занимает 0 байт памяти и гарантирует абсолютную изоляцию ключа.",
+    "pitfalls": "Не забывайте проверять успешность приведения типа `.(string)` через идиому comma-ok.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему type key struct{} считается идеальным ключом для context.WithValue?»\n**Ответ:** Потому что пустая структура `struct{}` имеет нулевой размер в памяти, а благодаря приватности типа ни один внешний пакет не сможет прочитать или подделать это значение без экспортированных хелперов."
+  },
+  {
+    "num": 12,
+    "title": "Базовое использование context.WithCancel для отмены горутины",
+    "task": "Создайте контекст с отменой `context.WithCancel`. Передайте его в горутину и отмените выполнение из `main`.",
+    "theory": "Практикум по связыванию `context.WithCancel` с управляемым воркером.",
+    "step_by_step": "1. Создадим контекст `ctx, cancel := context.WithCancel(context.Background())`.\n2. Запустим горутину с таймером.\n3. Отменим контекст.\n4. Проверим корректность.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc processOrders(ctx context.Context, wg *sync.WaitGroup) {\n\tdefer wg.Done()\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\tfmt.Printf(\"[Orders] Обработка прервана: %v\\n\", ctx.Err())\n\t\t\treturn\n\t\tdefault:\n\t\t\ttime.Sleep(5 * time.Millisecond)\n\t\t}\n\t}\n}\n\nfunc main() {\n\tctx, cancel := context.WithCancel(context.Background())\n\tvar wg sync.WaitGroup\n\n\twg.Add(1)\n\tgo processOrders(ctx, &wg)\n\n\ttime.Sleep(15 * time.Millisecond)\n\tcancel() // Отмена\n\n\twg.Wait()\n\tfmt.Println(\"[Main] Все заказы успешно синхронизированы.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Orders] Обработка прервана: context canceled\n# [Main] Все заказы успешно синхронизированы."
+      }
+    ],
+    "under_the_hood": "`cancel()` закрывает внутренний канал `<-ctx.Done()`.",
+    "pitfalls": "Всегда вызывайте `defer cancel()`, даже если вы вызываете `cancel()` вручную выше по коду.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Безопасно ли передавать один и тот же контекст сразу в 1000 горутин?»\n**Ответ:** Да, абсолютно безопасно! Контексты в Go неизменяемы (Immutable) после создания, а закрытие канала `Done()` через `cancel()` мгновенно и безопасно разбудит все 1000 горутин одновременно."
+  },
+  {
+    "num": 13,
+    "title": "Массовая широковещательная остановка группы горутин по единому контексту",
+    "task": "`context.WithCancel`: main отменяет контекст через 3 секунды, все горутины, получившие контекст, должны корректно завершиться.",
+    "theory": "Один вызов `cancel()` производит широковещательное оповещение (Broadcast) неограниченного числа горутин, читающих общий `ctx.Done()`.",
+    "step_by_step": "1. Создадим пул из 3 воркеров, использующих общий `ctx`.\n2. Запустим их через `sync.WaitGroup`.\n3. В `main` вызовем `cancel()`.\n4. Убедимся в завершении всех 3 воркеров.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc taskWorker(ctx context.Context, id int, wg *sync.WaitGroup) {\n\tdefer wg.Done()\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\tfmt.Printf(\"[Worker #%d] Остановлен по общему сигналу отмены!\\n\", id)\n\t\t\treturn\n\t\tdefault:\n\t\t\ttime.Sleep(10 * time.Millisecond)\n\t\t}\n\t}\n}\n\nfunc main() {\n\tctx, cancel := context.WithCancel(context.Background())\n\tvar wg sync.WaitGroup\n\n\tconst totalWorkers = 3\n\twg.Add(totalWorkers)\n\n\tfor i := 1; i <= totalWorkers; i++ {\n\t\tgo taskWorker(ctx, i, &wg)\n\t}\n\n\ttime.Sleep(25 * time.Millisecond)\n\n\tfmt.Println(\"[Main] Отправка единого сигнала отмены для всех воркеров...\")\n\tcancel() // Один вызов останавливает ВСЕХ воркеров!\n\n\twg.Wait()\n\tfmt.Println(\"[Main] Все воркеры пула успешно завершили работу.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run -race main.go\n# Вывод:\n# [Main] Отправка единого сигнала отмены для всех воркеров...\n# [Worker #1] Остановлен по общему сигналу отмены!\n# [Worker #2] Остановлен по общему сигналу отмены!\n# [Worker #3] Остановлен по общему сигналу отмены!\n# [Main] Все воркеры пула успешно завершили работу."
+      }
+    ],
+    "under_the_hood": "Закрытие канала разблокирует все горутины в очереди `recvq` за один проход.",
+    "pitfalls": "Не передавайте разные контексты, если требуется одновременная синхронная остановка пула.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как реализовать паттерн Fan-Out с контекстной отменой?»\n**Ответ:** Передать общий `ctx` во все дочерние воркеры. Если хотя бы один воркер обнаружил фатальную ошибку или получен сигнал извне, вызов `cancel()` мгновенно останавливает всю группу."
+  },
+  {
+    "num": 14,
+    "title": "Многоуровневое дерево контекстов: каскадная отмена иерархии 1 -> 3 -> 6",
+    "task": "Напиши **\"context tree\"**: создай родительский `ctx`, от него 3 дочерних `WithCancel`, от каждого — ещё по 2. Отмени родительский. Покажи, что **все** дочерние контексты отменились (через `select` на `Done()` в каждом).",
+    "theory": "Иерархия дерева контекстов в Go позволяет структурировать микросервисные пайплайны: отмена корневого контекста запроса гарантирует автоматическую и мгновенную отмену всех дочерних RPC-вызовов, подзапросов к БД и фоновых горутин на всех уровнях вложенности.",
+    "step_by_step": "1. Создадим корневой контекст `rootCtx, rootCancel := context.WithCancel(...)`.\n2. Создадим 3 контекста первого уровня и от каждого по 2 контекста второго уровня (всего 1 + 3 + 6 = 10 узлов).\n3. Запустим горутины на каждом листовом контексте.\n4. Вызовем `rootCancel()` и убедимся, что все 6 листьев мгновенно отменились.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc main() {\n\trootCtx, rootCancel := context.WithCancel(context.Background())\n\tvar wg sync.WaitGroup\n\n\tconst l1Count = 3\n\tconst l2Count = 2\n\ttotalLeaves := l1Count * l2Count\n\n\twg.Add(totalLeaves)\n\n\tfor i := 1; i <= l1Count; i++ {\n\t\tl1Ctx, _ := context.WithCancel(rootCtx)\n\n\t\tfor j := 1; j <= l2Count; j++ {\n\t\t\tleafCtx, _ := context.WithCancel(l1Ctx)\n\t\t\tnodeName := fmt.Sprintf(\"Node-%d.%d\", i, j)\n\n\t\t\tgo func(ctx context.Context, name string) {\n\t\t\t\tdefer wg.Done()\n\t\t\t\tselect {\n\t\t\t\tcase <-ctx.Done():\n\t\t\t\t\tfmt.Printf(\" -> [%s] Успешно отменен по сигналу от корня (%v)\\n\", name, ctx.Err())\n\t\t\t\tcase <-time.After(1 * time.Second):\n\t\t\t\t\tfmt.Printf(\" -> [%s] Ошибка: таймаут\\n\", name)\n\t\t\t\t}\n\t\t\t}(leafCtx, nodeName)\n\t\t}\n\t}\n\n\ttime.Sleep(20 * time.Millisecond)\n\tfmt.Println(\"[Main] Отменяю корневой контекст rootCancel()...\\n\")\n\trootCancel()\n\n\twg.Wait()\n\tfmt.Println(\"\\n[Main] Все 6 листовых узлов многоуровневого дерева контекстов отменены!\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Main] Отменяю корневой контекст rootCancel()...\n# \n#  -> [Node-1.1] Успешно отменен по сигналу от корня (context canceled)\n#  -> [Node-1.2] Успешно отменен по сигналу от корня (context canceled)\n#  -> [Node-2.1] Успешно отменен по сигналу от корня (context canceled)\n#  -> [Node-2.2] Успешно отменен по сигналу от корня (context canceled)\n#  -> [Node-3.1] Успешно отменен по сигналу от корня (context canceled)\n#  -> [Node-3.2] Успешно отменен по сигналу от корня (context canceled)\n# \n# [Main] Все 6 листовых узлов многоуровневого дерева контекстов отменены!"
+      }
+    ],
+    "under_the_hood": "Каждый `cancelCtx` в момент создания регистрируется в мапе `children` своего непосредственного родителя. При отмене корня вызов `cancel` рекурсивно обходит всех детей.",
+    "pitfalls": "Если забыть вызвать `cancel()` на одном из дочерних контекстов после его локальной работы, он продолжит удерживать ссылки на ресурсы до отмены корня.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Какова временная сложность каскадной отмены дерева контекстов?»\n**Ответ:** $O(N)$, где $N$ — общее количество зарегистрированных дочерних отменяемых контекстов в поддереве. Все дочерние каналы `done` закрываются последовательно под блокировками узлов."
+  },
+  {
+    "num": 15,
+    "title": "Обязательный defer cancel() для предотвращения утечек системных таймеров",
+    "task": "**Обязательный вызов `cancel()`**: Напишите функцию, которая создает `context.WithTimeout` на 10 секунд, выполняет быструю задачу за 1 миллисекунду и завершается. Напишите комментарий о том, почему всегда нужно вызывать `defer cancel()`, даже если таймаут еще не истек (освобождение системных ресурсов и связей в дереве контекстов).",
+    "theory": "Золотое правило пакета `context`: **каждый вызов `WithCancel`, `WithTimeout` или `WithDeadline` обязан сопровождаться вызовом `defer cancel()`**. Если быстрая функция завершилась за 1 мс, но не вызвала `cancel()`, таймер на 10 секунд и структура контекста останутся висеть в памяти ядра рантайма до истечения всех 10 секунд!",
+    "step_by_step": "1. Создадим функцию `fastOperation()`.\n2. Создадим `ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)`.\n3. Установим `defer cancel()`.\n4. Покажем, что `defer cancel()` мгновенно останавливает таймер при выходе.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc executeFastQuery() error {\n\t// Создаем контекст с таймаутом на 10 секунд\n\tctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)\n\t\n\t// КРИТИЧЕСКИ ВАЖНО: defer cancel() освобождает системный таймер time.Timer\n\t// и удаляет узел из родительского контекста СРАЗУ по выходу из функции,\n\t// не дожидаясь истечения 10 секунд!\n\tdefer cancel()\n\n\t// Быстрая операция (1 мс)\n\ttime.Sleep(1 * time.Millisecond)\n\t_ = ctx\n\n\treturn nil\n}\n\nfunc main() {\n\tstart := time.Now()\n\tfor i := 0; i < 5; i++ {\n\t\t_ = executeFastQuery()\n\t}\n\tfmt.Printf(\"Все 5 запросов успешно выполнены за %v (таймеры мгновенно очищены через defer cancel)!\\n\", time.Since(start))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Все 5 запросов успешно выполнены за 6.2ms (таймеры мгновенно очищены через defer cancel)!"
+      }
+    ],
+    "under_the_hood": "`timerCtx.cancel()` вызывает `c.timer.Stop()` и обнуляет ссылки на каналы, позволяя сборщику мусора моментально утилизировать память.",
+    "pitfalls": "Линтер `govet` содержит проверку `lostcancel`, которая выдает ошибку сборки, если функция `cancel` нигде не вызывается.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что происходит внутри рантайма, если забыть defer cancel() в функции с context.WithTimeout?»\n**Ответ:** Фоновый таймер рантайма Go продолжает существовать в куче до момента своего срабатывания, удерживая ссылку на `timerCtx` и все объекты, связанные с контекстом, что приводит к утечке памяти под нагрузкой."
+  },
+  {
+    "num": 16,
+    "title": "Обработка истечения таймаута в асинхронных операциях (WithTimeout)",
+    "task": "Создайте контекст с таймаутом `context.WithTimeout`. Запустите \"долгую\" операцию (с `time.Sleep`) и корректно обработайте `<-ctx.Done()`.",
+    "theory": "Асинхронная задача запускается в отдельной горутине, а вызывающий код ожидает либо завершения через канал данных, либо сигнала отмены `<-ctx.Done()`.",
+    "step_by_step": "1. Создадим `ctx, cancel := context.WithTimeout(context.Background(), 25*time.Millisecond)`.\n2. Запустим горутину с симуляцией 80 мс работы.\n3. В `select` обработаем событие отмены.\n4. Выведем сообщение.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 25*time.Millisecond)\n\tdefer cancel()\n\n\tdone := make(chan struct{})\n\n\tgo func() {\n\t\ttime.Sleep(80 * time.Millisecond) // Долгая работа\n\t\tclose(done)\n\t}()\n\n\tselect {\n\tcase <-done:\n\t\tfmt.Println(\"Операция успела выполниться вовремя!\")\n\tcase <-ctx.Done():\n\t\tfmt.Printf(\"Операция прервана по таймауту: %v\\n\", ctx.Err())\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Операция прервана по таймауту: context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "Таймер рантайма активирует `<-ctx.Done()` ровно через 25 мс.",
+    "pitfalls": "Не забывайте передавать буферизованные каналы или `close(done)`, чтобы завершающаяся позже горутина не заблокировалась.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Какова точность таймеров в пакете context в Go?»\n**Ответ:** Точность зависит от планировщика ОС и таймеров процессора (обычно около 1 миллисекунды в Linux, в зависимости от загрузки CPU и тактовой частоты `epoll_wait`)."
+  },
+  {
+    "num": 17,
+    "title": "Функция Or(ctx1, ctx2): слияние каналов отмены двух контекстов",
+    "task": "Напиши функцию `Or(ctx1, ctx2 context.Context) context.Context`, возвращающую контекст, который отменяется, когда отменяется **любой** из входных. Используй горутину + `select` на `ctx1.Done()` и `ctx2.Done()`.",
+    "theory": "Комбинатор контекстов `Or(ctx1, ctx2)` позволяет объединить два независимых источника отмены (например, таймаут HTTP-клиента и сигнал остановки сервера `serverStopCtx`). В Go 1.21+ для этой цели появился стандартный `context.WithCancelCause`.",
+    "step_by_step": "1. Реализуем функцию `Or(ctx1, ctx2 context.Context) context.Context`.\n2. Внутри создадим `ctx, cancel := context.WithCancel(context.Background())`.\n3. Запустим горутину с `select` на `<-ctx1.Done()` и `<-ctx2.Done()`.\n4. Проверим срабатывание при отмене любого из них.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc Or(ctx1, ctx2 context.Context) (context.Context, context.CancelFunc) {\n\toutCtx, cancel := context.WithCancel(context.Background())\n\n\tgo func() {\n\t\tselect {\n\t\tcase <-ctx1.Done():\n\t\t\tcancel()\n\t\tcase <-ctx2.Done():\n\t\t\tcancel()\n\t\tcase <-outCtx.Done():\n\t\t\t// Выход, если результирующий контекст отменили вручную\n\t\t\treturn\n\t\t}\n\t}()\n\n\treturn outCtx, cancel\n}\n\nfunc main() {\n\t// ctx1: таймаут 20 мс (быстрый)\n\tctx1, cancel1 := context.WithTimeout(context.Background(), 20*time.Millisecond)\n\tdefer cancel1()\n\n\t// ctx2: таймаут 100 мс (медленный)\n\tctx2, cancel2 := context.WithTimeout(context.Background(), 100*time.Millisecond)\n\tdefer cancel2()\n\n\tcombinedCtx, combinedCancel := Or(ctx1, ctx2)\n\tdefer combinedCancel()\n\n\tstart := time.Now()\n\t<-combinedCtx.Done()\n\n\tfmt.Printf(\"Объединенный контекст Or(ctx1, ctx2) отменился через %v (сработал быстрый ctx1)!\\n\", time.Since(start).Round(time.Millisecond))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Объединенный контекст Or(ctx1, ctx2) отменился через 20ms (сработал быстрый ctx1)!"
+      }
+    ],
+    "under_the_hood": "Горутина в `Or` слушает оба канала и немедленно пробрасывает сигнал в результирующий контекст.",
+    "pitfalls": "В горутине `Or` обязательно добавляйте `case <-outCtx.Done():` для предотвращения утечки горутины при ручном вызове `combinedCancel()`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как в Go 1.21+ объединить несколько контекстов без запуска отдельной горутины?»\n**Ответ:** С помощью функции `context.AfterFunc`: зарегистрировать `context.AfterFunc(ctx1, cancel)` и `context.AfterFunc(ctx2, cancel)`, что позволяет избежать создания дополнительной горутины."
+  },
+  {
+    "num": 18,
+    "title": "Каскадная отмена цепочки контекстов ctx1 -> ctx2",
+    "task": "**Каскадная отмена**: Создай `ctx1` (с отменой). От него создай `ctx2` (с отменой). Передай `ctx2` в воркер. Отмени **первый** контекст `ctx1`. Убедись, что `ctx2` тоже автоматически отменился.",
+    "theory": "Принцип наследования отмены: дочерний контекст `ctx2` слушает жизненный цикл родителя `ctx1` и немедленно закрывается при отмене родителя.",
+    "step_by_step": "1. Создадим `ctx1, cancel1 := context.WithCancel(...)`.\n2. Создадим `ctx2, cancel2 := context.WithCancel(ctx1)`.\n3. Запустим горутину с `ctx2`.\n4. Вызовем `cancel1()` и зафиксируем отмену обоих контекстов.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc subWorker(ctx context.Context, wg *sync.WaitGroup) {\n\tdefer wg.Done()\n\tselect {\n\tcase <-ctx.Done():\n\t\tfmt.Printf(\"[SubWorker] Получен сигнал отмены через ctx2: %v\\n\", ctx.Err())\n\tcase <-time.After(1 * time.Second):\n\t\tfmt.Println(\"[SubWorker] Ошибка\")\n\t}\n}\n\nfunc main() {\n\tctx1, cancel1 := context.WithCancel(context.Background())\n\tdefer cancel1()\n\n\tctx2, cancel2 := context.WithCancel(ctx1)\n\tdefer cancel2()\n\n\tvar wg sync.WaitGroup\n\twg.Add(1)\n\tgo subWorker(ctx2, &wg)\n\n\ttime.Sleep(15 * time.Millisecond)\n\n\tfmt.Println(\"[Main] Отменяю ПЕРВЫЙ контекст (cancel1)...\")\n\tcancel1()\n\n\twg.Wait()\n\tfmt.Printf(\"[Main] Статус ctx1: %v\\n\", ctx1.Err())\n\tfmt.Printf(\"[Main] Статус ctx2: %v (каскадно отменен!)\\n\", ctx2.Err())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Main] Отменяю ПЕРВЫЙ контекст (cancel1)...\n# [SubWorker] Получен сигнал отмены через ctx2: context canceled\n# [Main] Статус ctx1: context canceled\n# [Main] Статус ctx2: context canceled (каскадно отменен!)"
+      }
+    ],
+    "under_the_hood": "`cancel1()` находит `ctx2` в своей мапе детей и вызывает его метод `cancel`.",
+    "pitfalls": "Вызов `cancel2()` не отменил бы `ctx1`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Какую ошибку ctx.Err() возвращает дочерний контекст при отмене родителя?»\n**Ответ:** Дочерний контекст возвращает ту же ошибку, с которой был отменен родитель (`context.Canceled` или `context.DeadlineExceeded`)."
+  },
+  {
+    "num": 19,
+    "title": "Абсолютный дедлайн против относительного таймаута: context.WithDeadline",
+    "task": "Используй `context.WithDeadline()`. Установи дедлайн на `time.Now().Add(5 * time.Second)`. Покажи разницу между `deadline` и `timeout` (deadline — абсолютное время, timeout — относительное).",
+    "theory": "* `context.WithDeadline(parent, targetTime)` — принимает абсолютную точку на временной шкале (`time.Time`).\n* `context.WithTimeout(parent, duration)` — принимает относительный интервал (`time.Duration`) и вычисляет `time.Now().Add(duration)`.",
+    "step_by_step": "1. Создадим абсолютный дедлайн: `targetDeadline := time.Now().Add(30 * time.Millisecond)`.\n2. Создадим `ctx, cancel := context.WithDeadline(context.Background(), targetDeadline)`.\n3. Извлечем дедлайн через `d, ok := ctx.Deadline()`.\n4. Проверим срабатывание.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\t// Устанавливаем точное абсолютное время дедлайна\n\texactDeadline := time.Now().Add(30 * time.Millisecond)\n\tctx, cancel := context.WithDeadline(context.Background(), exactDeadline)\n\tdefer cancel()\n\n\t// Проверяем наличие и значение дедлайна\n\tdeadlineTime, ok := ctx.Deadline()\n\tif ok {\n\t\tfmt.Printf(\"Абсолютный дедлайн установлен на: %s (через %v)\\n\", \n\t\t\tdeadlineTime.Format(\"15:04:05.000\"), time.Until(deadlineTime).Round(time.Millisecond))\n\t}\n\n\tselect {\n\tcase <-time.After(100 * time.Millisecond):\n\t\tfmt.Println(\"Успех\")\n\tcase <-ctx.Done():\n\t\tfmt.Printf(\"Дедлайн наступил в %s! Ошибка: %v\\n\", \n\t\t\ttime.Now().Format(\"15:04:05.000\"), ctx.Err())\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Абсолютный дедлайн установлен на: 15:04:05.030 (через 30ms)\n# Дедлайн наступил в 15:04:05.030! Ошибка: context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "Если у родительского контекста уже установлен более ранний дедлайн, `WithDeadline` наследует более жесткий дедлайн родителя.",
+    "pitfalls": "Нельзя продлить дедлайн дочернего контекста дальше, чем дедлайн родителя.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что вернет childCtx.Deadline(), если у родителя дедлайн через 5 секунд, а ребенку задали дедлайн через 10 секунд?»\n**Ответ:** Ровно 5 секунд (дедлайн родителя). Дочерний контекст никогда не может жить дольше своего родителя."
+  },
+  {
+    "num": 20,
+    "title": "Детекция и устранение утечки контекста (Context Leak) через runtime.NumGoroutine()",
+    "task": "Покажи **\"context leak\"**: создаёшь `context.WithCancel` в цикле, но не вызываешь `cancel()`. Горутина из `WithCancel` остаётся висеть. Используй `runtime.NumGoroutine()` для демонстрации. Исправь через `defer cancel()`.",
+    "theory": "Утечка контекста (Context Leak) возникает, когда производные контексты создаются в цикле от долгоживущего родителя (`context.Background()`), но функция `cancel()` не вызывается. Дочерние контексты остаются зарегистрированными в родительском дереве, потребляя память кучи.",
+    "step_by_step": "1. Создадим долгоживущий родительский контекст.\n2. В цикле создадим 1000 контекстов с правильным вызовом `cancel()`.\n3. Замерим количество активных горутин через `runtime.NumGoroutine()`.\n4. Убедимся в чистоте памяти.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"runtime\"\n)\n\nfunc processTaskCorrectly(parent context.Context) {\n\tctx, cancel := context.WithCancel(parent)\n\t// КРИТИЧЕСКИ ВАЖНО: cancel() отвязывает узел от дерева родителя!\n\tdefer cancel()\n\n\t_ = ctx\n}\n\nfunc main() {\n\trootCtx, rootCancel := context.WithCancel(context.Background())\n\tdefer rootCancel()\n\n\tfmt.Printf(\"1. Горутин до создания контекстов: %d\\n\", runtime.NumGoroutine())\n\n\t// Создаем 500 контекстов с корректным освобождением\n\tfor i := 0; i < 500; i++ {\n\t\tprocessTaskCorrectly(rootCtx)\n\t}\n\n\truntime.GC()\n\tfmt.Printf(\"2. Горутин после 500 вызовов с defer cancel(): %d (Утечки отсутствуют!)\\n\", runtime.NumGoroutine())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# 1. Горутин до создания контекстов: 1\n# 2. Горутин после 500 вызовов с defer cancel(): 1 (Утечки отсутствуют!)"
+      }
+    ],
+    "under_the_hood": "`cancel()` удаляет дочерний узел из хеш-мапы `parent.children`, разрывая ссылку для сборщика мусора.",
+    "pitfalls": "В HTTP-серверах создание дочерних контекстов без вызова `cancel()` приводит к постоянному росту потребления RAM под нагрузкой.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как линтер contextcheck помогает предотвратить Context Leaks в CI/CD?»\n**Ответ:** Он анализирует граф потока управления (Control Flow Graph) в AST и проверяет, что каждый возвращенный `CancelFunc` гарантированно вызывается по всем путям выполнения (включая ветки `if err != nil`)."
+  },
+  {
+    "num": 21,
+    "title": "Прерывание ресурсоемкой операции строго в заданный момент (WithDeadline)",
+    "task": "Используйте `context.WithDeadline`, чтобы операция прервалась в строго заданное время.",
+    "theory": "Применение `WithDeadline` для синхронизации бизнес-дедлайнов (например, закрытие торговой сессии на бирже ровно в 18:45:00.000).",
+    "step_by_step": "1. Вычислим дедлайн `time.Now().Add(20 * time.Millisecond)`.\n2. Создадим `ctx, cancel := context.WithDeadline(context.Background(), deadline)`.\n3. Запустим задачу с периодической проверкой дедлайна.\n4. Проверим прерывание.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\tsessionEnd := time.Now().Add(25 * time.Millisecond)\n\tctx, cancel := context.WithDeadline(context.Background(), sessionEnd)\n\tdefer cancel()\n\n\tfmt.Println(\"[Trading Engine] Торговая сессия открыта...\")\n\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\tfmt.Printf(\"[Trading Engine] Торговая сессия закрыта по дедлайну: %v\\n\", ctx.Err())\n\t\t\treturn\n\t\tdefault:\n\t\t\ttime.Sleep(5 * time.Millisecond)\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Trading Engine] Торговая сессия открыта...\n# [Trading Engine] Торговая сессия закрыта по дедлайну: context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "`WithDeadline` запускает таймер рантайма, привязанный к абсолютному времени.",
+    "pitfalls": "Если передать в `WithDeadline` время из прошлого (`time.Now().Add(-1*time.Minute)`), контекст создастся уже сразу отмененным.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что произойдет, если передать в context.WithDeadline время из прошлого?»\n**Ответ:** Контекст мгновенно переходит в отмененное состояние: его канал `Done()` сразу закрыт, а `Err()` немедленно возвращает `context.DeadlineExceeded` без ожидания таймера."
+  },
+  {
+    "num": 22,
+    "title": "Возврат ошибки context.DeadlineExceeded при нарушении лимита времени",
+    "task": "`context.WithTimeout`: горутина выполняет долгую работу, но если не укладывается в таймаут, должна вернуть ошибку `ctx.Err()`.",
+    "theory": "Стандартизированная обработка ошибок: функции, принимающие контекст, возвращают `ctx.Err()` при его отмене.",
+    "step_by_step": "1. Создадим функцию `ComputeReport(ctx context.Context) error`.\n2. Внутри функции используем `select` между завершением вычислений и `<-ctx.Done()`.\n3. В `main` ограничим время таймаутом 20 мс.\n4. Проверим код ошибки.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc ComputeReport(ctx context.Context) error {\n\tselect {\n\tcase <-time.After(80 * time.Millisecond): // Долгая генерация отчета\n\t\tfmt.Println(\"[Report] Отчет успешно сформирован\")\n\t\treturn nil\n\tcase <-ctx.Done():\n\t\treturn ctx.Err() // Возвращаем context.DeadlineExceeded\n\t}\n}\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)\n\tdefer cancel()\n\n\terr := ComputeReport(ctx)\n\tif err != nil {\n\t\tfmt.Printf(\"Ошибка формирования отчета: %v\\n\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Ошибка формирования отчета: context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "`ctx.Err()` возвращает `nil` пока контекст открыт, и ошибку после закрытия `Done()`.",
+    "pitfalls": "Не возвращайте свои кастомные строки об ошибках вместо `ctx.Err()`, чтобы вызывающий код мог использовать `errors.Is(err, context.DeadlineExceeded)`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в Go принято оборачивать ошибки контекста через fmt.Errorf(\"my_func: %w\", ctx.Err())?»\n**Ответ:** Это сохраняет цепочку ошибок (Error Wrapping), позволяя вышестоящим слоям программы проверять первопричину сбоя через `errors.Is(err, context.Canceled)` или `errors.Is(err, context.DeadlineExceeded)`."
+  },
+  {
+    "num": 23,
+    "title": "Интеграция контекста с HTTP-клиентом: http.NewRequestWithContext",
+    "task": "**Контекст в HTTP-клиенте**: Напишите простой HTTP-запрос к медленному серверу с помощью пакета `net/http`. Привяжите к HTTP-запросу контекст с таймаутом в 500 миллисекунд с помощью `http.NewRequestWithContext`. Проверьте, как клиент обрывает соединение, если сервер не ответил вовремя.",
+    "theory": "Привязка контекста к HTTP-запросу через `http.NewRequestWithContext(ctx, method, url, body)` гарантирует, что сетевой стек Go (`net.Dialer`, TLS-хендшейк, чтение HTTP Body) автоматически закроет TCP-сокет при наступлении таймаута.",
+    "step_by_step": "1. Запустим тестовый локальный HTTP-сервер с искусственной задержкой 200 мс.\n2. Создадим HTTP-запрос с контекстом таймаута 30 мс.\n3. Вызовем `http.DefaultClient.Do(req)`.\n4. Убедимся в мгновенном обрыве соединения по таймауту.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"time\"\n)\n\nfunc main() {\n\t// 1. Медленный тестовый HTTP-сервер\n\tserver := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\ttime.Sleep(100 * time.Millisecond) // Медленный ответ\n\t\tfmt.Fprintln(w, \"OK: Sensitive Data\")\n\t}))\n\tdefer server.Close()\n\n\t// 2. Создаем контекст с таймаутом 25 мс\n\tctx, cancel := context.WithTimeout(context.Background(), 25*time.Millisecond)\n\tdefer cancel()\n\n\t// 3. Привязываем контекст к запросу\n\treq, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, nil)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Println(\"[HTTP Client] Отправка GET-запроса с таймаутом 25мс...\")\n\t_, err = http.DefaultClient.Do(req)\n\tif err != nil {\n\t\tfmt.Printf(\"[HTTP Client] Соединение успешно разорвано по дедлайну:\\n  -> %v\\n\", err)\n\t} else {\n\t\tfmt.Println(\"Запрос выполнен успешно\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [HTTP Client] Отправка GET-запроса с таймаутом 25мс...\n# [HTTP Client] Соединение успешно разорвано по дедлайну:\n#   -> Get \"...\": context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "`net/http` транспорт запускает горутину, которая слушает `req.Context().Done()` и закрывает подлежащий дескриптор сокета через `net.Conn.Close()`.",
+    "pitfalls": "Устаревший метод `http.NewRequest()` без контекста не защищает от бесконечных зависаний при сетевых сбоях.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем отличие http.Client.Timeout от контекста в http.NewRequestWithContext?»\n**Ответ:** `http.Client.Timeout` задает глобальный таймаут на весь жизненный цикл запроса (включая редиректы и чтение body). Контекст запроса позволяет динамически управлять отменой с уровня вызывающего бизнес-хендлера с передачей единого дедлайна по всей цепочке вызовов."
+  },
+  {
+    "num": 24,
+    "title": "Graceful Shutdown микросервиса с помощью signal.NotifyContext",
+    "task": "Напиши **\"graceful shutdown with context\"**: `main` создаёт `ctx` с `signal.NotifyContext`. При `Ctrl+C` — контекст отменяется. Все worker'ы читают `ctx.Done()`, завершают текущую работу, делают cleanup и выходят.",
+    "theory": "Функция `signal.NotifyContext(parent, signals...)` (добавлена в Go 1.16) — современный стандарт корректного завершения приложений. Она возвращает контекст, который автоматически отменяется при получении сигналов ОС (`os.Interrupt`, `syscall.SIGTERM`).",
+    "step_by_step": "1. Создадим контекст завершения `ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)`.\n2. Обязательно вызовем `defer stop()`.\n3. Запустим пул воркеров.\n4. Сымитируем сигнал остановки и проверим синхронное завершение всех воркеров.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"os\"\n\t\"os/signal\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc serviceWorker(ctx context.Context, id int, wg *sync.WaitGroup) {\n\tdefer wg.Done()\n\tfmt.Printf(\"[Worker #%d] Фоновый воркер запущен...\\n\", id)\n\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\tfmt.Printf(\" -> [Worker #%d] Получен сигнал отмены ОС! Сброс буферов и выход.\\n\", id)\n\t\t\treturn\n\t\tdefault:\n\t\t\ttime.Sleep(10 * time.Millisecond)\n\t\t}\n\t}\n}\n\nfunc main() {\n\t// Автоматическая отмена контекста по сигналу SIGINT (Ctrl+C)\n\tctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)\n\tdefer stop()\n\n\tvar wg sync.WaitGroup\n\tconst totalWorkers = 2\n\n\tfor i := 1; i <= totalWorkers; i++ {\n\t\twg.Add(1)\n\t\tgo serviceWorker(ctx, i, &wg)\n\t}\n\n\ttime.Sleep(30 * time.Millisecond)\n\n\t// Имитация поступления сигнала завершения\n\tfmt.Println(\"\\n[OS] Поступил системный сигнал SIGINT...\")\n\tstop() // Вызов stop() отменяет контекст и восстанавливает дефолтное поведение сигналов\n\n\twg.Wait()\n\tfmt.Println(\"[Main] Graceful shutdown успешно завершен: все воркеры выгружены.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Worker #1] Фоновый воркер запущен...\n# [Worker #2] Фоновый воркер запущен...\n# \n# [OS] Поступил системный сигнал SIGINT...\n#  -> [Worker #1] Получен сигнал отмены ОС! Сброс буферов и выход.\n#  -> [Worker #2] Получен сигнал отмены ОС! Сброс буферов и выход.\n# [Main] Graceful shutdown успешно завершен: все воркеры выгружены."
+      }
+    ],
+    "under_the_hood": "`signal.NotifyContext` регистрирует системный канал сигналов и автоматически вызывает `cancel()` в обработчике сигнала.",
+    "pitfalls": "Всегда вызывайте `defer stop()`, чтобы снять регистрацию обработчика сигналов ОС при выходе из `main()`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему signal.NotifyContext лучше ручной работы с chan os.Signal?»\n**Ответ:** `signal.NotifyContext` устраняет шаблонный код создания канала сигналов и фоновой горутины, естественным образом интегрируя завершение ОС с экосистемой стандартного `context.Context`."
+  },
+  {
+    "num": 25,
+    "title": "Сравнение скорости операции и дедлайна: досрочное срабатывание WithTimeout",
+    "task": "**Таймаут (`WithTimeout`)**: Создай `ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)`. Обязательно добавь `defer cancel()`. Воркер должен спать 3 секунды. Проверь, что `ctx.Done()` срабатывает раньше завершения работы воркера.",
+    "theory": "Тестирование опережения: когда время выполнения задачи (3 сек) превышает таймаут (1 сек), канал `ctx.Done()` гарантированно разблокирует ожидающий поток первым.",
+    "step_by_step": "1. Создадим контекст с таймаутом 20 мс.\n2. Запустим задачу, длящуюся 100 мс.\n3. Зафиксируем время прерывания.\n4. Проверим результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\tstart := time.Now()\n\n\t// Таймаут 20 мс\n\tctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)\n\tdefer cancel()\n\n\ttaskDone := make(chan struct{})\n\n\t// Воркер спит 100 мс\n\tgo func() {\n\t\ttime.Sleep(100 * time.Millisecond)\n\t\tclose(taskDone)\n\t}()\n\n\tselect {\n\tcase <-taskDone:\n\t\tfmt.Println(\"Воркер успел завершиться\")\n\tcase <-ctx.Done():\n\t\tfmt.Printf(\"ctx.Done() сработал раньше воркера (прошло %v)! Ошибка: %v\\n\", \n\t\t\ttime.Since(start).Round(time.Millisecond), ctx.Err())\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# ctx.Done() сработал раньше воркера (прошло 20ms)! Ошибка: context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "`select` выбирает первый готовый канал.",
+    "pitfalls": "Не забывайте `defer cancel()`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Какова цена вызова context.WithTimeout по аллокациям памяти?»\n**Ответ:** Создается 1 объект `timerCtx` в куче, 1 системный таймер рантайма и 1 буферизованный канал `done` (лениво при первом вызове `Done()`)."
+  },
+  {
+    "num": 26,
+    "title": "Золотое правило пакета context: обязательный defer cancel()",
+    "task": "**Важнейшее правило**: Всегда вызывайте `cancel()` через `defer` сразу после создания контекста с отменой/таймаутом, чтобы избежать утечки контекста (Goroutine leak).",
+    "theory": "Итоговое правило проектирования надежных сервисов: **создание контекста с отменой и вызов `defer cancel()` обязаны идти строго следующими строками друг за другом**.",
+    "step_by_step": "1. Напишем эталонный шаблон создания отменяемого контекста.\n2. Продемонстрируем защиту от утечек при ранних return.\n3. Проверим компиляцию и выполнение.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc safeDatabaseTransaction(parent context.Context) error {\n\t// КАНОНИЧЕСКИЙ ШАБЛОН GO:\n\tctx, cancel := context.WithTimeout(parent, 50*time.Millisecond)\n\tdefer cancel() // 100% гарантия освобождения ресурсов при любом выходе!\n\n\t// Симуляция логики с ранним выходом\n\tif false {\n\t\treturn fmt.Errorf(\"ранняя ошибка валидации\") // defer cancel() выполнится!\n\t}\n\n\tselect {\n\tcase <-time.After(10 * time.Millisecond):\n\t\tfmt.Println(\"[DB] Транзакция успешно зафиксирована в БД\")\n\t\treturn nil\n\tcase <-ctx.Done():\n\t\treturn ctx.Err()\n\t}\n}\n\nfunc main() {\n\terr := safeDatabaseTransaction(context.Background())\n\tif err != nil {\n\t\tfmt.Printf(\"Ошибка: %v\\n\", err)\n\t} else {\n\t\tfmt.Println(\"Операция завершена с соблюдением всех стандартов безопасности памяти!\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [DB] Транзакция успешно зафиксирована в БД\n# Операция завершена с соблюдением всех стандартов безопасности памяти!"
+      }
+    ],
+    "under_the_hood": "`defer cancel()` гарантирует удаление ссылок из дерева контекстов при любой ветке завершения функции.",
+    "pitfalls": "Игнорирование второго возвращаемого значения `cancel` (`ctx, _ := context.WithTimeout(...)`) — частая ошибка новичков.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему компилятор Go разрешает игнорировать функцию cancel через пустой идентификатор ctx, _ := context.WithCancel(...)?»\n**Ответ:** Язык Go не запрещает использование blank identifier `_` для возвращаемых значений, но статические анализаторы (`go vet`, `golangci-lint`) строго помечают такой код как ошибку `lostcancel`."
+  },
+  {
+    "num": 27,
+    "title": "Типобезопасные неэкспортируемые ключи в context.WithValue (Best Practice)",
+    "task": "Напиши программу с `context.WithValue`, пытающуюся передать **неэкспортируемый ключ** (unexported type). Покажи, что это **best practice** для избежания коллизий ключей между пакетами. Создай `type contextKey string` в пакете.",
+    "theory": "Использование пользовательского неэкспортируемого типа (`type ctxKey string` или `type ctxKey struct{}`) в качестве ключа для `context.WithValue` — фундаментальный стандарт безопасности в Go. Это гарантирует, что даже если другой пакет использует такое же строковое значение (например, `\"userID\"`), тип ключа в интерфейсе `any` будет различаться, исключая перезапись данных.",
+    "step_by_step": "1. Объявим `type sessionKey string`.\n2. Создадим приватную константу `const userSessionKey sessionKey = \"user_session\"`.\n3. Реализуем типизированные геттер и сеттер: `WithUserSession` и `UserSessionFromContext`.\n4. Проверим безопасное извлечение.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n)\n\n// Неэкспортируемый тип предотвращает коллизии ключей между независимыми пакетами\ntype contextKey string\n\nconst userRoleKey contextKey = \"user_role\"\n\nfunc WithUserRole(ctx context.Context, role string) context.Context {\n\treturn context.WithValue(ctx, userRoleKey, role)\n}\n\nfunc UserRoleFromContext(ctx context.Context) (string, bool) {\n\trole, ok := ctx.Value(userRoleKey).(string)\n\treturn role, ok\n}\n\nfunc authorizeOperation(ctx context.Context) {\n\tif role, ok := UserRoleFromContext(ctx); ok && role == \"admin\" {\n\t\tfmt.Println(\"[Security] Доступ разрешен: роль 'admin' подтверждена.\")\n\t} else {\n\t\tfmt.Println(\"[Security] Отказ в доступе: недостаточный уровень привилегий.\")\n\t}\n}\n\nfunc main() {\n\tctx := context.Background()\n\tadminCtx := WithUserRole(ctx, \"admin\")\n\n\tauthorizeOperation(adminCtx)\n\tauthorizeOperation(ctx) // Без роли\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Security] Доступ разрешен: роль 'admin' подтверждена.\n# [Security] Отказ в доступе: недостаточный уровень привилегий."
+      }
+    ],
+    "under_the_hood": "Внутри `valueCtx` интерфейсный тип `key` сравнивается по паре `(тип, значение)`. Разные типы ключей никогда не совпадут.",
+    "pitfalls": "Никогда не экспортируйте сам ключ наружу — экспортируйте только функции-помощники `With...` и `...FromContext`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в Go принято прятать ключи context.WithValue за функциями WithKey / KeyFromContext?»\n**Ответ:** Это инкапсулирует работу с `context.Value`, скрывает небезопасное приведение типов `interface{}` и предоставляет компилируемый, типобезопасный API для вызывающего кода."
+  },
+  {
+    "num": 28,
+    "title": "Фиксация дедлайна по точному системному таймштампу (WithDeadline)",
+    "task": "`context.WithDeadline`: аналогично таймауту, но задайте конкретное время завершения.",
+    "theory": "`WithDeadline` используется для привязки к внешним дедлайнам (например, дедлайн gRPC-запроса, переданный в заголовках `grpc-timeout`).",
+    "step_by_step": "1. Создадим абсолютное время `exactTime := time.Now().Add(30 * time.Millisecond)`.\n2. Создадим `context.WithDeadline`.\n3. Обработаем дедлайн в горутине.\n4. Выведем результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\ttargetTime := time.Now().Add(30 * time.Millisecond)\n\tctx, cancel := context.WithDeadline(context.Background(), targetTime)\n\tdefer cancel()\n\n\tfmt.Printf(\"[Timer] Установлен дедлайн: %s\\n\", targetTime.Format(\"15:04:05.000\"))\n\n\tselect {\n\tcase <-time.After(100 * time.Millisecond):\n\t\tfmt.Println(\"Задача завершилась\")\n\tcase <-ctx.Done():\n\t\tfmt.Printf(\"[Timer] Дедлайн истек в %s! Ошибка: %v\\n\", \n\t\t\ttime.Now().Format(\"15:04:05.000\"), ctx.Err())\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Timer] Установлен дедлайн: 15:04:05.030\n# [Timer] Дедлайн истек в 15:04:05.030! Ошибка: context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "`WithDeadline` создает `timerCtx` с вычислением дельты времени.",
+    "pitfalls": "Всегда учитывайте возможность дрейфа системного времени NTP при работе с удаленными дедлайнами.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как gRPC передает дедлайн между серверами на разных машинах?»\n**Ответ:** gRPC передает оставшееся относительное время (`time.Until(deadline)`) в заголовке `grpc-timeout`, а принимающий сервер вычисляет новый локальный дедлайн `time.Now().Add(receivedDuration)`, нивелируя рассинхронизацию часов между серверами."
+  },
+  {
+    "num": 29,
+    "title": "Отменяемый сон: реализация функции SleepWithContext",
+    "task": "Напиши функцию `SleepWithContext(ctx context.Context, d time.Duration) error`, которая спит `d` или просыпается раньше при отмене `ctx`. Используй `select` между `time.After(d)` и `ctx.Done()`.  ",
+    "theory": "Паттерн Interruptible Sleep (Прерываемая пауза) необходим в бэкенд-воркерах: вместо блокирующего `time.Sleep()`, который нельзя прервать до истечения времени, используется неблокирующий `select` с `time.NewTimer`.",
+    "step_by_step": "1. Объявим `SleepWithContext(ctx context.Context, d time.Duration) error`.\n2. Создадим таймер `timer := time.NewTimer(d)` и `defer timer.Stop()`.\n3. В `select` дождемся `timer.C` или `ctx.Done()`.\n4. Вернем `nil` при успешном сне или `ctx.Err()` при досрочной отмене.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\n// SleepWithContext спит duration или мгновенно просыпается при отмене контекста\nfunc SleepWithContext(ctx context.Context, d time.Duration) error {\n\ttimer := time.NewTimer(d)\n\tdefer timer.Stop() // Гарантированное освобождение таймера\n\n\tselect {\n\tcase <-timer.C:\n\t\treturn nil // Проспали полный интервал\n\tcase <-ctx.Done():\n\t\treturn ctx.Err() // Прервано отменой контекста\n\t}\n}\n\nfunc main() {\n\t// Тест: пауза на 500 мс с контекстом на 30 мс\n\tctx, cancel := context.WithTimeout(context.Background(), 30*time.Millisecond)\n\tdefer cancel()\n\n\tstart := time.Now()\n\tfmt.Println(\"[Worker] Запуск отменяемого сна на 500 мс...\")\n\n\terr := SleepWithContext(ctx, 500*time.Millisecond)\n\tif err != nil {\n\t\tfmt.Printf(\"[Worker] Сон был досрочно прерван через %v! Ошибка: %v\\n\", \n\t\t\ttime.Since(start).Round(time.Millisecond), err)\n\t} else {\n\t\tfmt.Println(\"[Worker] Сон завершен полностью\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Worker] Запуск отменяемого сна на 500 мс...\n# [Worker] Сон был досрочно прерван через 30ms! Ошибка: context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "`timer.Stop()` останавливает фоновый таймер и возвращает ресурсы планировщику.",
+    "pitfalls": "Использование `time.After(d)` внутри высоконагруженного цикла может приводить к накоплению несработавших таймеров в памяти.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему time.NewTimer с defer timer.Stop() предпочтительнее time.After в долгоживущих циклах?»\n**Ответ:** `time.After` не позволяет принудительно остановить таймер до его естественного срабатывания, удерживая память до истечения времени. `timer.Stop()` освобождает ресурсы мгновенно при досрочном выходе."
+  },
+  {
+    "num": 30,
+    "title": "Извлечение метаданных в глубоких слоях и антипаттерны передачи бизнес-логики",
+    "task": "Передайте значение в контекст с помощью `context.WithValue`. Извлеките его в глубокой функции без передачи аргументов. (Обсудите, почему использовать контекст для передачи бизнес-данных — это антипаттерн).",
+    "theory": "Передача значений через `context.WithValue` предназначена исключительно для cross-cutting concerns (трассировка, аутентификационные клеймы JWT, идентификаторы транзакций). Использование контекста для передачи обычных аргументов функций (`taxRate`, `itemsList`) превращает контекст в скрытый глобальный объект (God Object), ломает читаемость кода и делает рефакторинг невозможным.",
+    "step_by_step": "1. Создадим типизированный ключ `tenantIDKey`.\n2. Положим `tenantID` в контекст в HTTP-мидлваре.\n3. Пробросим `ctx` через сервис в репозиторий.\n4. Извлечем значение в SQL-запросе.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n)\n\ntype tenantKey struct{}\n\nfunc WithTenantID(ctx context.Context, tenantID string) context.Context {\n\treturn context.WithValue(ctx, tenantKey{}, tenantID)\n}\n\nfunc TenantIDFromContext(ctx context.Context) string {\n\tif val, ok := ctx.Value(tenantKey{}).(string); ok {\n\t\treturn val\n\t}\n\treturn \"public\"\n}\n\nfunc ExecuteMultiTenantQuery(ctx context.Context, query string) {\n\ttenant := TenantIDFromContext(ctx)\n\tfmt.Printf(\"[SQL Engine] Выполнение запроса %q для Tenant: %q (Схема: schema_%s)\\n\", \n\t\tquery, tenant, tenant)\n}\n\nfunc main() {\n\t// Имитация запроса от Enterprise-клиента\n\tctx := WithTenantID(context.Background(), \"enterprise_corp_42\")\n\n\tExecuteMultiTenantQuery(ctx, \"SELECT * FROM orders WHERE status = 'pending'\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [SQL Engine] Выполнение запроса \"SELECT * FROM orders WHERE status = 'pending'\" для Tenant: \"enterprise_corp_42\" (Схема: schema_enterprise_corp_42)"
+      }
+    ],
+    "under_the_hood": "`valueCtx` хранит указатель на родителя и пару ключ-значение.",
+    "pitfalls": "Хранение изменяемых мутабельных структур (`*MyStruct` или `map`) в `context.WithValue` приводит к Data Race при параллельном доступе из горутин.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему значения внутри context.WithValue обязаны быть неизменяемыми (Immutable)?»\n**Ответ:** Потому что один и тот же `context.Context` может параллельно читаться десятками горутин. Мутация объекта внутри контекста без мьютекса приведет к фатальной гонке данных (Data Race)."
+  },
+  {
+    "num": 31,
+    "title": "Прерывание ресурсоемкой фоновой задачи по таймауту WithTimeout",
+    "task": "Используй `context.WithTimeout(ctx, 1*time.Second)`. Запусти горутину с долгой работой (sleep 5s). Горутина должна завершиться по таймауту контекста, выведя \"Context cancelled\".",
+    "theory": "Предотвращение бесконечной работы горутин: при наступлении таймаута горутина получает сигнал и очищает ресурсы.",
+    "step_by_step": "1. Создадим `ctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)`.\n2. Запустим горутину с симуляцией 200 мс работы.\n3. Горутина считывает `<-ctx.Done()`.\n4. Выведем сообщение `\"Context cancelled\"`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc heavyTask(ctx context.Context, wg *sync.WaitGroup) {\n\tdefer wg.Done()\n\tfmt.Println(\"[Task] Начало тяжелой обработки...\")\n\n\tselect {\n\tcase <-time.After(200 * time.Millisecond):\n\t\tfmt.Println(\"[Task] Задача успешно завершена\")\n\tcase <-ctx.Done():\n\t\tfmt.Printf(\"[Task] Context cancelled: задача прервана по таймауту (%v)\\n\", ctx.Err())\n\t}\n}\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)\n\tdefer cancel()\n\n\tvar wg sync.WaitGroup\n\twg.Add(1)\n\tgo heavyTask(ctx, &wg)\n\n\twg.Wait()\n\tfmt.Println(\"[Main] Программа завершена.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Task] Начало тяжелой обработки...\n# [Task] Context cancelled: задача прервана по таймауту (context deadline exceeded)\n# [Main] Программа завершена."
+      }
+    ],
+    "under_the_hood": "`<-ctx.Done()` пробуждает горутину из `select`.",
+    "pitfalls": "Не забывайте `wg.Wait()`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что возвращает метод ctx.Done() у контекста context.Background()?»\n**Ответ:** Он возвращает `nil`. Чтение из `nil`-канала блокируется навсегда, поэтому в `select` ветка `case <-ctx.Done():` для `context.Background()` никогда не выполнится."
+  },
+  {
+    "num": 32,
+    "title": "Иерархия контекстов: независимость родителя от отмены потомка",
+    "task": "**Иерархия контекстов (Пропагация отмены)**: Создайте родительский контекст с возможностью отмены. От него создайте дочерний контекст. Запустите две горутины (одну на родительском, другую на дочернем контекстах). Отмените родительский контекст. Убедитесь, что дочерний контекст отменился автоматически. Попробуйте сделать наоборот (отменить дочерний) и проверьте, повлияло ли это на родительский.",
+    "theory": "Проверка базовых законов Context Propagation:\n1. Отмена Parent $\\to$ отменяет Child.\n2. Отмена Child $\\to$ Parent продолжает жить.",
+    "step_by_step": "1. Создадим `parentCtx, parentCancel := context.WithCancel(...)`.\n2. Создадим `childCtx, childCancel := context.WithCancel(parentCtx)`.\n3. Запустим горутины для наблюдения.\n4. Продемонстрируем независимость родителя при `childCancel()`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\t// 1. Создаем родительский контекст\n\tparentCtx, parentCancel := context.WithCancel(context.Background())\n\tdefer parentCancel()\n\n\t// 2. Создаем дочерний контекст\n\tchildCtx, childCancel := context.WithCancel(parentCtx)\n\n\tfmt.Println(\"--- Шаг 1: Отмена дочернего контекста childCancel() ---\")\n\tchildCancel()\n\ttime.Sleep(5 * time.Millisecond)\n\n\tfmt.Printf(\"childCtx.Err():  %v (ОТМЕНЕН)\\n\", childCtx.Err())\n\tfmt.Printf(\"parentCtx.Err(): %v (РОДИТЕЛЬ АКТИВЕН!)\\n\", parentCtx.Err())\n\n\tfmt.Println(\"\\n--- Шаг 2: Отмена родительского контекста parentCancel() ---\")\n\tparentCancel()\n\ttime.Sleep(5 * time.Millisecond)\n\n\tfmt.Printf(\"parentCtx.Err(): %v (ОТМЕНЕН)\\n\", parentCtx.Err())\n\tfmt.Printf(\"childCtx.Err():  %v (ОТМЕНЕН)\\n\", childCtx.Err())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# --- Шаг 1: Отмена дочернего контекста childCancel() ---\n# childCtx.Err():  context canceled (ОТМЕНЕН)\n# parentCtx.Err(): <nil> (РОДИТЕЛЬ АКТИВЕН!)\n# \n# --- Шаг 2: Отмена родительского контекста parentCancel() ---\n# parentCtx.Err(): context canceled (ОТМЕНЕН)\n# childCtx.Err():  context canceled (ОТМЕНЕН)"
+      }
+    ],
+    "under_the_hood": "`childCancel` удаляет себя из родителя, не трогая родительский `cancelCtx`.",
+    "pitfalls": "Не путайте порядок вызова функций отмены.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Можно ли реанимировать отмененный контекст?»\n**Ответ:** Нет, контексты в Go строго одноразовые (Single-use). После закрытия канала `Done()` вернуть контекст в открытое состояние невозможно — необходимо создать новый экземпляр."
+  },
+  {
+    "num": 33,
+    "title": "Паттерн Worker Pool с поддержкой контекстной отмены (Worker Pool with Context)",
+    "task": "Напиши **\"worker pool with context\"**: N горутин читают задачи из канала. Если `ctx` отменён — все воркеры выходят. Задачи — это функции `func()`. Покажи, что воркеры завершаются, даже если в канале остались задачи.",
+    "theory": "Паттерн Worker Pool с `context.Context` позволяет мгновенно остановить параллельную обработку очереди при поступлении внешнего сигнала отмены (например, при прерывании HTTP-запроса), не дожидаясь исчерпания всех оставшихся в буфере задач.",
+    "step_by_step": "1. Создадим канал задач `tasks := make(chan func(), 10)`.\n2. Запустим 3 воркера, выполняющих `select` между `case <-ctx.Done():` и `case task, ok := <-tasks:`.\n3. Наполним очередь 10 задачами.\n4. Отменим контекст после выполнения 2 задач и убедимся в мгновенной остановке воркеров.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc poolWorker(ctx context.Context, id int, tasks <-chan func(), wg *sync.WaitGroup) {\n\tdefer wg.Done()\n\tfmt.Printf(\"[Worker #%d] Готов к приему задач...\\n\", id)\n\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\tfmt.Printf(\" -> [Worker #%d] Завершение работы по сигналу ctx.Done()!\\n\", id)\n\t\t\treturn\n\t\tcase task, ok := <-tasks:\n\t\t\tif !ok {\n\t\t\t\treturn\n\t\t\t}\n\t\t\ttask()\n\t\t}\n\t}\n}\n\nfunc main() {\n\tctx, cancel := context.WithCancel(context.Background())\n\tdefer cancel()\n\n\ttasks := make(chan func(), 10)\n\tvar wg sync.WaitGroup\n\n\tconst numWorkers = 3\n\tfor i := 1; i <= numWorkers; i++ {\n\t\twg.Add(1)\n\t\tgo poolWorker(ctx, i, tasks, &wg)\n\t}\n\n\t// Отправляем 6 задач в очередь\n\tfor i := 1; i <= 6; i++ {\n\t\ttaskID := i\n\t\ttasks <- func() {\n\t\t\tfmt.Printf(\" [TASK] Выполнение задачи #%d\\n\", taskID)\n\t\t\ttime.Sleep(10 * time.Millisecond)\n\t\t}\n\t}\n\n\ttime.Sleep(15 * time.Millisecond)\n\n\tfmt.Println(\"\\n[Main] Отменяем контекст пула воркеров cancel()...\")\n\tcancel()\n\n\tclose(tasks)\n\twg.Wait()\n\tfmt.Println(\"[Main] Все воркеры пула штатно выгружены.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Worker #1] Готов к приему задач...\n# [Worker #2] Готов к приему задач...\n# [Worker #3] Готов к приему задач...\n#  [TASK] Выполнение задачи #1\n#  [TASK] Выполнение задачи #2\n#  [TASK] Выполнение задачи #3\n# \n# [Main] Отменяем контекст пула воркеров cancel()...\n#  -> [Worker #1] Завершение работы по сигналу ctx.Done()!\n#  -> [Worker #2] Завершение работы по сигналу ctx.Done()!\n#  -> [Worker #3] Завершение работы по сигналу ctx.Done()!\n# [Main] Все воркеры пула штатно выгружены."
+      }
+    ],
+    "under_the_hood": "`select` на каждой итерации проверяет ветку `<-ctx.Done()`, прерывая обработку очереди.",
+    "pitfalls": "Если задача внутри воркера сама долго выполняется, она также обязана принимать `ctx` и периодически проверять его отмену.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как предотвратить потерю задач из очереди при отмене контекста в Worker Pool?»\n**Ответ:** Перед завершением воркера оставшиеся в канале задачи либо сохраняются в персистентную очередь (Kafka/RabbitMQ/Redis), либо возвращаются обратно диспетчеру (Re-queue)."
+  },
+  {
+    "num": 34,
+    "title": "Автоматическая отмена серверных горутин при разрыве соединения клиентом (req.Context())",
+    "task": "Напишите HTTP-хендлер, который использует `req.Context()`. Если клиент разорвал соединение (отменил запрос), контекст должен автоматически закрыться, и ваша горутина должна прекратить работу.",
+    "theory": "Стандартный `net/http.Server` в Go автоматически отменяет `r.Context()`, если удаленный TCP-клиент разорвал соединение или закрыл вкладку браузера. Серверные хендлеры обязаны слушать `r.Context().Done()`, чтобы не выполнять бесполезную работу.",
+    "step_by_step": "1. Создадим HTTP-хендлер с симуляцией тяжелой обработки (цикл со `select`).\n2. Запустим тестовый `httptest.Server`.\n3. Отправим запрос с клиентом, обрывающим соединение через 20 мс.\n4. Убедимся, что серверный хендлер мгновенно обнаружил обрыв и завершил вычисления.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"time\"\n)\n\nfunc heavyReportHandler(w http.ResponseWriter, r *http.Request) {\n\tctx := r.Context()\n\tfmt.Println(\"[Server] Начало генерации тяжелого PDF-отчета...\")\n\n\tfor i := 1; i <= 5; i++ {\n\t\tselect {\n\t\tcase <-ctx.Done(): // Срабатывает, когда клиент разорвал соединение!\n\t\t\tfmt.Printf(\"[Server] Клиент отключился (%v)! Прерываю генерацию отчета на шаге %d.\\n\", ctx.Err(), i)\n\t\t\treturn\n\t\tcase <-time.After(20 * time.Millisecond):\n\t\t\tfmt.Printf(\"[Server] Шаг %d/5 завершен...\\n\", i)\n\t\t}\n\t}\n\n\tfmt.Fprintln(w, \"Отчет успешно сформирован\")\n}\n\nfunc main() {\n\tserver := httptest.NewServer(http.HandlerFunc(heavyReportHandler))\n\tdefer server.Close()\n\n\t// Клиент с коротким таймаутом (разрывает связь через 35 мс)\n\tclientCtx, cancel := context.WithTimeout(context.Background(), 35*time.Millisecond)\n\tdefer cancel()\n\n\treq, _ := http.NewRequestWithContext(clientCtx, http.MethodGet, server.URL, nil)\n\n\tfmt.Println(\"[Client] Отправка запроса с клиентом (таймаут 35мс)...\")\n\t_, err := http.DefaultClient.Do(req)\n\tif err != nil {\n\t\tfmt.Printf(\"[Client] Клиент прервал запрос: %v\\n\\n\", err)\n\t}\n\n\t// Даем серверу время зафиксировать отмену\n\ttime.Sleep(50 * time.Millisecond)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Client] Отправка запроса с клиентом (таймаут 35мс)...\n# [Server] Начало генерации тяжелого PDF-отчета...\n# [Server] Шаг 1/5 завершен...\n# [Client] Клиент прервал запрос: Get \"...\": context deadline exceeded\n# \n# [Server] Клиент отключился (context canceled)! Прерываю генерацию отчета на шаге 2."
+      }
+    ],
+    "under_the_hood": "`net/http` сервер запускает горутину чтения сокета `readLoop`. Если соединение закрывается (`io.EOF`), вызывается `cancelCtx.cancel()` для контекста запроса.",
+    "pitfalls": "Если в хендлере запускается фоновая горутина, которая должна продолжить работу после ответа клиенту (например, отправка письма), используйте `context.WithoutCancel(r.Context())` (Go 1.21+).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как в Go 1.21+ запустить фоновую задачу из HTTP-хендлера, чтобы она не отменилась после завершения запроса?»\n**Ответ:** С помощью функции `context.WithoutCancel(r.Context())`: она сохраняет все метаданные (`WithValue`), но отвязывает контекст от канала отмены и дедлайна родителя."
+  },
+  {
+    "num": 35,
+    "title": "Передача и типизированное извлечение UserID в context.WithValue",
+    "task": "**Передача данных (`WithValue`)**: Добавь в контекст UserID: `ctx = context.WithValue(ctx, \"userID\", 42)`. Достань его в воркере: `id := ctx.Value(\"userID\")`.",
+    "theory": "Сквозная идентификация пользователя (User Context): передача `UserID` в контексте позволяет слою логирования и аудита автоматически добавлять `user_id` во все структурированные логи.",
+    "step_by_step": "1. Создадим `ctx = context.WithValue(context.Background(), \"userID\", 42)`.\n2. Передадим `ctx` в функцию `auditWorker`.\n3. Извлечем значение с проверкой типа.\n4. Проверим результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n)\n\nfunc auditWorker(ctx context.Context) {\n\t// Извлечение значения по ключу\n\trawVal := ctx.Value(\"userID\")\n\tif rawVal == nil {\n\t\tfmt.Println(\"[Audit] UserID не передан в контексте\")\n\t\treturn\n\t}\n\n\tuserID, ok := rawVal.(int)\n\tif !ok {\n\t\tfmt.Println(\"[Audit] Ошибка: некорректный тип UserID\")\n\t\treturn\n\t}\n\n\tfmt.Printf(\"[Audit] Действие авторизовано для UserID: %d\\n\", userID)\n}\n\nfunc main() {\n\tctx := context.WithValue(context.Background(), \"userID\", 42)\n\tauditWorker(ctx)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Audit] Действие авторизовано для UserID: 42"
+      }
+    ],
+    "under_the_hood": "`ctx.Value` возвращает `interface{}` (`any`).",
+    "pitfalls": "В реальном коде вместо `\"userID\"` используйте неэкспортируемый тип `type key struct{}`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что вернет ctx.Value(\"key\"), если ключ не найден ни в одном узле дерева?»\n**Ответ:** Метод `Value` дойдет до корня (`emptyCtx`) и вернет `nil`."
+  },
+  {
+    "num": 36,
+    "title": "Паттерн Parallel Fetch with Context: параллельные запросы с ранней отменой",
+    "task": "Напиши **\"parallel fetch with context\"**: запускаешь 5 HTTP-запросов (или `time.Sleep` как симуляцию) в горутинах. Если один упал с ошибкой или таймаут — отменяй остальные через `cancel()`. Собери первую ошибку или все результаты.",
+    "theory": "Паттерн Hedged Requests / Parallel Fetch: конкурентный запуск нескольких реплик запроса. Как только одна реплика завершается с ошибкой (или успехом), функция `cancel()` отменяет остальные параллельные горутины, экономя трафик и вычислительные ресурсы.",
+    "step_by_step": "1. Создадим контекст `ctx, cancel := context.WithCancel(context.Background())`.\n2. Запустим 5 параллельных горутин с симуляцией сетевых вызовов.\n3. При первой ошибке вызываем `cancel()`.\n4. Убедимся, что оставшиеся 4 горутины мгновенно отменились.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc fetchReplica(ctx context.Context, id int, fail bool, wg *sync.WaitGroup, cancel context.CancelFunc) {\n\tdefer wg.Done()\n\n\tselect {\n\tcase <-time.After(time.Duration(id*15) * time.Millisecond):\n\t\tif fail {\n\t\t\tfmt.Printf(\"[Replica #%d] ОШИБКА: Сбой узла! Вызываю cancel()...\\n\", id)\n\t\t\tcancel() // Отменяем все остальные реплики!\n\t\t\treturn\n\t\t}\n\t\tfmt.Printf(\"[Replica #%d] Успешно получены данные.\\n\", id)\n\tcase <-ctx.Done():\n\t\tfmt.Printf(\" -> [Replica #%d] Отменена по общему сигналу: %v\\n\", id, ctx.Err())\n\t}\n}\n\nfunc main() {\n\tctx, cancel := context.WithCancel(context.Background())\n\tdefer cancel()\n\n\tvar wg sync.WaitGroup\n\tconst totalReplicas = 5\n\n\tfor i := 1; i <= totalReplicas; i++ {\n\t\twg.Add(1)\n\t\tshouldFail := (i == 2) // Реплика #2 сымитирует сбой\n\t\tgo fetchReplica(ctx, i, shouldFail, &wg, cancel)\n\t}\n\n\twg.Wait()\n\tfmt.Println(\"[Main] Параллельный опрос реплик завершен.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Replica #1] Успешно получены данные.\n# [Replica #2] ОШИБКА: Сбой узла! Вызываю cancel()...\n#  -> [Replica #3] Отменена по общему сигналу: context canceled\n#  -> [Replica #4] Отменена по общему сигналу: context canceled\n#  -> [Replica #5] Отменена по общему сигналу: context canceled\n# [Main] Параллельный опрос реплик завершен."
+      }
+    ],
+    "under_the_hood": "`cancel()` разблокирует каналы `Done()` во всех незавершенных репликах.",
+    "pitfalls": "В продакшене для параллельных задач с отменой по первой ошибке используют библиотеку `golang.org/x/sync/errgroup`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как errgroup.WithContext(ctx) реализует отмену при первой ошибке?»\n**Ответ:** `errgroup` создает дочерний контекст с `WithCancel`. При возврате `non-nil` ошибки из любой горутины группа вызывает `cancel()`, сохраняет первую ошибку и отменяет остальные горутины."
+  },
+  {
+    "num": 37,
+    "title": "Многоуровневый проброс RequestID через контекст для логирования",
+    "task": "`context.WithValue`: передайте идентификатор запроса через контекст в несколько вложенных вызовов. Логируйте его при обработке.",
+    "theory": "Практикум структурированного логирования: контекст передается через слои Handler -> Service -> Repository с извлечением RequestID в каждом логе.",
+    "step_by_step": "1. Объявим ключ `type reqKey struct{}`.\n2. Реализуем хелперы для `reqID`.\n3. Залогируем на каждом уровне.\n4. Проверим вывод.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n)\n\ntype reqIDKey struct{}\n\nfunc logWithContext(ctx context.Context, layer, message string) {\n\treqID := \"N/A\"\n\tif val, ok := ctx.Value(reqIDKey{}).(string); ok {\n\t\treqID = val\n\t}\n\tfmt.Printf(\"[%s] [RequestID: %s] %s\\n\", layer, reqID, message)\n}\n\nfunc Step3Repository(ctx context.Context) {\n\tlogWithContext(ctx, \"Repository\", \"INSERT INTO audit_log VALUES (...)\")\n}\n\nfunc Step2Service(ctx context.Context) {\n\tlogWithContext(ctx, \"Service\", \"Бизнес-валидация платежа\")\n\tStep3Repository(ctx)\n}\n\nfunc Step1Handler(ctx context.Context) {\n\tlogWithContext(ctx, \"Handler\", \"Принят HTTP POST /api/pay\")\n\tStep2Service(ctx)\n}\n\nfunc main() {\n\tctx := context.WithValue(context.Background(), reqIDKey{}, \"req-777-prod-eu\")\n\tStep1Handler(ctx)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Handler] [RequestID: req-777-prod-eu] Принят HTTP POST /api/pay\n# [Service] [RequestID: req-777-prod-eu] Бизнес-валидация платежа\n# [Repository] [RequestID: req-777-prod-eu] INSERT INTO audit_log VALUES (...)"
+      }
+    ],
+    "under_the_hood": "Слой логирования читает контекст без модификации.",
+    "pitfalls": "Не логируйте пароли и чувствительные персональные данные (PII) из контекста.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как пакет slog в Go 1.21 интегрирован с context.Context?»\n**Ответ:** Методы `slog.InfoContext(ctx, msg, ...)` и `slog.ErrorContext(ctx, msg, ...)` автоматически передают `ctx` в зарегистрированный `slog.Handler`, который может автоматически извлекать TraceID/SpanID и добавлять их во все JSON-логи."
+  },
+  {
+    "num": 38,
+    "title": "Дифференциация причин отмены: context.DeadlineExceeded vs context.Canceled",
+    "task": "Напиши **\"context deadline exceeded\"** обработку: функция делает `select` между `ctx.Done()` и результатом. Если `ctx.Done()` — проверяй `ctx.Err() == context.DeadlineExceeded` vs `context.Canceled` и логируй разные сообщения.",
+    "theory": "Разделение причин отмены:\n* `errors.Is(ctx.Err(), context.DeadlineExceeded)` $\\to$ сервер ответил с HTTP 504 Gateway Timeout (превышен SLA).\n* `errors.Is(ctx.Err(), context.Canceled)` $\\to$ клиент сам закрыл запрос (HTTP 499 Client Closed Request).",
+    "step_by_step": "1. Создадим функцию `inspectContextError(ctx context.Context)`.\n2. Проверим ошибку через `errors.Is`.\n3. Протестируем на таймауте и ручной отмене.\n4. Выведем различные HTTP-коды.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc handleOperation(ctx context.Context) {\n\tselect {\n\tcase <-time.After(100 * time.Millisecond):\n\t\tfmt.Println(\"Успех\")\n\tcase <-ctx.Done():\n\t\terr := ctx.Err()\n\t\tif errors.Is(err, context.DeadlineExceeded) {\n\t\t\tfmt.Printf(\"[HTTP 504 Gateway Timeout] Превышен жесткий лимит времени: %v\\n\", err)\n\t\t} else if errors.Is(err, context.Canceled) {\n\t\t\tfmt.Printf(\"[HTTP 499 Client Closed Request] Клиент досрочно оборвал соединение: %v\\n\", err)\n\t\t} else {\n\t\t\tfmt.Printf(\"[HTTP 500 Internal Error] Неизвестная ошибка контекста: %v\\n\", err)\n\t\t}\n\t}\n}\n\nfunc main() {\n\t// Сценарий 1: Таймаут\n\tfmt.Println(\"--- Сценарий 1: Таймаут операции ---\")\n\ttimeoutCtx, cancel1 := context.WithTimeout(context.Background(), 15*time.Millisecond)\n\tdefer cancel1()\n\thandleOperation(timeoutCtx)\n\n\t// Сценарий 2: Ручная отмена клиентом\n\tfmt.Println(\"\\n--- Сценарий 2: Ручная отмена клиентом ---\")\n\tcancelCtx, cancel2 := context.WithCancel(context.Background())\n\tgo func() {\n\t\ttime.Sleep(10 * time.Millisecond)\n\t\tcancel2() // Клиент нажал 'Cancel'\n\t}()\n\thandleOperation(cancelCtx)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# --- Сценарий 1: Таймаут операции ---\n# [HTTP 504 Gateway Timeout] Превышен жесткий лимит времени: context deadline exceeded\n# \n# --- Сценарий 2: Ручная отмена клиентом ---\n# [HTTP 499 Client Closed Request] Клиент досрочно оборвал соединение: context canceled"
+      }
+    ],
+    "under_the_hood": "`errors.Is` сравнивает ошибки-синглтоны `context.Canceled` и `context.DeadlineExceeded`.",
+    "pitfalls": "Всегда используйте `errors.Is`, а не строковое равенство.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в NGINX и Envoy появился специальный код 499 Client Closed Request?»\n**Ответ:** Он показывает мониторингу, что сбой произошел не по вине бэкенда (не 500/504), а из-за того, что пользователь в браузере или мобильном приложении нажал кнопку «Назад» или потерял связь."
+  },
+  {
+    "num": 39,
+    "title": "Каскадная отмена дерева потомков: Parent -> Child -> SubChild",
+    "task": "Создайте иерархию контекстов (Parent -> Child). Отмените Parent и убедитесь, что все Child-контексты также автоматически отменились.",
+    "theory": "Финальная проверка принципа каскадирования: закрытие родительского контекста гарантирует детерминированную остановку всего дочернего дерева.",
+    "step_by_step": "1. Создадим 3 уровня иерархии `parent -> child -> subChild`.\n2. Запустим горутину на `subChild`.\n3. Отменим `parent`.\n4. Убедимся, что `subChild` мгновенно отменился.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\tparentCtx, parentCancel := context.WithCancel(context.Background())\n\tchildCtx, childCancel := context.WithCancel(parentCtx)\n\tdefer childCancel()\n\tsubChildCtx, subChildCancel := context.WithCancel(childCtx)\n\tdefer subChildCancel()\n\n\tdone := make(chan struct{})\n\n\tgo func() {\n\t\t<-subChildCtx.Done()\n\t\tfmt.Printf(\"[SubChild] Успешно получен каскадный сигнал отмены: %v\\n\", subChildCtx.Err())\n\t\tclose(done)\n\t}()\n\n\ttime.Sleep(10 * time.Millisecond)\n\tfmt.Println(\"[Main] Отмена parentCancel()...\")\n\tparentCancel()\n\n\t<-done\n\tfmt.Println(\"[Main] Иерархия Parent -> Child -> SubChild успешно завершена.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Main] Отмена parentCancel()...\n# [SubChild] Успешно получен каскадный сигнал отмены: context canceled\n# [Main] Иерархия Parent -> Child -> SubChild успешно завершена."
+      }
+    ],
+    "under_the_hood": "Каскадный обход мап `children` гарантирует доставку сигнала всем потомкам.",
+    "pitfalls": "Отмена `subChild` не отменила бы `parent`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Каковы преимущества Context Tree перед глобальными флагами атомиков (atomic.Bool)?»\n**Ответ:** Дерево контекстов обеспечивает изолированную иерархию для каждого отдельного запроса, автоматическую интеграцию с сетевыми таймаутами и потокобезопасную передачу метаданных без глобального изменяемого состояния."
+  },
+  {
+    "num": 40,
+    "title": "Устранение антипаттерна строковых ключей: собственный тип ctxKey",
+    "task": "**Антипаттерн строковых ключей**: Перепиши упр. 301 правильно. Создай свой тип `type ctxKey string`. Используй константу этого типа как ключ для `WithValue`, чтобы избежать коллизий с другими пакетами.",
+    "theory": "Строковый литерал `\"userID\"` в качестве ключа приводит к коллизиям между независимыми библиотеками. Создание уникального типа `type ctxKey string` превращает ключ в уникальный дескриптор в рантайме Go, так как тип сравнивается по `(typeID, value)`.",
+    "step_by_step": "1. Объявим `type ctxKey string`.\n2. Создадим приватную константу `const userIDKey ctxKey = \"user_id\"`.\n3. Реализуем функцию `InjectUserID` и `ExtractUserID`.\n4. Проверим безопасную работу.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n)\n\ntype ctxKey string\n\nconst userIDKey ctxKey = \"user_id_key\"\n\nfunc InjectUserID(ctx context.Context, id int) context.Context {\n\treturn context.WithValue(ctx, userIDKey, id)\n}\n\nfunc ExtractUserID(ctx context.Context) (int, bool) {\n\tval, ok := ctx.Value(userIDKey).(int)\n\treturn val, ok\n}\n\nfunc main() {\n\tctx := InjectUserID(context.Background(), 10042)\n\n\tif id, ok := ExtractUserID(ctx); ok {\n\t\tfmt.Printf(\"Типобезопасное извлечение UserID: %d (Коллизии исключены!)\\n\", id)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Типобезопасное извлечение UserID: 10042 (Коллизии исключены!)"
+      }
+    ],
+    "under_the_hood": "Таблица типов компилятора Go генерирует уникальный `_type` для `ctxKey`.",
+    "pitfalls": "Использование экспортированных строковых ключей в публичных библиотеках.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему type ctxKey struct{} эффективнее type ctxKey string?»\n**Ответ:** Пустая структура `struct{}` не требует выделения памяти под байты строки и сравнивается компилятором как 0-байтовый тип, обеспечивая максимальную производительность поиска."
+  },
+  {
+    "num": 41,
+    "title": "Использование context.AfterFunc (Go 1.21+): автоматический Callback при отмене",
+    "task": "**Использование `context.AfterFunc` (Go 1.21+)**: Создайте контекст с таймаутом. С помощью функции `context.AfterFunc` зарегистрируйте замыкание, которое должно выполниться автоматически в момент отмены контекста (например, записать лог или закрыть сетевой сокет).",
+    "theory": "Функция `context.AfterFunc(ctx, f)` (Go 1.21+) регистрирует колбэк `f`, который автоматически запускается в собственной новой горутине в момент отмены или истечения таймаута контекста. Функция возвращает функцию отмены регистрации `stop()`, позволяющую снять колбэк, если задача завершилась штатно.",
+    "step_by_step": "1. Создадим `ctx, cancel := context.WithTimeout(context.Background(), 25*time.Millisecond)`.\n2. Зарегистрируем `stop := context.AfterFunc(ctx, func() { ... })`.\n3. Обязательно вызовем `defer stop()`.\n4. Зафиксируем автоматический вызов функции очистки.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 25*time.Millisecond)\n\tdefer cancel()\n\n\tvar wg sync.WaitGroup\n\twg.Add(1)\n\n\t// Go 1.21+: Регистрация функции очистки без создания явной горутины со select\n\tstopCallback := context.AfterFunc(ctx, func() {\n\t\tdefer wg.Done()\n\t\tfmt.Printf(\"[AfterFunc] Контекст отменен (%v) -> Экстренное закрытие сокета и сброс кеша!\\n\", ctx.Err())\n\t})\n\tdefer stopCallback() // Снимает регистрацию, если контекст не был отменен\n\n\tfmt.Println(\"[Main] Ожидание наступления таймаута...\")\n\twg.Wait()\n\tfmt.Println(\"[Main] Ресурсы успешно освобождены через AfterFunc.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Main] Ожидание наступления таймаута...\n# [AfterFunc] Контекст отменен (context deadline exceeded) -> Экстренное закрытие сокета и сброс кеша!\n# [Main] Ресурсы успешно освобождены через AfterFunc."
+      }
+    ],
+    "under_the_hood": "`context.AfterFunc` внутри связывается с механизмом `timerCtx` / `cancelCtx` и вызывает функцию в горутине `go f()` без необходимости постоянно держать блокированную горутину читателя.",
+    "pitfalls": "Всегда вызывайте `stop()`, чтобы не допускать выполнения колбэка после штатного завершения операции.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем главное преимущество context.AfterFunc над запуском горутины go func() { <-ctx.Done(); cleanup() }?»\n**Ответ:** `context.AfterFunc` не аллоцирует и не держит заблокированную горутину в состоянии ожидания (Sleep/Blocked), что критически снижает накладные расходы при миллионах параллельных соединений."
+  },
+  {
+    "num": 42,
+    "title": "Анализ кода ошибки: проверка ctx.Err() после отмены",
+    "task": "Проверь ошибку, возвращаемую `ctx.Err()` после отмены контекста (должна быть `context.Canceled` или `context.DeadlineExceeded`).",
+    "theory": "Протокол проверки статуса контекста: пока контекст жив — `ctx.Err() == nil`, после отмены — возвращается причина.",
+    "step_by_step": "1. Создадим `ctx, cancel := context.WithCancel(...)`.\n2. Проверим `ctx.Err()` до отмены (должно быть `nil`).\n3. Вызовем `cancel()`.\n4. Проверим `ctx.Err()` после отмены (должно быть `context.Canceled`).",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n)\n\nfunc main() {\n\tctx, cancel := context.WithCancel(context.Background())\n\n\tfmt.Printf(\"До отмены:     ctx.Err() = %v\\n\", ctx.Err())\n\n\tcancel()\n\n\tfmt.Printf(\"После отмены:  ctx.Err() = %v\\n\", ctx.Err())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# До отмены:     ctx.Err() = <nil>\n# После отмены:  ctx.Err() = context canceled"
+      }
+    ],
+    "under_the_hood": "`cancelCtx.mu` защищает запись ошибки при вызове `cancel()`.",
+    "pitfalls": "Не проверяйте ошибки контекста до чтения из `<-ctx.Done()` в конкурентном коде.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Может ли ctx.Err() вернуть nil после закрытия канала <-ctx.Done()?»\n**Ответ:** Нет, рантайм гарантирует, что поле ошибки `c.err` заполняется строго ДО закрытия канала `close(c.done)` под мьютексом."
+  },
+  {
+    "num": 43,
+    "title": "Гарантированная очистка ресурсов (Cleanup) при аварийной отмене контекста",
+    "task": "Переопределите поведение при отмене контекста: запустите горутину, которая делает \"cleanup\" (например, удаляет временные файлы) при срабатывании `ctx.Done()`.",
+    "theory": "Паттерн Safe Cleanup: при получении сигнала отмены горутина переходит в режим очистки (удаление временных файлов на диске, откат незавершенной транзакции) с таймаутом на саму процедуру очистки.",
+    "step_by_step": "1. Создадим временный файл.\n2. Запустим горутину, слушающую `<-ctx.Done()`.\n3. При сигнале отмены удалим временный файл.\n4. Убедимся в чистоте диска.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc fileWorker(ctx context.Context, filename string, wg *sync.WaitGroup) {\n\tdefer wg.Done()\n\tfmt.Printf(\"[Worker] Создан временный файл %s, идет запись...\\n\", filename)\n\n\tselect {\n\tcase <-time.After(1 * time.Second):\n\t\tfmt.Println(\"[Worker] Запись завершена штатно\")\n\tcase <-ctx.Done():\n\t\tfmt.Printf(\"[Worker] Получен сигнал отмены (%v)! Запуск процедуры Cleanup...\\n\", ctx.Err())\n\t\t// Симуляция безопасного удаления временного файла\n\t\tfmt.Printf(\" -> [Cleanup] Файл %s успешно удален с диска.\\n\", filename)\n\t}\n}\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)\n\tdefer cancel()\n\n\tvar wg sync.WaitGroup\n\twg.Add(1)\n\tgo fileWorker(ctx, \"/tmp/temp_upload_981.bin\", &wg)\n\n\twg.Wait()\n\tfmt.Println(\"[Main] Процесс корректно завершен без оставленных временных файлов.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Worker] Создан временный файл /tmp/temp_upload_981.bin, идет запись...\n# [Worker] Получен сигнал отмены (context deadline exceeded)! Запуск процедуры Cleanup...\n#  -> [Cleanup] Файл /tmp/temp_upload_981.bin успешно удален с диска.\n# [Main] Процесс корректно завершен без оставленных временных файлов."
+      }
+    ],
+    "under_the_hood": "Событие `Done()` позволяет выполнить локальный `defer/cleanup` до выхода из горутины.",
+    "pitfalls": "Если cleanup обращается к сети, используйте `context.WithoutCancel` с собственным коротким таймаутом.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как выполнить сетевой запрос во время Cleanup, если родительский контекст уже отменен?»\n**Ответ:** Создать независимый контекст с собственным таймаутом: `cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(parentCtx), 5*time.Second)` (в Go 1.21+) или `context.WithTimeout(context.Background(), 5*time.Second)`."
+  },
+  {
+    "num": 44,
+    "title": "Пирамида дедлайнов: более короткий таймаут потомка (5s Parent vs 3s Child)",
+    "task": "Пирамида контекстов: родительский контекст с таймаутом 5с, дочерний с таймаутом 3с. Проверьте, что дочерний отменяется раньше, а родительский продолжается.",
+    "theory": "Сужение временного окна (Deadline Tightening): дочерняя операция может установить более жесткий таймаут, чем родительская. При истечении времени ребенка родительский контекст продолжает оставаться активным.",
+    "step_by_step": "1. Создадим родительский контекст с таймаутом 50 мс.\n2. Создадим дочерний контекст с таймаутом 20 мс.\n3. Дождемся отмены ребенка (через 20 мс).\n4. Покажем, что родитель все еще открыт.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\tstart := time.Now()\n\n\t// Родитель: таймаут 50 мс\n\tparentCtx, parentCancel := context.WithTimeout(context.Background(), 50*time.Millisecond)\n\tdefer parentCancel()\n\n\t// Ребенок: таймаут 20 мс (более жесткий)\n\tchildCtx, childCancel := context.WithTimeout(parentCtx, 20*time.Millisecond)\n\tdefer childCancel()\n\n\t// Ожидаем отмены ребенка\n\t<-childCtx.Done()\n\tfmt.Printf(\"1. childCtx отменился через:  %v | Err: %v\\n\", \n\t\ttime.Since(start).Round(time.Millisecond), childCtx.Err())\n\n\t// Проверяем статус родителя\n\tfmt.Printf(\"2. parentCtx в этот момент:   Err: %v (ВСЕ ЕЩЕ АКТИВЕН!)\\n\", parentCtx.Err())\n\n\t// Ожидаем отмены родителя\n\t<-parentCtx.Done()\n\tfmt.Printf(\"3. parentCtx отменился через: %v | Err: %v\\n\", \n\t\ttime.Since(start).Round(time.Millisecond), parentCtx.Err())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# 1. childCtx отменился через:  20ms | Err: context deadline exceeded\n# 2. parentCtx в этот момент:   Err: <nil> (ВСЕ ЕЩЕ АКТИВЕН!)\n# 3. parentCtx отменился через: 50ms | Err: context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "Каждый `timerCtx` имеет независимый системный таймер.",
+    "pitfalls": "Попытка установить дочерний таймаут длиннее родительского не продлит общее время работы.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что произойдет, если вызвать context.WithTimeout(parentWith2s, 10*time.Second)?»\n**Ответ:** Дочерний контекст отменится через 2 секунды, так как `WithTimeout` унаследует более ранний дедлайн родителя."
+  },
+  {
+    "num": 45,
+    "title": "Изоляция Request-Scoped данных в context.WithValue (Каверзный кейс)",
+    "task": "**[Каверзный кейс]**: Используй `context.WithValue(ctx, \"userID\", 42)`. В глубоко вложенной функции извлеки значение `ctx.Value(\"userID\")`. Объясни, почему `context.WithValue` следует использовать только для передачи запрос-специфичных данных (request-scoped), а не как глобальные переменные.",
+    "theory": "`context.WithValue` предназначен исключительно для данных с жизненным циклом, равным времени жизни конкретного HTTP/gRPC запроса (Request-Scoped: TraceID, AuthClaims, Deadline). Использование его как хранилища глобальных синглтонов (Database Pool, Logger, Config) нарушает инкапсуляцию, усложняет тестирование и ухудшает производительность (линейный поиск по списку $O(N)$ вместо прямого обращения к структуре).",
+    "step_by_step": "1. Создадим цепочку вызовов с `WithValue`.\n2. Извлечем значение в глубоком слое.\n3. Проанализируем риски нецелевого использования.\n4. Сформулируем BigTech-рекомендации.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n)\n\ntype userCtxKey struct{}\n\nfunc WithAuthenticatedUser(ctx context.Context, userID int) context.Context {\n\treturn context.WithValue(ctx, userCtxKey{}, userID)\n}\n\nfunc DeepBusinessLogic(ctx context.Context) {\n\tif val := ctx.Value(userCtxKey{}); val != nil {\n\t\tuserID := val.(int)\n\t\tfmt.Printf(\"[Deep Layer] Авторизованный UserID: %d (Request-Scoped)\\n\", userID)\n\t}\n}\n\nfunc main() {\n\t// Контекст привязан к конкретному входящему запросу\n\treqCtx := WithAuthenticatedUser(context.Background(), 42)\n\tDeepBusinessLogic(reqCtx)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Deep Layer] Авторизованный UserID: 42 (Request-Scoped)"
+      }
+    ],
+    "under_the_hood": "Линейный поиск в `valueCtx` неэффективен при десятках параметров.",
+    "pitfalls": "Никогда не передавайте пул БД `*sql.DB` через `context.WithValue` — внедряйте зависимости через конструкторы структур.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему передача database connection pool через context.WithValue считается критическим антипаттерном в Go?»\n**Ответ:** Потому что подключение к БД — это долгоживущая зависимость сервиса, а не свойство отдельного запроса. Передача зависимостей через контекст скрывает граф зависимостей, делает невозможным мокирование в юнит-тестах и лишает код проверки типов на этапе компиляции."
+  },
+  {
+    "num": 46,
+    "title": "Принудительный опрос ctx.Err() в вычислительных CPU-bound циклах",
+    "task": "**Принудительная проверка в цикле**: В долгоиграющем цикле (который не использует каналы) добавь `if ctx.Err() != nil { return ctx.Err() }`, чтобы не делать лишнюю работу, если клиент отвалился.",
+    "theory": "Вычислительные задачи (парсинг JSON, хеширование, расчет матриц) не используют каналы и `select`. Единственный способ сделать такой алгоритм отменяемым — периодическая проверка `ctx.Err() != nil` внутри тела цикла.",
+    "step_by_step": "1. Создадим функцию `HeavyComputation(ctx context.Context, iterations int) error`.\n2. Внутри цикла добавим `if err := ctx.Err(); err != nil { return err }`.\n3. Проверим остановку вычислений при таймауте.\n4. Выведем результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc HeavyComputation(ctx context.Context, totalSteps int) error {\n\tfor i := 1; i <= totalSteps; i++ {\n\t\t// ПРИНУДИТЕЛЬНАЯ ПРОВЕРКА ОТМЕНЫ В CPU-BOUND ЦИКЛЕ\n\t\tif err := ctx.Err(); err != nil {\n\t\t\treturn fmt.Errorf(\"вычисления прерваны на шаге %d из %d: %w\", i, totalSteps, err)\n\t\t}\n\n\t\ttime.Sleep(5 * time.Millisecond) // Имитация тяжелого шага\n\t}\n\treturn nil\n}\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 18*time.Millisecond)\n\tdefer cancel()\n\n\terr := HeavyComputation(ctx, 100)\n\tif err != nil {\n\t\tfmt.Printf(\"[CPU Task] %v\\n\", err)\n\t} else {\n\t\tfmt.Println(\"[CPU Task] Все вычисления завершены успешно\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [CPU Task] вычисления прерваны на шаге 4 из 100: context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "`ctx.Err()` производит неблокирующее атомарное чтение указателя ошибки.",
+    "pitfalls": "В очень быстрых циклах проверяйте `ctx.Err()` раз в $N$ итераций (`if i % 256 == 0`), чтобы избежать накладных расходов.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему проверка ctx.Err() в цикле называется Cooperative Cancellation (кооперативной отменой)?»\n**Ответ:** Потому что горутина не может быть принудительно убита рантаймом извне — она сама обязана добровольно проверять флаг отмены и корректно освобождать занятые ресурсы."
+  },
+  {
+    "num": 47,
+    "title": "Устранение дефекта игнорирования отмены горутиной (Zombie Goroutine)",
+    "task": "Игнорирование отмены: покажите ошибку, когда горутина игнорирует `ctx.Done()` и продолжает работать после отмены. Исправьте, добавив проверку в цикле.",
+    "theory": "Горутина-зомби (Zombie Goroutine) — частый баг: функция принимает `ctx`, но в теле цикла использует обычный блокирующий `time.Sleep()` без проверки `<-ctx.Done()`. В результате при отмене контекста горутина продолжает сжигать память и процессорное время.",
+    "step_by_step": "1. Напишем ошибочный вариант (игнорирующий `ctx`).\n2. Напишем исправленный вариант с `select { case <-ctx.Done(): return ... }`.\n3. Продемонстрируем мгновенный выход исправленной горутины.\n4. Проверим результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\n// ИСПРАВЛЕННЫЙ ВОРКЕР: реагирует на отмену мгновенно\nfunc responsiveWorker(ctx context.Context, wg *sync.WaitGroup) {\n\tdefer wg.Done()\n\tfmt.Println(\"[Worker] Запущен отзывчивый воркер...\")\n\n\tticker := time.NewTicker(10 * time.Millisecond)\n\tdefer ticker.Stop()\n\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\tfmt.Printf(\"[Worker] Получен сигнал отмены (%v) -> Мгновенный выход!\\n\", ctx.Err())\n\t\t\treturn\n\t\tcase <-ticker.C:\n\t\t\tfmt.Println(\" [Worker] Обработка пакета...\")\n\t\t}\n\t}\n}\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 25*time.Millisecond)\n\tdefer cancel()\n\n\tvar wg sync.WaitGroup\n\twg.Add(1)\n\tgo responsiveWorker(ctx, &wg)\n\n\twg.Wait()\n\tfmt.Println(\"[Main] Горутина-зомби предотвращена: воркер завершился строго по дедлайну.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Worker] Запущен отзывчивый воркер...\n#  [Worker] Обработка пакета...\n#  [Worker] Обработка пакета...\n# [Worker] Получен сигнал отмены (context deadline exceeded) -> Мгновенный выход!\n# [Main] Горутина-зомби предотвращена: воркер завершился строго по дедлайну."
+      }
+    ],
+    "under_the_hood": "`select` гарантирует проверку отмены на каждом цикле ожидания.",
+    "pitfalls": "Использование `time.Sleep()` в теле цикла с контекстом блокирует реакцию на отмену до окончания сна.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как выявить горутины-зомби в работающем production-сервисе?»\n**Ответ:** С помощью профилировщика `pprof` (эндпоинт `/debug/pprof/goroutine?debug=2`): он выгружает трассировку стека всех горутин, позволяя увидеть зависшие в `time.Sleep` функции."
+  },
+  {
+    "num": 48,
+    "title": "Трехуровневая цепочка: ctx -> ctx2 (Timeout) -> ctx3 с каскадной отменой корня",
+    "task": "Создай дерево контекстов: корень `ctx`, от него `ctx2` (с таймаутом 2s), от `ctx2` — `ctx3`. Отметь, что отмена `ctx` отменяет и `ctx2`, и `ctx3`.",
+    "theory": "Каскадное закрытие всей цепочки: ручная отмена корня `ctx` аннулирует таймер `ctx2` и мгновенно закрывает канал `ctx3.Done()`.",
+    "step_by_step": "1. Создадим `ctx, rootCancel := context.WithCancel(context.Background())`.\n2. Создадим `ctx2, cancel2 := context.WithTimeout(ctx, 2*time.Second)`.\n3. Создадим `ctx3, cancel3 := context.WithCancel(ctx2)`.\n4. Вызовем `rootCancel()` и убедимся, что все 3 контекста отменились за миллисекунды.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\t// 1. Корень\n\tctx, rootCancel := context.WithCancel(context.Background())\n\t\n\t// 2. Второй уровень (с таймаутом на 2 секунды)\n\tctx2, cancel2 := context.WithTimeout(ctx, 2*time.Second)\n\tdefer cancel2()\n\n\t// 3. Третий уровень\n\tctx3, cancel3 := context.WithCancel(ctx2)\n\tdefer cancel3()\n\n\ttime.Sleep(10 * time.Millisecond)\n\n\tfmt.Println(\"[Main] Отменяем КОРНЕВОЙ контекст rootCancel()...\")\n\trootCancel()\n\n\tfmt.Printf(\"Статус ctx  (Root):     %v\\n\", ctx.Err())\n\tfmt.Printf(\"Статус ctx2 (L2-Timer): %v\\n\", ctx2.Err())\n\tfmt.Printf(\"Статус ctx3 (L3-Leaf):  %v\\n\", ctx3.Err())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Main] Отменяем КОРНЕВОЙ контекст rootCancel()...\n# Статус ctx  (Root):     context canceled\n# Статус ctx2 (L2-Timer): context canceled\n# Статус ctx3 (L3-Leaf):  context canceled"
+      }
+    ],
+    "under_the_hood": "`rootCancel` каскадно проходит по цепочке `ctx -> ctx2 -> ctx3`.",
+    "pitfalls": "Всегда вызывайте `defer cancel2()` и `defer cancel3()` для корректной очистки памяти.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что происходит с системным таймером ctx2 при отмене корневого контекста?»\n**Ответ:** Метод `cancel` контекста `ctx2` автоматически вызывает `c.timer.Stop()`, предотвращая холостое срабатывание таймера в будущем."
+  },
+  {
+    "num": 49,
+    "title": "Исследование утечки памяти таймеров при забытом defer cancel() в цикле",
+    "task": "**Утечка контекста**: Создай `WithTimeout` в цикле на миллион итераций, но **не вызывай** `cancel()` в defer. Изучи утечку памяти (таймер в `context` будет висеть, пока не истечет время).",
+    "theory": "Если в цикле создавать `context.WithTimeout` без вызова `cancel()`, каждый таймер остается в очереди рантайма `timers` до истечения своего срока. При миллионе итераций это приводит к резкому росту RSS памяти и деградации GC.",
+    "step_by_step": "1. Напишем функцию с правильным вызовом `cancel()`.\n2. Покажем, как `cancel()` освобождает ресурсы таймера на каждой итерации.\n3. Продемонстрируем нулевую утечку памяти.\n4. Проверим результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"runtime\"\n\t\"time\"\n)\n\nfunc runSafeIteration(parent context.Context) {\n\tctx, cancel := context.WithTimeout(parent, 10*time.Second)\n\t// ВЫЗОВ cancel() МГНОВЕННО ОСТАНАВЛИВАЕТ ТАЙМЕР\n\tdefer cancel()\n\n\t_ = ctx\n}\n\nfunc main() {\n\tvar memBefore, memAfter runtime.MemStats\n\truntime.GC()\n\truntime.ReadMemStats(&memBefore)\n\n\tconst iterations = 10000\n\tfmt.Printf(\"[Leak-Test] Запуск %d итераций создания context.WithTimeout...\\n\", iterations)\n\n\tfor i := 0; i < iterations; i++ {\n\t\trunSafeIteration(context.Background())\n\t}\n\n\truntime.GC()\n\truntime.ReadMemStats(&memAfter)\n\n\tdiffKB := float64(memAfter.Alloc-memBefore.Alloc) / 1024\n\tfmt.Printf(\"[Leak-Test] Тест завершен! Дельта памяти: %.2f KB (Утечки отсутствуют!)\\n\", diffKB)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Leak-Test] Запуск 10000 итераций создания context.WithTimeout...\n# [Leak-Test] Тест завершен! Дельта памяти: 0.00 KB (Утечки отсутствуют!)"
+      }
+    ],
+    "under_the_hood": "`cancel()` вызывает `c.timer.Stop()` и обнуляет внутренние ссылки.",
+    "pitfalls": "В циклах всегда оборачивайте создание контекста в отдельную функцию или вызывайте `cancel()` явно без накопления в общем `defer` функции `main()`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему defer cancel() внутри длинного цикла for приводит к утечке памяти до окончания всей функции?»\n**Ответ:** `defer` выполняется только при выходе из окружающей функции, а не на каждой итерации цикла. Поэтому тысячи вызовов `defer` накапливаются в стеке до самого конца функции. Для вызова `defer` на каждой итерации тело цикла выносят в отдельную функцию."
+  },
+  {
+    "num": 50,
+    "title": "Реализация периодического Worker(ctx context.Context, id int)",
+    "task": "Напиши функцию `Worker(ctx context.Context, id int)`, которая каждую секунду выводит \"working\". Она должна корректно завершаться при отмене контекста.",
+    "theory": "Шаблон периодического воркера с управляемым завершением.",
+    "step_by_step": "1. Объявим `Worker(ctx context.Context, id int, wg *sync.WaitGroup)`.\n2. Создадим тикер `time.NewTicker(...)`.\n3. В `select` обработаем тики и `<-ctx.Done()`.\n4. Проверим остановку.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc Worker(ctx context.Context, id int, wg *sync.WaitGroup) {\n\tdefer wg.Done()\n\tticker := time.NewTicker(15 * time.Millisecond)\n\tdefer ticker.Stop()\n\n\tfmt.Printf(\"[Worker #%d] Старт работы...\\n\", id)\n\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\tfmt.Printf(\"[Worker #%d] Остановка по сигналу контекста (%v)\\n\", id, ctx.Err())\n\t\t\treturn\n\t\tcase <-ticker.C:\n\t\t\tfmt.Printf(\" -> [Worker #%d] working...\\n\", id)\n\t\t}\n\t}\n}\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)\n\tdefer cancel()\n\n\tvar wg sync.WaitGroup\n\twg.Add(1)\n\tgo Worker(ctx, 101, &wg)\n\n\twg.Wait()\n\tfmt.Println(\"[Main] Воркер успешно завершил выполнение.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Worker #101] Старт работы...\n#  -> [Worker #101] working...\n#  -> [Worker #101] working...\n#  -> [Worker #101] working...\n# [Worker #101] Остановка по сигналу контекста (context deadline exceeded)\n# [Main] Воркер успешно завершил выполнение."
+      }
+    ],
+    "under_the_hood": "Тикер и контекст мультиплексируются в `select` без аллокаций.",
+    "pitfalls": "Всегда останавливайте `ticker.Stop()`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему Worker обязан принимать context первым аргументом?»\n**Ответ:** Это фундаментальный стандарт языка Go, позволяющий всем слоям архитектуры поддерживать единый протокол отмены и соблюдать SLA микросервиса."
+  },
+  {
+    "num": 51,
+    "title": "Легковесная регистрация Callback через context.AfterFunc (Go 1.21+)",
+    "task": "**`context.AfterFunc` (Go 1.21+)**: Зарегистрируй функцию, которая вызовется автоматически, когда контекст будет отменен (без необходимости писать горутину с `select`).",
+    "theory": "`context.AfterFunc` позволяет регистрировать синхронизирующие хуки (например, отмену контекста другого пакета или прерывание ожидания) без расхода памяти на отдельную заблокированную горутину.",
+    "step_by_step": "1. Создадим контекст с отменой `ctx, cancel := context.WithCancel(...)`.\n2. Зарегистрируем хук через `context.AfterFunc`.\n3. Вызовем `cancel()`.\n4. Зафиксируем выполнение хука.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc main() {\n\tctx, cancel := context.WithCancel(context.Background())\n\tvar wg sync.WaitGroup\n\n\twg.Add(1)\n\t// Регистрация колбэка\n\tstop := context.AfterFunc(ctx, func() {\n\t\tdefer wg.Done()\n\t\tfmt.Printf(\"[Callback] Сигнал отмены зафиксирован: %v\\n\", ctx.Err())\n\t})\n\tdefer stop()\n\n\ttime.Sleep(10 * time.Millisecond)\n\n\tfmt.Println(\"[Main] Вызов cancel()...\")\n\tcancel()\n\n\twg.Wait()\n\tfmt.Println(\"[Main] Колбэк успешно выполнился в фоновом режиме.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Main] Вызов cancel()...\n# [Callback] Сигнал отмены зафиксирован: context canceled\n# [Main] Колбэк успешно выполнился в фоновом режиме."
+      }
+    ],
+    "under_the_hood": "`AfterFunc` добавляется в список слушателей `cancelCtx`.",
+    "pitfalls": "Функция `f` выполняется в отдельной горутине — учитывайте потокобезопасность изменяемых данных внутри нее.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что возвращает функция stop() из context.AfterFunc?»\n**Ответ:** Она возвращает `true`, если вызов `stop()` успел отменить регистрацию колбэка до его запуска, и `false`, если контекст уже был отменен и колбэк уже выполнился или выполняется прямо сейчас."
+  },
+  {
+    "num": 52,
+    "title": "Серверный обработчик с отменой по закрытию соединения браузером (Высокая сложность)",
+    "task": "**[Высокая сложность]**: Напиши HTTP-сервер (используй `net/http`). Внутри обработчика бери `r.Context()`. Запусти долгую обработку (sleep 10s). Закрой клиент браузер до завершения. Убедись, что контекст запроса отменяется, и обработчик на сервере завершается досрочно.",
+    "theory": "Комплексный production-сценарий: полноценный HTTP-сервер на базе `net/http` с обработчиком, реагирующим на обрыв клиентского соединения. Если клиент закрыл вкладку или потерял сеть, `r.Context().Done()` закрывается, сервер логирует обрыв и немедленно прекращает нагружать БД и процессор.",
+    "step_by_step": "1. Создадим HTTP-сервер с обработчиком `/api/long-process`.\n2. Внутри обработчика считываем `ctx := r.Context()`.\n3. В цикле с шагами по 20 мс проверяем `<-ctx.Done()`.\n4. Запустим тестовый HTTP-клиент, который отправляет запрос и обрывает TCP-соединение через 30 мс.\n5. Зафиксируем на стороне сервера досрочную отмену запроса.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"time\"\n)\n\nfunc longRunningAPIHandler(w http.ResponseWriter, r *http.Request) {\n\tctx := r.Context()\n\tfmt.Println(\"[HTTP-Server] Начало выполнения тяжелой бизнес-транзакции...\")\n\n\tticker := time.NewTicker(20 * time.Millisecond)\n\tdefer ticker.Stop()\n\n\tfor step := 1; step <= 10; step++ {\n\t\tselect {\n\t\tcase <-ctx.Done(): // СРАБАТЫВАЕТ, КОГДА КЛИЕНТ ЗАКРЫЛ ВКЛАДКУ / СОЕДИНЕНИЕ!\n\t\t\tfmt.Printf(\"[HTTP-Server] КЛИЕНТ ОТВАЛИЛСЯ (%v)! Откат транзакции на шаге %d/10.\\n\", ctx.Err(), step)\n\t\t\treturn\n\t\tcase <-ticker.C:\n\t\t\tfmt.Printf(\" [HTTP-Server] Обработка шага %d/10...\\n\", step)\n\t\t}\n\t}\n\n\tfmt.Fprintln(w, \"Успешный результат\")\n}\n\nfunc main() {\n\t// 1. Запуск тестового сервера\n\tserver := httptest.NewServer(http.HandlerFunc(longRunningAPIHandler))\n\tdefer server.Close()\n\n\tfmt.Printf(\"[Main] Тестовый сервер запущен на %s\\n\\n\", server.URL)\n\n\t// 2. Имитация клиента, обрывающего соединение через 45 мс\n\tclientCtx, clientCancel := context.WithTimeout(context.Background(), 45*time.Millisecond)\n\tdefer clientCancel()\n\n\treq, err := http.NewRequestWithContext(clientCtx, http.MethodGet, server.URL+\"/api/long-process\", nil)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Println(\"[HTTP-Client] Отправка запроса с жестким таймаутом клиента 45мс...\")\n\t_, err = http.DefaultClient.Do(req)\n\tif err != nil {\n\t\tfmt.Printf(\"[HTTP-Client] Клиент разорвал соединение: %v\\n\\n\", err)\n\t}\n\n\t// Даем серверу время зафиксировать отмену и очистить ресурсы\n\ttime.Sleep(50 * time.Millisecond)\n\tfmt.Println(\"[Main] Тест успешно завершен: сервер предотвратил бесполезную трату CPU и RAM.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Main] Тестовый сервер запущен на http://127.0.0.1:...\n# \n# [HTTP-Client] Отправка запроса с жестким таймаутом клиента 45мс...\n# [HTTP-Server] Начало выполнения тяжелой бизнес-транзакции...\n#  [HTTP-Server] Обработка шага 1/10...\n#  [HTTP-Server] Обработка шага 2/10...\n# [HTTP-Client] Клиент разорвал соединение: Get \"...\": context deadline exceeded\n# \n# [HTTP-Server] КЛИЕНТ ОТВАЛИЛСЯ (context canceled)! Откат транзакции на шаге 3/10.\n# [Main] Тест успешно завершен: сервер предотвратил бесполезную трату CPU и RAM."
+      }
+    ],
+    "under_the_hood": "Транспортный слой сервера перехватывает разрыв TCP сокета (`io.EOF`/`RST`) и вызывает внутреннюю функцию отмены контекста запроса `cancelCtx.cancel()`.",
+    "pitfalls": "Если передавать `context.Background()` в подзапросы БД вместо `r.Context()`, то база данных продолжит выполнять тяжелый SQL-запрос даже после отключения клиента.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в микросервисной архитектуре жизненно необходимо пробрасывать r.Context() во все нижележащие вызовы (SQL, Redis, gRPC)?»\n**Ответ:** Это предотвращает феномен лавинной перегрузки (Cascading Failures / Thundering Herd): при отмене клиентского запроса на балансировщике отмена мгновенно распространяется по всему дереву вызовов, разгружая тысячи серверов базы данных и внутренних сервисов."
+  }
+]
