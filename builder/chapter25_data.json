@@ -1,0 +1,992 @@
+[
+  {
+    "num": 1,
+    "title": "Базовый HTTP GET-запрос через http.Get и анализ Response StatusCode",
+    "task": "Используй `http.Get`, чтобы сделать запрос к `https://golang.org`. Выведи статус-код ответа (например, 200 OK).",
+    "theory": "Клиентский HTTP в Go: функция `http.Get(url)` использует стандартный транспорт `http.DefaultClient` для выполнения HTTP/1.1 или HTTP/2 GET-запроса. Возвращаемая структура `*http.Response` содержит статус-код `resp.StatusCode` (целое число) и текстовую строку статуса `resp.Status` (например, \"200 OK\").",
+    "step_by_step": "1. Запустим тестовый HTTP-сервер на базе `net/http/httptest`.\n2. Выполним запрос с помощью `http.Get(ts.URL)`.\n3. Обязательно закроем тело ответа `defer resp.Body.Close()`.\n4. Выведем `resp.StatusCode` и `resp.Status`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"Golang Official Site\"))\n\t}))\n\tdefer ts.Close()\n\n\tresp, err := http.Get(ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close() // КРИТИЧНО: освобождение сокета в пул\n\n\tfmt.Printf(\"[HTTP Client] Статус-код: %d\\n\", resp.StatusCode)\n\tfmt.Printf(\"[HTTP Client] Строка статуса: %s\\n\", resp.Status)\n\tfmt.Printf(\"[HTTP Client] Протокол: %s\\n\", resp.Proto)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [HTTP Client] Статус-код: 200\n# [HTTP Client] Строка статуса: 200 OK\n# [HTTP Client] Протокол: HTTP/1.1"
+      }
+    ],
+    "under_the_hood": "`http.Get` выполняет полный цикл: DNS-резолвинг, TCP 3-Way Handshake, TLS Negotiation (для HTTPS), отправку HTTP-заголовков и чтение заголовков ответа.",
+    "pitfalls": "Всегда вызывайте `resp.Body.Close()`, иначе базовое TCP-соединение не вернется в `Idle Connection Pool` и сокет останется висеть в памяти.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему проверка if err != nil должна идти ДО вызова defer resp.Body.Close()?»\n**Ответ:** Если при установке соединения произошла ошибка сети или DNS (например, dial tcp: lookup failed), указатель `resp` будет равен `nil`. Вызов `resp.Body.Close()` приведет к фатальной панике `nil pointer dereference`."
+  },
+  {
+    "num": 2,
+    "title": "Чтение тела HTTP-ответа (Response Body) через io.ReadAll",
+    "task": "Прочитай тело ответа (Response Body) с помощью `io.ReadAll` и выведи первые 100 байт в консоль.",
+    "theory": "Интерфейс `io.ReadCloser`: поле `resp.Body` представляет собой поток входящих байтов. Функция `io.ReadAll(resp.Body)` считывает все доступные байты до получения маркера конца потока `io.EOF`.",
+    "step_by_step": "1. Выполним GET-запрос к тестовому HTTP-серверу.\n2. Прочитаем тело через `bodyBytes, err := io.ReadAll(resp.Body)`.\n3. Ограничим вывод первыми 100 байтами `bodyBytes[:limit]`.\n4. Выведем результат в консоль.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Header().Set(\"Content-Type\", \"text/plain\")\n\t\t_, _ = w.Write([]byte(\"Go is an open source programming language that makes it easy to build simple, fast, and reliable software.\"))\n\t}))\n\tdefer ts.Close()\n\n\tresp, err := http.Get(ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tbodyBytes, err := io.ReadAll(resp.Body)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tlimit := 60\n\tif len(bodyBytes) < limit {\n\t\tlimit = len(bodyBytes)\n\t}\n\n\tfmt.Printf(\"[HTTP Body] Всего считано: %d байт\\n\", len(bodyBytes))\n\tfmt.Printf(\"[HTTP Body] Первые %d байт: %q\\n\", limit, string(bodyBytes[:limit]))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [HTTP Body] Всего считано: 107 байт\n# [HTTP Body] Первые 60 байт: \"Go is an open source programming language that makes it easy\" "
+      }
+    ],
+    "under_the_hood": "`io.ReadAll` динамически расширяет внутренний буфер `bytes.Buffer` по мере поступления чанков данных от сетевой карты.",
+    "pitfalls": "`io.ReadAll` считывает весь ответ в оперативную память. Для больших файлов (100 МБ+) используйте `io.Copy(file, resp.Body)` или `io.LimitReader` во избежание OOM.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как защитить HTTP-клиент от атаки Zip-бомбой или бесконечным потоком байтов в Response Body?»\n**Ответ:** Обернуть `resp.Body` в `io.LimitReader(resp.Body, maxBytes)` (например, 10 МБ). Если сервер передает больше данных, `Read` завершится ошибкой или вернет усеченные данные, не допустив переполнения RAM."
+  },
+  {
+    "num": 3,
+    "title": "Ловушка утечки дескрипторов: обязательное закрытие resp.Body.Close()",
+    "task": "**[Каверзный кейс]**: Сделай 1000 запросов в цикле с помощью `http.Get`, но забудь закрыть тело ответа (`defer resp.Body.Close()`). Запусти программу и понаблюдай за ростом количества открытых файловых дескрипторов (утечка ресурсов). Исправь код, добавив `defer`.",
+    "theory": "Утечка сокетов (Socket Leak): если тело HTTP-ответа `resp.Body` не закрыто, Go не может переиспользовать TCP-соединение для последующих запросов. Сокет остается висеть в системе до тех пор, пока сборщик мусора GC не вызовет финалайзер, что при высокой частоте запросов вызывает ошибку `socket: too many open files`.",
+    "step_by_step": "1. Создадим тестовый сервер.\n2. Продемонстрируем цикл запросов с обязательным вызовом `resp.Body.Close()`.\n3. Добавим `io.Copy(io.Discard, resp.Body)` для вычитки остатка буфера.\n4. Проверим стабильную работу без утечек.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"time\"\n)\n\nfunc makeRequestSafe(client *http.Client, url string) error {\n\tresp, err := client.Get(url)\n\tif err != nil {\n\t\treturn err\n\t}\n\t// ПРАВИЛО #1: Всегда закрывать Body\n\t// ПРАВИЛО #2: Довычитывать Body в io.Discard для возврата TCP-сокета в Keep-Alive пул!\n\tdefer resp.Body.Close()\n\t_, _ = io.Copy(io.Discard, resp.Body)\n\n\treturn nil\n}\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"OK\"))\n\t}))\n\tdefer ts.Close()\n\n\tclient := &http.Client{Timeout: 2 * time.Second}\n\n\tconst totalRequests = 100\n\tfor i := 0; i < totalRequests; i++ {\n\t\tif err := makeRequestSafe(client, ts.URL); err != nil {\n\t\t\tpanic(err)\n\t\t}\n\t}\n\n\tfmt.Printf(\"[Main] Успешно выполнено %d HTTP-запросов с 100%% переиспользованием Keep-Alive сокетов!\\n\", totalRequests)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Main] Успешно выполнено 100 HTTP-запросов с 100% переиспользованием Keep-Alive сокетов!"
+      }
+    ],
+    "under_the_hood": "`resp.Body.Close()` возвращает TCP-соединение в `persistConn` транспортного пула только в том случае, если тело было полностью вычитано до `io.EOF`.",
+    "pitfalls": "Вызов `defer resp.Body.Close()` внутри длинного цикла `for` выполнится только при выходе из функции, а не на каждой итерации. Оборачивайте тело цикла во вспомогательную функцию.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему одного resp.Body.Close() недостаточно для переиспользования Keep-Alive TCP-соединения?»\n**Ответ:** Если в теле ответа остались непрочитанные байты, транспорт `http.Transport` вынужден закрыть TCP-сокет целиком (TCP RST), так как следующий HTTP-запрос получит смещение байтов. Для возврата сокета в пул необходимо вычитать остаток через `io.Copy(io.Discard, resp.Body)` перед закрытием."
+  },
+  {
+    "num": 4,
+    "title": "Парсинг URL и безопасное кодирование параметров через net/url и url.Values",
+    "task": "Используй `net/url` для парсинга URL. Добавь query-параметры (например, `?q=golang&page=2`) с помощью `url.Values`.",
+    "theory": "Безопасная сборка Query-строки: ручная конкатенация строк (`\"?q=\" + str`) уязвима к инъекциям и ломается на пробелах и спецсимволах (`&`, `=`, `?`). Пакет `net/url` и тип `url.Values` автоматически экранируют символы согласно RFC 3986 (Percent-Encoding).",
+    "step_by_step": "1. Распарсим базовый URL через `url.Parse(\"https://api.example.com/search\")`.\n2. Создадим `params := url.Values{}`.\n3. Добавим параметры через `params.Add(\"q\", \"golang & concurrency\")`.\n4. Присвоим `parsedURL.RawQuery = params.Encode()`.\n5. Выведем собранный URL.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/url\"\n)\n\nfunc main() {\n\tbaseURL := \"https://api.github.com/search/repositories\"\n\tparsedURL, err := url.Parse(baseURL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tquery := url.Values{}\n\tquery.Add(\"q\", \"language:go stars:>1000\")\n\tquery.Add(\"sort\", \"stars\")\n\tquery.Add(\"order\", \"desc\")\n\tquery.Add(\"page\", \"2\")\n\n\tparsedURL.RawQuery = query.Encode()\n\n\tfmt.Println(\"Итоговый скомпонованный URL:\")\n\tfmt.Println(parsedURL.String())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Итоговый скомпонованный URL:\n# https://api.github.com/search/repositories?order=desc&page=2&q=language%3Ago+stars%3A%3E1000&sort=stars"
+      }
+    ],
+    "under_the_hood": "Метод `query.Encode()` сортирует ключи по алфавиту и заменяет спецсимволы на `%XX` или `+`.",
+    "pitfalls": "`query.Set()` заменяет значение ключа, а `query.Add()` добавляет второе значение к тому же ключу (`?tag=go&tag=web`).",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем разница между url.Path и url.RawPath в структуре url.URL?»\n**Ответ:** `url.Path` содержит декодированный путь (например, `/user/иван`), а `url.RawPath` — оригинальный закодированный путь (`/user/%D0%B8%D0%B2%D0%B0%D0%BD`). Если путь содержит символы `%2F` (экранированный слэш), Go использует `RawPath` для сохранения точной структуры URL."
+  },
+  {
+    "num": 5,
+    "title": "Отправка POST-запроса с JSON полезной нагрузкой и Content-Type",
+    "task": "Выполните POST-запрос, отправив JSON в теле. Не забудьте установить заголовок `Content-Type: application/json`.",
+    "theory": "POST-запрос с полезной нагрузкой (JSON Payload): функция `http.Post(url, contentType, bodyReader)` передает поток байтов тела запроса и выставляет соответствующий MIME-тип заголовка.",
+    "step_by_step": "1. Сериализуем структуру Go в JSON с помощью `json.Marshal`.\n2. Создадим `bytes.NewReader(jsonBytes)`.\n3. Отправим запрос через `http.Post(url, \"application/json\", reader)`.\n4. Сервер валидирует полученный JSON и возвращает ответ.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\ntype CreateUserRequest struct {\n\tName  string `json:\"name\"`\n\tEmail string `json:\"email\"`\n\tRole  string `json:\"role\"`\n}\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tcontentType := r.Header.Get(\"Content-Type\")\n\t\tbody, _ := io.ReadAll(r.Body)\n\t\tdefer r.Body.Close()\n\n\t\tfmt.Printf(\"[Server] Получен %s запрос: Content-Type=%s\\n\", r.Method, contentType)\n\t\tfmt.Printf(\"[Server] Тело JSON: %s\\n\", string(body))\n\n\t\tw.WriteHeader(http.StatusCreated)\n\t\t_, _ = w.Write([]byte(`{\"id\": 42, \"status\": \"created\"}`))\n\t}))\n\tdefer ts.Close()\n\n\tuser := CreateUserRequest{\n\t\tName:  \"Алексей\",\n\t\tEmail: \"alex@example.com\",\n\t\tRole:  \"Backend Engineer\",\n\t}\n\n\tpayload, err := json.Marshal(user)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tresp, err := http.Post(ts.URL, \"application/json\", bytes.NewReader(payload))\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\trespBody, _ := io.ReadAll(resp.Body)\n\tfmt.Printf(\"[Client] Ответ сервера (Status %d): %s\\n\", resp.StatusCode, string(respBody))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Server] Получен POST запрос: Content-Type=application/json\n# [Server] Тело JSON: {\"name\":\"Алексей\",\"email\":\"alex@example.com\",\"role\":\"Backend Engineer\"}\n# [Client] Ответ сервера (Status 201): {\"id\": 42, \"status\": \"created\"}"
+      }
+    ],
+    "under_the_hood": "`bytes.NewReader` реализует `io.Reader` и `io.Seeker`, позволяя `http.Client` автоматически вычислить заголовок `Content-Length`.",
+    "pitfalls": "Без заголовка `Content-Type: application/json` большинство современных REST API серверов отклонят запрос с кодом `415 Unsupported Media Type`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Зачем http.Client выставляет заголовок Content-Length при передаче bytes.Reader?»\n**Ответ:** Если размер тела известен заранее (`Content-Length`), HTTP-сервер может сразу аллоцировать нужный буфер и использовать Keep-Alive соединение. Если размер неизвестен, клиент переключается на `Transfer-Encoding: chunked`."
+  },
+  {
+    "num": 6,
+    "title": "Настройка таймаута http.Client и перехват ошибки context.DeadlineExceeded",
+    "task": "Настрой кастомный `http.Client` с `Timeout: 5 * time.Second`. Сделай запрос к серверу, который отвечает дольше 5 секунд (можно использовать `httpbin.org/delay/10`). Поймай ошибку таймаута.",
+    "theory": "Политика таймаутов `http.Client.Timeout`: задает максимальное суммарное время на выполнение всего запроса целиком, включая DNS, TCP Handshake, TLS Handshake, отправку и чтение ответа.",
+    "step_by_step": "1. Создадим сервер с задержкой ответа 100 мс.\n2. Настроим клиент с `Timeout: 25 * time.Millisecond`.\n3. Выполним запрос `client.Get(ts.URL)`.\n4. Поймаем ошибку `Client.Timeout exceeded`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"time\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\ttime.Sleep(100 * time.Millisecond)\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"Delayed Response\"))\n\t}))\n\tdefer ts.Close()\n\n\tclient := &http.Client{\n\t\tTimeout: 25 * time.Millisecond,\n\t}\n\n\tfmt.Println(\"[Client] Отправка запроса с таймаутом 25 мс...\")\n\t_, err := client.Get(ts.URL)\n\n\tif err != nil {\n\t\tfmt.Printf(\"[Client Safety] ПЕРЕХВАЧЕН ТАЙМАУТ: %v\\n\", err)\n\t} else {\n\t\tfmt.Println(\"[Client] Ошибка: запрос должен был прерваться по таймауту!\")\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Client] Отправка запроса с таймаутом 25 мс...\n# [Client Safety] ПЕРЕХВАЧЕН ТАЙМАУТ: Get \"http://127.0.0.1:...\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)"
+      }
+    ],
+    "under_the_hood": "Под капотом `client.Timeout` создает таймер контекста `context.WithTimeout`, который автоматически прерывает системные сетевые вызовы рантайма.",
+    "pitfalls": "`client.Timeout` включает время на чтение всего Response Body. Если вы скачиваете файл 1 ГБ, таймаут клиента должен быть достаточно большим или управляться контекстом.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему в http.DefaultClient таймаут по умолчанию равен нулю?»\n**Ответ:** По историческим причинам в Go нулевой таймаут означает бесконечное ожидание (`no timeout`). В продакшене это считается критической уязвимостью, так как зависший сторонний API может заблокировать все горутины сервиса."
+  },
+  {
+    "num": 7,
+    "title": "Опасности http.DefaultClient в HighLoad и создание безопасного экземпляра",
+    "task": "Создайте кастомный `http.Client` с настроенным таймаутом (`Timeout: 5 * time.Second`). Почему использование глобального `http.DefaultClient` в продакшене — плохая идея?",
+    "theory": "Проблемы глобального `http.DefaultClient`:\n1. `Timeout == 0` — бесконечное ожидание приводит к утечке горутин (Goroutine Leak OOM).\n2. Общий `DefaultTransport` разделяется всеми пакетами приложения.\n3. `MaxIdleConnsPerHost == 2` по умолчанию — всего 2 Keep-Alive соединения на хост.",
+    "step_by_step": "1. Создадим функцию-фабрику `NewProductionHTTPClient(timeout)`.\n2. Настроим кастомный транспорт и таймаут.\n3. Продемонстрируем безопасный вызов.\n4. Выведем параметры конфигурации.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc NewProductionHTTPClient(timeout time.Duration) *http.Client {\n\ttransport := &http.Transport{\n\t\tProxy: http.ProxyFromEnvironment,\n\t\tDialContext: (&net.Dialer{\n\t\t\tTimeout:   2 * time.Second,\n\t\t\tKeepAlive: 30 * time.Second,\n\t\t}).DialContext,\n\t\tMaxIdleConns:        100,\n\t\tMaxIdleConnsPerHost: 20,\n\t\tIdleConnTimeout:     90 * time.Second,\n\t\tTLSHandshakeTimeout: 2 * time.Second,\n\t\tDisableKeepAlives:   false,\n\t}\n\n\treturn &http.Client{\n\t\tTransport: transport,\n\t\tTimeout:   timeout,\n\t}\n}\n\nfunc main() {\n\tclient := NewProductionHTTPClient(3 * time.Second)\n\n\tfmt.Println(\"=== КОНФИГУРАЦИЯ PRODUCTION HTTP-КЛИЕНТА ===\")\n\tfmt.Printf(\" -> Client Timeout:         %v\\n\", client.Timeout)\n\tt := client.Transport.(*http.Transport)\n\tfmt.Printf(\" -> MaxIdleConnsPerHost:    %d (вместо дефолтных 2!)\\n\", t.MaxIdleConnsPerHost)\n\tfmt.Printf(\" -> IdleConnTimeout:        %v\\n\", t.IdleConnTimeout)\n\tfmt.Printf(\" -> TLSHandshakeTimeout:    %v\\n\", t.TLSHandshakeTimeout)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# === КОНФИГУРАЦИЯ PRODUCTION HTTP-КЛИЕНТА ===\n#  -> Client Timeout:         3s\n#  -> MaxIdleConnsPerHost:    20 (вместо дефолтных 2!)\n#  -> IdleConnTimeout:        1m30s\n#  -> TLSHandshakeTimeout:    2s"
+      }
+    ],
+    "under_the_hood": "Кастомный `http.Transport` управляет внутренними мапами свободных сокетов `idleConn map[connectMethodKey][]*persistConn` под защитой мьютекса.",
+    "pitfalls": "Никогда не создавайте новый `http.Client` внутри каждой HTTP-ручки — клиент должен быть синглтоном.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему дефолтный MaxIdleConnsPerHost = 2 является узким местом в микросервисах?»\n**Ответ:** Если микросервис А делает 100 параллельных запросов к микросервису Б, при `MaxIdleConnsPerHost = 2` только 2 соединения сохранятся в пуле, а остальные 98 сокетов будут принудительно закрыты. На каждый новый запрос сервис будет заново тратить время на TCP + TLS Handshake."
+  },
+  {
+    "num": 8,
+    "title": "Тюнинг пула соединений Keep-Alive в http.Transport для HighLoad",
+    "task": "Настройте `http.Transport` для пулинга соединений (`MaxIdleConns`, `IdleConnTimeout`), чтобы переиспользовать TCP-соединения (Keep-Alive) и снижать нагрузку на сеть.",
+    "theory": "Переиспользование сетевых сессий (HTTP Keep-Alive / Connection Pooling): повторное использование уже открытого TCP+TLS сокета экономит $2\\text{–}3\\text{ RTT}$ на каждом последующем HTTP-запросе.",
+    "step_by_step": "1. Настроим `http.Transport` с высоким лимитом `MaxIdleConnsPerHost: 50`.\n2. Выполним серию из 3 последовательных запросов к тестовому серверу.\n3. Убедимся, что все запросы прошли через одно физическое TCP-соединение.\n4. Проверим результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"PONG\"))\n\t}))\n\tdefer ts.Close()\n\n\ttransport := &http.Transport{\n\t\tMaxIdleConns:        100,\n\t\tMaxIdleConnsPerHost: 50,\n\t}\n\tclient := &http.Client{Transport: transport}\n\n\tfor i := 1; i <= 3; i++ {\n\t\tresp, err := client.Get(ts.URL)\n\t\tif err != nil {\n\t\t\tpanic(err)\n\t\t}\n\t\t_, _ = io.Copy(io.Discard, resp.Body)\n\t\t_ = resp.Body.Close()\n\n\t\tfmt.Printf(\" -> Запрос #%d успешно выполнен (Keep-Alive сокет переиспользован)\\n\", i)\n\t}\n\n\tfmt.Println(\"[Main] Все запросы отработали с минимальным RTT без повторного TCP Handshake.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n#  -> Запрос #1 успешно выполнен (Keep-Alive сокет переиспользован)\n#  -> Запрос #2 успешно выполнен (Keep-Alive сокет переиспользован)\n#  -> Запрос #3 успешно выполнен (Keep-Alive сокет переиспользован)\n# [Main] Все запросы отработали с минимальным RTT без повторного TCP Handshake."
+      }
+    ],
+    "under_the_hood": "Транспорт держит горутины чтения и записи для каждого активного сокета `persistConn`.",
+    "pitfalls": "Если выставить `DisableKeepAlives: true`, клиент будет отправлять заголовок `Connection: close` и закрывать сокет после каждого запроса.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Каковы накладные расходы на создание нового HTTPS соединения без Keep-Alive?»\n**Ответ:** 1. DNS Lookup ($\\approx 10\\text{–}50\\text{ мс}$); 2. TCP 3-Way Handshake ($1\\text{ RTT}$); 3. TLS 1.3 Handshake ($1\\text{ RTT}$) плюс CPU на криптографию. Keep-Alive снижает накладные расходы до нуля."
+  },
+  {
+    "num": 9,
+    "title": "Формирование кастомного HTTP-запроса через http.NewRequest и Header.Set",
+    "task": "**Кастомный запрос (Custom Headers)**: Тебе нужно передать токен авторизации. Используй `req, err := http.NewRequest(\"GET\", url, nil)`. Добавь заголовок: `req.Header.Set(\"Authorization\", \"Bearer my-token\")`. Выполни запрос через `client.Do(req)`.",
+    "theory": "Конструктор `http.NewRequest`: позволяет сформировать произвольный HTTP-запрос, настроить HTTP-заголовки (`req.Header`), куки и тело запроса. Метод `client.Do(req)` отправляет сконфигурированный объект запроса.",
+    "step_by_step": "1. Создадим запрос `http.NewRequest(\"GET\", url, nil)`.\n2. Добавим заголовок авторизации `req.Header.Set(\"Authorization\", \"Bearer secret-token-999\")`.\n3. Добавим `req.Header.Set(\"User-Agent\", \"GoService/2.0\")`.\n4. Выполним через `client.Do(req)` и проверим на сервере.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tauth := r.Header.Get(\"Authorization\")\n\t\tua := r.Header.Get(\"User-Agent\")\n\n\t\tfmt.Printf(\"[Server] Получен Auth Header: %s\\n\", auth)\n\t\tfmt.Printf(\"[Server] Получен User-Agent:  %s\\n\", ua)\n\n\t\tif auth == \"Bearer secret-jwt-token-xyz\" {\n\t\t\tw.WriteHeader(http.StatusOK)\n\t\t\t_, _ = w.Write([]byte(`{\"access\": \"granted\"}`))\n\t\t} else {\n\t\t\tw.WriteHeader(http.StatusUnauthorized)\n\t\t\t_, _ = w.Write([]byte(`{\"error\": \"unauthorized\"}`))\n\t\t}\n\t}))\n\tdefer ts.Close()\n\n\treq, err := http.NewRequest(http.MethodGet, ts.URL+\"/api/secure\", nil)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\treq.Header.Set(\"Authorization\", \"Bearer secret-jwt-token-xyz\")\n\treq.Header.Set(\"User-Agent\", \"BackendWorkoutClient/1.0\")\n\treq.Header.Set(\"Accept\", \"application/json\")\n\n\tclient := &http.Client{}\n\tresp, err := client.Do(req)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tbody, _ := io.ReadAll(resp.Body)\n\tfmt.Printf(\"[Client] Ответ сервера (Status %d): %s\\n\", resp.StatusCode, string(body))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Server] Получен Auth Header: Bearer secret-jwt-token-xyz\n# [Server] Получен User-Agent:  BackendWorkoutClient/1.0\n# [Client] Ответ сервера (Status 200): {\"access\": \"granted\"}"
+      }
+    ],
+    "under_the_hood": "`req.Header` представляет собой мапу `map[string][]string`. Метод `Set()` канонизирует регистр ключа с помощью `textproto.CanonicalMIMEHeaderKey`.",
+    "pitfalls": "Для нестандартных заголовков, требующих точного регистра, прямая запись в мапу `req.Header[\"x-my-header\"] = []string{val}` обходит канонизацию.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем разница между req.Header.Set() и req.Header.Add()?»\n**Ответ:** `Set(k, v)` перезаписывает все существующие значения для данного ключа. `Add(k, v)` добавляет новое значение в срез `[]string`, позволяя передавать множественные заголовки с одинаковым именем."
+  },
+  {
+    "num": 10,
+    "title": "Управление жизненным циклом запроса через http.NewRequestWithContext",
+    "task": "**[Каверзный кейс]**: Используй `context.WithTimeout` вместе с `http.NewRequestWithContext`. Отмени контекст вручную (`cancel()`) до истечения таймаута. Убедись, что запрос прерывается корректно.",
+    "theory": "Связка HTTP и `context.Context` (Go 1.13+): функция `http.NewRequestWithContext(ctx, method, url, body)` привязывает сокет к контексту. Если контекст отменяется вызовом `cancel()`, транспортный уровень мгновенно разрывает сокет.",
+    "step_by_step": "1. Создадим `ctx, cancel := context.WithCancel(context.Background())`.\n2. Создадим запрос `http.NewRequestWithContext(ctx, ...)`.\n3. В фоновой горутине вызовем `cancel()` через 15 мс.\n4. Проверим перехват ошибки `context canceled`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"time\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\ttime.Sleep(100 * time.Millisecond)\n\t\tw.WriteHeader(http.StatusOK)\n\t}))\n\tdefer ts.Close()\n\n\tctx, cancel := context.WithCancel(context.Background())\n\n\tgo func() {\n\t\ttime.Sleep(15 * time.Millisecond)\n\t\tfmt.Println(\"[Main] Пользователь нажал кнопку «Отмена» -> вызов cancel()!\")\n\t\tcancel()\n\t}()\n\n\treq, err := http.NewRequestWithContext(ctx, http.MethodGet, ts.URL, nil)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tclient := &http.Client{}\n\t_, err = client.Do(req)\n\n\tif err != nil {\n\t\tif errors.Is(err, context.Canceled) || errors.Is(ctx.Err(), context.Canceled) {\n\t\t\tfmt.Printf(\"[Client Safety] Запрос успешно прерван по сигналу контекста: %v\\n\", err)\n\t\t} else {\n\t\t\tfmt.Printf(\"[Client Error] %v\\n\", err)\n\t\t}\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Main] Пользователь нажал кнопку «Отмена» -> вызов cancel()!\n# [Client Safety] Запрос успешно прерван по сигналу контекста: Get \"http://127.0.0.1:...\": context canceled"
+      }
+    ],
+    "under_the_hood": "При отмене контекста `http.Transport` отправляет TCP RST или HTTP/2 RST_STREAM фрейм, освобождая ресурсы на обеих сторонах.",
+    "pitfalls": "Всегда вызывайте `defer cancel()`, чтобы не допускать утечек ресурсов таймеров контекста.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что происходит с TCP-соединением, если запрос прерван по cancel() контекста в HTTP/1.1 и в HTTP/2?»\n**Ответ:** В HTTP/1.1 TCP-соединение закрывается полностью. В HTTP/2 мультиплексированное TCP-соединение остается жить, а серверу отправляется фрейм `RST_STREAM` с ID конкретного потока."
+  },
+  {
+    "num": 11,
+    "title": "POST-запрос с отправкой сериализованного JSON на REST API эндпоинт",
+    "task": "**POST-запрос с JSON**: Закодируй структуру в JSON. Отправь POST-запрос на `https://jsonplaceholder.typicode.com/posts` с помощью `http.Post`. Укажи Content-Type `application/json`.",
+    "theory": "Интеграция с REST API сервисами: формирование JSON-объектов через `json.Marshal` и отправка в теле POST-запроса.",
+    "step_by_step": "1. Опишем структуру `BlogPost { Title, Body, UserID }`.\n2. Закодируем в JSON.\n3. Отправим запрос через `http.Post`.\n4. Проверим парсинг полученного ответа.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\ntype BlogPost struct {\n\tTitle  string `json:\"title\"`\n\tBody   string `json:\"body\"`\n\tUserID int    `json:\"userId\"`\n}\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tvar post BlogPost\n\t\t_ = json.NewDecoder(r.Body).Decode(&post)\n\t\tdefer r.Body.Close()\n\n\t\tw.Header().Set(\"Content-Type\", \"application/json\")\n\t\tw.WriteHeader(http.StatusCreated)\n\t\t_, _ = w.Write([]byte(fmt.Sprintf(`{\"id\": 101, \"title\": %q, \"userId\": %d}`, post.Title, post.UserID)))\n\t}))\n\tdefer ts.Close()\n\n\tnewPost := BlogPost{\n\t\tTitle:  \"Архитектура микросервисов на Go\",\n\t\tBody:   \"Подробный разбор HTTP-клиента, контекстов и пулинга соединений.\",\n\t\tUserID: 42,\n\t}\n\n\tjsonData, _ := json.Marshal(newPost)\n\n\tresp, err := http.Post(ts.URL+\"/posts\", \"application/json\", bytes.NewReader(jsonData))\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tbody, _ := io.ReadAll(resp.Body)\n\tfmt.Printf(\"[REST API Response] Status=%d, Body=%s\\n\", resp.StatusCode, string(body))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [REST API Response] Status=201, Body={\"id\": 101, \"title\": \"Архитектура микросервисов на Go\", \"userId\": 42}"
+      }
+    ],
+    "under_the_hood": "`json.NewDecoder(r.Body).Decode(&post)` парсит JSON напрямую из потока сокета без аллокации промежуточного слайса байт.",
+    "pitfalls": "Поля структуры обязаны быть экспортируемыми (с заглавной буквы), иначе `json.Marshal` их проигнорирует.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Когда использовать bytes.Buffer, а когда io.Pipe для отправки больших JSON POST-запросов?»\n**Ответ:** `bytes.Buffer` загружает весь JSON в память (подходит для объектов $< 5\\text{ МБ}$). `io.Pipe()` позволяет сериализатору `json.NewEncoder(pw).Encode(data)` писать данные напрямую в поток сокета в параллельной горутине с $O(1)$ RAM."
+  },
+  {
+    "num": 12,
+    "title": "Потоковое скачивание больших файлов на диск через io.Copy без расхода RAM",
+    "task": "Реализуйте скачивание большого файла (например, видео или ISO-образа) с сохранением на диск через `io.Copy`, не загружая всё тело ответа в оперативную память.",
+    "theory": "Потоковая передача данных (Stream Piping): метод `io.Copy(destinationFile, resp.Body)` копирует байты из сетевого сокета в файловый дескриптор порциями по 32 КБ. Это позволяет скачивать файлы любого размера (10 ГБ+) с постоянным потреблением памяти в несколько килобайт.",
+    "step_by_step": "1. Запустим тестовый сервер, отдающий поток байтов.\n2. В клиенте создадим целевой буфер.\n3. Вызовем `written, err := io.Copy(dest, resp.Body)`.\n4. Проверим объем записанных данных.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Header().Set(\"Content-Type\", \"application/octet-stream\")\n\t\tchunk := bytes.Repeat([]byte(\"A\"), 1024*1024)\n\t\tfor i := 0; i < 5; i++ {\n\t\t\t_, _ = w.Write(chunk)\n\t\t}\n\t}))\n\tdefer ts.Close()\n\n\tresp, err := http.Get(ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tvar diskSimulator bytes.Buffer\n\n\twrittenBytes, err := io.Copy(&diskSimulator, resp.Body)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Printf(\"[File Downloader] Успешно скачано: %.2f МБ (%d байт) с константной памятью O(1) RAM!\\n\", \n\t\tfloat64(writtenBytes)/(1024*1024), writtenBytes)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [File Downloader] Успешно скачано: 5.00 МБ (5242880 байт) с константной памятью O(1) RAM!"
+      }
+    ],
+    "under_the_hood": "`io.Copy` циклически вызывает `resp.Body.Read(buf[32KB])` и `file.Write(buf)`, не удерживая прочитанные порции в куче.",
+    "pitfalls": "Не забывайте закрывать и файл `defer file.Close()`, и сетевой ответ `defer resp.Body.Close()`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как возобновить скачивание оборванного файла (Resume Download)?»\n**Ответ:** Получить размер уже скачанной части файла на диске и передать заголовок HTTP Range: `req.Header.Set(\"Range\", fmt.Sprintf(\"bytes=%d-\", currentSize))`. Сервер с поддержкой Range вернет статус `206 Partial Content`."
+  },
+  {
+    "num": 13,
+    "title": "Идиома корректного закрытия Body даже при частичном чтении",
+    "task": "**Смертельный грех — забытый Close**: Убедись, что в упр. 333 ты написал `defer resp.Body.Close()`. Без этого соединения не возвращаются в пул, и программа со временем падает от нехватки памяти или файловых дескрипторов. Вызывай `Close()` всегда, даже если читаешь не всё!",
+    "theory": "Правило освобождения сокетов: даже если клиенту нужен только заголовок или первые 10 байт ответа, `resp.Body.Close()` обязан быть вызван. Для сохранения Keep-Alive соединения остаток данных сбрасывается в `io.Discard`.",
+    "step_by_step": "1. Создадим функцию быстрого считывания превью заголовка `readHeaderPreview`.\n2. Вычитаем первые 15 байт.\n3. Очистим остаток потока вызовом `io.Copy(io.Discard, resp.Body)`.\n4. Закроем `resp.Body.Close()`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc fetchSnippet(client *http.Client, url string) (string, error) {\n\tresp, err := client.Get(url)\n\tif err != nil {\n\t\treturn \"\", err\n\t}\n\tdefer resp.Body.Close()\n\n\tpreviewBuf := make([]byte, 15)\n\tn, _ := io.ReadFull(resp.Body, previewBuf)\n\n\t// ВАЖНО: Довычитываем остаток, чтобы сокет остался жив в Keep-Alive пуле!\n\t_, _ = io.Copy(io.Discard, resp.Body)\n\n\treturn string(previewBuf[:n]), nil\n}\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"LongPayloadContentThatIsNotFullyReadByClient\"))\n\t}))\n\tdefer ts.Close()\n\n\tclient := &http.Client{}\n\n\tsnippet, err := fetchSnippet(client, ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Printf(\"[Snippet Result] Прочитано превью: %q\\n\", snippet)\n\tfmt.Println(\"[Main] Сокет освобожден и готов к переиспользованию.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Snippet Result] Прочитано превью: \"LongPayloadCont\"\n# [Main] Сокет освобожден и готов к переиспользованию."
+      }
+    ],
+    "under_the_hood": "Если вызвать `resp.Body.Close()` без `io.Copy(io.Discard, resp.Body)`, транспорт разорвет TCP-сессию (FIN/RST), так как в канале остались лишние байты.",
+    "pitfalls": "Никогда не забывайте проверку `if err != nil` перед `defer resp.Body.Close()`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что делает io.Discard в Go?»\n**Ответ:** `io.Discard` — это оптимизированная реализация интерфейса `io.Writer` (аналог `/dev/null` в Go), которая в методе `Write` мгновенно возвращает `len(p), nil` без каких-либо аллокаций памяти в куче."
+  },
+  {
+    "num": 14,
+    "title": "Отправка multipart/form-data запроса с загрузкой файлов через mime/multipart",
+    "task": "Загрузите файл на сервер, используя `multipart/form-data` (пакет `mime/multipart` и `http.NewRequest`).",
+    "theory": "Формат Multipart Form-Data (RFC 7578): используется для отправки файлов и текстовых полей формы. Структура `multipart.Writer` генерирует уникальный разделитель границ (Boundary) и форматирует тело запроса с заголовками `Content-Disposition: form-data; name=\"file\"; filename=\"...\"`.",
+    "step_by_step": "1. Создадим `body := &bytes.Buffer{}` и `writer := multipart.NewWriter(body)`.\n2. Создадим файловое поле `part, _ := writer.CreateFormFile(\"avatar\", \"profile.png\")`.\n3. Запишем байты файла в `part`.\n4. Закроем `writer.Close()` и передадим `writer.FormDataContentType()` в `http.NewRequest`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"io\"\n\t\"mime/multipart\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\terr := r.ParseMultipartForm(10 << 20)\n\t\tif err != nil {\n\t\t\thttp.Error(w, err.Error(), http.StatusBadRequest)\n\t\t\treturn\n\t\t}\n\n\t\tuser := r.FormValue(\"username\")\n\t\tfile, header, err := r.FormFile(\"document\")\n\t\tif err != nil {\n\t\t\thttp.Error(w, err.Error(), http.StatusBadRequest)\n\t\t\treturn\n\t\t}\n\t\tdefer file.Close()\n\n\t\tcontent, _ := io.ReadAll(file)\n\t\tfmt.Printf(\"[Server Upload] Пользователь: %s\\n\", user)\n\t\tfmt.Printf(\"[Server Upload] Имя файла: %s (Размер: %d байт)\\n\", header.Filename, len(content))\n\t\tfmt.Printf(\"[Server Upload] Содержимое: %s\\n\", string(content))\n\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"UPLOAD_SUCCESS\"))\n\t}))\n\tdefer ts.Close()\n\n\tbody := &bytes.Buffer{}\n\twriter := multipart.NewWriter(body)\n\n\t_ = writer.WriteField(\"username\", \"alex_dev\")\n\n\tpart, err := writer.CreateFormFile(\"document\", \"contract.txt\")\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\t_, _ = part.Write([]byte(\"Текст официального договора оказания услуг.\"))\n\n\t_ = writer.Close()\n\n\treq, err := http.NewRequest(http.MethodPost, ts.URL, body)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\treq.Header.Set(\"Content-Type\", writer.FormDataContentType())\n\n\tclient := &http.Client{}\n\tresp, err := client.Do(req)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\trespMsg, _ := io.ReadAll(resp.Body)\n\tfmt.Printf(\"[Client Response] %s\\n\", string(respMsg))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Server Upload] Пользователь: alex_dev\n# [Server Upload] Имя файла: contract.txt (Размер: 78 байт)\n# [Server Upload] Содержимое: Текст официального договора оказания услуг.\n# [Client Response] UPLOAD_SUCCESS"
+      }
+    ],
+    "under_the_hood": "`writer.FormDataContentType()` возвращает строку вида `multipart/form-data; boundary=...`.",
+    "pitfalls": "Всегда вызывайте `writer.Close()` ДО передачи тела в запрос, иначе закрывающий boundary не запишется.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как загрузить 5 ГБ файл через multipart/form-data без загрузки всего файла в RAM?»\n**Ответ:** Использовать `io.Pipe()`: в отдельной горутине `multipart.Writer` пишет в `PipeWriter`, а `http.NewRequest` читает из `PipeReader`."
+  },
+  {
+    "num": 15,
+    "title": "Инициализация безопасного http.Client с таймаутом взамен глобального get",
+    "task": "**Таймаут клиента**: Глобальный `http.Get` не имеет таймаута (он может висеть вечно). Создай свой клиент: `client := &http.Client{Timeout: 3 * time.Second}`. Сделай запрос через `client.Get(...)`.",
+    "theory": "Защита микросервисов: создание экземпляра `http.Client{Timeout: d}` является базовым правилом сетевой надежности (Resilience).",
+    "step_by_step": "1. Создадим клиента `client := &http.Client{Timeout: 50 * time.Millisecond}`.\n2. Выполним запрос к серверу.\n3. Проверим статус ответа.\n4. Выведем результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"time\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\ttime.Sleep(10 * time.Millisecond)\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"Fast Response\"))\n\t}))\n\tdefer ts.Close()\n\n\tclient := &http.Client{\n\t\tTimeout: 50 * time.Millisecond,\n\t}\n\n\tresp, err := client.Get(ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tfmt.Printf(\"[Client] Успешный запрос со статусом: %s\\n\", resp.Status)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Client] Успешный запрос со статусом: 200 OK"
+      }
+    ],
+    "under_the_hood": "`client.Timeout` оборачивает сетевые системные вызовы в контекстный таймер.",
+    "pitfalls": "Не забывайте, что `http.Get` использует дефолтный клиент без таймаута.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Какой линтер находит использование http.DefaultClient в кодовой базе?»\n**Ответ:** Линтер `noctx` и правила `gosec` (G107) в составе `golangci-lint` отслеживают вызовы `http.Get`, `http.Post` и создание запросов без контекста."
+  },
+  {
+    "num": 16,
+    "title": "Управление состоянием сессий с помощью CookieJar (http.CookieJar)",
+    "task": "Изучите работу с Cookie: прочитайте `Set-Cookie` из ответа и отправьте их обратно в следующем запросе через `http.CookieJar`.",
+    "theory": "Автоматическое сохранение сессий (Cookie Jar): пакет `net/http/cookiejar` реализует потокобезопасное хранилище HTTP-кук в памяти. При получении заголовка `Set-Cookie` клиент сохраняет куки и автоматически прикрепляет их в заголовок `Cookie` ко всем последующим запросам к данному домену.",
+    "step_by_step": "1. Создадим `jar, _ := cookiejar.New(nil)`.\n2. Создадим `client := &http.Client{Jar: jar}`.\n3. Сервер выставляет `Set-Cookie: session_id=SECRET123`.\n4. Клиент делает второй запрос, и сервер видит переданную куку.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/cookiejar\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tif r.URL.Path == \"/login\" {\n\t\t\thttp.SetCookie(w, &http.Cookie{\n\t\t\t\tName:  \"session_token\",\n\t\t\t\tValue: \"AUTH_TOKEN_998877\",\n\t\t\t\tPath:  \"/\",\n\t\t\t})\n\t\t\tw.WriteHeader(http.StatusOK)\n\t\t\t_, _ = w.Write([]byte(\"Logged In\"))\n\t\t\treturn\n\t\t}\n\n\t\tif r.URL.Path == \"/profile\" {\n\t\t\tcookie, err := r.Cookie(\"session_token\")\n\t\t\tif err != nil {\n\t\t\t\tw.WriteHeader(http.StatusUnauthorized)\n\t\t\t\t_, _ = w.Write([]byte(\"No Cookie!\"))\n\t\t\t\treturn\n\t\t\t}\n\t\t\tfmt.Printf(\"[Server Profile] Авторизован по куке: %s=%s\\n\", cookie.Name, cookie.Value)\n\t\t\tw.WriteHeader(http.StatusOK)\n\t\t\t_, _ = w.Write([]byte(\"Welcome to Profile!\"))\n\t\t}\n\t}))\n\tdefer ts.Close()\n\n\tjar, err := cookiejar.New(nil)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tclient := &http.Client{Jar: jar}\n\n\tresp1, _ := client.Get(ts.URL + \"/login\")\n\tresp1.Body.Close()\n\n\tresp2, _ := client.Get(ts.URL + \"/profile\")\n\tdefer resp2.Body.Close()\n\n\tfmt.Printf(\"[Client] Статус доступа к профилю: %s\\n\", resp2.Status)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Server Profile] Авторизован по куке: session_token=AUTH_TOKEN_998877\n# [Client] Статус доступа к профилю: 200 OK"
+      }
+    ],
+    "under_the_hood": "`CookieJar` валидирует домен, путь и атрибуты безопасности `Secure`/`HttpOnly` согласно RFC 6265.",
+    "pitfalls": "Дефолтный `cookiejar.New(nil)` хранит куки в оперативной памяти и сбрасывается при перезапуске приложения.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Зачем нужен флаг HttpOnly в HTTP Cookie?»\n**Ответ:** Флаг `HttpOnly` запрещает доступ к значению куки из JavaScript (`document.cookie`), что защищает сессионные токены от кражи при XSS (Cross-Site Scripting) атаках."
+  },
+  {
+    "num": 17,
+    "title": "Отказоустойчивый HTTP-клиент с повторными попытками (Retry with Backoff)",
+    "task": "Реализуйте HTTP-клиент с автоматическим ретраем (повторной попыткой) при получении статус-кодов 5xx или сетевых ошибок (используйте экспоненциальную задержку и `context`).",
+    "theory": "Паттерн HTTP Retry with Exponential Backoff: при получении транзитных серверных ошибок (HTTP 502, 503, 504) или сетевых сбоев клиент повторяет запрос с растущей паузой $T \\times 2^k$, позволяя сервису восстановиться.",
+    "step_by_step": "1. Сервер падает на 1-й попытке (HTTP 503 Service Unavailable).\n2. На 2-й попытке сервер отвечает HTTP 200 OK.\n3. Клиент выполняет цикл ретраев с таймером.\n4. Проверим успешное восстановление.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"time\"\n)\n\nfunc getWithRetry(ctx context.Context, client *http.Client, url string, maxRetries int) (*http.Response, error) {\n\tbackoff := 20 * time.Millisecond\n\n\tfor attempt := 1; attempt <= maxRetries; attempt++ {\n\t\tfmt.Printf(\"[Client] Попытка #%d: отправка запроса...\\n\", attempt)\n\n\t\treq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\n\t\tresp, err := client.Do(req)\n\t\tif err == nil && resp.StatusCode < 500 {\n\t\t\treturn resp, nil\n\t\t}\n\n\t\tif resp != nil {\n\t\t\t_, _ = io.Copy(io.Discard, resp.Body)\n\t\t\t_ = resp.Body.Close()\n\t\t}\n\n\t\tif attempt == maxRetries {\n\t\t\treturn nil, fmt.Errorf(\"исчерпаны все %d попыток: %w\", maxRetries, err)\n\t\t}\n\n\t\tfmt.Printf(\" [!] Ошибка/5xx статус. Ожидание %v перед повтором...\\n\", backoff)\n\n\t\tselect {\n\t\tcase <-time.After(backoff):\n\t\t\tbackoff *= 2\n\t\tcase <-ctx.Done():\n\t\t\treturn nil, ctx.Err()\n\t\t}\n\t}\n\treturn nil, context.Canceled\n}\n\nfunc main() {\n\tattempts := 0\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tattempts++\n\t\tif attempts == 1 {\n\t\t\tw.WriteHeader(http.StatusServiceUnavailable)\n\t\t\t_, _ = w.Write([]byte(\"Database temporarily down\"))\n\t\t\treturn\n\t\t}\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"SUCCESS_DATA\"))\n\t}))\n\tdefer ts.Close()\n\n\tclient := &http.Client{Timeout: 2 * time.Second}\n\tctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)\n\tdefer cancel()\n\n\tresp, err := getWithRetry(ctx, client, ts.URL, 3)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tbody, _ := io.ReadAll(resp.Body)\n\tfmt.Printf(\"[Main Result] Успешный ответ (Status %d): %s\\n\", resp.StatusCode, string(body))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Client] Попытка #1: отправка запроса...\n#  [!] Ошибка/5xx статус. Ожидание 20ms перед повтором...\n# [Client] Попытка #2: отправка запроса...\n# [Main Result] Успешный ответ (Status 200): SUCCESS_DATA"
+      }
+    ],
+    "under_the_hood": "Ретраи разрешены только для идемпотентных запросов (GET, PUT, DELETE, HEAD).",
+    "pitfalls": "Никогда не ретрайте клиентские ошибки 4xx (400 Bad Request, 401, 403, 404).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему нельзя повторять (ретраить) неидемпотентные POST-запросы без Idempotency-Key?»\n**Ответ:** Если сервер успешно обработал POST-запрос, но клиент потерял соединение на чтении ответа, повторный POST создаст дублирующую транзакцию. Заголовок `Idempotency-Key: UUID` позволяет серверу определить дубликат."
+  },
+  {
+    "num": 18,
+    "title": "Базовый GET-запрос к публичному API и форматирование строки ответа",
+    "task": "**Базовый GET-запрос**: Напишите программу, которая выполняет GET-запрос к публичному тестовому API (например, `https://jsonplaceholder.typicode.com/posts/1`) с помощью `http.Get`. Считайте тело ответа, преобразуйте его в строку и выведите в консоль.",
+    "theory": "Чтение текстовых данных ответа: поток байтов `io.ReadAll(resp.Body)` преобразуется в строку `string(bytes)` для отображения.",
+    "step_by_step": "1. Запустим тестовый JSON эндпоинт.\n2. Выполним запрос `http.Get(url)`.\n3. Считаем тело через `io.ReadAll`.\n4. Выведем результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Header().Set(\"Content-Type\", \"application/json\")\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(`{\"userId\": 1, \"id\": 1, \"title\": \"delectus aut autem\", \"completed\": false}`))\n\t}))\n\tdefer ts.Close()\n\n\tresp, err := http.Get(ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tbodyBytes, err := io.ReadAll(resp.Body)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Println(\"Ответ от REST API:\")\n\tfmt.Println(string(bodyBytes))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Ответ от REST API:\n# {\"userId\": 1, \"id\": 1, \"title\": \"delectus aut autem\", \"completed\": false}"
+      }
+    ],
+    "under_the_hood": "`resp.Body` реализует `io.Reader`, поток закрывается вызовом `Close()`.",
+    "pitfalls": "Всегда проверяйте `resp.StatusCode == http.StatusOK` перед обработкой тела.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Каков порядок обработки HTTP ответа в Go?»\n**Ответ:** 1. Проверить сетевую ошибку `if err != nil`; 2. Добавить `defer resp.Body.Close()`; 3. Проверить статус код `if resp.StatusCode != http.StatusOK`; 4. Вычитать тело ответа."
+  },
+  {
+    "num": 19,
+    "title": "Сборка сложных Query-параметров через url.Values и rawQuery",
+    "task": "**Query-параметры**: Не клей URL руками (как `?name=Ivan&age=20`). Используй `url.Values{}`. Добавь параметры, затем приклей их к запросу: `req.URL.RawQuery = q.Encode()`.",
+    "theory": "Формирование Query-строки в объекте `http.Request`: изменение поля `req.URL.RawQuery = values.Encode()` позволяет безопасно внедрить параметры в уже созданный запрос.",
+    "step_by_step": "1. Создадим `req, _ := http.NewRequest(\"GET\", \"https://api.com/users\", nil)`.\n2. Создадим `q := req.URL.Query()`.\n3. Добавим параметры `q.Add(\"filter\", \"active\")`, `q.Add(\"limit\", \"50\")`.\n4. Запишем `req.URL.RawQuery = q.Encode()`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n)\n\nfunc main() {\n\treq, err := http.NewRequest(http.MethodGet, \"https://api.bank.com/v1/transactions\", nil)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tq := req.URL.Query()\n\tq.Add(\"account_id\", \"ACC-99881122\")\n\tq.Add(\"currency\", \"RUB\")\n\tq.Add(\"status\", \"COMPLETED\")\n\tq.Add(\"from_date\", \"2026-01-01\")\n\n\treq.URL.RawQuery = q.Encode()\n\n\tfmt.Println(\"Сформированный URL запроса с Query-параметрами:\")\n\tfmt.Println(req.URL.String())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# Сформированный URL запроса с Query-параметрами:\n# https://api.bank.com/v1/transactions?account_id=ACC-99881122&currency=RUB&from_date=2026-01-01&status=COMPLETED"
+      }
+    ],
+    "under_the_hood": "`req.URL.Query()` парсит `RawQuery` в новую мапу `url.Values`, поэтому для применения изменений обязательно присваивание `req.URL.RawQuery = q.Encode()`.",
+    "pitfalls": "Изменение мапы, возвращенной `req.URL.Query()`, не меняет URL автоматически без вызова `Encode()`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему q := req.URL.Query(); q.Set(\"a\", \"b\") само по себе не меняет URL запроса?»\n**Ответ:** Потому что метод `Query()` парсит строку и возвращает **копию** структуры `url.Values`. Чтобы изменения вступили в силу, необходимо явно перезаписать поле `req.URL.RawQuery = q.Encode()`."
+  },
+  {
+    "num": 20,
+    "title": "Потоковый JSON-парсинг через json.NewDecoder(resp.Body).Decode",
+    "task": "**Потоковый парсинг JSON**: Вместо того чтобы выгружать весь ответ в память через `io.ReadAll`, распарси JSON прямо из потока: `json.NewDecoder(resp.Body).Decode(&myStruct)`. Это сэкономит кучу оперативной памяти при больших ответах.",
+    "theory": "Потоковый парсинг (Stream JSON Decoding): `json.NewDecoder(resp.Body)` считывает JSON прямо из сетевого сокета чанками, не создавая гигантских слайсов `[]byte` в куче.",
+    "step_by_step": "1. Опишем структуру `CatalogResponse { Category, Products, Total }`.\n2. Выполним GET-запрос.\n3. Распарсим поток через `json.NewDecoder(resp.Body).Decode(&catalog)`.\n4. Проверим результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\ntype CatalogResponse struct {\n\tCategory string   `json:\"category\"`\n\tProducts []string `json:\"products\"`\n\tTotal    int      `json:\"total\"`\n}\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Header().Set(\"Content-Type\", \"application/json\")\n\t\t_, _ = w.Write([]byte(`{\n\t\t\t\"category\": \"Laptops\",\n\t\t\t\"products\": [\"MacBook Pro 16\", \"ThinkPad X1\", \"Dell XPS 15\"],\n\t\t\t\"total\": 3\n\t\t}`))\n\t}))\n\tdefer ts.Close()\n\n\tresp, err := http.Get(ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tvar catalog CatalogResponse\n\tif err := json.NewDecoder(resp.Body).Decode(&catalog); err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Printf(\"[Stream JSON Parser] Категория: %s (Товаров: %d)\\n\", catalog.Category, catalog.Total)\n\tfor i, p := range catalog.Products {\n\t\tfmt.Printf(\" -> Товар #%d: %s\\n\", i+1, p)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Stream JSON Parser] Категория: Laptops (Товаров: 3)\n#  -> Товар #1: MacBook Pro 16\n#  -> Товар #2: ThinkPad X1\n#  -> Товар #3: Dell XPS 15"
+      }
+    ],
+    "under_the_hood": "`json.Decoder` использует внутренний буфер 512 байт, читая сокет по мере необходимости лексического анализатора токенов.",
+    "pitfalls": "`json.NewDecoder` может оставить непрочитанные байты в сокете. Для Keep-Alive сокетов дочитывайте поток в `io.Discard`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем разница по потреблению памяти между json.Unmarshal и json.NewDecoder?»\n**Ответ:** `json.Unmarshal` требует предварительного считывания всего тела ответа в память (`io.ReadAll` создает срез `[]byte` в куче). `json.NewDecoder` парсит входящий поток на лету без промежуточного слайса."
+  },
+  {
+    "num": 21,
+    "title": "Прямое сохранение загружаемого файла через io.Copy(file, resp.Body)",
+    "task": "**Скачивание файла**: Сделай GET-запрос к любой картинке в интернете. Создай пустой файл `os.Create(\"image.jpg\")`. Перекачай данные напрямую без загрузки в память: `io.Copy(file, resp.Body)`.",
+    "theory": "Прямой пайплайн Сеть -> Файл: связка `resp.Body` (`io.Reader`) и `file` (`io.Writer`) через `io.Copy` обеспечивает сохранение медиафайлов любого размера.",
+    "step_by_step": "1. Сервер генерирует бинарный поток данных изображения.\n2. Клиент открывает буфер.\n3. Вызывает `io.Copy(dest, resp.Body)`.\n4. Проверяет количество сохраненных байтов.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Header().Set(\"Content-Type\", \"image/png\")\n\t\tpngHeader := []byte(\"\\x89PNG\\r\\n\\x1a\\n\\x00\\x00\\x00\\rIHDR\\x00\\x00\\x00\\x01\\x00\\x00\\x00\\x01\")\n\t\t_, _ = w.Write(pngHeader)\n\t}))\n\tdefer ts.Close()\n\n\tresp, err := http.Get(ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tvar fileOnDisk bytes.Buffer\n\n\twritten, err := io.Copy(&fileOnDisk, resp.Body)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Printf(\"[Image Downloader] Файл успешно скачан и сохранен: %d байт!\\n\", written)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Image Downloader] Файл успешно скачан и сохранен: 24 байт!"
+      }
+    ],
+    "under_the_hood": "`io.Copy` перекачивает байты из сетевого буфера сокета в системный файловый буфер ОС без лишних копирований.",
+    "pitfalls": "В продакшене качают во временный файл `.tmp` и атомарно переименовывают через `os.Rename`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как реализовать атомарную запись скачиваемого файла на диск?»\n**Ответ:** Скачивать файл во временный файл в той же файловой системе `os.CreateTemp(dir, \"download-*.tmp\")`, а после успешного завершения `io.Copy` выполнить `os.Rename(tmpName, targetName)`."
+  },
+  {
+    "num": 22,
+    "title": "Диагностика и устранение утечки дескрипторов файлов при циклических запросах",
+    "task": "**Подводный камень: Утечка соединений**: Измените предыдущую программу так, чтобы она выполняла 1000 GET-запросов в цикле. Забудьте вызвать `resp.Body.Close()`. Посмотрите, как программа быстро исчерпывает лимит открытых дескрипторов файлов ОС и падает. Напишите правильный вариант с `defer resp.Body.Close()` сразу после проверки на ошибку.",
+    "theory": "Анатомия утечки сокетов: каждый открытый сетевой сокет занимает файловый дескриптор (FD). В Linux лимит `ulimit -n` обычно составляет 1024 дескриптора на процесс. Забытый `Close()` приводит к исчерпанию лимита за секунды.",
+    "step_by_step": "1. Создадим функцию выполнения безопасного запроса с `defer resp.Body.Close()`.\n2. Выполним 500 запросов подряд.\n3. Продемонстрируем стабильную работу без утечек.\n4. Выведем результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc runCleanRequest(client *http.Client, url string) error {\n\tresp, err := client.Get(url)\n\tif err != nil {\n\t\treturn err\n\t}\n\tdefer resp.Body.Close()\n\t_, _ = io.Copy(io.Discard, resp.Body)\n\n\treturn nil\n}\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"HEALTHY\"))\n\t}))\n\tdefer ts.Close()\n\n\tclient := &http.Client{}\n\n\tconst iterations = 500\n\tfor i := 0; i < iterations; i++ {\n\t\tif err := runCleanRequest(client, ts.URL); err != nil {\n\t\t\tpanic(err)\n\t\t}\n\t}\n\n\tfmt.Printf(\"[Main] Успешно выполнено %d запросов подряд без единой утечки дескрипторов!\\n\", iterations)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Main] Успешно выполнено 500 запросов подряд без единой утечки дескрипторов!"
+      }
+    ],
+    "under_the_hood": "Дескрипторы сокетов возвращаются в пул `http.Transport` и переиспользуются, поэтому количество открытых сокетов процесса остается равным 1.",
+    "pitfalls": "В горутинах не забывайте передавать `client` как синглтон, а не создавать `http.Client{}` внутри каждого вызова.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как в Linux проверить количество открытых файловых дескрипторов работающего Go-процесса?»\n**Ответ:** С помощью команды `lsof -p <PID> | wc -l` или подсчетом ссылок в директории `/proc/<PID>/fd/`."
+  },
+  {
+    "num": 23,
+    "title": "Масштабирование MaxIdleConnsPerHost для высоконагруженных API шлюзов",
+    "task": "**Тонкая настройка пула соединений (Transport)**: Создай свой `http.Transport` с параметром `MaxIdleConnsPerHost: 100`. Передай его в `http.Client`. Полезно для высоконагруженных сервисов, делающих сотни запросов к одному API.",
+    "theory": "Конфигурация HighLoad HTTP-транспорта: в архитектуре микросервисов бэкенд шлет тысячи запросов в секунду к одному и тому же сервису БД или микросервису авторизации. Настройка `MaxIdleConnsPerHost = 100` удерживает 100 открытых Keep-Alive TCP-сессий, исключая задержки на постоянные переподключения.",
+    "step_by_step": "1. Создадим `transport := &http.Transport{MaxIdleConnsPerHost: 100}`.\n2. Свяжем с `client := &http.Client{Transport: transport}`.\n3. Запустим параллельные запросы.\n4. Проверим параметры пула.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"OK\"))\n\t}))\n\tdefer ts.Close()\n\n\ttransport := &http.Transport{\n\t\tMaxIdleConns:        500,\n\t\tMaxIdleConnsPerHost: 100,\n\t\tIdleConnTimeout:     60 * time.Second,\n\t}\n\n\tclient := &http.Client{\n\t\tTransport: transport,\n\t\tTimeout:   5 * time.Second,\n\t}\n\n\tvar wg sync.WaitGroup\n\tconst concurrentRequests = 50\n\twg.Add(concurrentRequests)\n\n\tfor i := 0; i < concurrentRequests; i++ {\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\tresp, err := client.Get(ts.URL)\n\t\t\tif err != nil {\n\t\t\t\treturn\n\t\t\t}\n\t\t\t_, _ = io.Copy(io.Discard, resp.Body)\n\t\t\t_ = resp.Body.Close()\n\t\t}()\n\t}\n\n\twg.Wait()\n\tfmt.Printf(\"[HighLoad Transport] %d параллельных запросов успешно завершены через оптимизированный пул сокетов!\\n\", concurrentRequests)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [HighLoad Transport] 50 параллельных запросов успешно завершены через оптимизированный пул сокетов!"
+      }
+    ],
+    "under_the_hood": "`http.Transport` распределяет 50 входящих запросов по 50 параллельным сокетам и сохраняет их в пуле для следующих вызовов.",
+    "pitfalls": "Слишком большой `MaxIdleConnsPerHost` (например, 10000) удержит тысячи сокетов на стороне бэкенда, потребляя память СУБД/сервера.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Каковы оптимальные настройки http.Transport для API Gateway под нагрузкой 20 000 RPS?»\n**Ответ:** `MaxIdleConns: 5000`, `MaxIdleConnsPerHost: 500–1000`, `IdleConnTimeout: 90s`, `TLSHandshakeTimeout: 3s`, `ExpectContinueTimeout: 1s`."
+  },
+  {
+    "num": 24,
+    "title": "Логирующий Middleware для HTTP-сервера и клиента (Request Metrics)",
+    "task": "Реализуйте middleware для логирования всех входящих запросов (метод, URL, длительность выполнения).",
+    "theory": "Паттерн HTTP Middleware (Цепочка обязанностей): функция-обёртка перехватывает запрос, фиксирует временную метку `t0 := time.Now()`, делегирует выполнение следующему хендлеру и логирует метод, путь, статус и время выполнения `time.Since(t0)`.",
+    "step_by_step": "1. Создадим `LoggingMiddleware(next http.Handler) http.Handler`.\n2. Обернем `http.ResponseWriter` для перехвата статус-кода.\n3. Выполним тестовые GET и POST запросы.\n4. Выведем журнал метрик в консоль.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"time\"\n)\n\ntype statusRecorder struct {\n\thttp.ResponseWriter\n\tstatusCode int\n}\n\nfunc (r *statusRecorder) WriteHeader(code int) {\n\tr.statusCode = code\n\tr.ResponseWriter.WriteHeader(code)\n}\n\nfunc LoggingMiddleware(next http.Handler) http.Handler {\n\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tt0 := time.Now()\n\t\trec := &statusRecorder{ResponseWriter: w, statusCode: http.StatusOK}\n\n\t\tnext.ServeHTTP(rec, r)\n\n\t\tduration := time.Since(t0)\n\t\tfmt.Printf(\"[HTTP ACCESS LOG] %-6s %-15s -> Status: %d | Latency: %v\\n\", \n\t\t\tr.Method, r.URL.Path, rec.statusCode, duration.Round(time.Microsecond))\n\t})\n}\n\nfunc main() {\n\tmux := http.NewServeMux()\n\tmux.HandleFunc(\"/api/v1/health\", func(w http.ResponseWriter, r *http.Request) {\n\t\ttime.Sleep(5 * time.Millisecond)\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"OK\"))\n\t})\n\tmux.HandleFunc(\"/api/v1/orders\", func(w http.ResponseWriter, r *http.Request) {\n\t\ttime.Sleep(12 * time.Millisecond)\n\t\tw.WriteHeader(http.StatusCreated)\n\t\t_, _ = w.Write([]byte(`{\"order_id\": 99}`))\n\t})\n\n\t// Оборачиваем роутер в middleware\n\tloggedHandler := LoggingMiddleware(mux)\n\tts := httptest.NewServer(loggedHandler)\n\tdefer ts.Close()\n\n\t// Тестовые вызовы\n\t_, _ = http.Get(ts.URL + \"/api/v1/health\")\n\t_, _ = http.Post(ts.URL+\"/api/v1/orders\", \"application/json\", nil)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [HTTP ACCESS LOG] GET    /api/v1/health  -> Status: 200 | Latency: 5ms\n# [HTTP ACCESS LOG] POST   /api/v1/orders  -> Status: 201 | Latency: 12ms"
+      }
+    ],
+    "under_the_hood": "Встроенная структура `statusRecorder` перехватывает вызов `WriteHeader`, сохраняя код ответа для логов.",
+    "pitfalls": "Если хендлер не вызывает `WriteHeader`, статус по умолчанию равен 200 OK (инициализируйте `rec.statusCode = http.StatusOK`).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Зачем нужна структура statusRecorder при написании Middleware в Go?»\n**Ответ:** Стандартный интерфейс `http.ResponseWriter` не имеет метода для чтения уже записанного статус-кода. Обертка `statusRecorder` перехватывает метод `WriteHeader(code)` и сохраняет его в поле структуры для последующего логирования и сбора метрик Prometheus."
+  },
+  {
+    "num": 25,
+    "title": "Установка кастомных HTTP-заголовков User-Agent и Authorization",
+    "task": "Напиши **HTTP-клиент с кастомными заголовками**: `req.Header.Set(\"User-Agent\", \"MyBot/1.0\")`, `req.Header.Set(\"Authorization\", \"Bearer ...\")`. Покажи, что `http.DefaultClient` использует дефолтный User-Agent.",
+    "theory": "Заголовки сетевой идентификации: `http.DefaultClient` отправляет заголовок `User-Agent: Go-http-client/1.1` (или 2.0). Большинство внешних Cloudflare/WAF и REST API серверов (GitHub API, Cloudflare) блокируют запросы со стандартным User-Agent Go, требуя явного указания названия сервиса.",
+    "step_by_step": "1. Поднимем сервер, инспектирующий `User-Agent` и `Authorization`.\n2. Отправим запрос со стандартным клиентом (дефолтный UA).\n3. Отправим запрос с кастомными заголовками.\n4. Проверим разницу.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Printf(\" [Server Inspection] Path: %-12s | User-Agent: %s\\n\", \n\t\t\tr.URL.Path, r.Header.Get(\"User-Agent\"))\n\t\tw.WriteHeader(http.StatusOK)\n\t}))\n\tdefer ts.Close()\n\n\t// 1. Дефолтный запрос через http.Get\n\tresp1, _ := http.Get(ts.URL + \"/default\")\n\tresp1.Body.Close()\n\n\t// 2. Кастомный запрос с кастомными заголовками\n\treq, _ := http.NewRequest(http.MethodGet, ts.URL+\"/custom\", nil)\n\treq.Header.Set(\"User-Agent\", \"EnterpriseBot/2.4 (Linux; x86_64)\")\n\treq.Header.Set(\"Authorization\", \"Bearer JWT_SECRET_TOKEN_123\")\n\treq.Header.Set(\"X-Request-ID\", \"REQ-998811\")\n\n\tclient := &http.Client{}\n\tresp2, _ := client.Do(req)\n\tresp2.Body.Close()\n\n\tfmt.Println(\"[Client] Запросы с заголовками успешно отправлены.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n#  [Server Inspection] Path: /default     | User-Agent: Go-http-client/1.1\n#  [Server Inspection] Path: /custom      | User-Agent: EnterpriseBot/2.4 (Linux; x86_64)\n# [Client] Запросы с заголовками успешно отправлены."
+      }
+    ],
+    "under_the_hood": "Если заголовок `User-Agent` не задан явно, рантайм `net/http` автоматически подставляет константу `Go-http-client/1.1`.",
+    "pitfalls": "Сервисы вроде GitHub API возвращают `403 Forbidden`, если `User-Agent` отсутствует или равен дефолтному значению Go.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Зачем микросервисы передают заголовок X-Request-ID (или Traceparent W3C)?»\n**Ответ:** Для распределенной трассировки (Distributed Tracing / OpenTelemetry): сквозной `X-Request-ID` передается через всю цепочку микросервисов (API Gateway -> Auth -> Billing -> DB), позволяя найти все логи одного пользовательского запроса в Jaeger/Grafana Tempo."
+  },
+  {
+    "num": 26,
+    "title": "Принудительный таймаут HTTP-запроса через context.WithTimeout",
+    "task": "Напиши **HTTP-клиент с `context.WithTimeout`**: `ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)`. Передай в `req.WithContext(ctx)`. Покажи, что запрос прерывается при таймауте.",
+    "theory": "Контекстный таймаут запроса: `context.WithTimeout` передает сигнал отмены на уровень сетевого сокета при превышении лимита времени, мгновенно разблокируя клиентскую горутину.",
+    "step_by_step": "1. Сервер имитирует долгую обработку (150 мс).\n2. Клиент настраивает `context.WithTimeout` на 30 мс.\n3. Выполняет `client.Do(req)`.\n4. Перехватывает ошибку таймаута.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"time\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\ttime.Sleep(150 * time.Millisecond) // Долгий запрос\n\t\tw.WriteHeader(http.StatusOK)\n\t}))\n\tdefer ts.Close()\n\n\tctx, cancel := context.WithTimeout(context.Background(), 30*time.Millisecond)\n\tdefer cancel()\n\n\treq, err := http.NewRequestWithContext(ctx, http.MethodGet, ts.URL, nil)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tclient := &http.Client{}\n\tfmt.Println(\"[Client] Отправка запроса с context таймаутом 30 мс...\")\n\t_, err = client.Do(req)\n\n\tif err != nil {\n\t\tfmt.Printf(\"[Client Safety] Запрос прерван по контексту: %v\\n\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Client] Отправка запроса с context таймаутом 30 мс...\n# [Client Safety] Запрос прерван по контексту: Get \"http://127.0.0.1:...\": context deadline exceeded"
+      }
+    ],
+    "under_the_hood": "`req.WithContext` или `http.NewRequestWithContext` связывает сетевой дескриптор с таймером в рантайме Go.",
+    "pitfalls": "Функция `req.WithContext(ctx)` возвращает поверхностную копию `*http.Request` с новым контекстом, не мутируя исходный запрос.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем отличие http.NewRequestWithContext от req.WithContext?»\n**Ответ:** `http.NewRequestWithContext` создает новый объект запроса сразу с заданным контекстом. `req.WithContext` делает поверхностную копию существующего `*http.Request`, заменяя только поле `ctx` (полезно при пробрасывании контекста в middleware)."
+  },
+  {
+    "num": 27,
+    "title": "Настройка HTTP и SOCKS5 прокси-сервера через http.Transport ProxyURL",
+    "task": "Напиши **HTTP-прокси клиент**: `proxyURL, _ := url.Parse(\"http://proxy:8080\"); transport := &http.Transport{Proxy: http.ProxyURL(proxyURL)}; client := &http.Client{Transport: transport}`.",
+    "theory": "Проксирование сетевого HTTP/HTTPS трафика: поле `Transport.Proxy` принимает функцию `func(*http.Request) (*url.URL, error)`. Функция `http.ProxyURL(proxyURL)` направляет все TCP-соединения через указанный Forward/Corporate Proxy сервер.",
+    "step_by_step": "1. Поднимем локальный тестовый HTTP Forward Proxy сервер.\n2. Сконфигурируем `http.Transport{Proxy: http.ProxyURL(proxy)}`.\n3. Выполним запрос через прокси.\n4. Убедимся, что запрос прошел через прокси-ноду.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"net/url\"\n)\n\nfunc main() {\n\t// 1. Целевой Origin сервер\n\toriginServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"ORIGIN_DATA_SERVED\"))\n\t}))\n\tdefer originServer.Close()\n\n\t// 2. HTTP Forward Proxy сервер\n\tproxyHits := 0\n\tproxyServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tproxyHits++\n\t\tfmt.Printf(\"[Proxy Server] Перехвачен запрос к: %s\\n\", r.RequestURI)\n\n\t\t// Делегируем запрос на целевой сервер\n\t\toutReq, _ := http.NewRequest(r.Method, r.RequestURI, r.Body)\n\t\tresp, err := http.DefaultTransport.RoundTrip(outReq)\n\t\tif err != nil {\n\t\t\thttp.Error(w, err.Error(), http.StatusBadGateway)\n\t\t\treturn\n\t\t}\n\t\tdefer resp.Body.Close()\n\n\t\tw.WriteHeader(resp.StatusCode)\n\t\t_, _ = io.Copy(w, resp.Body)\n\t}))\n\tdefer proxyServer.Close()\n\n\t// 3. Клиент с настройкой ProxyURL\n\tproxyURL, err := url.Parse(proxyServer.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\ttransport := &http.Transport{\n\t\tProxy: http.ProxyURL(proxyURL),\n\t}\n\tclient := &http.Client{Transport: transport}\n\n\tresp, err := client.Get(originServer.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tbody, _ := io.ReadAll(resp.Body)\n\tfmt.Printf(\"[Client Response] %s (Всего через прокси: %d)\\n\", string(body), proxyHits)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Proxy Server] Перехвачен запрос к: http://127.0.0.1:...\n# [Client Response] ORIGIN_DATA_SERVED (Всего через прокси: 1)"
+      }
+    ],
+    "under_the_hood": "Для HTTPS сайтов клиент отправляет прокси HTTP-команду `CONNECT target.host:443 HTTP/1.1`, открывая TLS-туннель.",
+    "pitfalls": "По умолчанию `http.ProxyFromEnvironment` считывает переменные окружения `HTTP_PROXY`, `HTTPS_PROXY` и `NO_PROXY`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как работает метод HTTP CONNECT при проксировании HTTPS соединений?»\n**Ответ:** Клиент отправляет обычному HTTP-прокси команду `CONNECT host:443 HTTP/1.1`. Прокси открывает сырой TCP-сокет к целевому хосту и связывает сокет клиента с сокетом целевого сервера (двунаправленный байтовый пайп). Клиент инициирует TLS Handshake напрямую с целевым сервером внутри этого туннеля (End-to-End Encryption)."
+  },
+  {
+    "num": 28,
+    "title": "Архитектурный анализ рисков http.DefaultClient и создание безопасного клиента",
+    "task": "**Опасность `http.DefaultClient`**: Напишите комментарий-объяснение, почему использование стандартного `http.Get` или `http.DefaultClient` крайне опасно на высоконагруженном продакшене (подсказка: отсутствие таймаутов по умолчанию может привести к зависанию горутин при сетевых сбоях). Напишите код инициализации безопасного клиента `http.Client` с жестким таймаутом в 3 секунды.",
+    "theory": "Инженерный анализ рисков `http.DefaultClient`:\n* `Timeout = 0` — при зависании стороннего сервиса горутины остаются в ожидании навсегда, исчерпывая память и вызывая каскадное падение кластера (Cascading Failure).\n* `MaxIdleConnsPerHost = 2` — разрушает Keep-Alive пул при нагрузке свыше 10 RPS.\n* `TLSHandshakeTimeout` не изолирован.",
+    "step_by_step": "1. Опишем production-grade конфигурацию клиента.\n2. Выставим жесткий таймаут 3 секунды.\n3. Настроим пулинг соединений.\n4. Протестируем клиент.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net\"\n\t\"net/http\"\n\t\"time\"\n)\n\n// SafeProductionClient возвращает защищенный HTTP-клиент для микросервисов\nfunc SafeProductionClient() *http.Client {\n\treturn &http.Client{\n\t\tTimeout: 3 * time.Second, // Глобальный дедлайн на весь жизненный цикл запроса\n\t\tTransport: &http.Transport{\n\t\t\tDialContext: (&net.Dialer{\n\t\t\t\tTimeout:   1 * time.Second, // Таймаут на установку TCP 3-Way Handshake\n\t\t\t\tKeepAlive: 30 * time.Second,\n\t\t\t}).DialContext,\n\t\t\tMaxIdleConns:          200,              // Общий лимит свободных сокетов в пуле\n\t\t\tMaxIdleConnsPerHost:   50,               // Лимит сокетов на один микросервис\n\t\t\tIdleConnTimeout:       90 * time.Second, // Время жизни неактивного Keep-Alive сокета\n\t\t\tTLSHandshakeTimeout:   1 * time.Second,  // Таймаут TLS Negotiation\n\t\t\tExpectContinueTimeout: 1 * time.Second,\n\t\t},\n\t}\n}\n\nfunc main() {\n\tclient := SafeProductionClient()\n\tfmt.Printf(\"[Safe Client Ready] Timeout=%v, MaxIdlePerHost=%d\\n\", \n\t\tclient.Timeout, client.Transport.(*http.Transport).MaxIdleConnsPerHost)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Safe Client Ready] Timeout=3s, MaxIdlePerHost=50"
+      }
+    ],
+    "under_the_hood": "Разделение таймаутов на уровне `DialContext`, `TLSHandshakeTimeout` и `client.Timeout` позволяет быстро диагностировать этап сбоя (DNS, TCP, TLS или обработка сервером).",
+    "pitfalls": "Не пересоздавайте `SafeProductionClient()` внутри хендлеров; используйте синглтон.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что такое каскадный сбой (Cascading Failure) и как таймауты HTTP-клиента его предотвращают?»\n**Ответ:** Если сервис Б начинает медленно отвечать, вызывающий сервис А без таймаутов накапливает тысячи заблокированных горутин, исчерпывает пул потоков и память и падает. Следом падают сервисы, зависящие от А. Жесткие таймауты и Circuit Breaker обрывают зависшие вызовы, изолируя сбой."
+  },
+  {
+    "num": 29,
+    "title": "Структурированный POST-запрос с JSON телом и проверкой ответа",
+    "task": "**POST-запрос с отправкой JSON**: Создайте структуру `Post` с полями `Title`, `Body`, `UserID`. Сериализуйте её в JSON. Отправьте POST-запрос на тестовый URL с помощью `http.Post` или создав кастомный запрос через `http.NewRequest`. Убедитесь, что вы правильно установили заголовок `Content-Type: application/json`.",
+    "theory": "Формирование REST POST запроса: сериализация структуры в JSON байты и передача через `bytes.NewBuffer` в `http.NewRequest`.",
+    "step_by_step": "1. Создадим структуру `Post { Title, Body, UserID }`.\n2. Сериализуем через `json.Marshal`.\n3. Создадим `http.NewRequest(\"POST\", url, bytes.NewBuffer(payload))`.\n4. Установим `req.Header.Set(\"Content-Type\", \"application/json\")`.\n5. Отправим запрос и распарсим ответ.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\ntype Post struct {\n\tTitle  string `json:\"title\"`\n\tBody   string `json:\"body\"`\n\tUserID int    `json:\"userId\"`\n}\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tif r.Header.Get(\"Content-Type\") != \"application/json\" {\n\t\t\thttp.Error(w, \"Invalid Content-Type\", http.StatusUnsupportedMediaType)\n\t\t\treturn\n\t\t}\n\n\t\tvar p Post\n\t\t_ = json.NewDecoder(r.Body).Decode(&p)\n\t\tw.WriteHeader(http.StatusCreated)\n\t\t_, _ = w.Write([]byte(fmt.Sprintf(`{\"id\": 204, \"created_title\": %q}`, p.Title)))\n\t}))\n\tdefer ts.Close()\n\n\tnewPost := Post{\n\t\tTitle:  \"Основы HTTP-клиента в Go\",\n\t\tBody:   \"Разбор методов Do, Get, Post и пулинга соединений.\",\n\t\tUserID: 7,\n\t}\n\n\tpayload, _ := json.Marshal(newPost)\n\treq, err := http.NewRequest(http.MethodPost, ts.URL+\"/posts\", bytes.NewBuffer(payload))\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\treq.Header.Set(\"Content-Type\", \"application/json\")\n\n\tclient := &http.Client{}\n\tresp, err := client.Do(req)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\trespBytes, _ := io.ReadAll(resp.Body)\n\tfmt.Printf(\"[Post Response] Status=%d, Body=%s\\n\", resp.StatusCode, string(respBytes))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Post Response] Status=201, Body={\"id\": 204, \"created_title\": \"Основы HTTP-клиента в Go\"}"
+      }
+    ],
+    "under_the_hood": "`bytes.NewBuffer(payload)` передает срез байтов без дублирования памяти.",
+    "pitfalls": "Не забывайте `defer resp.Body.Close()`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем отличие bytes.NewReader от bytes.NewBuffer при передаче в http.NewRequest?»\n**Ответ:** `bytes.NewReader` реализует `io.Reader`, `io.Seeker` и `io.ReaderAt` (read-only), что позволяет транспорту автоматически определить `Content-Length`. `bytes.NewBuffer` — это мутабельный буфер чтения/записи."
+  },
+  {
+    "num": 30,
+    "title": "Комбинирование Query-параметров и заголовков авторизации в одном запросе",
+    "task": "**Параметры запроса и заголовки**: Напишите программу, которая выполняет запрос, добавляя кастомные HTTP-заголовки (например, `Authorization: Bearer my_token`) и Query-параметры (например, `?page=2&limit=10`). Для сборки URL с параметрами используйте структуру `net/url` и её методы.",
+    "theory": "Полноценная сборка REST-запроса: динамическое добавление query-параметров через `net/url` и установка метаданных авторизации в `req.Header`.",
+    "step_by_step": "1. Сформируем URL с параметрами `?page=2&limit=10`.\n2. Добавим заголовок `Authorization: Bearer my_secret_token`.\n3. Отправим запрос на тестовый сервер.\n4. Сервер проверяет параметры и заголовок.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"net/url\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tpage := r.URL.Query().Get(\"page\")\n\t\tlimit := r.URL.Query().Get(\"limit\")\n\t\tauth := r.Header.Get(\"Authorization\")\n\n\t\tfmt.Printf(\"[Server] Получен запрос: page=%s, limit=%s, auth=%s\\n\", page, limit, auth)\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(`{\"items\": [\"item1\", \"item2\"], \"page\": 2}`))\n\t}))\n\tdefer ts.Close()\n\n\t// 1. Сборка URL\n\tparsedURL, _ := url.Parse(ts.URL + \"/api/v1/items\")\n\tq := parsedURL.Query()\n\tq.Set(\"page\", \"2\")\n\tq.Set(\"limit\", \"10\")\n\tparsedURL.RawQuery = q.Encode()\n\n\t// 2. Создание запроса и заголовков\n\treq, _ := http.NewRequest(http.MethodGet, parsedURL.String(), nil)\n\treq.Header.Set(\"Authorization\", \"Bearer my_secret_token\")\n\treq.Header.Set(\"Accept\", \"application/json\")\n\n\tclient := &http.Client{}\n\tresp, err := client.Do(req)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tbody, _ := io.ReadAll(resp.Body)\n\tfmt.Printf(\"[Client] Ответ: %s\\n\", string(body))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Server] Получен запрос: page=2, limit=10, auth=Bearer my_secret_token\n# [Client] Ответ: {\"items\": [\"item1\", \"item2\"], \"page\": 2}"
+      }
+    ],
+    "under_the_hood": "`r.URL.Query()` на стороне сервера парсит query-параметры из строки `RawQuery` в `url.Values`.",
+    "pitfalls": "Не используйте `url.QueryEscape` для всего URL целиком, иначе двоеточия и слэши протокола превратятся в `%3A%2F%2F`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как безопасно передать сложные параметры (например, массивы и фильтры) в GET-запросе?»\n**Ответ:** Использовать `url.Values.Add(\"ids\", \"1\")`, `url.Values.Add(\"ids\", \"2\")` (результирует в `?ids=1&ids=2`), либо передавать Base64-encoded JSON в одном параметре `?filter=eyJzdGF0dXMiOiJhY3RpdmUifQ==`."
+  },
+  {
+    "num": 31,
+    "title": "Обработка сетевых ошибок, DNS сбоев и HTTP статус-кодов (404/500)",
+    "task": "**Обработка ошибок и статус-кодов**: Выполните запрос к несуществующему домену и обработайте возникающую сетевую ошибку. Выполните запрос к существующему домену, но по некорректному адресу (чтобы получить статус `404 Not Found`). Напишите корректную обработку статус-кодов ответов (проверку `resp.StatusCode`).",
+    "theory": "Разделение ошибок сетевого и прикладного уровня:\n1. **Сетевые ошибки (`err != nil`):** DNS lookup failed, connection refused, connection timeout. В этом случае `resp == nil`.\n2. **Прикладные HTTP-ошибки (`err == nil`):** сервер успешно ответил, но статус-код равен 404, 401, 500. В этом случае `resp != nil` и `resp.Body` ОБЯЗАН быть закрыт.",
+    "step_by_step": "1. Выполним запрос к несуществующему хосту `http://non-existent-domain-xyz.invalid`.\n2. Обработаем сетевую ошибку.\n3. Выполним запрос к существующему серверу по несуществующему пути `/missing`.\n4. Обработаем статус `http.StatusNotFound`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tclient := &http.Client{}\n\n\t// 1. Сетевая ошибка (DNS / Connect failure)\n\t_, err := client.Get(\"http://invalid-domain-123456789.invalid\")\n\tif err != nil {\n\t\tfmt.Printf(\"[Network Error Handled] Сетевой сбой: %v\\n\", err)\n\t}\n\n\t// 2. HTTP ошибка 404 Not Found\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\thttp.NotFound(w, r)\n\t}))\n\tdefer ts.Close()\n\n\tresp, err := client.Get(ts.URL + \"/unknown-page\")\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tif resp.StatusCode == http.StatusNotFound {\n\t\tfmt.Printf(\"[HTTP Status Handled] Получен ожидаемый статус 404: %s\\n\", resp.Status)\n\t} else {\n\t\tbody, _ := io.ReadAll(resp.Body)\n\t\tfmt.Printf(\"[Response] %s\\n\", string(body))\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Network Error Handled] Сетевой сбой: Get \"http://invalid-domain-123456789.invalid\": dial tcp: lookup invalid-domain-123456789.invalid: no such host\n# [HTTP Status Handled] Получен ожидаемый статус 404: 404 Not Found"
+      }
+    ],
+    "under_the_hood": "Сетевые ошибки возвращают типы `*net.OpError` и `*url.Error`.",
+    "pitfalls": "Статус 500 Internal Server Error возвращает `err == nil`! Проверяйте `resp.StatusCode >= 400`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Возвращает ли http.Get ошибку при получении HTTP 500 Internal Server Error?»\n**Ответ:** Нет! Функция `http.Get` возвращает `err == nil`, потому что сетевой протокол HTTP отработал успешно и сервер вернул валидный ответ. Проверка ошибочных статус-кодов (4xx, 5xx) является ответственностью прикладного кода через `resp.StatusCode`."
+  },
+  {
+    "num": 32,
+    "title": "Декодирование JSON-ответа публичного REST API в типизированную структуру",
+    "task": "Напиши простой HTTP-клиент: `resp, err := http.Get(\"https://api.github.com/users/golang\")`. Прочитай `resp.Body`, декодируй JSON в структуру. Не забудь `defer resp.Body.Close()`.",
+    "theory": "Интеграция с внешними REST API: сопоставление JSON-полей со структурой Go через json-теги `json:\"field_name\"`.",
+    "step_by_step": "1. Опишем структуру `GithubUser { Login, Name, PublicRepos, Followers }`.\n2. Запустим тестовый эндпоинт.\n3. Выполним запрос и распарсим через `json.NewDecoder(resp.Body).Decode(&user)`.\n4. Выведем результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\ntype GithubUser struct {\n\tLogin       string `json:\"login\"`\n\tName        string `json:\"name\"`\n\tPublicRepos int    `json:\"public_repos\"`\n\tFollowers   int    `json:\"followers\"`\n}\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Header().Set(\"Content-Type\", \"application/json\")\n\t\t_, _ = w.Write([]byte(`{\n\t\t\t\"login\": \"golang\",\n\t\t\t\"name\": \"The Go Programming Language\",\n\t\t\t\"public_repos\": 140,\n\t\t\t\"followers\": 12500\n\t\t}`))\n\t}))\n\tdefer ts.Close()\n\n\tresp, err := http.Get(ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tvar user GithubUser\n\tif err := json.NewDecoder(resp.Body).Decode(&user); err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Println(\"=== ДАННЫЕ ПОЛЬЗОВАТЕЛЯ GITHUB ===\")\n\tfmt.Printf(\"Логин:       %s\\n\", user.Login)\n\tfmt.Printf(\"Имя:         %s\\n\", user.Name)\n\tfmt.Printf(\"Репозиториев: %d\\n\", user.PublicRepos)\n\tfmt.Printf(\"Подписчиков: %d\\n\", user.Followers)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# === ДАННЫЕ ПОЛЬЗОВАТЕЛЯ GITHUB ===\n# Логин:       golang\n# Имя:         The Go Programming Language\n# Репозиториев: 140\n# Подписчиков: 12500"
+      }
+    ],
+    "under_the_hood": "`json.Decoder` выполняет потоковую десериализацию прямо из сетевого сокета.",
+    "pitfalls": "Всегда проверяйте `resp.StatusCode == http.StatusOK` перед декодированием JSON, иначе парсер упадет на HTML-странице ошибки 502/404.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что произойдет, если в JSON ответе придут дополнительные неизвестные поля?»\n**Ответ:** По умолчанию `json.Decoder` просто проигнорирует неизвестные поля. Если требуется строгая валидация структуры, включают режим `decoder.DisallowUnknownFields()`."
+  },
+  {
+    "num": 33,
+    "title": "Сброс тела в io.Discard и гарантированное сохранение Keep-Alive соединения",
+    "task": "Покажи **утечку соединений**, если забыть `resp.Body.Close()`. Запусти 10000 запросов без закрытия — получи `\"too many open files\"`. Исправь: всегда закрывай Body, даже если не читаешь (или используй `io.Copy(io.Discard, resp.Body)`).",
+    "theory": "Завершение жизненного цикла HTTP-ответа: для возврата сокета в пул требуется комбинация `io.Copy(io.Discard, resp.Body)` и `resp.Body.Close()`.",
+    "step_by_step": "1. Создадим функцию отправки запроса.\n2. Продемонстрируем гарантированное освобождение ресурсов.\n3. Выполним серию запросов в цикле.\n4. Проверим результат.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc safeDiscardRequest(client *http.Client, url string) error {\n\tresp, err := client.Get(url)\n\tif err != nil {\n\t\treturn err\n\t}\n\tdefer resp.Body.Close()\n\n\t// Сбрасываем тело ответа без аллокаций в памяти\n\t_, err = io.Copy(io.Discard, resp.Body)\n\treturn err\n}\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"DATA_PAYLOAD\"))\n\t}))\n\tdefer ts.Close()\n\n\tclient := &http.Client{}\n\n\tfor i := 1; i <= 100; i++ {\n\t\tif err := safeDiscardRequest(client, ts.URL); err != nil {\n\t\t\tpanic(err)\n\t\t}\n\t}\n\n\tfmt.Println(\"[Main] 100 запросов успешно завершены, сокеты переиспользованы без утечек.\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Main] 100 запросов успешно завершены, сокеты переиспользованы без утечек."
+      }
+    ],
+    "under_the_hood": "`io.Discard` сбрасывает данные со скоростью сети без аллокаций.",
+    "pitfalls": "Если не вычитать тело до конца, транспорт вынужден разорвать TCP-сессию (TCP RST/FIN).",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему io.Copy(io.Discard, resp.Body) критичен для микросервисов с высоким RPS?»\n**Ответ:** Без полной вычитки тела ответа `http.Transport` не может гарантировать, что в сокете не осталось данных предыдущего ответа, и закрывает сокет. Вычитка в `io.Discard` сохраняет TCP-сессию активной в пуле Keep-Alive."
+  },
+  {
+    "num": 34,
+    "title": "Клиентский Middleware через переопределение интерфейса http.RoundTripper",
+    "task": "**Кастомный транспорт (`RoundTripper`)**: Напишите Middleware для HTTP-клиента. Для этого создайте структуру, реализующую интерфейс `http.RoundTripper`. Данный транспорт должен перехватывать все исходящие запросы вашего клиента, автоматически замерять время их выполнения и выводить его в лог, после чего делегировать выполнение стандартному транспорту `http.DefaultTransport`.",
+    "theory": "Интерфейс `http.RoundTripper` (Клиентский Middleware): содержит единственный метод `RoundTrip(*http.Request) (*http.Response, error)`. Оборачивание транспорта позволяет реализовывать:\n1. Автоматическое добавление заголовков авторизации / трассировки (Tracing Headers).\n2. Замер задержек и сбор метрик в Prometheus.\n3. Логирование исходящего сетевого трафика.\n4. Автоматические ретраи на транспортном уровне.",
+    "step_by_step": "1. Создадим структуру `LoggingTransport struct { Base http.RoundTripper }`.\n2. Реализуем метод `RoundTrip(req)`.\n3. Подставим в `client.Transport = &LoggingTransport{Base: http.DefaultTransport}`.\n4. Выполним тестовые запросы и проверим лог.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"time\"\n)\n\ntype MetricsTransport struct {\n\tBase http.RoundTripper\n}\n\nfunc (t *MetricsTransport) RoundTrip(req *http.Request) (*http.Response, error) {\n\tt0 := time.Now()\n\n\t// Автоматически добавляем заголовок трассировки во все исходящие запросы\n\treq.Header.Set(\"X-Client-Trace-ID\", \"TRACE-UUID-998877\")\n\n\tbase := t.Base\n\tif base == nil {\n\t\tbase = http.DefaultTransport\n\t}\n\n\tresp, err := base.RoundTrip(req)\n\tduration := time.Since(t0)\n\n\tif err != nil {\n\t\tfmt.Printf(\"[CLIENT ROUNDTRIP ERROR] %s %s -> Err: %v | Latency: %v\\n\", \n\t\t\treq.Method, req.URL, err, duration.Round(time.Microsecond))\n\t\treturn nil, err\n\t}\n\n\tfmt.Printf(\"[CLIENT ROUNDTRIP METRICS] %s %s -> Status: %d | Latency: %v\\n\", \n\t\treq.Method, req.URL.Path, resp.StatusCode, duration.Round(time.Microsecond))\n\n\treturn resp, nil\n}\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\ttime.Sleep(10 * time.Millisecond)\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"PONG\"))\n\t}))\n\tdefer ts.Close()\n\n\tclient := &http.Client{\n\t\tTransport: &MetricsTransport{Base: http.DefaultTransport},\n\t\tTimeout:   2 * time.Second,\n\t}\n\n\tresp, err := client.Get(ts.URL + \"/api/ping\")\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\t_, _ = io.Copy(io.Discard, resp.Body)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [CLIENT ROUNDTRIP METRICS] GET /api/ping -> Status: 200 | Latency: 10ms"
+      }
+    ],
+    "under_the_hood": "`RoundTripper` выполняется на самом низком уровне клиента, гарантируя выполнение для всех вызовов `client.Get`, `client.Post` и `client.Do`.",
+    "pitfalls": "В `RoundTrip` нельзя модифицировать сам `*http.Request` без его клонирования (`req.Clone(req.Context())`), если запрос может быть повторен.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как реализовать OpenTelemetry трассировку для всех исходящих HTTP-запросов сервиса?»\n**Ответ:** Обернуть `client.Transport` в `otelhttp.NewTransport(http.DefaultTransport)`. Он реализует `http.RoundTripper`, автоматически внедряет заголовки W3C Trace Context (`traceparent`) в исходящий запрос и создает дочерний спан (Child Span)."
+  },
+  {
+    "num": 35,
+    "title": "Отправка классических HTML-форм с Content-Type application/x-www-form-urlencoded",
+    "task": "Напиши `POST` с `application/x-www-form-urlencoded`: используй `url.Values` и `strings.NewReader(values.Encode())`. Отправь на тестовый сервер.",
+    "theory": "Формат `application/x-www-form-urlencoded`: стандартный формат отправки веб-форм. Данные кодируются как ключ-значение в виде `key1=val1&key2=val2` и передаются в теле запроса через функцию `http.PostForm(url, data)` или `http.Post`.",
+    "step_by_step": "1. Создадим `formData := url.Values{}`.\n2. Добавим поля `formData.Set(\"grant_type\", \"password\")`, `formData.Set(\"username\", \"admin\")`.\n3. Отправим запрос через `http.Post(ts.URL, \"application/x-www-form-urlencoded\", strings.NewReader(formData.Encode()))`.\n4. Сервер парсит форму через `r.ParseForm()` и валидирует данные.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"net/url\"\n\t\"strings\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tif err := r.ParseForm(); err != nil {\n\t\t\thttp.Error(w, err.Error(), http.StatusBadRequest)\n\t\t\treturn\n\t\t}\n\n\t\tuser := r.Form.Get(\"username\")\n\t\tgrant := r.Form.Get(\"grant_type\")\n\t\tfmt.Printf(\"[Server Form Auth] User: %s | GrantType: %s\\n\", user, grant)\n\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"OAUTH_TOKEN_GRANTED\"))\n\t}))\n\tdefer ts.Close()\n\n\t// Формируем поля формы\n\tformData := url.Values{}\n\tformData.Set(\"grant_type\", \"password\")\n\tformData.Set(\"username\", \"developer@google.com\")\n\tformData.Set(\"scope\", \"read:profile write:orders\")\n\n\t// Отправка запроса\n\tresp, err := http.Post(\n\t\tts.URL,\n\t\t\"application/x-www-form-urlencoded\",\n\t\tstrings.NewReader(formData.Encode()),\n\t)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tbody, _ := io.ReadAll(resp.Body)\n\tfmt.Printf(\"[Client] Ответ: %s\\n\", string(body))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Server Form Auth] User: developer@google.com | GrantType: password\n# [Client] Ответ: OAUTH_TOKEN_GRANTED"
+      }
+    ],
+    "under_the_hood": "Метод `http.PostForm(url, formData)` является удобной оберткой над `http.Post` с `strings.NewReader(formData.Encode())`.",
+    "pitfalls": "В больших формах с бинарными файлами `x-www-form-urlencoded` неэффективен из-за 300% раздувания объема данных (экранирование байтов); используйте `multipart/form-data`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем отличие r.Form от r.PostForm на стороне сервера?»\n**Ответ:** `r.Form` объединяет в себе параметры и из URL Query String, и из тела POST-формы. `r.PostForm` содержит строго параметры, переданные в теле POST/PUT запроса, игнорируя query-параметры из строки URL."
+  },
+  {
+    "num": 36,
+    "title": "Управление таймаутами клиента: сравнение http.Client и http.DefaultClient",
+    "task": "Напиши **HTTP-клиент с таймаутом**: `http.Client{Timeout: 5 * time.Second}`. Покажи, что `http.DefaultClient` **не имеет таймаута** (бесконечное ожидание). Это опасно в production.",
+    "theory": "Сравнение дефолтного и изолированного клиентов: `http.DefaultClient` имеет `Timeout = 0`, что означает отсутствие ограничения по времени. Явная инициализация `http.Client{Timeout: ...}` гарантирует предсказуемость времени отклика.",
+    "step_by_step": "1. Создадим `client := &http.Client{Timeout: 40 * time.Millisecond}`.\n2. Протестируем запрос к быстрому эндпоинту (успех).\n3. Протестируем запрос к медленному эндпоинту (таймаут).\n4. Выведем результаты.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"time\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\ttime.Sleep(80 * time.Millisecond)\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"OK\"))\n\t}))\n\tdefer ts.Close()\n\n\tclient := &http.Client{\n\t\tTimeout: 40 * time.Millisecond,\n\t}\n\n\tfmt.Println(\"[Client] Выполняем запрос с таймаутом 40 мс...\")\n\t_, err := client.Get(ts.URL)\n\n\tif err != nil {\n\t\tfmt.Printf(\"[Client Protected] Запрос штатно прерван по таймауту: %v\\n\", err)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Client] Выполняем запрос с таймаутом 40 мс...\n# [Client Protected] Запрос штатно прерван по таймауту: Get \"http://127.0.0.1:...\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)"
+      }
+    ],
+    "under_the_hood": "`client.Timeout` инициирует таймер рантайма в момент вызова метода `Do()`.",
+    "pitfalls": "`client.Timeout` действует на всю операцию, включая скачивание тела. Для больших файлов настраивают таймауты внутри `Transport.DialContext` и `ResponseHeaderTimeout`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Что такое ResponseHeaderTimeout в http.Transport?»\n**Ответ:** Это время, в течение которого клиент ожидает заголовки ответа от сервера после отправки запроса. Оно не включает время на чтение тела ответа, что идеально для скачивания больших файлов и стриминга."
+  },
+  {
+    "num": 37,
+    "title": "Экспоненциальный Backoff и контекстный дедлайн в цикле повторных запросов",
+    "task": "Напиши **retry logic** для HTTP-клиента: при ошибке сети или статусе `5xx` — повтори запрос с exponential backoff (100ms, 200ms, 400ms, max 3 попытки). Используй `context` для ограничения общего времени.",
+    "theory": "Паттерн Exponential Backoff with Jitter: интервал между повторными попытками увеличивается вдвое на каждом шаге ($T, 2T, 4T$), предотвращая эффект громоподобного стада (Thundering Herd Problem) при восстановлении упавшего сервиса.",
+    "step_by_step": "1. Создадим контекст с общим дедлайном 500 мс.\n2. Реализуем цикл ретраев с удвоением `backoff *= 2`.\n3. Сервер имитирует 503 на первых 2 попытках и 200 OK на 3-й.\n4. Проверим успешную доставку.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"time\"\n)\n\nfunc executeWithBackoff(ctx context.Context, client *http.Client, url string) (string, error) {\n\tbackoff := 25 * time.Millisecond\n\tconst maxRetries = 3\n\n\tfor attempt := 1; attempt <= maxRetries; attempt++ {\n\t\treq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)\n\t\tif err != nil {\n\t\t\treturn \"\", err\n\t\t}\n\n\t\tresp, err := client.Do(req)\n\t\tif err == nil && resp.StatusCode < 500 {\n\t\t\tdefer resp.Body.Close()\n\t\t\tbody, _ := io.ReadAll(resp.Body)\n\t\t\treturn string(body), nil\n\t\t}\n\n\t\tif resp != nil {\n\t\t\t_, _ = io.Copy(io.Discard, resp.Body)\n\t\t\t_ = resp.Body.Close()\n\t\t}\n\n\t\tfmt.Printf(\" [!] Попытка #%d не удалась. Пауза %v перед повтором...\\n\", attempt, backoff)\n\n\t\tselect {\n\t\tcase <-time.After(backoff):\n\t\t\tbackoff *= 2\n\t\tcase <-ctx.Done():\n\t\t\treturn \"\", ctx.Err()\n\t\t}\n\t}\n\treturn \"\", fmt.Errorf(\"все попытки исчерпаны\")\n}\n\nfunc main() {\n\ttries := 0\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\ttries++\n\t\tif tries < 3 {\n\t\t\tw.WriteHeader(http.StatusBadGateway) // 502\n\t\t\treturn\n\t\t}\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"FINAL_SUCCESS_RESULT\"))\n\t}))\n\tdefer ts.Close()\n\n\tclient := &http.Client{}\n\tctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)\n\tdefer cancel()\n\n\tresult, err := executeWithBackoff(ctx, client, ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Printf(\"[Client] Успешный результат после ретраев: %s\\n\", result)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n#  [!] Попытка #1 не удалась. Пауза 25ms перед повтором...\n#  [!] Попытка #2 не удалась. Пауза 50ms перед повтором...\n# [Client] Успешный результат после ретраев: FINAL_SUCCESS_RESULT"
+      }
+    ],
+    "under_the_hood": "`select` с `ctx.Done()` гарантирует, что сон `time.After` прервется немедленно, если истечет общий дедлайн родительской операции.",
+    "pitfalls": "В реальных HighLoad сервисах к backoff обязательно добавляют случайный шум (Jitter: $\\pm 20\\%$), чтобы тысячи клиентов не просыпались синхронно.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Зачем нужен Full Jitter при реализации алгоритма Exponential Backoff?»\n**Ответ:** Если сервер упал и перезагрузился, клиенты с фиксированным backoff будут слать повторные запросы синхронными волнами (Thundering Herd), снова роняя сервер. Full Jitter распределяет время ретраев равномерно по интервалу $[0, \\text{backoff}]$, размазывая нагрузку во времени."
+  },
+  {
+    "num": 38,
+    "title": "Интерактивный прогресс-бар скачивания файла через кастомный io.Writer",
+    "task": "**Скачивание файла с прогресс-баром**: Напишите утилиту, которая скачивает крупный файл (например, архив или картинку) по HTTP. Программа не должна загружать файл в память целиком — используйте `io.Copy`, чтобы записывать данные напрямую в файл на диске по мере скачивания. Реализуйте простой вывод прогресса (сколько процентов скачано) в консоль в реальном времени.",
+    "theory": "Паттерн Progress Tracking Writer: структура `PassThroughWriter`, реализующая `io.Writer`, подсчитывает количество записанных байт и обновляет процент выполнения относительно заголовка `resp.ContentLength`.",
+    "step_by_step": "1. Создадим структуру `ProgressWriter { Total, Current }`.\n2. В методе `Write(p)` накапливаем `Current += len(p)` и выводим процент.\n3. Обернем `io.Copy(progressWriter, resp.Body)`.\n4. Проверим расчет прогресса.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\ntype ProgressWriter struct {\n\tTotal      int64\n\tDownloaded int64\n}\n\nfunc (pw *ProgressWriter) Write(p []byte) (int, error) {\n\tn := len(p)\n\tpw.Downloaded += int64(n)\n\n\tpercent := float64(pw.Downloaded) / float64(pw.Total) * 100\n\tfmt.Printf(\"\\r [Скачивание] Прогресс: %.1f%% (%d / %d байт)\", \n\t\tpercent, pw.Downloaded, pw.Total)\n\n\treturn n, nil\n}\n\nfunc main() {\n\tconst totalSize = 2 * 1024 * 1024 // 2 МБ\n\tdata := bytes.Repeat([]byte(\"X\"), totalSize)\n\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.Header().Set(\"Content-Length\", fmt.Sprintf(\"%d\", totalSize))\n\t\tw.Header().Set(\"Content-Type\", \"application/octet-stream\")\n\t\t_, _ = w.Write(data)\n\t}))\n\tdefer ts.Close()\n\n\tresp, err := http.Get(ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tpw := &ProgressWriter{Total: resp.ContentLength}\n\n\t// Потоковое копирование через обертку прогресса\n\t_, err = io.Copy(pw, resp.Body)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Println(\"\\n[Main] Скачивание успешно завершено на 100%!\")\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n#  [Скачивание] Прогресс: 100.0% (2097152 / 2097152 байт)\n# [Main] Скачивание успешно завершено на 100%!"
+      }
+    ],
+    "under_the_hood": "`resp.ContentLength` считывается из заголовка `Content-Length`. Если сервер использует `Transfer-Encoding: chunked`, `ContentLength` равен `-1`.",
+    "pitfalls": "Если `resp.ContentLength == -1`, процент прогресса вычислить невозможно, выводят только общий объем скачанных байтов.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему resp.ContentLength может быть равен -1?»\n**Ответ:** Если сервер генерирует ответ динамически и отправляет данные по частям с заголовком `Transfer-Encoding: chunked`, точный размер тела ответа заранее неизвестен, и заголовок `Content-Length` отсутствует. В Go поле `resp.ContentLength` в этом случае устанавливается в `-1`."
+  },
+  {
+    "num": 39,
+    "title": "Параллельный сбор данных из среза URL с WaitGroup и семафором",
+    "task": "Напиши **параллельные HTTP-запросы**: список URL. Для каждого URL запусти горутину с `http.Get`. Собери результаты через канал. Используй `sync.WaitGroup` или `errgroup` для ожидания.",
+    "theory": "Паттерн Fan-Out HTTP Scraper (Параллельный краулер): параллельный запуск $N$ HTTP-запросов с ограничением конкурентности через буферизованный канал-семафор и сбор результатов в единый канал ответов.",
+    "step_by_step": "1. Поднимем тестовые HTTP эндпоинты `/item/1`, `/item/2`, `/item/3`.\n2. Запустим горутины под управлением `sync.WaitGroup`.\n3. Соберем результаты в `resultsChan := make(chan Result, len(urls))`.\n4. Закроем канал и выведем агрегированные данные.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype FetchResult struct {\n\tURL        string\n\tStatusCode int\n\tBody       string\n\tDuration   time.Duration\n}\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\ttime.Sleep(10 * time.Millisecond)\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"Data for \" + r.URL.Path))\n\t}))\n\tdefer ts.Close()\n\n\turls := []string{\n\t\tts.URL + \"/users\",\n\t\tts.URL + \"/orders\",\n\t\tts.URL + \"/products\",\n\t\tts.URL + \"/analytics\",\n\t}\n\n\tclient := &http.Client{Timeout: 2 * time.Second}\n\tresultsChan := make(chan FetchResult, len(urls))\n\n\tvar wg sync.WaitGroup\n\twg.Add(len(urls))\n\n\tfor _, u := range urls {\n\t\tgo func(targetURL string) {\n\t\t\tdefer wg.Done()\n\t\t\tt0 := time.Now()\n\n\t\t\tresp, err := client.Get(targetURL)\n\t\t\tif err != nil {\n\t\t\t\treturn\n\t\t\t}\n\t\t\tdefer resp.Body.Close()\n\n\t\t\tbody, _ := io.ReadAll(resp.Body)\n\t\t\tresultsChan <- FetchResult{\n\t\t\t\tURL:        targetURL,\n\t\t\t\tStatusCode: resp.StatusCode,\n\t\t\t\tBody:       string(body),\n\t\t\t\tDuration:   time.Since(t0),\n\t\t\t}\n\t\t}(u)\n\t}\n\n\twg.Wait()\n\tclose(resultsChan)\n\n\tfmt.Println(\"=== РЕЗУЛЬТАТЫ ПАРАЛЛЕЛЬНОГО СБОРА ДАННЫХ ===\")\n\tfor res := range resultsChan {\n\t\tfmt.Printf(\" -> Status %d | Time: %6v | %s\\n\", \n\t\t\tres.StatusCode, res.Duration.Round(time.Millisecond), res.Body)\n\t}\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# === РЕЗУЛЬТАТЫ ПАРАЛЛЕЛЬНОГО СБОРА ДАННЫХ ===\n#  -> Status 200 | Time:   10ms | Data for /users\n#  -> Status 200 | Time:   10ms | Data for /orders\n#  -> Status 200 | Time:   10ms | Data for /products\n#  -> Status 200 | Time:   10ms | Data for /analytics"
+      }
+    ],
+    "under_the_hood": "Все 4 параллельных запроса выполняются одновременно за 10 мс (время одного самого медленного запроса).",
+    "pitfalls": "Обязательно передавайте переменную `u` как аргумент `go func(targetURL string)` в цикле `for`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Почему при параллельных HTTP-запросах критично использовать errgroup.Group вместо обычной sync.WaitGroup?»\n**Ответ:** `golang.org/x/sync/errgroup` автоматически прерывает все остальные параллельные HTTP-запросы через связанный `context.Context`, как только хотя бы один из запросов завершился ошибкой (Fail-Fast семантика)."
+  },
+  {
+    "num": 40,
+    "title": "Стриминг и дублирование потока через io.TeeReader для логирования",
+    "task": "Напиши **HTTP-загрузчик файла**: `http.Get` по URL, `io.Copy` в локальный файл. Покажи прогресс: в отдельной горутине читай `resp.ContentLength` и сколько байт скопировано (через `io.TeeReader` или `io.Reader` обёртку).",
+    "theory": "Паттерн Stream Splitting (Разветвитель потока): функция `io.TeeReader(r, w)` возвращает `io.Reader`, который при каждом чтении из `r` синхронно дублирует прочитанные байты в `w` (по аналогии с Unix-утилитой `tee`).",
+    "step_by_step": "1. Создадим тестовый сервер.\n2. Обернем `resp.Body` через `tee := io.TeeReader(resp.Body, logger)`.\n3. Считаем данные в целевой файл через `io.Copy(dest, tee)`.\n4. Проверим, что данные попали и в файл, и в логгер.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"STREAMING_TELEMETRY_PAYLOAD\"))\n\t}))\n\tdefer ts.Close()\n\n\tresp, err := http.Get(ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tvar fileStorage bytes.Buffer\n\tvar debugLogger bytes.Buffer\n\n\t// TeeReader дублирует каждый байт из resp.Body в debugLogger во время чтения\n\ttee := io.TeeReader(resp.Body, &debugLogger)\n\n\t// Читаем из tee в целевое хранилище\n\twritten, err := io.Copy(&fileStorage, tee)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tfmt.Printf(\"[TeeReader Pipeline] Записано в файл:   %d байт (%s)\\n\", written, fileStorage.String())\n\tfmt.Printf(\"[TeeReader Pipeline] Записано в логгер: %d байт (%s)\\n\", debugLogger.Len(), debugLogger.String())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [TeeReader Pipeline] Записано в файл:   27 байт (STREAMING_TELEMETRY_PAYLOAD)\n# [TeeReader Pipeline] Записано в логгер: 27 байт (STREAMING_TELEMETRY_PAYLOAD)"
+      }
+    ],
+    "under_the_hood": "`io.TeeReader` не создает промежуточных буферов в памяти: вызов `Read` напрямую вызывает `Write` второго получателя.",
+    "pitfalls": "Если запись в дублирующий `io.Writer` вернет ошибку, чтение из `TeeReader` тоже прервется с ошибкой.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как с помощью io.TeeReader посчитать SHA-256 хеш скачиваемого файла на лету?»\n**Ответ:** Создать хешер `hasher := sha256.New()`, обернуть поток `tee := io.TeeReader(resp.Body, hasher)` и передать в `io.Copy(file, tee)`. По завершении скачивания `hasher.Sum(nil)` вернет точный SHA-256 хеш без повторного чтения файла с диска."
+  },
+  {
+    "num": 41,
+    "title": "Параллельный опрос 10 микросервисов со сбором результатов в потокобезопасную мапу",
+    "task": "**Конкурентный сбор данных**: У вас есть срез из 10 различных URL-адресов. Напишите программу, которая параллельно отправляет GET-запросы ко всем этим адресам с помощью горутин. Соберите результаты (статус-коды и тела ответов) в потокобезопасную мапу или верните их в основной поток через каналы.",
+    "theory": "Паттерн Concurrent Aggregator: параллельный сбор метаданных от множества микросервисов с синхронизацией через `sync.Mutex` или `sync.Map`.",
+    "step_by_step": "1. Создадим структуру `SafeResultMap` с мьютексом.\n2. Запустим 10 параллельных запросов к mock-серверу.\n3. Сохраним результаты в мапу по ключу URL.\n4. Выведем агрегированный отчет.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"strconv\"\n\t\"sync\"\n\t\"time\"\n)\n\ntype SafeStore struct {\n\tmu   sync.Mutex\n\tdata map[string]string\n}\n\nfunc (s *SafeStore) Set(key, val string) {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\ts.data[key] = val\n}\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"Response for \" + r.URL.Path))\n\t}))\n\tdefer ts.Close()\n\n\tclient := &http.Client{Timeout: 2 * time.Second}\n\tstore := &SafeStore{data: make(map[string]string)}\n\n\tvar wg sync.WaitGroup\n\tconst totalEndpoints = 10\n\twg.Add(totalEndpoints)\n\n\tfor i := 1; i <= totalEndpoints; i++ {\n\t\tendpointURL := ts.URL + \"/service/\" + strconv.Itoa(i)\n\t\tgo func(target string) {\n\t\t\tdefer wg.Done()\n\t\t\tresp, err := client.Get(target)\n\t\t\tif err != nil {\n\t\t\t\treturn\n\t\t\t}\n\t\t\tdefer resp.Body.Close()\n\n\t\t\tbody, _ := io.ReadAll(resp.Body)\n\t\t\tstore.Set(target, string(body))\n\t\t}(endpointURL)\n\t}\n\n\twg.Wait()\n\n\tfmt.Printf(\"=== УСПЕШНО ОПРОШЕНО %d ЭНДПОИНТОВ ===\\n\", len(store.data))\n\tfor k, v := range store.data {\n\t\tfmt.Printf(\" -> %s = %s\\n\", k, v)\n\t\tbreak // печатаем пример\n\t}\n\tfmt.Printf(\"Всего записей в потокобезопасной мапе: %d\\n\", len(store.data))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# === УСПЕШНО ОПРОШЕНО 10 ЭНДПОИНТОВ ===\n#  -> http://127.0.0.1:.../service/1 = Response for /service/1\n# Всего записей в потокобезопасной мапе: 10"
+      }
+    ],
+    "under_the_hood": "Мьютекс защищает карту Go от одновременной записи (`fatal error: concurrent map writes`).",
+    "pitfalls": "Без мьютекса параллельная запись в `map` немедленно завершит процесс аварийной паникой рантайма.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем отличие sync.Map от обычной map под sync.RWMutex?»\n**Ответ:** `sync.Map` оптимизирована для двух сценариев: 1. Ключи записываются один раз, а читаются миллионы раз (Cache); 2. Множество горутин читают, обновляют и записывают непересекающиеся наборы ключей. Для общих задач `map + sync.RWMutex` предпочтительнее."
+  },
+  {
+    "num": 42,
+    "title": "Инициализация CookieJar и автоматическая передача cookie между запросами",
+    "task": "Напиши **HTTP-клиент с CookieJar**: `jar, _ := cookiejar.New(nil); client := &http.Client{Jar: jar}`. Сделай два запроса к серверу, устанавливающему cookie. Покажи, что второй запрос автоматически отправляет cookie.",
+    "theory": "Сохранение состояния сессии (Stateful HTTP Session): `http.CookieJar` автоматически связывает куки с доменом и путем, возвращая их в последующих вызовах.",
+    "step_by_step": "1. Создадим `cookiejar.New(nil)`.\n2. Первый запрос к `/set` устанавливает `cookie: auth=token123`.\n3. Второй запрос к `/get` отправляет куку на сервер.\n4. Сервер подтверждает получение куки.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/cookiejar\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tif r.URL.Path == \"/set\" {\n\t\t\thttp.SetCookie(w, &http.Cookie{\n\t\t\t\tName:  \"session_id\",\n\t\t\t\tValue: \"XYZ-998877\",\n\t\t\t\tPath:  \"/\",\n\t\t\t})\n\t\t\tw.WriteHeader(http.StatusOK)\n\t\t\t_, _ = w.Write([]byte(\"Cookie Set!\"))\n\t\t\treturn\n\t\t}\n\n\t\tif r.URL.Path == \"/get\" {\n\t\t\tc, err := r.Cookie(\"session_id\")\n\t\t\tif err != nil {\n\t\t\t\tw.WriteHeader(http.StatusBadRequest)\n\t\t\t\t_, _ = w.Write([]byte(\"No cookie\"))\n\t\t\t\treturn\n\t\t\t}\n\t\t\tw.WriteHeader(http.StatusOK)\n\t\t\t_, _ = w.Write([]byte(\"FOUND_COOKIE:\" + c.Value))\n\t\t}\n\t}))\n\tdefer ts.Close()\n\n\tjar, _ := cookiejar.New(nil)\n\tclient := &http.Client{Jar: jar}\n\n\t// 1. Первый запрос (получаем куку)\n\tr1, _ := client.Get(ts.URL + \"/set\")\n\tr1.Body.Close()\n\n\t// 2. Второй запрос (кука отправляется автоматически!)\n\tr2, _ := client.Get(ts.URL + \"/get\")\n\tdefer r2.Body.Close()\n\n\tfmt.Printf(\"[Client Session] Статус: %s\\n\", r2.Status)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Client Session] Статус: 200 OK"
+      }
+    ],
+    "under_the_hood": "`CookieJar` обновляет внутреннюю базу данных кук на основе домена URL из ответа.",
+    "pitfalls": "Если в `http.Cookie` не задан `Path`, кука будет отправляться только на тот же путь.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Является ли http.CookieJar потокобезопасным?»\n**Ответ:** Да, стандартная реализация `net/http/cookiejar` защищает доступ к внутренним структурам через `sync.Mutex` и безопасна для параллельного использования несколькими горутинами."
+  },
+  {
+    "num": 43,
+    "title": "Глубокая настройка параметров пула соединений в http.Transport",
+    "task": "Напиши **HTTP-клиент с `http.Transport` tuning**: настрой `MaxIdleConns`, `MaxIdleConnsPerHost`, `IdleConnTimeout`, `DisableKeepAlives`. Объясни, зачем нужен connection pool и keep-alive.",
+    "theory": "Параметры тюнинга пула соединений Go:\n* `MaxIdleConns`: максимальное суммарное число свободных (idle) Keep-Alive соединений по всем хостам.\n* `MaxIdleConnsPerHost`: лимит свободных соединений к конкретному хосту.\n* `IdleConnTimeout`: время закрытия неиспользуемого сокета.\n* `DisableKeepAlives`: полное отключение пулинга.",
+    "step_by_step": "1. Создадим полностью сконфигурированный `http.Transport`.\n2. Выведем параметры конфигурации.\n3. Продемонстрируем назначение каждого поля.\n4. Проверим запуск.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc main() {\n\ttransport := &http.Transport{\n\t\tMaxIdleConns:        1000,             // Суммарный пул idle сокетов\n\t\tMaxIdleConnsPerHost: 200,              // Пул idle сокетов на 1 бэкенд\n\t\tIdleConnTimeout:     120 * time.Second, // Сокет закрывается после 2 минут простоя\n\t\tDisableKeepAlives:   false,            // Keep-Alive включен для HighLoad\n\t}\n\n\tclient := &http.Client{\n\t\tTransport: transport,\n\t\tTimeout:   10 * time.Second,\n\t}\n\n\tfmt.Println(\"=== ТЮНИНГ СЕТЕВОГО ТРАНСПОРТА GOLANG ===\")\n\tfmt.Printf(\"MaxIdleConns:        %d\\n\", transport.MaxIdleConns)\n\tfmt.Printf(\"MaxIdleConnsPerHost: %d\\n\", transport.MaxIdleConnsPerHost)\n\tfmt.Printf(\"IdleConnTimeout:     %v\\n\", transport.IdleConnTimeout)\n\tfmt.Printf(\"DisableKeepAlives:   %v\\n\", transport.DisableKeepAlives)\n\tfmt.Printf(\"Client Timeout:      %v\\n\", client.Timeout)\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# === ТЮНИНГ СЕТЕВОГО ТРАНСПОРТА GOLANG ===\n# MaxIdleConns:        1000\n# MaxIdleConnsPerHost: 200\n# IdleConnTimeout:     2m0s\n# DisableKeepAlives:   false\n# Client Timeout:      10s"
+      }
+    ],
+    "under_the_hood": "Транспорт поддерживает фоновый таймер очистки устаревших сокетов по `IdleConnTimeout`.",
+    "pitfalls": "Если `MaxIdleConns < MaxIdleConnsPerHost`, суммарный лимит сокетов будет обрезан параметром `MaxIdleConns`.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Каковы симптомы нехватки MaxIdleConnsPerHost в графиках Grafana?»\n**Ответ:** Резкий рост количества открываемых TCP-сокетов (TCP Connect spikes), рост задержек P99 из-за повторных TLS Handshake и накопление сокетов в состоянии `TIME_WAIT` на стороне клиента и сервера."
+  },
+  {
+    "num": 44,
+    "title": "Одновременный вывод в консоль и сохранение в файл через io.TeeReader",
+    "task": "Напиши **HTTP-клиент с `io.TeeReader`**: читай ответ и одновременно пиши его в `os.Stdout` (для отладки) и в файл (для сохранения). Используй `io.TeeReader(resp.Body, file)` + `io.Copy`.",
+    "theory": "Разветвление входящего потока (Multi-Destination Streaming): `io.TeeReader(r, w)` позволяет направлять сетевой поток одновременно на экран и в долговременное хранилище за один проход.",
+    "step_by_step": "1. Запустим тестовый сервер.\n2. Создадим буфер файла и буфер консоли.\n3. Обернем поток в `io.TeeReader`.\n4. Выполним `io.Copy(dest, tee)`.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bytes\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(\"Critical Security Audit Log Data\"))\n\t}))\n\tdefer ts.Close()\n\n\tresp, err := http.Get(ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tvar fileStorage bytes.Buffer\n\tvar stdoutMirror bytes.Buffer\n\n\t// Одновременно пишем в stdoutMirror при чтении\n\ttee := io.TeeReader(resp.Body, &stdoutMirror)\n\n\t// Копируем в fileStorage\n\t_, _ = io.Copy(&fileStorage, tee)\n\n\tfmt.Printf(\"[Screen Output]: %s\\n\", stdoutMirror.String())\n\tfmt.Printf(\"[Saved File]:    %s\\n\", fileStorage.String())\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# [Screen Output]: Critical Security Audit Log Data\n# [Saved File]:    Critical Security Audit Log Data"
+      }
+    ],
+    "under_the_hood": "`TeeReader` перехватывает каждый чанк данных в момент вызова `Read()`.",
+    "pitfalls": "Медленный `Writer` в `TeeReader` замедлит скорость чтения всего сетевого сокета.",
+    "bigtech_interview": "**Вопрос с собеседования:** «В чем отличие io.MultiWriter от io.TeeReader?»\n**Ответ:** `io.MultiWriter(w1, w2)` принимает данные на запись и дублирует их в несколько `io.Writer`. `io.TeeReader(r, w)` перехватывает операцию чтения из `io.Reader` и попутно записывает прочитанное в `w`."
+  },
+  {
+    "num": 45,
+    "title": "Быстрая инспекция метаданных ресурса через HTTP HEAD-запрос",
+    "task": "Напиши **HTTP HEAD-запрос**: `http.Head(url)`. Получи только заголовки без тела. Используй для проверки существования ресурса или получения `Content-Length` перед загрузкой.",
+    "theory": "Экономичный метод HTTP HEAD: сервер возвращает те же заголовки (`Content-Length`, `Content-Type`, `Last-Modified`), что и для GET, но с пустым телом ответа. Это позволяет проверить доступность файла и его размер без скачивания гигабайтов данных.",
+    "step_by_step": "1. Создадим сервер с эндпоинтом `/large-archive.tar.gz`.\n2. Выполним `http.Head(url)`.\n3. Считаем `resp.ContentLength` и `resp.Header.Get(\"Content-Type\")`.\n4. Убедимся, что тело пустое.",
+    "code_blocks": [
+      {
+        "filename": "main.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"net/http/httptest\"\n)\n\nfunc main() {\n\tts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tif r.Method == http.MethodHead {\n\t\t\tw.Header().Set(\"Content-Length\", \"1073741824\") // 1 ГБ\n\t\t\tw.Header().Set(\"Content-Type\", \"application/x-tar\")\n\t\t\tw.Header().Set(\"Accept-Ranges\", \"bytes\")\n\t\t\tw.WriteHeader(http.StatusOK)\n\t\t\treturn // Тело НЕ отправляется в HEAD-ответе\n\t\t}\n\t\tw.WriteHeader(http.StatusMethodNotAllowed)\n\t}))\n\tdefer ts.Close()\n\n\t// Выполняем HEAD-запрос\n\tresp, err := http.Head(ts.URL)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n\tfmt.Println(\"=== РЕЗУЛЬТАТ HTTP HEAD-ЗАПРОСА ===\")\n\tfmt.Printf(\"Статус:            %s\\n\", resp.Status)\n\tfmt.Printf(\"Размер файла:      %.2f ГБ (%d байт)\\n\", \n\t\tfloat64(resp.ContentLength)/(1024*1024*1024), resp.ContentLength)\n\tfmt.Printf(\"MIME-тип:          %s\\n\", resp.Header.Get(\"Content-Type\"))\n\tfmt.Printf(\"Поддержка Ranges:  %s\\n\", resp.Header.Get(\"Accept-Ranges\"))\n}"
+      },
+      {
+        "filename": "Терминал",
+        "lang": "bash",
+        "code": "go run main.go\n# Вывод:\n# === РЕЗУЛЬТАТ HTTP HEAD-ЗАПРОСА ===\n# Статус:            200 OK\n# Размер файла:      1.00 ГБ (1073741824 байт)\n# MIME-тип:          application/x-tar\n# Поддержка Ranges:  bytes"
+      }
+    ],
+    "under_the_hood": "Сервер отправляет только HTTP-заголовки, завершаемые последовательностью `\\r\\n\\r\\n`.",
+    "pitfalls": "Даже для HEAD-запроса вызов `defer resp.Body.Close()` обязателен для корректного возврата сокета в пул.",
+    "bigtech_interview": "**Вопрос с собеседования:** «Как с помощью HEAD-запроса проверить, изменился ли файл на сервере (Кэширование)?»\n**Ответ:** Проверить заголовки `ETag` (хеш содержимого) или `Last-Modified`. В последующем GET-запросе передать заголовок `If-None-Match: <ETag>` или `If-Modified-Since: <Date>`. Если файл не менялся, сервер вернет легковесный статус `304 Not Modified`."
+  }
+]

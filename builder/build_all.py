@@ -73,6 +73,8 @@ with open('builder/chapter23_data.json', 'r', encoding='utf-8') as f:
     ch23_exercises = json.load(f)
 with open('builder/chapter24_data.json', 'r', encoding='utf-8') as f:
     ch24_exercises = json.load(f)
+with open('builder/chapter25_data.json', 'r', encoding='utf-8') as f:
+    ch25_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -173,6 +175,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             22: ('chapter22.html', '52/52'),
             23: ('chapter23.html', '132/132'),
             24: ('chapter24.html', '63/63'),
+            25: ('chapter25.html', '45/45'),
         }
         
         if num in status_map:
@@ -1578,12 +1581,82 @@ def build_chapter24_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter23.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 23 (Паттерны конкурентности)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 25 (HTTP-клиент) (Скоро) →</a>
+            <a href="chapter25.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #080c14; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 25 (HTTP-клиент) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '24. Низкоуровневая сеть (63/63)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter25_html(chapters):
+    active_chapter_num = 25
+    current_exercises = ch25_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 25 • HTTP Client & Networking</div>
+      <h1 class="hero-title">HTTP-клиент</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по работе с HTTP-клиентом в Go: архитектура net/http, безопасная инициализация http.Client с таймаутами, глубокий тюнинг http.Transport и пула Keep-Alive сокетов для HighLoad (MaxIdleConnsPerHost), отправка GET/POST/HEAD запросов, потоковая передача JSON (json.NewDecoder) и файлов через io.Copy, безопасная сборка URL в net/url, загрузка файлов multipart/form-data, сессионные CookieJar, клиентские Middleware на базе http.RoundTripper, паттерны ретраев с Exponential Backoff и контекстной отменой.
+      </p>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-number">45</div>
+          <div class="stat-label">Упражнений (100% задачника)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">net/http</div>
+          <div class="stat-label">HTTP/1.1 и HTTP/2 клиентский стек</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">Keep-Alive</div>
+          <div class="stat-label">Тюнинг пула сокетов и RoundTripper</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">Go 1.22+</div>
+          <div class="stat-label">Сетевые паттерны BigTech</div>
+        </div>
+      </div>
+    </section>
+    """)
+    
+    # Sections
+    sections = [
+        (1, 23, 'Раздел 1: Базовые HTTP-запросы, таймауты, пулинг сокетов и потоковая обработка'),
+        (24, 45, 'Раздел 2: Промышленные паттерны: Middleware RoundTripper, CookieJar, Retry Backoff и многопоточный сбор данных'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 25 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили клиентский HTTP-стек в Go: от базовых запросов и управления дедлайнами до тюнинга Keep-Alive пулов, реализации отказоустойчивых ретраев и кастомных клиентских Middleware на RoundTripper.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter24.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 24 (Низкоуровневая сеть TCP и UDP)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 26 (HTTP-сервер и REST API) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '25. HTTP-клиент (45/45)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1613,6 +1686,7 @@ if __name__ == '__main__':
         ('chapter22.html', build_chapter22_html),
         ('chapter23.html', build_chapter23_html),
         ('chapter24.html', build_chapter24_html),
+        ('chapter25.html', build_chapter25_html),
     ]
     
     for filename, builder_fn in pages:
