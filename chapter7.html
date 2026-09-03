@@ -156,6 +156,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 16px 12px;
+            scroll-behavior: smooth;
         }
 
         .sidebar-nav::-webkit-scrollbar {
@@ -3481,6 +3482,36 @@ func main() {
             });
         });
 
+        // Auto-center active chapter header in sidebar
+        function centerActiveChapterInSidebar(smooth = true) {
+            const sidebarNav = document.querySelector('.sidebar-nav');
+            const activeChapter = document.querySelector('.chapter-link.active');
+            if (!sidebarNav || !activeChapter) return;
+
+            const navRect = sidebarNav.getBoundingClientRect();
+            const activeRect = activeChapter.getBoundingClientRect();
+            const currentScroll = sidebarNav.scrollTop;
+            const targetScroll = currentScroll + (activeRect.top - navRect.top) - (navRect.height / 2) + (activeRect.height / 2);
+
+            sidebarNav.scrollTo({
+                top: Math.max(0, targetScroll),
+                behavior: smooth ? 'smooth' : 'auto'
+            });
+        }
+
+        // Auto-center active chapter on initial page load and after transition
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                centerActiveChapterInSidebar(true);
+            }, 80);
+        });
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                centerActiveChapterInSidebar(true);
+            }, 60);
+        });
+
         // Active Chapter Accordion Toggle (Collapse/Expand in sidebar)
         const activeToggle = document.getElementById('active-chapter-toggle');
         const subList = document.getElementById('active-sub-exercises');
@@ -3490,6 +3521,9 @@ func main() {
                 e.stopPropagation();
                 activeToggle.classList.toggle('collapsed');
                 subList.classList.toggle('collapsed');
+                setTimeout(() => {
+                    centerActiveChapterInSidebar(true);
+                }, 120);
             });
         }
 
@@ -3533,6 +3567,12 @@ func main() {
         if (menuBtn && sidebar) {
             menuBtn.addEventListener('click', () => {
                 sidebar.classList.toggle('open');
+                // Center active chapter when opening mobile menu drawer
+                if (sidebar.classList.contains('open')) {
+                    setTimeout(() => {
+                        centerActiveChapterInSidebar(true);
+                    }, 100);
+                }
             });
             document.addEventListener('click', (e) => {
                 if (!sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
