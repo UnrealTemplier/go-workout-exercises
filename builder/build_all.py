@@ -95,6 +95,8 @@ with open('builder/chapter34_data.json', 'r', encoding='utf-8') as f:
     ch34_exercises = json.load(f)
 with open('builder/chapter35_data.json', 'r', encoding='utf-8') as f:
     ch35_exercises = json.load(f)
+with open('builder/chapter36_data.json', 'r', encoding='utf-8') as f:
+    ch36_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -206,6 +208,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             33: ('chapter33.html', '89/89'),
             34: ('chapter34.html', '78/78'),
             35: ('chapter35.html', '78/78'),
+            36: ('chapter36.html', '130/130'),
         }
         
         if num in status_map:
@@ -2032,12 +2035,67 @@ def build_chapter35_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter34.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 34 GraphQL</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 36 RabbitMQ (Скоро) →</a>
+            <a href="chapter36.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 36 RabbitMQ →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '35. WebSockets и Real-time (78/78)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter36_html(chapters):
+    active_chapter_num = 36
+    current_exercises = ch36_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 36 • Enterprise Message Queues & Event-Driven Architecture with RabbitMQ in Go</div>
+      <h1 class="hero-title">RabbitMQ</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по проектированию и эксплуатации отказоустойчивых распределенных систем обмена сообщениями на Go 1.22+ с использованием RabbitMQ: протокол AMQP 0-9-1, подключение через amqp091-go, топология обменников (Direct, Fanout, Topic, Headers, Default), семантика доставок и подтверждений (Ack, Nack с requeue, Reject), надежная изоляция сбоев через Dead Letter Exchanges (DLX) и очереди DLQ, управление сроком жизни сообщений (TTL) и очередей (x-expires), контроль обратного давления (Backpressure / QoS Prefetch limits), потоковые подтверждения издателя (Publisher Confirms, PublishWithDeferredConfirm), очереди с приоритетами (x-max-priority), отказоустойчивые Quorum Queues на базе алгоритма Raft, паттерн Transactional Outbox, дедупликация и идемпотентность через Redis, сквозной распределенный трейсинг (OpenTelemetry W3C TraceContext в AMQP Headers), распределенные транзакции Saga (Orchestration & Choreography) и построение масштабируемых Event-Driven платформ.
+      </p>
+    </section>
+    """)
+    
+    # Sections (130 exercises)
+    sections = [
+        (1, 30, 'Раздел 1: Протокол AMQP 0-9-1, типы обменников (Direct, Fanout, Topic, Headers), очереди, подтверждения Ack/Nack и QoS'),
+        (31, 65, 'Раздел 2: Топология, Dead Letter Exchange (DLX), TTL, Publisher Confirms, Priority Queues и Graceful Reconnect'),
+        (66, 95, 'Раздел 3: Graceful Shutdown, Transactional Outbox, Quorum Queues (Raft), кластеризация, Circuit Breakers и Saga'),
+        (96, 130, 'Раздел 4: Observability, Prometheus, Distributed Tracing, безопасность TLS/ACL, бенчмарки и Финальный босс'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 36 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили брокер сообщений RabbitMQ и архитектуру Event-Driven систем на Go: от низкоуровневых фреймов AMQP 0-9-1 и тонкой маршрутизации обменников до отказоустойчивых Quorum Queues на базе Raft, Transactional Outbox с гарантией At-Least-Once доставки, идемпотентных консьюмеров, координации распределенных транзакций Saga и высоконагруженных платформ уровня Uber и Lyft.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter35.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 35 WebSockets и Real-time</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 37 Apache Kafka (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '36. RabbitMQ (130/130)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2078,6 +2136,7 @@ if __name__ == '__main__':
         ('chapter33.html', build_chapter33_html),
         ('chapter34.html', build_chapter34_html),
         ('chapter35.html', build_chapter35_html),
+        ('chapter36.html', build_chapter36_html),
     ]
     
     for filename, builder_fn in pages:
