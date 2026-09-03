@@ -93,6 +93,8 @@ with open('builder/chapter33_data.json', 'r', encoding='utf-8') as f:
     ch33_exercises = json.load(f)
 with open('builder/chapter34_data.json', 'r', encoding='utf-8') as f:
     ch34_exercises = json.load(f)
+with open('builder/chapter35_data.json', 'r', encoding='utf-8') as f:
+    ch35_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -203,6 +205,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             32: ('chapter32.html', '189/189'),
             33: ('chapter33.html', '89/89'),
             34: ('chapter34.html', '78/78'),
+            35: ('chapter35.html', '78/78'),
         }
         
         if num in status_map:
@@ -1975,12 +1978,66 @@ def build_chapter34_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter33.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 33 Микросервисная архитектура и паттерны</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 35 WebSockets и Real-time (Скоро) →</a>
+            <a href="chapter35.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 35 WebSockets и Real-time →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '34. GraphQL (78/78)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter35_html(chapters):
+    active_chapter_num = 35
+    current_exercises = ch35_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 35 • WebSockets & HighLoad Real-Time Systems in Go</div>
+      <h1 class="hero-title">WebSockets и Real-time</h1>
+      <p class="hero-desc">
+        Глубокое инженерное руководство по разработке и оптимизации полнодуплексных сетевых приложений реального времени на Go 1.22+: протокол WebSocket (RFC 6455), механизм рукопожатия (HTTP Upgrade) и тонкая конфигурация gorilla/websocket и coder/websocket, архитектура Hub/Client (комнаты чатов, топики, Echo Cancellation), потокобезопасность сокетов и канонический паттерн Write Pump, управление обратным давлением (Backpressure) и защита от Slow Consumer, надежный Heartbeat (Ping/Pong детекция полуоткрытых сокетов), сжатие сетевого трафика permessage-deflate, бинарные протоколы на Protocol Buffers, GraphQL Subscriptions поверх WebSocket (graphql-ws), бесконфликтная репликация документов на базе CRDT (LWW-Element-Set), сетевые игровые движки с фиксированным 60 FPS Game Loop, горизонтальное масштабирование через Redis Pub/Sub и проектирование высоконагруженных платформ стриминга.
+      </p>
+    </section>
+    """)
+    
+    # Sections
+    sections = [
+        (1, 25, 'Раздел 1: Протокол RFC 6455, HTTP Upgrade, Echo-сервер, клиенты, Hub/Client архитектура и Heartbeat'),
+        (26, 50, 'Раздел 2: Безопасность, Rate Limiting, Backpressure, потокобезопасность Write Pump и Protobuf'),
+        (51, 78, 'Раздел 3: GraphQL Subscriptions, Redis Pub/Sub, CRDT, игровые серверы 60 FPS и стриминг-платформа'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 35 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили разработку распределенных систем реального времени на Go: от низкоуровневых фреймов WebSocket и канонических циклов readPump/writePump до горизонтального масштабирования подписок через Redis Pub/Sub, бесконфликтной синхронизации данных CRDT, сетевых игровых движков с тикрейтом 60 FPS и архитектуры стриминговых платформ уровня Twitch.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter34.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 34 GraphQL</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 36 RabbitMQ (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '35. WebSockets и Real-time (78/78)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2020,6 +2077,7 @@ if __name__ == '__main__':
         ('chapter32.html', build_chapter32_html),
         ('chapter33.html', build_chapter33_html),
         ('chapter34.html', build_chapter34_html),
+        ('chapter35.html', build_chapter35_html),
     ]
     
     for filename, builder_fn in pages:
