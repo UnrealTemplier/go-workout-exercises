@@ -103,6 +103,8 @@ with open('builder/chapter38_data.json', 'r', encoding='utf-8') as f:
     ch38_exercises = json.load(f)
 with open('builder/chapter39_data.json', 'r', encoding='utf-8') as f:
     ch39_exercises = json.load(f)
+with open('builder/chapter40_data.json', 'r', encoding='utf-8') as f:
+    ch40_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -218,6 +220,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             37: ('chapter37.html', '88/88'),
             38: ('chapter38.html', '77/77'),
             39: ('chapter39.html', f'{len(ch39_exercises)}/{len(ch39_exercises)}'),
+            40: ('chapter40.html', f'{len(ch40_exercises)}/{len(ch40_exercises)}'),
         }
         
         if num in status_map:
@@ -2264,12 +2267,67 @@ def build_chapter39_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter38.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 38 NATS и NATS JetStream</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 40 Распределенная трассировка (OpenTelemetry) (Скоро) →</a>
+            <a href="chapter40.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 40 Распределенная трассировка (OpenTelemetry) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '39. Метрики и мониторинг (Prometheus) (114/114)') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+def build_chapter40_html(chapters):
+    active_chapter_num = 40
+    current_exercises = ch40_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 40 • Distributed Tracing, OpenTelemetry SDK, W3C Trace Context, Jaeger & Tempo in Go</div>
+      <h1 class="hero-title">Распределенная трассировка (OpenTelemetry)</h1>
+      <p class="hero-desc">
+        Глубокое инженерное руководство по разработке и внедрению распределенной трассировки OpenTelemetry в экосистеме микросервисов на Go 1.22+: архитектура разделения API и SDK, жизненный цикл спана (tracer.Start, defer span.End), внутрипроцессная передача контекста через context.Context и сетевое распространение по стандарту W3C Trace Context (traceparent, tracestate), семантический статус ошибки codes.Error против детальных событий span.RecordError, иерархия вызовов (Parent-Child) и причинно-следственные связи Span Links в асинхронных пакетных очередях Kafka, RabbitMQ и NATS, сквозная передача бизнес-контекста через W3C Baggage (tenant_id, feature_flag), подключение экспортеров OTLP over gRPC (:4317) и HTTP (:4318) в Jaeger и Grafana Tempo, семантические конвенции OpenTelemetry Resource и стандарты semconv, автоматическое инструментирование otelhttp (серверное middleware и клиентский транспорт RoundTripper), перехватчики otelgrpc (StatsHandler, Unary и Streaming RPC), трассировка базы данных database/sql через otelsql и драйвера jackc/pgx/v5 (pgxotel), мониторинг кэша Redis (redisotel), стратегии сэмплирования (AlwaysOn, TraceIDRatioBased, ParentBased), архитектура OpenTelemetry Collector (топология локального агента Sidecar/DaemonSet и централизованного шлюза Gateway), единый конвейер telemetry pipeline (receivers -> processors -> exporters), процессоры memory_limiter (защита от OOM), batch (пакетирование и сжатие), filter (удаление шума healthcheck) и tail_sampling (хвостовое сэмплирование 100% ошибок), автоматическая генерация RED-метрик из спанов через процессор spanmetrics, связка метрик и трейсов через OpenMetrics Exemplars для перехода в один клик от графика задержек в трейс инцидента, сквозная корреляция Traces -> Logs в Grafana (Tempo -> Loki по trace_id), построение карты микросервисов Service Graph, методология Distributed Trace Analysis для поиска узких мест и блокировок СУБД, детектор медленных запросов Slow Query Alert и надежная защита от утечки трейсов при Graceful Shutdown (defer tp.Shutdown).
+      </p>
+    </section>
+    """)
+    
+    # Sections (79 exercises)
+    sections = [
+        (1, 20, 'Раздел 1: Фундамент OpenTelemetry SDK, TracerProvider, W3C Trace Context, Baggage, OTLP gRPC и базовая авто-инструментация'),
+        (21, 40, 'Раздел 2: Docker окружение, Jaeger/Tempo UI, внутрипроцессный propagation, gRPC интерцепторы, базы данных и сэмплирование'),
+        (41, 60, 'Раздел 3: Tail-Based Sampling, pgxotel, uptrace, обработка паник, топология OTel Collector, memory_limiter и batch'),
+        (61, 79, 'Раздел 4: Ручной W3C Inject/Extract, Loki correlation, Service Graph, Exemplars, Distributed Trace Analysis и Slow Query Alert'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 40 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили распределенную трассировку OpenTelemetry на Go: от инициализации TracerProvider и протокола W3C Trace Context до сквозной передачи Baggage, интеграции с Jaeger, Grafana Tempo и Loki, настройки Tail-Based Sampling, защиты OTel Collector от OOM и глубокого анализа производительности распределенных транзакций.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter39.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 39 Метрики и мониторинг (Prometheus)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 41 Профилирование и рантайм-диагностика (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '40. Распределенная трассировка (OpenTelemetry) (79/79)') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2314,6 +2372,7 @@ if __name__ == '__main__':
         ('chapter37.html', build_chapter37_html),
         ('chapter38.html', build_chapter38_html),
         ('chapter39.html', build_chapter39_html),
+        ('chapter40.html', build_chapter40_html),
     ]
     
     for filename, builder_fn in pages:
