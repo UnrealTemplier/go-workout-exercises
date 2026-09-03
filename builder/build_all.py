@@ -89,6 +89,8 @@ with open('builder/chapter31_data.json', 'r', encoding='utf-8') as f:
     ch31_exercises = json.load(f)
 with open('builder/chapter32_data.json', 'r', encoding='utf-8') as f:
     ch32_exercises = json.load(f)
+with open('builder/chapter33_data.json', 'r', encoding='utf-8') as f:
+    ch33_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -197,6 +199,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             30: ('chapter30.html', '107/107'),
             31: ('chapter31.html', '120/120'),
             32: ('chapter32.html', '189/189'),
+            33: ('chapter33.html', '89/89'),
         }
         
         if num in status_map:
@@ -1863,12 +1866,65 @@ def build_chapter32_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter31.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 31 Бенчмарки, фаззинг и продвинутые методы тестирования</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 33 Микросервисная архитектура и паттерны (Скоро) →</a>
+            <a href="chapter33.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 33 Микросервисная архитектура и паттерны →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '32. Protocol Buffers и gRPC (189/189)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
+
+def build_chapter33_html(chapters):
+    active_chapter_num = 33
+    current_exercises = ch33_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append("""
+    <section class="hero-section" id="top">
+      <div class="hero-tag">Модуль 33 • Microservices Architecture & Distributed Patterns in Go</div>
+      <h1 class="hero-title">Микросервисная архитектура и паттерны</h1>
+      <p class="hero-desc">
+        Глубокое инженерное руководство по проектированию, декомпозиции и эксплуатации распределенных микросервисных систем на Go 1.22+: определение границ контекстов Bounded Context по методологии DDD, построение высокопроизводительных API Gateway и BFF (Backend for Frontend) с параллельной агрегацией через errgroup, динамическое обнаружение сервисов (Service Discovery в Consul и etcd) с арендой TTL и Watch-каналами, централизованная конфигурация и Hot Reload, клиентская балансировка нагрузки (Client-Side Load Balancing: round_robin, Least Connection, Peak EWMA, Headless Services), распределенные транзакции Saga (оркестрация и хореография) с компенсирующими действиями, гарантированная доставка сообщений Transactional Outbox с CDC, событийно-ориентированная архитектура (Event-Driven Architecture на Kafka, NATS и gRPC Streaming), CQRS с материализованными представлениями (ClickHouse, Elasticsearch) и аудит лага репликации, полный контур устойчивости к сбоям (Circuit Breaker на gobreaker, Bulkhead семафоры, Fallback деградация, Token Bucket Rate Limiting, Retry с Full Jitter и сквозной Context Deadline Propagation), сквозная наблюдаемость (OpenTelemetry distributed tracing с W3C TraceContext, экспорт в Jaeger, RED-метрики Prometheus и перцентили p50/p95/p99, pprof профилирование в production), контейнеризация Docker (multi-stage сборка на базе scratch/distroless до 15 МБ), Kubernetes манифесты (Deployment, ClusterIP Service, Ingress gRPC, HPA, preStop hooks для безопасного Connection Draining), Istio Service Mesh (Envoy sidecar, mTLS, Canary releases 90/10), GitOps пайплайны с ArgoCD, современный тулчейн Buf CLI (buf.yaml, buf lint, buf breaking) и паттерн безопасной миграции данных без простоев Strangler Fig.
+      </p>
+    </section>
+    """)
+    
+    # Sections
+    sections = [
+        (1, 30, 'Раздел 1: Декомпозиция монолита, API Gateway, Service Discovery, Saga, Outbox, CQRS и отказоустойчивость'),
+        (31, 60, 'Раздел 2: Наблюдаемость (Prometheus, Jaeger, pprof), Docker, Kubernetes (Deployment, Service, HPA), Istio и CI/CD'),
+        (61, 89, 'Раздел 3: Chaos Engineering, расширенный Circuit Breaker, BFF, Buf CLI, миграция Strangler Fig и E-Commerce платформа'),
+    ]
+    
+    ex_dict = {e['num']: e for e in current_exercises}
+    
+    for start_n, end_n, sec_title in sections:
+        content_parts.append(f"""
+        <div class="section-separator">
+            <h2>{sec_title}</h2>
+            <span class="tag">Упражнения {start_n}–{end_n}</span>
+        </div>
+        """)
+        for n in range(start_n, end_n + 1):
+            if n in ex_dict:
+                content_parts.append(build_exercise_card(ex_dict[n]))
+    content_parts.append("""
+    <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 33 полностью завершена!</h3>
+        <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 20px; line-height: 1.6;">
+            Вы в совершенстве освоили микросервисную архитектуру и паттерны распределенных систем в Go: от декомпозиции монолита и шлюзов API Gateway до паттернов Saga, Transactional Outbox, CQRS, Event Sourcing, Circuit Breaker, Service Mesh Istio, GitOps ArgoCD и проектирования высоконагруженных платформ e-commerce.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter32.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 32 Protocol Buffers и gRPC</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 34 GraphQL (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', '33. Микросервисная архитектура и паттерны (89/89)') + '\n' + sidebar_html + '\n' + '\n'.join(content_parts) + '\n' + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -1906,6 +1962,7 @@ if __name__ == '__main__':
         ('chapter30.html', build_chapter30_html),
         ('chapter31.html', build_chapter31_html),
         ('chapter32.html', build_chapter32_html),
+        ('chapter33.html', build_chapter33_html),
     ]
     
     for filename, builder_fn in pages:
