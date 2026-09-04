@@ -131,6 +131,8 @@ with open('builder/chapter52_data.json', 'r', encoding='utf-8') as f:
     ch52_exercises = json.load(f)
 with open('builder/chapter53_data.json', 'r', encoding='utf-8') as f:
     ch53_exercises = json.load(f)
+with open('builder/chapter54_data.json', 'r', encoding='utf-8') as f:
+    ch54_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -260,6 +262,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             51: ('chapter51.html', f'{len(ch51_exercises)}/{len(ch51_exercises)}'),
             52: ('chapter52.html', f'{len(ch52_exercises)}/{len(ch52_exercises)}'),
             53: ('chapter53.html', f'{len(ch53_exercises)}/{len(ch53_exercises)}'),
+            54: ('chapter54.html', f'{len(ch54_exercises)}/{len(ch54_exercises)}'),
         }
         
         if num in status_map:
@@ -3111,12 +3114,70 @@ def build_chapter53_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter52.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 52 Интеграция с C-кодом через CGO</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 54 Продвинутая рефлексия (reflect) (Скоро) →</a>
+            <a href="chapter54.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #ffffff; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #00add8;">Глава 54 Продвинутая рефлексия (reflect) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'53. Системные вызовы и взаимодействие с ОС ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+def build_chapter54_html(chapters):
+    active_chapter_num = 54
+    current_exercises = ch54_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 54</div>
+      <h1 class="hero-title">Продвинутая рефлексия (reflect)</h1>
+      <p class="hero-desc">
+        Исчерпывающее практическое и инженерное руководство по глубокому метапрограммированию и рантайм-инспекции типов в Go с помощью пакета reflect. Три фундаментальных закона рефлексии: переход от interface к объектам рефлексии, восстановление статических типов через Interface() и правила модификации данных (адресуемость CanAddr и CanSet). Механика типов и значений: детальное исследование reflect.Type и reflect.Value, различие между статическим Type и базовым Kind, разыменование указателей через Elem() и безопасная обработка nil. Инспекция и манипуляция структурами: чтение и валидация структурных тегов reflect.StructTag, динамический поиск полей FieldByName и FieldByIndex, обработка анонимных встраиваемых полей (embedding) и затенение идентификаторов. Динамическое создание структур данных на лету: инстанцирование слайсов (MakeSlice), ассоциативных массивов (MakeMap), каналов (MakeChan) и структур (StructOf). Создание функций в рантайме через reflect.MakeFunc: динамические перехватчики, логирующие прокси, мокирование интерфейсов и событийные шины (EventBus). Продвинутая конкурентность с reflect.Select для мультиплексирования динамических наборов каналов. Анализ производительности: аллокации в куче, escape analysis при передаче в any, издержки reflect.Call и reflectcall, а также безопасная интеграция с unsafe.Pointer и высокоскоростное кэширование метаданных в HighLoad-системах.
+      </p>
+    </section>
+    """)
+    
+    # Sections (114 exercises)
+    sections = [
+        (1, 28, 'Раздел 1: Законы рефлексии, основы reflect.Type, reflect.Value, Kind и адресуемость (Упр. 1–28)'),
+        (29, 56, 'Раздел 2: Динамический вызов методов, парсинг структурных тегов и манипуляция полями (Упр. 29–56)'),
+        (57, 84, 'Раздел 3: Создание динамических структур данных, проверка интерфейсов и DeepEqual (Упр. 57–84)'),
+        (85, 114, 'Раздел 4: Продвинутые техники: reflect.Select, кэширование, unsafe-интеграция и архитектура метапрограммирования (Упр. 85–114)')
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 54!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили рефлексию в Go: от законов рефлексии, манипуляции типами, полями и тегами до динамического создания функций через MakeFunc, построения mock-объектов, RPC-движков и оптимизации аллокаций в HighLoad.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter53.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 53 Системные вызовы и взаимодействие с ОС</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 55 Анализ AST и статический анализ кода (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'54. Продвинутая рефлексия (reflect) ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -3176,6 +3237,7 @@ if __name__ == '__main__':
         ('chapter51.html', build_chapter51_html),
         ('chapter52.html', build_chapter52_html),
         ('chapter53.html', build_chapter53_html),
+        ('chapter54.html', build_chapter54_html),
     ]
     
     for filename, builder_fn in pages:
