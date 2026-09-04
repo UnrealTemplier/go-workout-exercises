@@ -135,6 +135,8 @@ with open('builder/chapter54_data.json', 'r', encoding='utf-8') as f:
     ch54_exercises = json.load(f)
 with open('builder/chapter55_data.json', 'r', encoding='utf-8') as f:
     ch55_exercises = json.load(f)
+with open('builder/chapter56_data.json', 'r', encoding='utf-8') as f:
+    ch56_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -266,6 +268,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             53: ('chapter53.html', f'{len(ch53_exercises)}/{len(ch53_exercises)}'),
             54: ('chapter54.html', f'{len(ch54_exercises)}/{len(ch54_exercises)}'),
             55: ('chapter55.html', f'{len(ch55_exercises)}/{len(ch55_exercises)}'),
+            56: ('chapter56.html', f'{len(ch56_exercises)}/{len(ch56_exercises)}'),
         }
         
         if num in status_map:
@@ -3232,12 +3235,69 @@ def build_chapter55_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter54.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 54 Продвинутая рефлексия (reflect)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 56 Кодогенерация и шаблонизация (Скоро) →</a>
+            <a href="chapter56.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #ffffff; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #00add8;">Глава 56 Кодогенерация и шаблонизация →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'55. Анализ AST и статический анализ кода ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+def build_chapter56_html(chapters):
+    active_chapter_num = 56
+    current_exercises = ch56_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 56</div>
+      <h1 class="hero-title">Кодогенерация и шаблонизация</h1>
+      <p class="hero-desc">
+        Исчерпывающее практическое и инженерное руководство по промышленной кодогенерации и метапрограммированию в Go. Автоматизация сборки через директивы //go:generate и встроенные переменные окружения ($GOFILE, $GOPACKAGE, $GOLINE). Работа с официальными генераторами: stringer, моки интерфейсов и DI-контейнеры времени компиляции (Google Wire). Внедрение статических ресурсов и SQL-миграций через директиву //go:embed. Мощный синтаксис текстового процессора text/template: управление контекстом (with, range), пользовательские функции template.FuncMap, вложенные шаблоны define и обработка экранирования. Автоматическое форматирование исходного кода с помощью go/format и пакета imports. Разработка собственных CLI-генераторов полного цикла: AST-препроцессоры аннотаций, zero-allocation сериализаторы, типобезопасные клиенты OpenAPI/gRPC, ORM-репозитории и интеграция проверок чистоты генерации в пайплайны CI/CD и Makefile.
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, 20, "Раздел 1: Директива //go:generate, окружение и утилита stringer (Упр. 1–20)"),
+        (21, 40, "Раздел 2: Шаблонизатор text/template: синтаксис, функции, циклы и форматирование (Упр. 21–40)"),
+        (41, 60, "Раздел 3: Продвинутая шаблонизация, генерация моков, ORM и сериализации (Упр. 41–60)"),
+        (61, 77, "Раздел 4: Промышленные генераторы: DI, DDL, архитектурные слои и CI/CD (Упр. 61–77)"),
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 56!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили кодогенерацию и шаблонизацию в Go: от базовых директив go:generate и stringer до глубокого парсинга AST, шаблонов text/template, построения собственных ORM, DI-контейнеров, генераторов моков и интеграции в CI/CD пайплайны.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter55.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 55 Анализ AST и статический анализ кода</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 57 Симметричное и асимметричное шифрование (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'56. Кодогенерация и шаблонизация ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -3299,6 +3359,7 @@ if __name__ == '__main__':
         ('chapter53.html', build_chapter53_html),
         ('chapter54.html', build_chapter54_html),
         ('chapter55.html', build_chapter55_html),
+        ('chapter56.html', build_chapter56_html),
     ]
     
     for filename, builder_fn in pages:
