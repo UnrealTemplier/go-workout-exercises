@@ -147,6 +147,8 @@ with open('builder/chapter60_data.json', 'r', encoding='utf-8') as f:
     ch60_exercises = json.load(f)
 with open('builder/chapter61_data.json', 'r', encoding='utf-8') as f:
     ch61_exercises = json.load(f)
+with open('builder/chapter62_data.json', 'r', encoding='utf-8') as f:
+    ch62_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -338,6 +340,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             59: ('chapter59.html', f'{len(ch59_exercises)}/{len(ch59_exercises)}'),
             60: ('chapter60.html', f'{len(ch60_exercises)}/{len(ch60_exercises)}'),
             61: ('chapter61.html', f'{len(ch61_exercises)}/{len(ch61_exercises)}'),
+            62: ('chapter62.html', f'{len(ch62_exercises)}/{len(ch62_exercises)}'),
         }
         
         if num in status_map:
@@ -3653,12 +3656,71 @@ def build_chapter61_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter60.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 60 Безопасность веб-приложений и защита API</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 62 Аналитическая СУБД ClickHouse (Скоро) →</a>
+            <a href="chapter62.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #0b1120; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 62 Аналитическая СУБД ClickHouse →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'61. Документоориентированная база данных MongoDB ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter62_html(chapters):
+    active_chapter_num = 62
+    current_exercises = ch62_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 62</div>
+      <h1 class="hero-title">Аналитическая СУБД ClickHouse</h1>
+      <p class="hero-desc">
+        Глубокое инженерное руководство по колоночной аналитической СУБД ClickHouse для Go-разработчиков высоконагруженных платформ. Сетевые протоколы и драйвер: сравнительный анализ нативного бинарного TCP-протокола (порт 9000) и HTTP-интерфейса (порт 8123) в официальном драйвере github.com/ClickHouse/clickhouse-go/v2, сжатие блоков на лету (LZ4, ZSTD), потоковое чтение (Streaming Read) через rows.Next() с константным расходом оперативной памяти O(1) и векторизованный интерфейс Columnar Batch API (batch.Column(i).Append) для исключения накладных расходов рефлексии. Архитектура семейства MergeTree: физическое устройство хранения партов (Parts), разреженный первичный индекс (primary.cidx) с шагом index_granularity=8192, марк-файлы (.mrk2) для точечной адресации сжатых блоков, физическое партиционирование (PARTITION BY) против сортировки (ORDER BY), жизненный цикл данных (TTL) на уровне таблиц и отдельных колонок. Специализированные движки хранения: ReplacingMergeTree (дедупликация версий, модификатор FINAL и функция argMax), SummingMergeTree (автоматическое схлопывание счетчиков), AggregatingMergeTree с комбинаторами промежуточных состояний (-State и -Merge) и SimpleAggregateFunction, CollapsingMergeTree и VersionedCollapsingMergeTree с эмуляцией мутаций через знаковый признак Sign (+1 / -1). Вторичные индексы пропуска данных (Data Skipping Indexes): minmax, set, bloom_filter, tokenbf_v1 и n-граммный поиск по подстрокам LIKE через ngrambf_v1. Инкрементальные предагрегации: Materialized Views со связыванием TO target_table, Live Views и оконные стримы. Сложные типы: Array(T) с лямбда-функциями высшего порядка (arrayMap, arrayFilter, arrayReduce, arrayJoin), Tuple, Map(K, V), IPv4/IPv6, DateTime64(3) и высокоскоростной парсинг JSON (simdjson). Распределенная кластерная архитектура: фасад Distributed(cluster, db, table, sharding_key), двухуровневая репликация ReplicatedMergeTree с координацией через ClickHouse Keeper/ZooKeeper, потоковый импорт из Apache Kafka (Kafka Engine), аналитика локальных файлов через clickhouse-local и интеграция с внешними Data Lake (S3 Engine).
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Архитектура MergeTree, нативный бинарный протокол и пакетная вставка (Упражнения 1–18)"),
+        (19, "Раздел 2: Специализированные движки, индексы пропуска данных и компрессия (Упражнения 19–35)"),
+        (36, "Раздел 3: Сложные типы данных, партиционирование, Materialized Views и словари (Упражнения 36–53)"),
+        (54, "Раздел 4: Оконные функции, шардирование, интеграции и архитектурный синтез (Упражнения 54–71)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 62!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили аналитическую СУБД ClickHouse в Go: от физического устройства MergeTree и нативного бинарного протокола до специализированных движков, оконных функций, Materialized Views, шардирования и потокового импорта из Apache Kafka.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter61.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 61 Документоориентированная база данных MongoDB</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 63 Поисковые движки Elasticsearch и OpenSearch (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'62. Аналитическая СУБД ClickHouse ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -3726,6 +3788,7 @@ if __name__ == '__main__':
         ('chapter59.html', build_chapter59_html),
         ('chapter60.html', build_chapter60_html),
         ('chapter61.html', build_chapter61_html),
+        ('chapter62.html', build_chapter62_html),
     ]
     
     for filename, builder_fn in pages:
