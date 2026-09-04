@@ -111,6 +111,8 @@ with open('builder/chapter42_data.json', 'r', encoding='utf-8') as f:
     ch42_exercises = json.load(f)
 with open('builder/chapter43_data.json', 'r', encoding='utf-8') as f:
     ch43_exercises = json.load(f)
+with open('builder/chapter44_data.json', 'r', encoding='utf-8') as f:
+    ch44_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -230,6 +232,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             41: ('chapter41.html', f'{len(ch41_exercises)}/{len(ch41_exercises)}'),
             42: ('chapter42.html', f'{len(ch42_exercises)}/{len(ch42_exercises)}'),
             43: ('chapter43.html', f'{len(ch43_exercises)}/{len(ch43_exercises)}'),
+            44: ('chapter44.html', f'{len(ch44_exercises)}/{len(ch44_exercises)}'),
         }
         
         if num in status_map:
@@ -2497,12 +2500,70 @@ def build_chapter43_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter42.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 42 Проектирование чистой архитектуры и DDD</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 44 Проектирование высоконагруженных и отказоустойчивых систем (Скоро) →</a>
+            <a href="chapter44.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 44 Проектирование высоконагруженных и отказоустойчивых систем →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'43. Шаблоны проектирования распределенных и enterprise-систем ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+def build_chapter44_html(chapters):
+    active_chapter_num = 44
+    current_exercises = ch44_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 44</div>
+      <h1 class="hero-title">Проектирование высоконагруженных и отказоустойчивых систем</h1>
+      <p class="hero-desc">
+        Комплексное практическое руководство по проектированию экстремально высоконагруженных (HighLoad) и отказоустойчивых распределенных систем на языке Go: CQRS, Event Sourcing, многоуровневое кэширование (Cache-Aside, Write-Through, Write-Behind, Refresh-Ahead), алгоритмы Rate Limiting (Token Bucket, Leaky Bucket, Sliding Window Counter), L7 балансировка с Weighted Round-Robin, защита от каскадных сбоев через Bulkhead и Circuit Breaker, пулы соединений и дедупликация через singleflight.Group. Разбор механизмов Load Shedding, Backpressure, хаос-тестирования, шардирования с Consistent Hashing, катастрофоустойчивости (Disaster Recovery/PITR), динамического пула воркеров, а также сквозная реализация отказоустойчивого HighLoad SaaS-бэкенда и неблокирующего TCP-сервера на Linux epoll для преодоления барьера C10k/C100k.
+      </p>
+    </section>
+    """)
+    
+    # Sections (64 exercises)
+    sections = [
+        (1, 16, 'Раздел 1: CQRS, Event Sourcing, стратегии кэширования и алгоритмы Rate Limiting'),
+        (17, 32, 'Раздел 2: L7 балансировка, Bulkhead, Circuit Breaker, пулы соединений и Singleflight'),
+        (33, 48, 'Раздел 3: Отказоустойчивость, дедупликация запросов, префетчинг, Load Shedding и инженерия хаоса'),
+        (49, 64, 'Раздел 4: Согласованное хеширование, DR/PITR, динамические воркеры, Final Boss SaaS и C10k epoll')
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 44!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы успешно освоили ключевые дисциплины HighLoad и Fault Tolerance инженерии на Go: от тонкой настройки кэширования, лимитирования запросов и защиты пулов до согласованного хеширования, катастрофоустойчивости и неблокирующего сетевого ввода-вывода через системные вызовы Linux epoll.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter43.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 43 Шаблоны проектирования распределенных и enterprise-систем</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 45 Контейнеризация и Docker (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'44. Проектирование высоконагруженных и отказоустойчивых систем ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2551,6 +2612,7 @@ if __name__ == '__main__':
         ('chapter41.html', build_chapter41_html),
         ('chapter42.html', build_chapter42_html),
         ('chapter43.html', build_chapter43_html),
+        ('chapter44.html', build_chapter44_html),
     ]
     
     for filename, builder_fn in pages:
