@@ -139,6 +139,8 @@ with open('builder/chapter56_data.json', 'r', encoding='utf-8') as f:
     ch56_exercises = json.load(f)
 with open('builder/chapter57_data.json', 'r', encoding='utf-8') as f:
     ch57_exercises = json.load(f)
+with open('builder/chapter58_data.json', 'r', encoding='utf-8') as f:
+    ch58_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -272,6 +274,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             55: ('chapter55.html', f'{len(ch55_exercises)}/{len(ch55_exercises)}'),
             56: ('chapter56.html', f'{len(ch56_exercises)}/{len(ch56_exercises)}'),
             57: ('chapter57.html', f'{len(ch57_exercises)}/{len(ch57_exercises)}'),
+            58: ('chapter58.html', f'{len(ch58_exercises)}/{len(ch58_exercises)}'),
         }
         
         if num in status_map:
@@ -3353,12 +3356,70 @@ def build_chapter57_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter56.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 56 Кодогенерация и шаблонизация</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 58 Хеширование паролей и криптографическая стойкость (Скоро) →</a>
+            <a href="chapter58.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">Глава 58 Хеширование паролей и криптографическая стойкость →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'57. Симметричное и асимметричное шифрование ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+def build_chapter58_html(chapters):
+    active_chapter_num = 58
+    current_exercises = ch58_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 58</div>
+      <h1 class="hero-title">Хеширование паролей и криптографическая стойкость</h1>
+      <p class="hero-desc">
+        Глубокое инженерное руководство по защите учетных данных и криптографическому хранению паролей в Go. Криптографическая энтропия (crypto/rand) против детерминированного math/rand. Опасности быстрых дайджестов (MD5, SHA-1, SHA-256) и механика коллизий. Радужные таблицы (Rainbow Tables), генерация криптосолей и стандарт PBKDF2 (HMAC-SHA256). Промышленный стандарт bcrypt (golang.org/x/crypto/bcrypt): ключевое расписание Eksblowfish, калибровка фактора стоимости (cost factor), защита от DoS-атак через семафоры и пулы горутин, интеграция с PostgreSQL и GORM. Лимит длины 72 байта и техника Pre-hashing. Современный золотой стандарт Argon2id (RFC 9106, golang.org/x/crypto/argon2) и scrypt: устойчивость к GPU/ASIC перебору, компромисс память-время (TMTO) и канонический формат хранения PHC. Корпоративная безопасность: серверный перец (HMAC-SHA256 Pepper) вне базы данных, токены сессий PASETO (v4.local) против JWT, валидация паролей через протокол k-anonymity HaveIBeenPwned API, защита от тайминг-атак User Enumeration (Dummy Hash), ротация ключей (Key Ring) с поддержкой grace period, авторизация OAuth 2.0 (Authorization Code Flow) и OpenID Connect (OIDC) с валидацией JWKS, принудительное затирание секретов в памяти (Zeroing Memory) с защитой от Dead Code Elimination.
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Криптографическая энтропия и опасности быстрых хэшей (Упражнения 1–18)"),
+        (19, "Раздел 2: Промышленный стандарт bcrypt и защита от атак (Упражнения 19–37)"),
+        (38, "Раздел 3: Современный стандарт Argon2id, scrypt и KDF (Упражнения 38–47)"),
+        (48, "Раздел 4: Корпоративная безопасность: Peppering, PASETO, OAuth2/OIDC и память (Упражнения 48–56)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 58!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили современные методы безопасного хранения паролей и токены аутентификации в Go: от bcrypt и pre-hashing до Argon2id PHC, scrypt, HMAC Pepper, защищенных токенов PASETO, k-anonymity HaveIBeenPwned API, OAuth2/OIDC и гарантированного затирания секретов в памяти.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter57.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 57 Симметричное и асимметричное шифрование</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 59 Токены аутентификации и авторизация (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'58. Хеширование паролей и криптографическая стойкость ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -3422,6 +3483,7 @@ if __name__ == '__main__':
         ('chapter55.html', build_chapter55_html),
         ('chapter56.html', build_chapter56_html),
         ('chapter57.html', build_chapter57_html),
+        ('chapter58.html', build_chapter58_html),
     ]
     
     for filename, builder_fn in pages:
