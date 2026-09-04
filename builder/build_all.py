@@ -145,6 +145,8 @@ with open('builder/chapter59_data.json', 'r', encoding='utf-8') as f:
     ch59_exercises = json.load(f)
 with open('builder/chapter60_data.json', 'r', encoding='utf-8') as f:
     ch60_exercises = json.load(f)
+with open('builder/chapter61_data.json', 'r', encoding='utf-8') as f:
+    ch61_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -335,6 +337,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             58: ('chapter58.html', f'{len(ch58_exercises)}/{len(ch58_exercises)}'),
             59: ('chapter59.html', f'{len(ch59_exercises)}/{len(ch59_exercises)}'),
             60: ('chapter60.html', f'{len(ch60_exercises)}/{len(ch60_exercises)}'),
+            61: ('chapter61.html', f'{len(ch61_exercises)}/{len(ch61_exercises)}'),
         }
         
         if num in status_map:
@@ -3591,12 +3594,71 @@ def build_chapter60_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter59.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 59 Токены аутентификации и авторизация</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 61 Документоориентированная база данных MongoDB (Скоро) →</a>
+            <a href="chapter61.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #0b1120; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 61 Документоориентированная база данных MongoDB →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'60. Безопасность веб-приложений и защита API ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter61_html(chapters):
+    active_chapter_num = 61
+    current_exercises = ch61_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 61</div>
+      <h1 class="hero-title">Документоориентированная база данных MongoDB</h1>
+      <p class="hero-desc">
+        Комплексное практическое руководство по работе с NoSQL СУБД MongoDB в Go с использованием официального драйвера go.mongodb.org/mongo-driver. Архитектура движка хранения WiredTiger: организация структур данных на базе B-деревьев, кэширование страниц в памяти, checkpointing и журналы упреждающей записи (WAL/WiredTiger.wt). Внутреннее представление и форматы BSON: bson.D (строго упорядоченный срез пар ключ-значение для системных команд, пайплайнов и индексов), bson.M (неупорядоченная хэш-мапа), bson.A (BSON-массивы), 12-байтный primitive.ObjectID (4 байта Unix timestamp, 5 байт криптографически случайного процесса, 3 байта инкрементного счетчика) и primitive.Decimal128 для прецизионных финансовых вычислений без погрешностей плавающей запятой IEEE-754. Тонкая настройка пула сетевых соединений (MaxPoolSize, MinPoolSize, MaxConnIdleTime) и надежная обработка контекстных дедлайнов. Индексирование: Single field, Compound indexes с соблюдением правила ESR (Equality, Sort, Range), покрывающие индексы (covered queries), TTL-индексы для автоудаления устаревших сессий, Partial и Sparse индексы, полнотекстовые Text indexes, хэшированные (Hashed) и геопространственные 2dsphere индексы ($nearSphere, $geoWithin). Аналитический конвейер Aggregation Framework: $match, $project, $group с аккумуляторами ($sum, $avg, $push), $sort, $lookup (левое внешнее соединение коллекций с оптимизацией correlated subqueries), $unwind, параллельная обработка фасетов $facet, $bucketAuto, графовый обход $graphLookup и оконные функции $setWindowFields. Уровни консистентности и отказоустойчивости: Read Concern (local, available, majority, linearizable, snapshot), Write Concern (w:1, w:\"majority\", j:true, wtimeout) и Read Preference (primary, primaryPreferred, secondary, secondaryPreferred, nearest). Распределенные транзакции ACID поверх Replica Set с автоматическим повтором при TransientTransactionError и UnknownTransactionCommitResult. Репликация (Raft-подобные выборы Primary, oplog.rs), реактивные Change Streams для построения Event-Driven архитектур и CDC (Change Data Capture) с надежным возобновлением по Resume Token. Шардирование: кластерная маршрутизация mongos, распределение чанков (Chunk Split & Balance), выбор между Range и Hashed Shard Key. Специализированные сценарии: Time Series коллекции с бакетированием и гранулярностью (seconds, minutes, hours), векторный поиск Atlas Vector Search для RAG/LLM, блочное хранилище медиафайлов GridFS с чанками по 255 КБ, пулинг буферов BSON-сериализации и экстремальная HighLoad-оптимизация.
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Архитектура WiredTiger, BSON-типы, пул соединений и CRUD-операции (Упражнения 1–30)"),
+        (31, "Раздел 2: Индексы, Aggregation Framework и аналитические конвейеры (Упражнения 31–60)"),
+        (61, "Раздел 3: Read/Write Concerns, ACID-транзакции, Change Streams и шардирование (Упражнения 61–88)"),
+        (89, "Раздел 4: Time Series, Atlas Vector Search, GridFS и HighLoad оптимизация (Упражнения 89–113)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 61!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы досконально изучили работу с MongoDB в Go: от внутреннего устройства BSON и индексов WiredTiger до распределенных ACID-транзакций, реактивных Change Streams, сложных агрегаций, Time Series коллекций, Atlas Vector Search и GridFS.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter60.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 60 Безопасность веб-приложений и защита API</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 62 Аналитическая СУБД ClickHouse (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'61. Документоориентированная база данных MongoDB ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -3663,6 +3725,7 @@ if __name__ == '__main__':
         ('chapter58.html', build_chapter58_html),
         ('chapter59.html', build_chapter59_html),
         ('chapter60.html', build_chapter60_html),
+        ('chapter61.html', build_chapter61_html),
     ]
     
     for filename, builder_fn in pages:
