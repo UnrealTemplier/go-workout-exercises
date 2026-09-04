@@ -1138,7 +1138,7 @@
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим тестовый файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">example.txt</code> с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.WriteFile</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data, err := os.ReadFile("example.txt")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data, err := os.ReadFile(&quot;example.txt&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Преобразуем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[]byte</code> в строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string(data)</code> и выведем в терминал.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> убедимся в корректной обработке ошибок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err != nil</code>.</div></div>
   </div>
@@ -1308,7 +1308,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Откроем файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open("data.txt")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Откроем файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open(&quot;data.txt&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверим ошибку открытия <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err != nil</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Установим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer file.Close()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Инициализируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scanner := bufio.NewScanner(file)</code>.</div>
@@ -1370,7 +1370,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Если длина одной строки в файле превышает 64KB (например, гигантский JSON на одной строке), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scanner.Scan()</code> вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scanner.Err()</code> выдаст ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bufio.Scanner: token too long</code>. Для таких файлов нужно увеличивать буфер через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scanner.Buffer(buf, max)</code> или использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bufio.Reader.ReadString('\n')</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Если длина одной строки в файле превышает 64KB (например, гигантский JSON на одной строке), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scanner.Scan()</code> вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scanner.Err()</code> выдаст ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bufio.Scanner: token too long</code>. Для таких файлов нужно увеличивать буфер через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scanner.Buffer(buf, max)</code> или использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bufio.Reader.ReadString(&#x27;\n&#x27;)</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1463,7 +1463,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">binary.Read</code> необходимо передавать указатель на срез или массив фиксированной длины <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&restored</code>, иначе функция не сможет определить, сколько байт нужно вычитать из файла.</p></div>
+    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">binary.Read</code> необходимо передавать указатель на срез или массив фиксированной длины <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;restored</code>, иначе функция не сможет определить, сколько байт нужно вычитать из файла.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1491,7 +1491,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Зададим корневую директорию для поиска.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Walk</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Внутри функции обратного вызова отфильтруем каталоги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if info.IsDir()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверим расширение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Ext(path) == ".go"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверим расширение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Ext(path) == &quot;.go&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Выведем путь к каждому найденному <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.go</code> файлу.</div></div>
   </div>
   <div class="code-container">
@@ -1847,7 +1847,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">f, err := os.Create("temp.txt")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">f, err := os.Create(&quot;temp.txt&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сначала проверим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err != nil</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Только после успешной проверки напишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer f.Close()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запишем данные в файл.</div></div>
@@ -1927,7 +1927,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим временный файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tmpFile, err := os.CreateTemp("", "workout-*.tmp")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим временный файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tmpFile, err := os.CreateTemp(&quot;&quot;, &quot;workout-*.tmp&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Добавим отложенное удаление <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer os.Remove(tmpFile.Name())</code> и закрытие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer tmpFile.Close()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запишем временные данные и выведем путь к файлу.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> убедимся, что файл удален после выхода из функции.</div></div>
@@ -2190,7 +2190,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим тестовый файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">todo.txt</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Откроем файл через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Инициализируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bufio.NewScanner(file)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В цикле увеличим счетчик и выведем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[Line N]: <text></code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В цикле увеличим счетчик и выведем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[Line N]: &lt;text&gt;</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -2272,7 +2272,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл с начальной строкой.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Откроем файл через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0644)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запишем строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"New event appended\n"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запишем строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;New event appended\n&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Прочитаем файл целиком и убедимся в сохранении всех данных.</div></div>
   </div>
   <div class="code-container">
@@ -2506,7 +2506,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src.Read(buf)</code> возвращает $n > 0$ и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.EOF</code> на последнем шаге. Важно сначала записать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">buf[:n]</code>, а уже затем проверять <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err == io.EOF</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src.Read(buf)</code> возвращает $n &gt; 0$ и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.EOF</code> на последнем шаге. Важно сначала записать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">buf[:n]</code>, а уже затем проверять <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err == io.EOF</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -2514,8 +2514,8 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Может ли метод Read вернуть n > 0 и одновременно err == io.EOF?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! По контракту интерфейса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Reader</code>, при чтении последних байтов метод может вернуть ненулевое количество байт $n > 0$ и одновременно ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.EOF</code>. Вызывающий код обязан сначала обработать первые $n$ байт.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Может ли метод Read вернуть n &gt; 0 и одновременно err == io.EOF?»</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! По контракту интерфейса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Reader</code>, при чтении последних байтов метод может вернуть ненулевое количество байт $n &gt; 0$ и одновременно ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.EOF</code>. Вызывающий код обязан сначала обработать первые $n$ байт.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-17">
@@ -2525,7 +2525,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создай файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hello.txt</code> программно (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Create</code>). Запиши в него строку "Hello, File!". Закрой файл (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer f.Close()</code>). Прочитай файл обратно (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.ReadFile</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ioutil.ReadFile</code>) и выведи содержимое.</p></div>
+    <div><p style="margin-bottom: 6px;">Создай файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hello.txt</code> программно (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Create</code>). Запиши в него строку &quot;Hello, File!&quot;. Закрой файл (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer f.Close()</code>). Прочитай файл обратно (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.ReadFile</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ioutil.ReadFile</code>) и выведи содержимое.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2537,7 +2537,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hello.txt</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Create</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Добавим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer f.Close()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Hello, File!"</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">f.WriteString</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Hello, File!&quot;</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">f.WriteString</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Прочитаем через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.ReadFile</code> и выведем.</div></div>
   </div>
   <div class="code-container">
@@ -2595,8 +2595,8 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Каковы права файла при создании os.Create("test.txt") с правами 0666?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Реальные права файла вычисляются как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0666 & ~umask</code>. Если системный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">umask</code> равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0022</code>, итоговые права файла на диске будут <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0644</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-rw-r--r--</code>).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Каковы права файла при создании os.Create(&quot;test.txt&quot;) с правами 0666?»</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Реальные права файла вычисляются как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0666 &amp; ~umask</code>. Если системный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">umask</code> равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0022</code>, итоговые права файла на диске будут <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0644</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-rw-r--r--</code>).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-18">
@@ -2616,8 +2616,8 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим срез байт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data := []byte("Fast atomic byte write")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.WriteFile("fast.txt", data, 0644)</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим срез байт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data := []byte(&quot;Fast atomic byte write&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.WriteFile(&quot;fast.txt&quot;, data, 0644)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверим ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err != nil</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> прочитаем файл обратно и убедимся в успешной записи.</div></div>
   </div>
@@ -2947,7 +2947,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как настроить csv.Reader для файлов с разделителем точка с запятой (;) или табуляцией (\t)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Установить поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reader.Comma = ';'</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reader.Comma = '\t'</code>. Для чтения строк с разным количеством колонок устанавливают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reader.FieldsPerRecord = -1</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Установить поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reader.Comma = &#x27;;&#x27;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reader.Comma = &#x27;\t&#x27;</code>. Для чтения строк с разным количеством колонок устанавливают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reader.FieldsPerRecord = -1</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-22">
@@ -3222,7 +3222,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как предотвратить бесконечную рекурсию при копировании директорий с циклическими симлинками?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Отслеживать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ino</code> (inode) каждого каталога в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[uint64]bool</code> или использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.WalkDir</code> с проверкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">d.Type()&fs.ModeSymlink != 0</code> без автоматического перехода по ссылкам.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Отслеживать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ino</code> (inode) каждого каталога в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[uint64]bool</code> или использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.WalkDir</code> с проверкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">d.Type()&amp;fs.ModeSymlink != 0</code> без автоматического перехода по ссылкам.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-25">
@@ -3232,7 +3232,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Запись строки</strong>: Откройте файл на запись и запишите в него строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Привет, Go!"</code> с помощью метода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file.WriteString</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Запись строки</strong>: Откройте файл на запись и запишите в него строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Привет, Go!&quot;</code> с помощью метода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file.WriteString</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3244,7 +3244,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">greeting.txt</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Create</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Добавим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer f.Close()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запишем строку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">f.WriteString("Привет, Go!\n")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запишем строку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">f.WriteString(&quot;Привет, Go!\n&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> прочитаем файл и выведем содержимое.</div></div>
   </div>
   <div class="code-container">
@@ -3397,7 +3397,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Если файл содержит пустые строки, они возвращаются как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code> и увеличивают длину среза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lines</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Если файл содержит пустые строки, они возвращаются как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code> и увеличивают длину среза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lines</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3424,7 +3424,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">junk.tmp</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверим его наличие через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Stat</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Удалим файл через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Remove("junk.tmp")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Удалим файл через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Remove(&quot;junk.tmp&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Повторно вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Stat</code> и убедимся в удалении.</div></div>
   </div>
   <div class="code-container">
@@ -3491,7 +3491,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Найдите и замените определенное слово в текстовом файле, перезаписав его (прочитайте -> измените -> перезапишите).</p></div>
+    <div><p style="margin-bottom: 6px;">Найдите и замените определенное слово в текстовом файле, перезаписав его (прочитайте -&gt; измените -&gt; перезапишите).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3568,7 +3568,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как оптимизировать replaceInFile для работы без преобразования []byte -> string -> []byte?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как оптимизировать replaceInFile для работы без преобразования []byte -&gt; string -&gt; []byte?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bytes.ReplaceAll(data, []byte(old), []byte(new))</code> напрямую на срезах байт. Это исключит лишние аллокации строк в куче.</p></div>
   </div>
 </div>
@@ -3656,7 +3656,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему запись 10 000 строк через file.WriteString в 100 раз медленнее, чем через bufio.Writer?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file.WriteString</code> совершает 10 000 системных вызовов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">write(2)</code> с переключением колец защиты CPU (Ring 3 -> Ring 0 -> Ring 3). <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bufio.Writer</code> группирует строки в буфер и делает всего 10 системных вызовов по 4KB.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file.WriteString</code> совершает 10 000 системных вызовов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">write(2)</code> с переключением колец защиты CPU (Ring 3 -&gt; Ring 0 -&gt; Ring 3). <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bufio.Writer</code> группирует строки в буфер и делает всего 10 системных вызовов по 4KB.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-30">
@@ -3782,11 +3782,11 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">alphabet.txt</code> со строкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"0123456789ABCDEF"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">alphabet.txt</code> со строкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;0123456789ABCDEF&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Откроем файл через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Переместим курсор: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file.Seek(5, io.SeekStart)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Прочитаем 3 байта в буфер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">buf := make([]byte, 3)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> убедимся, что вычитаны символы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"567"</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> убедимся, что вычитаны символы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;567&quot;</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -4402,7 +4402,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">secure.cfg</code> с правами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0600</code> (чтение/запись только владельцем).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Chmod("secure.cfg", 0600)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Chmod(&quot;secure.cfg&quot;, 0600)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запросим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info.Mode().Perm()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сравним биты с константой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0600</code>.</div></div>
   </div>
@@ -4466,7 +4466,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как проверить, что файл является исполняемым скриптом в Linux на Go?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Проверить наличие бита исполнения: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if info.Mode().Perm()&0111 != 0 { /* файл исполняемый */ }</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Проверить наличие бита исполнения: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if info.Mode().Perm()&amp;0111 != 0 { /* файл исполняемый */ }</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-39">
@@ -4587,7 +4587,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">archive.tar.gz</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info, err := os.Stat("archive.tar.gz")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info, err := os.Stat(&quot;archive.tar.gz&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Распечатаем все свойства в форматированном виде.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> проверим вывод метаданных.</div></div>
   </div>
@@ -4668,7 +4668,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим тестовую папку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">workspace/</code> с несколькими файлами.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">entries, err := os.ReadDir("workspace")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">entries, err := os.ReadDir(&quot;workspace&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В цикле выведем имя каждого элемента и признак директории <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">entry.IsDir()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> убедимся в сортировке.</div></div>
   </div>
@@ -4924,7 +4924,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим дерево вложенных папок и файлов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуем функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WalkTree(dir string, level int) error</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сформируем визуальный отступ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Repeat("  ", level)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сформируем визуальный отступ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Repeat(&quot;  &quot;, level)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> распечатаем красивое иерархическое дерево каталогов.</div></div>
   </div>
   <div class="code-container">
@@ -5028,7 +5028,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file, err := os.Create("test.txt")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file, err := os.Create(&quot;test.txt&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверим ошибку создания <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err != nil</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Установим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer file.Close()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запросим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file.Stat()</code> и убедимся, что размер равен 0 байт.</div></div>
@@ -5114,7 +5114,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сформируем путь через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Join("var", "log", "app", "service.log.gz")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сформируем путь через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Join(&quot;var&quot;, &quot;log&quot;, &quot;app&quot;, &quot;service.log.gz&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Извлечем директорию через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Dir</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Извлечем имя файла через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Base</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Извлечем расширение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Ext</code>.</div></div>
@@ -5296,13 +5296,11 @@ func main() {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Золотое правило работы с ресурсами в Go:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">f, err := os.Open(name)</p>
-<p style="margin-bottom: 6px;">if err != nil {</p>
-<p style="margin-bottom: 6px;">return err // Обработка ошибки</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">defer f.Close() // Ресурс гарантированно закрыт</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p></div>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">f, err := os.Open(name)
+if err != nil {
+    return err // Обработка ошибки
+}
+defer f.Close() // Ресурс гарантированно закрыт</code></pre></div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -5384,7 +5382,7 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file.Read(b []byte)</code> заполняет слайс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">b</code> байтами из файла. При достижении конца файла возвращается ошибка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.EOF</code>. Если прочитана часть байт ($n > 0$), их необходимо обработать до выхода.</p></div>
+    <div><p style="margin-bottom: 6px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file.Read(b []byte)</code> заполняет слайс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">b</code> байтами из файла. При достижении конца файла возвращается ошибка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.EOF</code>. Если прочитана часть байт ($n &gt; 0$), их необходимо обработать до выхода.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -5574,7 +5572,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Откройте бинарный файл с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open</code> и прочитайте первые 16 байт, чтобы определить "магическое число" (сигнатуру) файла.</p></div>
+    <div><p style="margin-bottom: 6px;">Откройте бинарный файл с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open</code> и прочитайте первые 16 байт, чтобы определить &quot;магическое число&quot; (сигнатуру) файла.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5882,7 +5880,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Открытие для чтения</strong>: Напишите код, который открывает существующий файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">test.txt</code> в режиме "только для чтения" с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open</code>. Обработайте возможную ошибку (например, если файла нет).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Открытие для чтения</strong>: Напишите код, который открывает существующий файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">test.txt</code> в режиме &quot;только для чтения&quot; с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open</code>. Обработайте возможную ошибку (например, если файла нет).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5969,14 +5967,14 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoding/csv</code> поддерживает произвольные разделители колонок через установку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reader.Comma = '\t'</code> для файлов TSV (Tab-Separated Values).</p></div>
+    <div><p style="margin-bottom: 6px;">Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoding/csv</code> поддерживает произвольные разделители колонок через установку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reader.Comma = &#x27;\t&#x27;</code> для файлов TSV (Tab-Separated Values).</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим TSV файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">servers.tsv</code> с табуляцией в качестве разделителя.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Инициализируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">csv.NewReader(f)</code> и зададим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.Comma = '\t'</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Инициализируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">csv.NewReader(f)</code> и зададим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.Comma = &#x27;\t&#x27;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Прочитаем все строки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.ReadAll()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выведем отформатированную таблицу с выравниванием колонок.</div></div>
   </div>
@@ -6218,7 +6216,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в Go 1.13+ рекомендуют errors.Is(err, os.ErrNotExist) вместо os.IsNotExist(err)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> умеет разворачивать цепочки обернутых ошибок (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("step: %w", err)</code>), тогда как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.IsNotExist</code> проверяет только верхний тип ошибки и ломается на обертках.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> умеет разворачивать цепочки обернутых ошибок (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;step: %w&quot;, err)</code>), тогда как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.IsNotExist</code> проверяет только верхний тип ошибки и ломается на обертках.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-58">
@@ -6241,7 +6239,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DatabaseConfig</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db_config.json</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Инициализируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoder := json.NewEncoder(file)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Настроим отступы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoder.SetIndent("", "  ")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Настроим отступы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoder.SetIndent(&quot;&quot;, &quot;  &quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoder.Encode(cfg)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> проверим форматированный JSON файл.</div></div>
   </div>
@@ -6538,7 +6536,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">app_settings.json</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Объявим структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AppSettings struct { AppName string; Debug bool; Port int }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Откроем файл через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.NewDecoder(file).Decode(&settings)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.NewDecoder(file).Decode(&amp;settings)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> распечатаем поля структуры.</div></div>
   </div>
   <div class="code-container">
@@ -6600,7 +6598,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Передавайте в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Decode</code> указатель на структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&settings</code>, иначе поля структуры не заполнятся.</p></div>
+    <div><p style="margin-bottom: 6px;">Передавайте в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Decode</code> указатель на структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;settings</code>, иначе поля структуры не заполнятся.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -6619,7 +6617,7 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Байты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">65, 66, 67, 10</code> в таблице кодировки ASCII соответствуют символам <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">'A', 'B', 'C', '\n'</code>. Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file.Write(b)</code> записывает сырые байты без преобразований.</p></div>
+    <div><p style="margin-bottom: 6px;">Байты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">65, 66, 67, 10</code> в таблице кодировки ASCII соответствуют символам <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;\n&#x27;</code>. Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file.Write(b)</code> записывает сырые байты без преобразований.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -6628,7 +6626,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим срез байт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[]byte{65, 66, 67, 10}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">raw_ascii.txt</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запишем срез через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file.Write(bytes)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Прочитаем файл как строку и убедимся в появлении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"ABC\n"</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Прочитаем файл как строку и убедимся в появлении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;ABC\n&quot;</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -6793,12 +6791,12 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Если поле содержит запятую (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Mouse, Optical"</code>), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">csv.Writer</code> автоматически обернет поле в кавычки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\"Mouse, Optical\"</code> по RFC 4180.</p></div>
+    <div><p style="margin-bottom: 6px;">Если поле содержит запятую (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Mouse, Optical&quot;</code>), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">csv.Writer</code> автоматически обернет поле в кавычки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\&quot;Mouse, Optical\&quot;</code> по RFC 4180.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как безопасно экранировать поля с кавычками внутри CSV?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoding/csv</code> делает это автоматически: кавычка внутри поля удваивается (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"John ""The Boss"" Doe"</code>).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoding/csv</code> делает это автоматически: кавычка внутри поля удваивается (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;John &quot;&quot;The Boss&quot;&quot; Doe&quot;</code>).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-64">
@@ -6808,17 +6806,17 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу, которая сериализует структуру в JSON (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoding/json</code>) и записывает в файл. Затем читает из файла и десериализует. Используй теги структур <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"field_name"</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу, которая сериализует структуру в JSON (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoding/json</code>) и записывает в файл. Затем читает из файла и десериализует. Используй теги структур <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;field_name&quot;</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Теги структур <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"field_name,omitempty"</code> задают маппинг между полями Go-структуры (PascalCase) и полями JSON документа (snake_case/camelCase).</p></div>
+    <div><p style="margin-bottom: 6px;">Теги структур <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;field_name,omitempty&quot;</code> задают маппинг между полями Go-структуры (PascalCase) и полями JSON документа (snake_case/camelCase).</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ClusterNode struct { NodeID string json:"node_id"; IP string json:"ip_address" }</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ClusterNode struct { NodeID string json:&quot;node_id&quot;; IP string json:&quot;ip_address&quot; }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сериализуем через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.MarshalIndent</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сохраним в файл через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.WriteFile</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Прочитаем файл и десериализуем через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal</code>.</div>
@@ -6894,11 +6892,11 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal</code> использует рефлексию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reflect</code> для сопоставления JSON-ключей с тегами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"..."</code> структуры.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal</code> использует рефлексию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reflect</code> для сопоставления JSON-ключей с тегами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;...&quot;</code> структуры.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Тег <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"-"</code> исключает поле из сериализации, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">omitempty</code> пропускает поле, если оно равно zero value.</p></div>
+    <div><p style="margin-bottom: 6px;">Тег <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;-&quot;</code> исключает поле из сериализации, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">omitempty</code> пропускает поле, если оно равно zero value.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -6917,7 +6915,7 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.WalkDir</code> (Go 1.16+) — наиболее производительный способ обхода файловой системы в Go, фильтрующий файлы по расширению <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Ext(path) == ".txt"</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.WalkDir</code> (Go 1.16+) — наиболее производительный способ обхода файловой системы в Go, фильтрующий файлы по расширению <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Ext(path) == &quot;.txt&quot;</code>.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -6926,7 +6924,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим дерево тестовых файлов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.txt</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.log</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.json</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.WalkDir</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Отфильтруем папки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if d.IsDir()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сверим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Ext(path) == ".txt"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сверим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Ext(path) == &quot;.txt&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Распечатаем найденные пути.</div></div>
   </div>
   <div class="code-container">
@@ -7004,7 +7002,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как пропустить всю ветку каталога (например, .git или node_modules) при обходе?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Внутри коллбэка проверить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if d.IsDir() && d.Name() == "node_modules" { return filepath.SkipDir }</code>. Обходчик немедленно пропустит всю эту папку.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Внутри коллбэка проверить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if d.IsDir() &amp;&amp; d.Name() == &quot;node_modules&quot; { return filepath.SkipDir }</code>. Обходчик немедленно пропустит всю эту папку.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-66">
@@ -7025,7 +7023,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">test.txt</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data, err := os.ReadFile("test.txt")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data, err := os.ReadFile(&quot;test.txt&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Преобразуем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string(data)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выведем результат в консоль.</div></div>
   </div>
@@ -7196,7 +7194,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим дерево <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sandbox/a/b/c</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запишем файл внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sandbox/a/b/c/data.txt</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверим существование.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.RemoveAll("sandbox")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.RemoveAll(&quot;sandbox&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Убедимся в полной очистке.</div></div>
   </div>
   <div class="code-container">
@@ -7250,7 +7248,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Будьте предельно осторожны с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.RemoveAll</code>: если путь окажется пустым <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"/"</code>, можно случайно удалить корневую файловую систему!</p></div>
+    <div><p style="margin-bottom: 6px;">Будьте предельно осторожны с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.RemoveAll</code>: если путь окажется пустым <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;/&quot;</code>, можно случайно удалить корневую файловую систему!</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -7265,7 +7263,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Права доступа (Chmod)</strong>: Создай скрипт (например, файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">script.sh</code> с текстом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">echo "hello"</code>). Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Chmod</code>, чтобы выдать ему права на исполнение (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0755</code>).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Права доступа (Chmod)</strong>: Создай скрипт (например, файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">script.sh</code> с текстом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">echo &quot;hello&quot;</code>). Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Chmod</code>, чтобы выдать ему права на исполнение (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0755</code>).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7275,7 +7273,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">script.sh</code> со строкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">#!/bin/bash\necho "Hello from Go generated script!"\n</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">script.sh</code> со строкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">#!/bin/bash\necho &quot;Hello from Go generated script!&quot;\n</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Изменим права на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0755</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Chmod</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запросим метаданные через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Stat</code> и выведем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info.Mode().Perm()</code>.</div></div>
   </div>
@@ -7340,7 +7338,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как запустить сгенерированный скрипт напрямую из Go процесса?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os/exec</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cmd := exec.Command("./runner.sh"); out, err := cmd.CombinedOutput()</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os/exec</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cmd := exec.Command(&quot;./runner.sh&quot;); out, err := cmd.CombinedOutput()</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-70">
@@ -7444,7 +7442,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу, которая разбивает большой бинарный файл на части (chunk'и) заданного размера (например, 1MB каждый). Затем напиши программу-сборщик, которая объединяет chunk'и обратно.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу, которая разбивает большой бинарный файл на части (chunk&#x27;и) заданного размера (например, 1MB каждый). Затем напиши программу-сборщик, которая объединяет chunk&#x27;и обратно.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7600,7 +7598,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">messages.txt</code> с начальным текстом.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Откроем через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0644)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Допишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Second line of text\n"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Допишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Second line of text\n&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> выведем итоговый файл.</div></div>
   </div>
   <div class="code-container">
@@ -7891,7 +7889,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reader.Read(buf)</code> может вернуть $n < len(buf)$ даже если файл еще не закончился.</p></div>
+    <div><p style="margin-bottom: 6px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reader.Read(buf)</code> может вернуть $n &lt; len(buf)$ даже если файл еще не закончился.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -7906,7 +7904,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу, которая читает файл с произвольной позиции (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.File.Seek</code>). Реализуй "tail" — чтение последних N байт файла без загрузки всего файла в память.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу, которая читает файл с произвольной позиции (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.File.Seek</code>). Реализуй &quot;tail&quot; — чтение последних N байт файла без загрузки всего файла в память.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7996,7 +7994,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Если размер файла меньше $N$, смещение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-n</code> вернет ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EINVAL: invalid argument</code>. Всегда проверяйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">size > n</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Если размер файла меньше $N$, смещение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-n</code> вернет ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EINVAL: invalid argument</code>. Всегда проверяйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">size &gt; n</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -8176,7 +8174,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Знаки препинания (запятые, точки) не удаляются автоматически и остаются частью слова (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"word,"</code>).</p></div>
+    <div><p style="margin-bottom: 6px;">Знаки препинания (запятые, точки) не удаляются автоматически и остаются частью слова (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;word,&quot;</code>).</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -8461,7 +8459,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как определить, что DirEntry является симлинком?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Проверить битовую маску: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if e.Type()&fs.ModeSymlink != 0 { /* элемент является символической ссылкой */ }</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Проверить битовую маску: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if e.Type()&amp;fs.ModeSymlink != 0 { /* элемент является символической ссылкой */ }</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-81">
@@ -8484,7 +8482,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Record struct { ID int; Task string; Done bool }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим срез записей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">records</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сериализуем через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gob.NewEncoder(f).Encode(records)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Откроем файл и восстановим весь срез через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gob.NewDecoder(f).Decode(&restored)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Откроем файл и восстановим весь срез через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gob.NewDecoder(f).Decode(&amp;restored)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> распечатаем результат.</div></div>
   </div>
   <div class="code-container">
@@ -8772,7 +8770,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Реализуем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RotatingLogger</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В методе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Write(msg string)</code> проверяем текущий размер через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file.Stat()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">size >= maxSize</code> — вызываем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rotate()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">size &gt;= maxSize</code> — вызываем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rotate()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> запишем данные и проверим ротацию.</div></div>
   </div>
   <div class="code-container">
@@ -8901,7 +8899,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[1234567890]</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Откроем в режиме <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.O_RDWR</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сместим курсор на позицию 4: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file.Seek(4, io.SeekStart)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запишем строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"XXXX"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запишем строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;XXXX&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> убедимся, что остальная часть файла не пострадала.</div></div>
   </div>
   <div class="code-container">
@@ -9063,13 +9061,13 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Передача пустой строки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code> в первый аргумент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.CreateTemp("", "pattern-*.ext")</code> автоматически выбирает системный каталог временных файлов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.TempDir()</code>, обычно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/tmp</code> в Linux и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%TEMP%</code> в Windows).</p></div>
+    <div><p style="margin-bottom: 6px;">Передача пустой строки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code> в первый аргумент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.CreateTemp(&quot;&quot;, &quot;pattern-*.ext&quot;)</code> автоматически выбирает системный каталог временных файлов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.TempDir()</code>, обычно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/tmp</code> в Linux и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%TEMP%</code> в Windows).</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tmpFile, err := os.CreateTemp("", "session-*.tmp")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tmpFile, err := os.CreateTemp(&quot;&quot;, &quot;session-*.tmp&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Установим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer os.Remove(tmpFile.Name())</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer tmpFile.Close()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запишем временные данные.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выведем путь к файлу.</div></div>
@@ -9150,7 +9148,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим тестовую структуру директорий.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуем обход через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.WalkDir</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вычислим относительный путь через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Rel(root, path)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сформируем визуальный отступ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Repeat("  ", depth)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сформируем визуальный отступ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Repeat(&quot;  &quot;, depth)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> выведем дерево.</div></div>
   </div>
   <div class="code-container">
@@ -9228,7 +9226,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Для исключения скрытых файлов добавьте проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if strings.HasPrefix(d.Name(), ".") { return nil }</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Для исключения скрытых файлов добавьте проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if strings.HasPrefix(d.Name(), &quot;.&quot;) { return nil }</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -9253,7 +9251,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим временный файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.CreateTemp("", "worker-job-*.tmp")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим временный файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.CreateTemp(&quot;&quot;, &quot;worker-job-*.tmp&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Добавим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer os.Remove(f.Name())</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer f.Close()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запишем данные и прочитаем обратно.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> убедимся в удалении файла при выходе.</div></div>
@@ -9420,7 +9418,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Ext</code> возвращает расширение с ведущей точкой (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">".log"</code>).</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Ext</code> возвращает расширение с ведущей точкой (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;.log&quot;</code>).</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -9630,7 +9628,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим временный файл через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.CreateTemp("", "analytics-*.tmp")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим временный файл через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.CreateTemp(&quot;&quot;, &quot;analytics-*.tmp&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Установим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer os.Remove(f.Name())</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запишем данные и закроем файл.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> убедимся в удалении файла.</div></div>
@@ -9796,7 +9794,7 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">binary.Read(r, binary.LittleEndian, &player)</code> вычитывает ровно необходимое количество байт из файла и декодирует их напрямую в поля структуры.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">binary.Read(r, binary.LittleEndian, &amp;player)</code> вычитывает ровно необходимое количество байт из файла и декодирует их напрямую в поля структуры.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -9805,7 +9803,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PlayerData struct { ID uint32; Level uint16; Score float32 }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запишем тестовый бинарный файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">player.dat</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Откроем файл через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">binary.Read(f, binary.LittleEndian, &restored)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">binary.Read(f, binary.LittleEndian, &amp;restored)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> распечатаем восстановленные поля.</div></div>
   </div>
   <div class="code-container">
@@ -9875,12 +9873,12 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">binary.Read</code> обязательно передавать указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&p</code>, иначе возникнет ошибка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">binary.Read: non-pointer PlayerData</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">binary.Read</code> обязательно передавать указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;p</code>, иначе возникнет ошибка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">binary.Read: non-pointer PlayerData</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как прочитать массив из 1000 структур PlayerData за один системный вызов?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Передать указатель на срез <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">players := make([]PlayerData, 1000); binary.Read(f, binary.LittleEndian, &players)</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Передать указатель на срез <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">players := make([]PlayerData, 1000); binary.Read(f, binary.LittleEndian, &amp;players)</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-96">
@@ -9890,7 +9888,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши функцию, которая читает лог-файл (текстовый) и возвращает количество строк, содержащих слово "ERROR".</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши функцию, которая читает лог-файл (текстовый) и возвращает количество строк, содержащих слово &quot;ERROR&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9902,7 +9900,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим лог-файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">system.log</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуем функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CountErrorLines(path string) (int, error)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В цикле сканирования проверим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Contains(scanner.Text(), "ERROR")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В цикле сканирования проверим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Contains(scanner.Text(), &quot;ERROR&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> выведем общее число сбоев.</div></div>
   </div>
   <div class="code-container">
@@ -9968,12 +9966,12 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scanner.Bytes()</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bytes.Contains(scanner.Bytes(), []byte("ERROR"))</code> для нулевых аллокаций памяти.</p></div>
+    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scanner.Bytes()</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bytes.Contains(scanner.Bytes(), []byte(&quot;ERROR&quot;))</code> для нулевых аллокаций памяти.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как оптимизировать CountErrorLines для максимального throughput на NVMe SSD?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bytes.Count(chunk, []byte("\nERROR"))</code> на блоках по 1MB или пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang.org/x/sys/unix</code> с системным вызовом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mmap</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bytes.Count(chunk, []byte(&quot;\nERROR&quot;))</code> на блоках по 1MB или пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang.org/x/sys/unix</code> с системным вызовом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mmap</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-97">
@@ -9983,7 +9981,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу, которая использует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.MultiWriter</code> для одновременной записи в файл и в консоль. Напиши логгер, который пишет в несколько destination'ов.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу, которая использует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.MultiWriter</code> для одновременной записи в файл и в консоль. Напиши логгер, который пишет в несколько destination&#x27;ов.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -10071,7 +10069,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Финальное испытание]</strong>: Напиши CLI-утилиту, которая принимает флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-input</code> (путь к txt файлу) и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-output</code> (путь к новому файлу). Программа должна прочитать input, преобразовать весь текст в ВЕРХНИЙ РЕГИСТР, посчитать количество слов, и записать в output файл результат в формате: "WORDS: <count>\nUPPERCASE TEXT: ...". Обработать все ошибки (нет файла, нет прав и т.д.) через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">log.Fatalf</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Финальное испытание]</strong>: Напиши CLI-утилиту, которая принимает флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-input</code> (путь к txt файлу) и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-output</code> (путь к новому файлу). Программа должна прочитать input, преобразовать весь текст в ВЕРХНИЙ РЕГИСТР, посчитать количество слов, и записать в output файл результат в формате: &quot;WORDS: &lt;count&gt;\nUPPERCASE TEXT: ...&quot;. Обработать все ошибки (нет файла, нет прав и т.д.) через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">log.Fatalf</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -10081,7 +10079,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим флаги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">flag.StringVar(&inputPath, "input", ...)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-output</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим флаги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">flag.StringVar(&amp;inputPath, &quot;input&quot;, ...)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-output</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">flag.Parse()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Прочитаем входной файл и посчитаем слова.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Преобразуем текст в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.ToUpper(text)</code>.</div>
@@ -10201,7 +10199,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим временный файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.CreateTemp("", "app-config-*.json")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим временный файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.CreateTemp(&quot;&quot;, &quot;app-config-*.json&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Установим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer os.Remove(tmp.Name())</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запишем JSON конфигурацию.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Прочитаем конфигурацию.</div>
@@ -10363,7 +10361,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Обязательно возвращайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.EOF</code>, когда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.offset >= len(m.buf)</code>, иначе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.ReadAll</code> зависнет в бесконечном цикле!</p></div>
+    <div><p style="margin-bottom: 6px;">Обязательно возвращайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.EOF</code>, когда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.offset &gt;= len(m.buf)</code>, иначе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.ReadAll</code> зависнет в бесконечном цикле!</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>

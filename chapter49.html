@@ -883,14 +883,14 @@
       <a href="#ex-24" class="sub-exercise-link" title="Упр 24: Ловушка пустого интерфейса: Боксинг и побег в кучу">24. Ловушка пустого интерфейса: Боксинг и побег в кучу</a>
       <a href="#ex-25" class="sub-exercise-link" title="Упр 25: Профилирование памяти: inuse_space vs alloc_space в pprof">25. Профилирование памяти: inuse_space vs alloc_space в pprof</a>
       <a href="#ex-26" class="sub-exercise-link" title="Упр 26: 10 паттернов Escape Analysis: Глубокий анализ побега переменных">26. 10 паттернов Escape Analysis: Глубокий анализ побега переменных</a>
-      <a href="#ex-27" class="sub-exercise-link" title="Упр 27: Выделение крупных объектов Large Objects (> 32 КБ) напрямую из mheap">27. Выделение крупных объектов Large Objects (> 32 КБ) напрямую из mheap</a>
+      <a href="#ex-27" class="sub-exercise-link" title="Упр 27: Выделение крупных объектов Large Objects (&gt; 32 КБ) напрямую из mheap">27. Выделение крупных объектов Large Objects (&gt; 32 КБ) напрямую из mheap</a>
       <a href="#ex-28" class="sub-exercise-link" title="Упр 28: Escape Analysis при передаче данных в горутины и каналы">28. Escape Analysis при передаче данных в горутины и каналы</a>
       <a href="#ex-29" class="sub-exercise-link" title="Упр 29: Профилирование 1 млн мелких объектов в pprof heap">29. Профилирование 1 млн мелких объектов в pprof heap</a>
       <a href="#ex-30" class="sub-exercise-link" title="Упр 30: Сравнение динамического стека Go со стеками Java и C++">30. Сравнение динамического стека Go со стеками Java и C++</a>
       <a href="#ex-31" class="sub-exercise-link" title="Упр 31: Ложное разделение False Sharing и выравнивание по кэш-линиям">31. Ложное разделение False Sharing и выравнивание по кэш-линиям</a>
       <a href="#ex-32" class="sub-exercise-link" title="Упр 32: Округление классов размеров и трассировка GODEBUG=allocfreetrace">32. Округление классов размеров и трассировка GODEBUG=allocfreetrace</a>
       <a href="#ex-33" class="sub-exercise-link" title="Упр 33: Глубокая рекурсия, копирование стека и Stack Shrinking">33. Глубокая рекурсия, копирование стека и Stack Shrinking</a>
-      <a href="#ex-34" class="sub-exercise-link" title="Упр 34: Аллокация крупных объектов Large Objects (> 32 КБ) в куче">34. Аллокация крупных объектов Large Objects (> 32 КБ) в куче</a>
+      <a href="#ex-34" class="sub-exercise-link" title="Упр 34: Аллокация крупных объектов Large Objects (&gt; 32 КБ) в куче">34. Аллокация крупных объектов Large Objects (&gt; 32 КБ) в куче</a>
       <a href="#ex-35" class="sub-exercise-link" title="Упр 35: Фрагментация памяти и размеры слайсов 1..65 байт">35. Фрагментация памяти и размеры слайсов 1..65 байт</a>
       <a href="#ex-36" class="sub-exercise-link" title="Упр 36: Порог maxSmallSize (32 КБ) и архитектурные константы malloc">36. Порог maxSmallSize (32 КБ) и архитектурные константы malloc</a>
       <a href="#ex-37" class="sub-exercise-link" title="Упр 37: Escape Analysis: Сравнение Heap vs Stack на практике">37. Escape Analysis: Сравнение Heap vs Stack на практике</a>
@@ -1166,7 +1166,7 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В исходниках Go (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/malloc.go</code>) функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mallocgc(size uintptr, typ *_type, needzero bool) unsafe.Pointer</code> координирует все три уровня:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">size <= maxSmallSize</code> (32 КБ), запрашивается span нужного класса из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">getg().m.p.ptr().mcache.alloc[spc]</code>.</li>
+<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">size &lt;= maxSmallSize</code> (32 КБ), запрашивается span нужного класса из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">getg().m.p.ptr().mcache.alloc[spc]</code>.</li>
 <li style="margin-bottom: 4px;">Если спан в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> пуст, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache.refill(spc)</code>, обращающийся к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral[spc]</code> с захватом блокировки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral.lock</code>.</li>
 <li style="margin-bottom: 4px;">Если и в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral</code> нет свободных спанов, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap_.alloc(npages, spc)</code>, которая выделяет страницы из bitmap-аллокатора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pageAlloc</code>.</li>
 </ul></div>
@@ -1197,10 +1197,10 @@ func main() {
     <div><p style="margin-bottom: 6px;"><strong>Анализ ухода переменных в кучу (Escape Analysis)</strong>: Напишите три примера кода:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Где переменная гарантированно остается на стеке горутины.</li>
-<li style="margin-bottom: 4px;">Где переменная "утекает" (escapes) в кучу (например, возврат указателя на локальную переменную из функции).</li>
+<li style="margin-bottom: 4px;">Где переменная &quot;утекает&quot; (escapes) в кучу (например, возврат указателя на локальную переменную из функции).</li>
 <li style="margin-bottom: 4px;">Где переменная утекает в кучу из-за динамического выделения памяти (слайс с переменной длиной <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">make([]int, n)</code>).</li>
 </ul>
-<p style="margin-bottom: 6px;">Запустите компиляцию с подробным выводом анализа escape-анализа: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m"</code> и проверьте правильность ваших гипотез по отчету компилятора.</p></div>
+<p style="margin-bottom: 6px;">Запустите компиляцию с подробным выводом анализа escape-анализа: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m&quot;</code> и проверьте правильность ваших гипотез по отчету компилятора.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1217,7 +1217,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">stackAlloc</code>, где локальная структура не выходит за пределы функции.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">escapePointer</code>, возвращающую указатель на локальную структуру.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">escapeDynamicSlice</code>, аллоцирующую срез переменной длины <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Скомпилируйте код с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags="-m"</code> и найдите диагностические сообщения компилятора.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Скомпилируйте код с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags=&quot;-m&quot;</code> и найдите диагностические сообщения компилятора.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -1277,7 +1277,7 @@ go build -gcflags=&quot;-m&quot; escape.go</code></pre>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Компилятор строит граф потока данных (Directed Data Flow Graph).</p>
-<p style="margin-bottom: 6px;">Узлами графа являются переменные и выражения, ребрами — операции присваивания и взятия адреса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&</code>.</p>
+<p style="margin-bottom: 6px;">Узлами графа являются переменные и выражения, ребрами — операции присваивания и взятия адреса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;</code>.</p>
 <p style="margin-bottom: 6px;">Компилятор выполняет поиск связей с корнями (внешними указателями).</p>
 <p style="margin-bottom: 6px;">Если от переменной существует путь до возвращаемого значения, глобальной переменной или интерфейса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">any</code>, вес узла становится бесконечным (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EscHeap</code>), и генератор SSA вставляет вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.newobject</code>.</p></div>
   </div>
@@ -1299,7 +1299,7 @@ go build -gcflags=&quot;-m&quot; escape.go</code></pre>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Понимание спанов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>) и фрагментации</strong>: Память в Go нарезается на страницы (pages) размером 8 КБ, которые объединяются в структуры <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>. Каждый спан нарезается на ячейки фиксированного размера (size classes, всего около 67 классов). Объясните в комментариях концепцию внутренней фрагментации памяти: почему при аллокации структуры размером 33 байта рантайм выделит под неё ячейку из класса 48 байт, и куда деваются "лишние" 15 байт.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Понимание спанов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>) и фрагментации</strong>: Память в Go нарезается на страницы (pages) размером 8 КБ, которые объединяются в структуры <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>. Каждый спан нарезается на ячейки фиксированного размера (size classes, всего около 67 классов). Объясните в комментариях концепцию внутренней фрагментации памяти: почему при аллокации структуры размером 33 байта рантайм выделит под неё ячейку из класса 48 байт, и куда деваются &quot;лишние&quot; 15 байт.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1608,7 +1608,7 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Таблица классов в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sizeclasses.go</code> генерируется автоматически специальным скриптом при компиляции инструментария Go:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go run mksizeclasses.go > sizeclasses.go</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go run mksizeclasses.go &gt; sizeclasses.go</code>.</p>
 <p style="margin-bottom: 6px;">Шаг между классами размеров составляет около 12.5% (плюс округление до размеров машинного слова и страниц).</p>
 <p style="margin-bottom: 6px;">Это обеспечивает максимальный теоретический предел внутренней фрагментации не более 12.5% при любом распределении размеров объектов в приложении.</p></div>
   </div>
@@ -1632,16 +1632,16 @@ func main() {
     <div class="callout-title">📌 Условие задачи</div>
     <div><p style="margin-bottom: 6px;"><strong>Tiny, Small, Large allocations:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Tiny: < 16 bytes (special handling, может объединять несколько аллокаций)</li>
+<li style="margin-bottom: 4px;">Tiny: &lt; 16 bytes (special handling, может объединять несколько аллокаций)</li>
 <li style="margin-bottom: 4px;">Small: 16 bytes - 32 KB (через mspan)</li>
-<li style="margin-bottom: 4px;">Large: > 32 KB (напрямую из mheap)</li>
+<li style="margin-bottom: 4px;">Large: &gt; 32 KB (напрямую из mheap)</li>
 </ul></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Аллокатор Go делит все запросы памяти на 3 принципиально разные категории в зависимости от размера:</p>
 <div style="height: 8px;"></div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Tiny Allocations (< 16 байт без указателей):</strong></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Tiny Allocations (&lt; 16 байт без указателей):</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Мелкие структуры, строки, числовые переменные.</li>
 <li style="margin-bottom: 4px;">Обслуживаются специальным <strong>Tiny Allocator</strong> внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code>.</li>
@@ -1652,7 +1652,7 @@ func main() {
 <li style="margin-bottom: 4px;">Округляются до ближайшего из 67 классов размеров.</li>
 <li style="margin-bottom: 4px;">Выделяются из соответствующего <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> за 1-2 процессорных такта без локов.</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Large Allocations (> 32 КБ):</strong></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Large Allocations (&gt; 32 КБ):</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Большие срезы, буферы и крупные структуры.</li>
 <li style="margin-bottom: 4px;">Полностью минуют <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral</code>.</li>
@@ -1731,23 +1731,21 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mallocgc</code> ветвление выглядит следующим образом:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">if size <= maxSmallSize {</p>
-<p style="margin-bottom: 6px;">if noscan && size < maxTinySize {</p>
-<p style="margin-bottom: 6px;">// Tiny Allocator: упаковка в mcache.tiny</p>
-<p style="margin-bottom: 6px;">} else {</p>
-<p style="margin-bottom: 6px;">// Small Allocator: mcache.alloc[spanclass]</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">} else {</p>
-<p style="margin-bottom: 6px;">// Large Allocator: largeAlloc(size, needzero, noscan) -> mheap_.alloc</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">if size &lt;= maxSmallSize {
+    if noscan &amp;&amp; size &lt; maxTinySize {
+        // Tiny Allocator: упаковка в mcache.tiny
+    } else {
+        // Small Allocator: mcache.alloc[spanclass]
+    }
+} else {
+    // Large Allocator: largeAlloc(size, needzero, noscan) -&gt; mheap_.alloc
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">noscan</code> критически важен: Tiny Allocator объединяет объекты <strong>только если в них нет указателей</strong>, иначе сборщику мусора пришлось бы сканировать весь 16-байтный блок целиком даже при освобождении одного из объектов.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Если в крошечной структуре (даже размером 4 байта) есть указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*int</code>, она <strong>не попадает</strong> в Tiny Allocator и идет в общий Small Allocator (класс 16 байт).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Частые аллокации Large объектов (> 32 КБ) нагружают глобальный спинлок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap.lock</code>, вызывая деградацию параллелизма на многоядерных серверах.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Частые аллокации Large объектов (&gt; 32 КБ) нагружают глобальный спинлок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap.lock</code>, вызывая деградацию параллелизма на многоядерных серверах.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1878,7 +1876,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>mcache</strong>: Каждый P имеет свой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> — локальный кэш <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>'ов для разных size classes. Это позволяет аллоцировать без блокировок.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>mcache</strong>: Каждый P имеет свой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> — локальный кэш <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>&#x27;ов для разных size classes. Это позволяет аллоцировать без блокировок.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1890,7 +1888,7 @@ func main() {
 <li style="margin-bottom: 4px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> также расположен буфер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tiny</code> и смещение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tinyoffset</code> для Tiny-аллокатора.</li>
 </ul>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">Поскольку поток ОС $M$ монопольно владеет ассоциированным с ним $P$ во время исполнения Go-кода, горутины, работающие на данном $P$, аллоцируют память <strong>абсолютно без мьютексов, без spinlock'ов и без атомарных CAS инструкций</strong>. Выделение памяти занимает всего ~5-15 наносекунд.</p></div>
+<p style="margin-bottom: 6px;">Поскольку поток ОС $M$ монопольно владеет ассоциированным с ним $P$ во время исполнения Go-кода, горутины, работающие на данном $P$, аллоцируют память <strong>абсолютно без мьютексов, без spinlock&#x27;ов и без атомарных CAS инструкций</strong>. Выделение памяти занимает всего ~5-15 наносекунд.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -1961,17 +1959,15 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/mcache.go</code> метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache.allocLarge</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nextFreeFast</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func (c *mcache) nextFree(spc spanClass) (gclinkptr, uintptr, bool) {</p>
-<p style="margin-bottom: 6px;">s := c.alloc[spc]</p>
-<p style="margin-bottom: 6px;">freeIndex := s.nextFreeIndex()</p>
-<p style="margin-bottom: 6px;">if freeIndex == s.nelems {</p>
-<p style="margin-bottom: 6px;">// Спан полон — вызываем пополнение mcache из mcentral</p>
-<p style="margin-bottom: 6px;">c.refill(spc)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">// Быстрое извлечение адреса</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">func (c *mcache) nextFree(spc spanClass) (gclinkptr, uintptr, bool) {
+    s := c.alloc[spc]
+    freeIndex := s.nextFreeIndex()
+    if freeIndex == s.nelems {
+        // Спан полон — вызываем пополнение mcache из mcentral
+        c.refill(spc)
+    }
+    // Быстрое извлечение адреса
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nextFreeFast</code> инлайнится компилятором. При наличии свободных слотов он выполняется всего за 3 процессорные инструкции: битовый сдвиг, чтение и инкремент индекса.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -1992,7 +1988,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>mcentral</strong>: Когда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> истощается, он запрашивает новые <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>'ы из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral</code> (глобальный для каждого size class, с блокировкой).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>mcentral</strong>: Когда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> истощается, он запрашивает новые <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>&#x27;ы из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral</code> (глобальный для каждого size class, с блокировкой).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2106,7 +2102,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Tiny Allocator (< 16 bytes)]</strong>: Напиши структуру из двух полей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bool</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int8</code> (занимает 2 байта). Создай миллион таких структур. Объясни, как Tiny Allocator объединяет маленькие объекты (< 16B) в один блок 16B, чтобы уменьшить фрагментацию памяти.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Tiny Allocator (&lt; 16 bytes)]</strong>: Напиши структуру из двух полей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bool</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int8</code> (занимает 2 байта). Создай миллион таких структур. Объясни, как Tiny Allocator объединяет маленькие объекты (&lt; 16B) в один блок 16B, чтобы уменьшить фрагментацию памяти.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2117,7 +2113,7 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> При запросе объекта размера $N$ байт (например, 2 байта):</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Проверяется выравнивание (alignment).</li>
-<li style="margin-bottom: 4px;">Если в текущем 16-байтном блоке есть место (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tinyoffset + N <= 16</code>), объект размещается прямо в этом блоке, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tinyoffset</code> сдвигается на $N$.</li>
+<li style="margin-bottom: 4px;">Если в текущем 16-байтном блоке есть место (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tinyoffset + N &lt;= 16</code>), объект размещается прямо в этом блоке, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tinyoffset</code> сдвигается на $N$.</li>
 <li style="margin-bottom: 4px;">Если места нет, выделяется новый 16-байтный блок из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache.alloc[tinySpanClass]</code>.</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Благодаря этому несколько независимых мелких переменных делят один общий 16-байтный слот спана, снижая расход памяти в 4–8 раз!</div></div>
@@ -2201,19 +2197,17 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mallocgc</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">off := c.tinyoffset</p>
-<p style="margin-bottom: 6px;">// Выравнивание смещения</p>
-<p style="margin-bottom: 6px;">off = alignUp(off, size)</p>
-<p style="margin-bottom: 6px;">if off+size <= maxTinySize && c.tiny != 0 {</p>
-<p style="margin-bottom: 6px;">// Успех! Объект помещается в текущий tiny блок</p>
-<p style="margin-bottom: 6px;">x = unsafe.Pointer(c.tiny + off)</p>
-<p style="margin-bottom: 6px;">c.tinyoffset = off + size</p>
-<p style="margin-bottom: 6px;">c.tinyAllocs++</p>
-<p style="margin-bottom: 6px;">return x</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">// Иначе аллоцируем новый 16-байтный слот из spanclass tiny</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">off := c.tinyoffset
+// Выравнивание смещения
+off = alignUp(off, size)
+if off+size &lt;= maxTinySize &amp;&amp; c.tiny != 0 {
+    // Успех! Объект помещается в текущий tiny блок
+    x = unsafe.Pointer(c.tiny + off)
+    c.tinyoffset = off + size
+    c.tinyAllocs++
+    return x
+}
+// Иначе аллоцируем новый 16-байтный слот из spanclass tiny</code></pre></div>
 <p style="margin-bottom: 6px;">Поскольку весь 16-байтный блок не содержит указателей (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">noscan</code>), GC маркирует его целиком одним битом в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gcmarkBits</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -2234,7 +2228,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>mheap</strong>: Глобальный heap, управляющий всей памятью процесса. Содержит все <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>'ы, организованные в radix tree для быстрого поиска.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>mheap</strong>: Глобальный heap, управляющий всей памятью процесса. Содержит все <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>&#x27;ы, организованные в radix tree для быстрого поиска.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2250,7 +2244,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите код, аллоцирующий память крупными порциями (> 32 КБ), заставляя задействовать страницы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите код, аллоцирующий память крупными порциями (&gt; 32 КБ), заставляя задействовать страницы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Измерьте изменения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HeapSys</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HeapIdle</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.ReadMemStats</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Изучите карту арен виртуальной памяти процесса.</div></div>
   </div>
@@ -2317,12 +2311,12 @@ func main() {
 <li style="margin-bottom: 4px;">Промежуточные узлы хранят сводную информацию: максимальное непрерывное количество свободных страниц в поддереве.</li>
 <li style="margin-bottom: 4px;">Поиск диапазона из $K$ свободных страниц выполняется за $O(\log N)$ процессорными инструкциями поиска битов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">BSR</code>/<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">BSF</code> без линейного сканирования памяти!</li>
 </ul>
-<p style="margin-bottom: 6px;">Если страниц в текущих аренах не хватает, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysAlloc</code> -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mmap(PROT_READ|PROT_WRITE)</code>.</p></div>
+<p style="margin-bottom: 6px;">Если страниц в текущих аренах не хватает, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysAlloc</code> -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mmap(PROT_READ|PROT_WRITE)</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Рост метрики <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HeapSys</code> означает, что процесс запросил виртуальную память у ядра Linux. Даже после сборки мусора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HeapSys</code> не уменьшается автоматически — страницы переходят в статус <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HeapIdle</code> и возвращаются ядру только фоновым потоком <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scavenger</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Прямые аллокации в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code> блокируют глобальный мьютекс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap_.lock</code>, поэтому множественные параллельные аллокации объектов > 32 КБ создают бутылочное горлышко.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Прямые аллокации в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code> блокируют глобальный мьютекс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap_.lock</code>, поэтому множественные параллельные аллокации объектов &gt; 32 КБ создают бутылочное горлышко.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2337,14 +2331,14 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Иерархия: mcache → mcentral → mheap.</strong>: Напишите программу, интенсивно выделяющую объекты разного размера (маленькие <32KB, большие). Соберите профиль памяти (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof</code>), определите, из каких классов размеров (size classes) выделялась память, и в каких компонентах аллокатора.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Иерархия: mcache → mcentral → mheap.</strong>: Напишите программу, интенсивно выделяющую объекты разного размера (маленькие &lt;32KB, большие). Соберите профиль памяти (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof</code>), определите, из каких классов размеров (size classes) выделялась память, и в каких компонентах аллокатора.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Иерархия памяти Go работает по принципу каскадного кэширования:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>L1: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code>:</strong> Объекты $\le 32$ КБ выделяются локально на текущем $P$. Это Fast-Path без локов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>L2: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral</code>:</strong> Когда в спане <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> заканчиваются свободные ячейки, спан возвращается в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral</code>, а взамен забирается спан со свободными слотами. Это Slow-Path с блокировкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral.lock</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>L3: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code>:</strong> Если в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral</code> нет свободных спанов (или объект $> 32$ КБ), запрос идет в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code>. Выделяются 8 КБ страницы под глобальной блокировкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap.lock</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>L3: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code>:</strong> Если в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral</code> нет свободных спанов (или объект $&gt; 32$ КБ), запрос идет в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code>. Выделяются 8 КБ страницы под глобальной блокировкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap.lock</code>.</div>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">С помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof.WriteHeapProfile</code> можно зафиксировать как текущее распределение объектов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">inuse_space</code>), так и суммарный объем выделенной памяти за время работы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">alloc_space</code>).</p></div>
   </div>
@@ -2352,7 +2346,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите код, аллоцирующий мелкие объекты (128 байт), средние (4 КБ) и крупные (> 64 КБ).</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите код, аллоцирующий мелкие объекты (128 байт), средние (4 КБ) и крупные (&gt; 64 КБ).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сохраните профиль кучи в файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">heap.pprof</code> с помощью пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime/pprof</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запустите анализ профиля через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof -sample_index=alloc_space heap.pprof</code>.</div></div>
   </div>
@@ -2453,9 +2447,9 @@ go tool pprof -top -alloc_space heap.pprof</code></pre>
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/malloc.go</code> функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mallocgc</code>:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SmallItem</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">spc = makeSpanClass(size_to_class8[128], false)</code> -> обращение к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c.alloc[spc]</code>.</li>
-<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c.alloc[spc]</code> пуст -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c.refill(spc)</code> -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral[spc].cacheSpan()</code>.</li>
-<li style="margin-bottom: 4px;">Для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LargeItem</code>: размер 131072 байт > <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxSmallSize</code> (32768) -> вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">largeAlloc(131072, needzero, noscan)</code>.</li>
+<li style="margin-bottom: 4px;">Для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SmallItem</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">spc = makeSpanClass(size_to_class8[128], false)</code> -&gt; обращение к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c.alloc[spc]</code>.</li>
+<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c.alloc[spc]</code> пуст -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c.refill(spc)</code> -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral[spc].cacheSpan()</code>.</li>
+<li style="margin-bottom: 4px;">Для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LargeItem</code>: размер 131072 байт &gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxSmallSize</code> (32768) -&gt; вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">largeAlloc(131072, needzero, noscan)</code>.</li>
 </ul>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">largeAlloc</code> вычисляет число страниц <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">npages = 131072 / 8192 = 16</code> и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap_.alloc(16, spanClass(0))</code>.</p></div>
   </div>
@@ -2790,7 +2784,7 @@ func main() {
 <li style="margin-bottom: 4px;">Спит и периодически просыпается в фоне, управляемый потоком <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code>.</li>
 <li style="margin-bottom: 4px;">Рассчитывает целевой объем памяти, который нужно вернуть (Pacer).</li>
 <li style="margin-bottom: 4px;">Чтобы не грузить CPU, Scavenger настроен на потребление не более <strong>1% одного ядра CPU</strong>!</li>
-<li style="margin-bottom: 4px;">Он обходит Radix Tree свободных страниц <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pageAlloc</code> и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysUnused</code> -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">madvise(MADV_DONTNEED)</code> для диапазонов свободных страниц.</li>
+<li style="margin-bottom: 4px;">Он обходит Radix Tree свободных страниц <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pageAlloc</code> и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysUnused</code> -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">madvise(MADV_DONTNEED)</code> для диапазонов свободных страниц.</li>
 </ul></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -2902,7 +2896,7 @@ func BenchmarkAllocScale(b *testing.B) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Span coalescing</strong>: Когда смежные <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>'ы освобождаются, runtime объединяет их для снижения фрагментации.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Span coalescing</strong>: Когда смежные <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>&#x27;ы освобождаются, runtime объединяет их для снижения фрагментации.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3019,7 +3013,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Escape Analysis (Анализ побега)</strong>: Стек быстрый (выделение памяти сводится к сдвигу указателя регистра CPU), куча — медленная. Напиши две функции: одна возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code>, другая <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*int</code>. Скомпилируй с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m"</code>. Изучи вывод компилятора: найди фразу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">escapes to heap</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Escape Analysis (Анализ побега)</strong>: Стек быстрый (выделение памяти сводится к сдвигу указателя регистра CPU), куча — медленная. Напиши две функции: одна возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code>, другая <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*int</code>. Скомпилируй с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m&quot;</code>. Изучи вывод компилятора: найди фразу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">escapes to heap</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3043,8 +3037,8 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">valFunc() int</code>, создающую локальную переменную и возвращающую её по значению.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptrFunc() *int</code>, возвращающую указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&x</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Скомпилируйте с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m -l"</code> (флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-l</code> отключает инлайнинг функций для чистоты эксперимента).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptrFunc() *int</code>, возвращающую указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;x</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Скомпилируйте с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m -l&quot;</code> (флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-l</code> отключает инлайнинг функций для чистоты эксперимента).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверьте вывод компилятора на наличие строки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">escapes to heap</code>.</div></div>
   </div>
   <div class="code-container">
@@ -3086,29 +3080,25 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В ассемблерном коде (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-S -l"</code>):</p>
+    <div><p style="margin-bottom: 6px;">В ассемблерном коде (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-S -l&quot;</code>):</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">valFunc</code>:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`text</p>
-<p style="margin-bottom: 6px;">MOVL $42, AX  ; помещаем 42 в регистр возврата</p>
-<p style="margin-bottom: 6px;">RET           ; мгновенный возврат</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-text"><code class="language-text">  MOVL $42, AX  ; помещаем 42 в регистр возврата
+  RET           ; мгновенный возврат</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptrFunc</code>:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`text</p>
-<p style="margin-bottom: 6px;">LEAQ type:int(SB), AX</p>
-<p style="margin-bottom: 6px;">CALL runtime.newobject(SB) ; аллокация в mcache кучи!</p>
-<p style="margin-bottom: 6px;">MOVQ $42, (AX)             ; запись значения в кучу</p>
-<p style="margin-bottom: 6px;">RET</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-text"><code class="language-text">  LEAQ type:int(SB), AX
+  CALL runtime.newobject(SB) ; аллокация в mcache кучи!
+  MOVQ $42, (AX)             ; запись значения в кучу
+  RET</code></pre></div>
 <p style="margin-bottom: 6px;">Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.newobject</code> требует сотен процессорных тактов против одной инструкции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MOVL</code>!</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Преждевременная «оптимизация» передачей указателей на мелкие структуры (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*struct{ a, b int }</code>) вместо передачи по значению часто ухудшает производительность сервиса, вызывая лишние аллокации в куче и нагружая GC.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Передавайте по указателю только если: 1) объект действительно большой (> 64 байт); 2) метод обязан мутировать состояние структуры; 3) структура содержит мьютекс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Mutex</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Передавайте по указателю только если: 1) объект действительно большой (&gt; 64 байт); 2) метод обязан мутировать состояние структуры; 3) структура содержит мьютекс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Mutex</code>.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3216,7 +3206,7 @@ func main() {
 <p style="margin-bottom: 6px;">В фазе Sweep GC пересчитывает:</p>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s.allocCount = countBits(s.allocBits)</code></p>
 <p style="margin-bottom: 6px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s.allocCount == 0</code>, спан возвращается в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral.partial</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code>.</p>
-<p style="margin-bottom: 6px;">Но если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s.allocCount > 0</code> (хотя бы 1 живой объект), спан помечается как частично занятый и остается в памяти процесса, не позволяя высвободить 8 КБ физическую страницу ОС.</p></div>
+<p style="margin-bottom: 6px;">Но если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s.allocCount &gt; 0</code> (хотя бы 1 живой объект), спан помечается как частично занятый и остается в памяти процесса, не позволяя высвободить 8 КБ физическую страницу ОС.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -3338,14 +3328,12 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/mcentral.go</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func (c *mcentral) cacheSpan() *mspan {</p>
-<p style="margin-bottom: 6px;">lock(&c.lock) // Атомарный спинлок рантайма</p>
-<p style="margin-bottom: 6px;">// Поиск спана в c.partial</p>
-<p style="margin-bottom: 6px;">unlock(&c.lock)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
-<p style="margin-bottom: 6px;">Спинлок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lock(&c.lock)</code> использует инструкцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LOCK CMPXCHG</code>. При высокой частоте обращений линии кэша процессора переходят в статус Invalidated в протоколе MESI, замедляя обращения всех ядер к оперативной памяти.</p></div>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">func (c *mcentral) cacheSpan() *mspan {
+    lock(&amp;c.lock) // Атомарный спинлок рантайма
+    // Поиск спана в c.partial
+    unlock(&amp;c.lock)
+}</code></pre></div>
+<p style="margin-bottom: 6px;">Спинлок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lock(&amp;c.lock)</code> использует инструкцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LOCK CMPXCHG</code>. При высокой частоте обращений линии кэша процессора переходят в статус Invalidated в протоколе MESI, замедляя обращения всех ядер к оперативной памяти.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -3371,7 +3359,7 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Куча <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code> в Go не является одним сплошным неразрывным массивом памяти. Она организована как совокупность независимых регионов фиксированного размера — <strong>Arenas (Арены)</strong>:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">На 64-битных системах размер одной арены составляет <strong>64 МБ</strong> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">heapArenaBytes = 64 << 20</code>).</li>
+<li style="margin-bottom: 4px;">На 64-битных системах размер одной арены составляет <strong>64 МБ</strong> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">heapArenaBytes = 64 &lt;&lt; 20</code>).</li>
 <li style="margin-bottom: 4px;">На 32-битных системах — <strong>4 МБ</strong>.</li>
 <li style="margin-bottom: 4px;">Каждая арена описывается служебной структурой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">heapArena</code>.</li>
 </ul>
@@ -3447,11 +3435,11 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/mheap.go</code>:</p>
 <p style="margin-bottom: 6px;">Двухуровневый массив арен:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arenas [1 << arenaL1Bits]*[1 << arenaL2Bits]*heapArena</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arenas [1 &lt;&lt; arenaL1Bits]*[1 &lt;&lt; arenaL2Bits]*heapArena</code></p>
 <p style="margin-bottom: 6px;">При вычислении дескриптора арены по адресу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p</code>:</p>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arenaIndex := p / heapArenaBytes</code></p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">l1 := arenaIndex >> arenaL1Shift</code></p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">l2 := arenaIndex & arenaL2Mask</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">l1 := arenaIndex &gt;&gt; arenaL1Shift</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">l2 := arenaIndex &amp; arenaL2Mask</code></p>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ha := mheap_.arenas[l1][l2]</code></p>
 <p style="margin-bottom: 6px;">Такая двухуровневая разреженная таблица (Sparse Array) позволяет адресовать гигантские адресные пространства без предварительного выделения памяти под саму таблицу метаданных.</p></div>
   </div>
@@ -3577,12 +3565,10 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">allocCache</code> в реальном <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code> (файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan.go</code>):</p>
 <p style="margin-bottom: 6px;">При аллокации выполняется:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">b := s.allocCache</p>
-<p style="margin-bottom: 6px;">i := sys.TrailingZeros64(b)</p>
-<p style="margin-bottom: 6px;">s.allocCache >>= (i + 1)</p>
-<p style="margin-bottom: 6px;">s.freeindex += (i + 1)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">b := s.allocCache
+i := sys.TrailingZeros64(b)
+s.allocCache &gt;&gt;= (i + 1)
+s.freeindex += (i + 1)</code></pre></div>
 <p style="margin-bottom: 6px;">Это полностью исключает любые циклы и ветвления в Fast-Path! Аллокация одного объекта в Go сводится к 3 машинным инструкциям процессора.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -3685,7 +3671,7 @@ func main() {
     <div><p style="margin-bottom: 6px;">В функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap.grow(npages uintptr)</code>:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Проверяется, есть ли свободные страницы в текущих аренах <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pageAlloc</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если свободных непрерывных страниц нужного размера нет, рассчитывается объем расширения (минимум 64 МБ — размер одной арены).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysAlloc</code> -> системный вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mmap(PROT_READ|PROT_WRITE)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysAlloc</code> -&gt; системный вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mmap(PROT_READ|PROT_WRITE)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Инициализируется дескриптор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">heapArena</code> и связывается с Radix Tree свободных страниц.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Новые страницы помечаются в битовой карте как свободные и объединяются со смежными спанами.</div></div>
   </div>
@@ -3707,19 +3693,17 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Ловушка пустого интерфейса</strong>: Передай простую локальную переменную типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Println(a)</code>. Запусти Escape Analysis (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-m</code>). Ты увидишь, что переменная "сбегает" в кучу. Почему? Потому что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Println</code> принимает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">interface{}</code> (any), а передача значения в интерфейс почти всегда требует аллокации в куче на этапе компиляции.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Ловушка пустого интерфейса</strong>: Передай простую локальную переменную типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Println(a)</code>. Запусти Escape Analysis (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-m</code>). Ты увидишь, что переменная &quot;сбегает&quot; в кучу. Почему? Потому что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Println</code> принимает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">interface{}</code> (any), а передача значения в интерфейс почти всегда требует аллокации в куче на этапе компиляции.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Передача конкретного значения в параметр типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">interface{}</code> (или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">any</code>) называется <strong>упаковкой (Boxing / Interface Boxing)</strong>.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Интерфейс в рантайме Go представляется структурой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">eface</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">type eface struct {</p>
-<p style="margin-bottom: 6px;">_type *_type         // указатель на метаданные типа</p>
-<p style="margin-bottom: 6px;">data  unsafe.Pointer // указатель на сами данные</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">type eface struct {
+    _type *_type         // указатель на метаданные типа
+    data  unsafe.Pointer // указатель на сами данные
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Поскольку поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data</code> является <strong>указателем</strong>, компилятор обязан передать туда адрес в памяти.</p>
 <p style="margin-bottom: 6px;">Если размер переменной больше размера машинного слова (или компилятор не может доказать, что вызываемая функция не сохранит этот указатель на будущее), компилятор вынужден:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Выделить память в куче (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.convT64</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.convTstring</code> и т.д.).</div>
@@ -3734,7 +3718,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите функцию, передающую <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code> в функцию с параметром <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code> (без интерфейса).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишите функцию, передающую <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Println</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Скомпилируйте с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m"</code> и сравните отчеты Escape Analysis.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Скомпилируйте с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m&quot;</code> и сравните отчеты Escape Analysis.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Исследуйте вызовы функций <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.convT*</code> в ассемблере.</div></div>
   </div>
   <div class="code-container">
@@ -3783,12 +3767,10 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В ассемблере функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code>:</p>
 <p style="margin-bottom: 6px;">При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">anyPrint(num)</code> компилятор генерирует:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`text</p>
-<p style="margin-bottom: 6px;">MOVQ $42, AX</p>
-<p style="margin-bottom: 6px;">CALL runtime.convT64(SB)  ; аллоцирует 8 байт в mcache кучи!</p>
-<p style="margin-bottom: 6px;">MOVQ AX, (SP)             ; передача адреса в eface.data</p>
-<p style="margin-bottom: 6px;">CALL main.anyPrint(SB)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-text"><code class="language-text">MOVQ $42, AX
+CALL runtime.convT64(SB)  ; аллоцирует 8 байт в mcache кучи!
+MOVQ AX, (SP)             ; передача адреса в eface.data
+CALL main.anyPrint(SB)</code></pre></div>
 <p style="margin-bottom: 6px;">Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.convT64</code> из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/iface.go</code> выделяет 8-байтный слот из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache.alloc</code> (класс 8 байт) и записывает туда число 42. Каждое логирование в горячем цикле порождает мусор в куче!</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -3799,7 +3781,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Почему высокопроизводительные библиотеки логирования (Uber Zap, Zerolog) избегают использования <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">interface{}</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf</code>?</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что передача аргументов через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">interface{}</code> приводит к Interface Boxing: на каждое логируемое число, булевый флаг или структуру компилятор Go вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.convT*</code>, выделяя память в куче. Zap и Zerolog используют типизированные методы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">zap.Int("id", 42)</code>), которые пишут бинарные данные напрямую в байтовый кольцевой буфер без боксинга и с нулевыми аллокациями в куче (Zero Allocation Logging).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что передача аргументов через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">interface{}</code> приводит к Interface Boxing: на каждое логируемое число, булевый флаг или структуру компилятор Go вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.convT*</code>, выделяя память в куче. Zap и Zerolog используют типизированные методы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">zap.Int(&quot;id&quot;, 42)</code>), которые пишут бинарные данные напрямую в байтовый кольцевой буфер без боксинга и с нулевыми аллокациями в куче (Zero Allocation Logging).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-25">
@@ -3809,7 +3791,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Memory profiling</strong>: Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof heap profile</code> с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-inuse_space</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-alloc_space</code>. Изучите разницу: "что сейчас в памяти" vs "что было аллоцировано за всё время".</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Memory profiling</strong>: Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof heap profile</code> с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-inuse_space</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-alloc_space</code>. Изучите разницу: &quot;что сейчас в памяти&quot; vs &quot;что было аллоцировано за всё время&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3930,21 +3912,21 @@ go tool pprof -top -alloc_space spaces.pprof</code></pre>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напишите 10 функций с разными паттернами (возврат указателя, слайс, замыкание, интерфейс). Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m -m"</code> и для каждой функции объясните, почему переменная «убегает» (escapes to heap) или остаётся на стеке.</p></div>
+    <div><p style="margin-bottom: 6px;">Напишите 10 функций с разными паттернами (возврат указателя, слайс, замыкание, интерфейс). Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m -m&quot;</code> и для каждой функции объясните, почему переменная «убегает» (escapes to heap) или остаётся на стеке.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Анализ побега компилятора Go (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags="-m -m"</code>) выполняет глубокий статический анализ потока графа управления (SSA Dataflow).</p>
+    <div><p style="margin-bottom: 6px;">Анализ побега компилятора Go (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags=&quot;-m -m&quot;</code>) выполняет глубокий статический анализ потока графа управления (SSA Dataflow).</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Ключевые правила побега в кучу:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Возврат адреса (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&x</code>):</strong> время жизни объекта превышает стек вызова.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Возврат адреса (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;x</code>):</strong> время жизни объекта превышает стек вызова.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Передача в интерфейс (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">any(x)</code>):</strong> стирание типов требует размещения адреса.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Замыкание (Closure):</strong> переменная захватывается замыканием, вызываемым после возврата.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Динамический размер (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">make([]T, n)</code>):</strong> размер неизвестен на этапе компиляции.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> <strong>Слишком большой размер:</strong> структуры $> 64$ КБ вытесняются с 2 КБ стека в кучу.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> <strong>Отправка указателя в канал (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ch <- &x</code>):</strong> время жизни объекта передается другой горутине.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">7.</span> <strong>Передача в горутину (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go func(&x)</code>):</strong> стек горутины независим.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">8.</span> <strong>Косвенное сохранение (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*ptr = &x</code>):</strong> утечка через косвенный указатель.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> <strong>Слишком большой размер:</strong> структуры $&gt; 64$ КБ вытесняются с 2 КБ стека в кучу.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> <strong>Отправка указателя в канал (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ch &lt;- &amp;x</code>):</strong> время жизни объекта передается другой горутине.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">7.</span> <strong>Передача в горутину (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go func(&amp;x)</code>):</strong> стек горутины независим.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">8.</span> <strong>Косвенное сохранение (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*ptr = &amp;x</code>):</strong> утечка через косвенный указатель.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">9.</span> <strong>Интерфейс без побега:</strong> компилятор может доказать безопасность, если функция инлайнится.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">10.</span> <strong>Слайс константного размера:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">make([]int, 10)</code> остается на стеке при отсутствии побега.</div></div>
   </div>
@@ -3953,7 +3935,7 @@ go tool pprof -top -alloc_space spaces.pprof</code></pre>
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">patterns.go</code> с 10 функциями, реализующими каждый из указанных паттернов.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Скомпилируйте файл с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m -m" patterns.go</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Скомпилируйте файл с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m -m&quot; patterns.go</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проанализируйте подробный вывод компилятора с объяснением причин каждого побега.</div></div>
   </div>
   <div class="code-container">
@@ -4069,10 +4051,10 @@ func main() {
     <div><p style="margin-bottom: 6px;">Флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-m -m</code> включает режим максимальной подробности алгоритма анализа побега.</p>
 <p style="margin-bottom: 6px;">Компилятор печатает причины решений:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">from &x (address-of) to return (return)</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">from &amp;x (address-of) to return (return)</code></li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">make([]int, n) escapes to heap: non-constant size</code></li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">too large for stack</code> (если размер массива превышает порог <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxStackVarSize = 64 * 1024</code> байт)</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&x does not escape</code> (если компилятор доказал, что локальный указатель разыменовывается в том же стеке).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;x does not escape</code> (если компилятор доказал, что локальный указатель разыменовывается в том же стеке).</li>
 </ul></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -4089,11 +4071,11 @@ func main() {
 <div class="exercise-card" id="ex-27">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #27</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Выделение крупных объектов Large Objects (> 32 КБ) напрямую из mheap</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Выделение крупных объектов Large Objects (&gt; 32 КБ) напрямую из mheap</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[mheap and Arenas]</strong>: Аллоцируй очень большой слайс (например, 100 MB). Это Large Object (> 32KB). Объясни, как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code> выделяет под это непрерывную арену страниц напрямую у ОС (через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mmap</code>).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[mheap and Arenas]</strong>: Аллоцируй очень большой слайс (например, 100 MB). Это Large Object (&gt; 32KB). Объясни, как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code> выделяет под это непрерывную арену страниц напрямую у ОС (через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mmap</code>).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4170,29 +4152,27 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/malloc.go</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func largeAlloc(size uintptr, needzero bool, noscan bool) *mspan {</p>
-<p style="margin-bottom: 6px;">npages := size >> _PageShift</p>
-<p style="margin-bottom: 6px;">if size&_PageMask != 0 {</p>
-<p style="margin-bottom: 6px;">npages++</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">// Захват глобального лока кучи</p>
-<p style="margin-bottom: 6px;">lock(&mheap_.lock)</p>
-<p style="margin-bottom: 6px;">s := mheap_.alloc(npages, spanClass(0))</p>
-<p style="margin-bottom: 6px;">unlock(&mheap_.lock)</p>
-<p style="margin-bottom: 6px;">return s</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">func largeAlloc(size uintptr, needzero bool, noscan bool) *mspan {
+    npages := size &gt;&gt; _PageShift
+    if size&amp;_PageMask != 0 {
+        npages++
+    }
+    // Захват глобального лока кучи
+    lock(&amp;mheap_.lock)
+    s := mheap_.alloc(npages, spanClass(0))
+    unlock(&amp;mheap_.lock)
+    return s
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Поскольку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">spanClass = 0</code>, спан не привязан ни к одному из 67 классов размеров и существует как единичный монолитный блок памяти.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Захват <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap_.lock</code> блокирует все остальные потоки $M$, пытающиеся выделить крупные объекты или пополнить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code>. Частые аллокации объектов $> 32$ КБ создают серьезный contention.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Захват <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap_.lock</code> блокирует все остальные потоки $M$, пытающиеся выделить крупные объекты или пополнить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code>. Частые аллокации объектов $&gt; 32$ КБ создают серьезный contention.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Для крупных буферов передачи данных (сеть, сжатие, дисковый I/O) обязательно используйте переиспользуемые пулы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Pool</code>.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Почему в Go крупные объекты (> 32 КБ) не кэшируются в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code>, а выделяются каждый раз напрямую из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code>?</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Почему в Go крупные объекты (&gt; 32 КБ) не кэшируются в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code>, а выделяются каждый раз напрямую из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code>?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Крупные объекты слишком велики, чтобы держать их в локальных кэшах $P$: кэширование 100-мегабайтных блоков на каждом из 64 процессоров $P$ мгновенно привело бы к исчерпанию физической памяти сервера. Кроме того, частота аллокаций крупных объектов в нормальных сервисах на порядки ниже, чем мелких, поэтому накладные расходы на обращение к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code> остаются пренебрежимо малы.</p></div>
   </div>
 </div>
@@ -4203,7 +4183,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Escape analysis</strong>: Напишите код с переменными, которые "убегают" в heap (возвращаются из функции, передаются в горутины). Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m"</code> для наблюдения escape analysis.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Escape analysis</strong>: Напишите код с переменными, которые &quot;убегают&quot; в heap (возвращаются из функции, передаются в горутины). Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m&quot;</code> для наблюдения escape analysis.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4221,7 +4201,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите функцию, передающую указатель на локальную переменную в фоновую горутину.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишите функцию, отправляющую указатель в канал.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Скомпилируйте с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags="-m"</code> и убедитесь в наличии строки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">escapes to heap</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Скомпилируйте с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags=&quot;-m&quot;</code> и убедитесь в наличии строки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">escapes to heap</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -4289,7 +4269,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Передача структур по значению через канал (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">chan Job</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">chan *Job</code>) для небольших объектов позволяет избежать аллокации в куче! Данные просто копируются в кольцевой буфер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hchan</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Передача указателей на переменные цикла в горутину <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go func() { ...(&v) }</code> приводит не только к аллокации в куче, но и к классическому Data Race.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Передача указателей на переменные цикла в горутину <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go func() { ...(&amp;v) }</code> приводит не только к аллокации в куче, но и к классическому Data Race.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -4297,7 +4277,7 @@ func main() {
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Если структура небольшая (до 64–128 байт), эффективнее передавать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">chan T</code> по значению: данные копируются напрямую внутри кольцевого буфера канала без единой аллокации в куче и без создания работы для сборщика мусора.</li>
-<li style="margin-bottom: 4px;">Если структура крупная (> 512 байт), копирование байтов в буфер канала становится дорогим, и предпочтительнее передавать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">chan *T</code> по указателю (желательно используя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Pool</code> для переиспользования памяти).</li>
+<li style="margin-bottom: 4px;">Если структура крупная (&gt; 512 байт), копирование байтов в буфер канала становится дорогим, и предпочтительнее передавать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">chan *T</code> по указателю (желательно используя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Pool</code> для переиспользования памяти).</li>
 </ul></div>
   </div>
 </div>
@@ -4437,7 +4417,7 @@ go tool pprof -top -inuse_space million.pprof</code></pre>
 <p style="margin-bottom: 6px;">| <strong>Начальный размер</strong> | <strong>2 КБ</strong> (2048 байт) | <strong>1 МБ – 8 МБ</strong> (фиксированный) |</p>
 <p style="margin-bottom: 6px;">| <strong>Модель роста</strong> | Динамический непрерывный стек (x2 при нехватке) | Фиксированный стек с Guard Page |</p>
 <p style="margin-bottom: 6px;">| <strong>Память на 100k потоков</strong>| $\approx \mathbf{200 \text{ МБ}}$ | $\approx \mathbf{100 \text{ ГБ}}$ (невозможно запустить!) |</p>
-<p style="margin-bottom: 6px;">| <strong>Сжатие стека</strong> | Да (GC ужимает вдвое, если занято $< 1/4$) | Нет (память удерживается процессом) |</p>
+<p style="margin-bottom: 6px;">| <strong>Сжатие стека</strong> | Да (GC ужимает вдвое, если занято $&lt; 1/4$) | Нет (память удерживается процессом) |</p>
 <p style="margin-bottom: 6px;">| <strong>Переполнение стека</strong> | Плавное удвоение (до 1 ГБ) | Падение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGSEGV</code> / <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">StackOverflowError</code> |</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Благодаря 2 КБ динамическому стеку один Go-процесс может легко удерживать сотни тысяч активных горутин на обычном ноутбуке.</p></div>
@@ -4513,7 +4493,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Если горутина временно потребовала большой стек (например, 1 МБ при парсинге XML), а затем вернулась в легкий режим, сборщик мусора сожмет её стек обратно только в следующем цикле GC при условии <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">used < capacity / 4</code>.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Если горутина временно потребовала большой стек (например, 1 МБ при парсинге XML), а затем вернулась в легкий режим, сборщик мусора сожмет её стек обратно только в следующем цикле GC при условии <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">used &lt; capacity / 4</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Рекурсивные функции без базового случая переполнят стек до лимита 1 ГБ, после чего процесс упадет.</div></div>
   </div>
   <div class="callout callout-bigtech">
@@ -4717,12 +4697,10 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/malloc.go</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">var sizeclass uint8</p>
-<p style="margin-bottom: 6px;">if size <= smallSizeMax-8 {</p>
-<p style="margin-bottom: 6px;">sizeclass = size_to_class8[divRoundUp(size, smallSizeDiv)]</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">var sizeclass uint8
+if size &lt;= smallSizeMax-8 {
+    sizeclass = size_to_class8[divRoundUp(size, smallSizeDiv)]
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Для размера 25: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">divRoundUp(25, 8) = 4</code>.</p>
 <p style="margin-bottom: 6px;">В массиве <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">size_to_class8[4]</code> хранится индекс класса 4.</p>
 <p style="margin-bottom: 6px;">Класс 4 в таблице <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">class_to_size</code> соответствует размеру 32 байта.</p>
@@ -4756,7 +4734,7 @@ func main() {
     <div><p style="margin-bottom: 6px;">Рост стека в Go реализован через операцию <strong>Stack Copying (Копирование стека)</strong>:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> При старте горутины выделяется непрерывный фрейм 2 КБ.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В прологе функции компилятор проверяет:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SP < g.stackguard0</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SP &lt; g.stackguard0</code></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если места не хватает, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.morestack</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">morestack</code> переключается на системный стек <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">g0</code> и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.newstack()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">newstack</code> выделяет новый блок памяти <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">newsize = oldsize * 2</code> и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.copystack</code>.</div>
@@ -4769,7 +4747,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите рекурсивную функцию глубокой вложенности (глубина 100+).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сохраняйте адреса локальных переменных на разных уровнях рекурсии.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Продемонстрируйте факт скачков базового адреса стека при удвоениях (2KB -> 4KB -> 8KB -> 16KB).</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Продемонстрируйте факт скачков базового адреса стека при удвоениях (2KB -&gt; 4KB -&gt; 8KB -&gt; 16KB).</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -4843,7 +4821,7 @@ func main() {
 <div class="exercise-card" id="ex-34">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #34</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Аллокация крупных объектов Large Objects (> 32 КБ) в куче</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Аллокация крупных объектов Large Objects (&gt; 32 КБ) в куче</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -4853,9 +4831,9 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">В рантайме Go действует строгое разделение логики аллокации по пороговому значению <strong><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxSmallSize = 32768</code> байт (32 КБ)</strong>.</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">Архитектурная причина, почему объекты $> 32$ КБ минуют <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral</code>:</p>
+<p style="margin-bottom: 6px;">Архитектурная причина, почему объекты $&gt; 32$ КБ минуют <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral</code>:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Экономия памяти:</strong> В Go есть $P$ логических процессоров (например, 64 ядра). Если бы каждый $P$ кэшировал крупные объекты (по 100 КБ, 1 МБ, 10 МБ) в своем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code>, сотни мегабайт или гигабайты памяти простаивали бы в локальных кэшах без дела.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Низкая частота аллокаций:</strong> Статистически объекты $> 32$ КБ выделяются в тысячи раз реже, чем мелкие структуры. Поэтому оверхед на захват глобальной блокировки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap.lock</code> на несколько микросекунд не оказывает негативного влияния на общую пропускную способность системы.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Низкая частота аллокаций:</strong> Статистически объекты $&gt; 32$ КБ выделяются в тысячи раз реже, чем мелкие структуры. Поэтому оверхед на захват глобальной блокировки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap.lock</code> на несколько микросекунд не оказывает негативного влияния на общую пропускную способность системы.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Прямое выделение страниц:</strong> Крупный объект представляет собой непрерывный блок из целого числа страниц по 8 КБ ($N = \lceil \text{size} / 8192 \rceil$). Аллокатор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pageAlloc</code> просто находит нужный непрерывный интервал страниц в арене.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -4921,20 +4899,18 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/malloc.go</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">if size > maxSmallSize {</p>
-<p style="margin-bottom: 6px;">var s *mspan</p>
-<p style="margin-bottom: 6px;">systemstack(func() {</p>
-<p style="margin-bottom: 6px;">s = largeAlloc(size, needzero, noscan)</p>
-<p style="margin-bottom: 6px;">})</p>
-<p style="margin-bottom: 6px;">s.freeindex = 1</p>
-<p style="margin-bottom: 6px;">s.allocCount = 1</p>
-<p style="margin-bottom: 6px;">x = unsafe.Pointer(s.base())</p>
-<p style="margin-bottom: 6px;">size = s.elemsize</p>
-<p style="margin-bottom: 6px;">// регистрация объекта</p>
-<p style="margin-bottom: 6px;">return x</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">if size &gt; maxSmallSize {
+    var s *mspan
+    systemstack(func() {
+        s = largeAlloc(size, needzero, noscan)
+    })
+    s.freeindex = 1
+    s.allocCount = 1
+    x = unsafe.Pointer(s.base())
+    size = s.elemsize
+    // регистрация объекта
+    return x
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Вызов выполняется на системном стеке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">systemstack</code>, так как требуется переключение на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">g0</code> для безопасного захвата <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap_.lock</code> и манипуляций с Radix Tree страниц.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -5050,7 +5026,7 @@ func main() {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Как функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">append</code> в Go выбирает новую емкость слайса при переполнении, начиная с Go 1.18?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong></p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Для срезов емкостью $< 256$ элементов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cap</code> удваивается ($2x$).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Для срезов емкостью $&lt; 256$ элементов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cap</code> удваивается ($2x$).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Для срезов $\ge 256$ элементов емкость плавно растет по формуле:</div>
 <p style="margin-bottom: 6px;">$$\text{newcap} = \text{oldcap} + (\text{oldcap} + 3 \times 256) / 4$$</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Полученное число байт передается в функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">roundupsize(newcap * elemsize)</code>, которая <strong>округляет размер до границы ближайшего Size Class</strong> в аллокаторе Go. Это гарантирует, что выделенная память используется на 100% без остатка.</div></div>
@@ -5063,7 +5039,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напишите программу с большим объектом (>32 KB по умолчанию). Покажите, что он идёт напрямую в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code> (large allocation). Найдите в исходниках порог (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxSmallSize</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pageSize</code>) и объясните, почему именно так.</p></div>
+    <div><p style="margin-bottom: 6px;">Напишите программу с большим объектом (&gt;32 KB по умолчанию). Покажите, что он идёт напрямую в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap</code> (large allocation). Найдите в исходниках порог (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxSmallSize</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pageSize</code>) и объясните, почему именно так.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5175,7 +5151,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Escape Analysis (Heap vs Stack)]</strong>: Напиши функцию, которая возвращает указатель на локальную переменную. Запусти <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m"</code>. Убедись, что переменная "утекла" в кучу (escapes to heap). Напиши другую функцию, которая не возвращает указатель, и убедись, что аллокация произошла на стеке (не требует работы GC).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Escape Analysis (Heap vs Stack)]</strong>: Напиши функцию, которая возвращает указатель на локальную переменную. Запусти <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m&quot;</code>. Убедись, что переменная &quot;утекла&quot; в кучу (escapes to heap). Напиши другую функцию, которая не возвращает указатель, и убедись, что аллокация произошла на стеке (не требует работы GC).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5192,7 +5168,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">createOnStack() int</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">createOnHeap() *int</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Скомпилируйте файл с ключами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags="-m"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Скомпилируйте файл с ключами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags=&quot;-m&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сопоставьте вывод компилятора с поведением памяти в ассемблере.</div></div>
   </div>
   <div class="code-container">
@@ -5236,11 +5212,9 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В выводе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m"</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`text</p>
-<p style="margin-bottom: 6px;">./heap_vs_stack.go:14:9: &x escapes to heap</p>
-<p style="margin-bottom: 6px;">./heap_vs_stack.go:13:2: moved to heap: x</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+    <div><p style="margin-bottom: 6px;">В выводе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m&quot;</code>:</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-text"><code class="language-text">./heap_vs_stack.go:14:9: &amp;x escapes to heap
+./heap_vs_stack.go:13:2: moved to heap: x</code></pre></div>
 <p style="margin-bottom: 6px;">Фраза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">moved to heap: x</code> означает, что компилятор удалил переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> из стекового фрейма функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">createOnHeap</code> и полностью перенес её аллокацию в кучу через внутренний вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.newobject(type:int)</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -5250,8 +5224,8 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Если функция возвращает указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&x</code>, может ли компилятор Go при определенных условиях ВСЕ-ТАКИ оставить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> на стеке?</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! Если функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">foo()</code> возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&x</code>, но компилятор выполняет <strong>инлайнинг (Inlining)</strong> этой функции в точку вызова (например, в функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bar()</code>), и в функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bar()</code> указатель никуда дальше не утекает, компилятор оставляет переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> на стеке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bar()</code>. Инлайнинг нейтрализует побег в кучу.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Если функция возвращает указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;x</code>, может ли компилятор Go при определенных условиях ВСЕ-ТАКИ оставить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> на стеке?</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! Если функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">foo()</code> возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;x</code>, но компилятор выполняет <strong>инлайнинг (Inlining)</strong> этой функции в точку вызова (например, в функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bar()</code>), и в функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bar()</code> указатель никуда дальше не утекает, компилятор оставляет переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> на стеке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bar()</code>. Инлайнинг нейтрализует побег в кучу.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-38">
@@ -5392,7 +5366,7 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Горутина $G$ не может исполняться в вакууме: чтобы выполнять код, она обязана быть привязана к потоку ОС $M$, который в свою очередь владеет конкретным $P$.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В любой момент времени с дескриптором <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">P.mcache</code> взаимодействует <strong>ровно один поток ОС $M$</strong>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Следовательно, операция выделения памяти из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> гарантированно защищена от параллельного доступа на уровне планировщика!</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Никаких мьютексов, никаких spinlock'ов, никаких атомарных инструкций шины <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LOCK</code>. Выделение слота сводится к трем ассемблерным инструкциям чтения и сдвига битовой маски.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Никаких мьютексов, никаких spinlock&#x27;ов, никаких атомарных инструкций шины <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LOCK</code>. Выделение слота сводится к трем ассемблерным инструкциям чтения и сдвига битовой маски.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -5710,7 +5684,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Побег в кучу и стек.</strong>: Напишите функции, где переменная остаётся на стеке, и где «убегает» в кучу. Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m"</code> для анализа решений escape analysis. Проверьте, как это влияет на аллокацию.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Побег в кучу и стек.</strong>: Напишите функции, где переменная остаётся на стеке, и где «убегает» в кучу. Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m&quot;</code> для анализа решений escape analysis. Проверьте, как это влияет на аллокацию.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5738,7 +5712,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите стековую функцию вычисления расстояния между точками.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишите кучевую версию с возвратом указателя и интерфейсным боксингом.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проведите сравнительный бенчмарк с замером аллокаций памяти (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-benchmem</code>).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Подтвердите результаты выводом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m"</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Подтвердите результаты выводом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m&quot;</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -5942,7 +5916,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Почему фоновый Scavenger в Go не пытается возвращать память ядру ОС каждую миллисекунду?</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Системный вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">madvise</code> требует перехода в пространство ядра (Context Switch), захвата блокировок виртуальной памяти процесса в ядре Linux (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mm->mmap_lock</code>) и инвалидации записей в TLB процессора (TLB shootdown на всех ядрах). Если вызывать его слишком часто, процессор начнет тратить все ресурсы на работу ядра ОС вместо выполнения бизнес-логики сервиса. Scavenger балансирует возврат памяти с лимитом в 1% CPU.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Системный вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">madvise</code> требует перехода в пространство ядра (Context Switch), захвата блокировок виртуальной памяти процесса в ядре Linux (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mm-&gt;mmap_lock</code>) и инвалидации записей в TLB процессора (TLB shootdown на всех ядрах). Если вызывать его слишком часто, процессор начнет тратить все ресурсы на работу ядра ОС вместо выполнения бизнес-логики сервиса. Scavenger балансирует возврат памяти с лимитом в 1% CPU.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-44">
@@ -6023,14 +5997,12 @@ go tool pprof -top cpu.pprof</code></pre>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В выводе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof -top</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`text</p>
-<p style="margin-bottom: 6px;">(pprof) top</p>
-<p style="margin-bottom: 6px;">Showing nodes accounting for 1.82s, 85.45% of 2.13s total</p>
-<p style="margin-bottom: 6px;">flat  flat%   sum%        cum   cum%</p>
-<p style="margin-bottom: 6px;">0.98s 46.01% 46.01%      1.45s 68.08%  runtime.mallocgc</p>
-<p style="margin-bottom: 6px;">0.28s 13.15% 59.15%      0.28s 13.15%  runtime.memclrNoHeapPointers</p>
-<p style="margin-bottom: 6px;">0.19s  8.92% 68.08%      0.19s  8.92%  runtime.nextFreeFast</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-text"><code class="language-text">(pprof) top
+Showing nodes accounting for 1.82s, 85.45% of 2.13s total
+      flat  flat%   sum%        cum   cum%
+     0.98s 46.01% 46.01%      1.45s 68.08%  runtime.mallocgc
+     0.28s 13.15% 59.15%      0.28s 13.15%  runtime.memclrNoHeapPointers
+     0.19s  8.92% 68.08%      0.19s  8.92%  runtime.nextFreeFast</code></pre></div>
 <p style="margin-bottom: 6px;">Видно, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.mallocgc</code> занимает львиную долю времени! Оптимизация такого кода через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Pool</code> или устранение побега в кучу мгновенно высвобождает до 50% вычислительных мощностей процессора.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -6043,7 +6015,7 @@ go tool pprof -top cpu.pprof</code></pre>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> В выводе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof cpu</code> вашего микросервиса функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.mallocgc</code> занимает 35% CPU, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.gcDrain</code> — еще 20%. Что это означает и каков план действий?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это классический симптом «Memory Allocation Thrashing» (приложение генерирует слишком много мусора в куче). План действий:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Снять <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof heap</code> с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-alloc_space</code> для поиска функций, создающих максимальный темп аллокаций.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверить Escape Analysis (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags="-m"</code>): заменить передачу по указателю на структуры по значению.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверить Escape Analysis (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags=&quot;-m&quot;</code>): заменить передачу по указателю на структуры по значению.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Pool</code> для частых временных буферов и объектов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверить предвыделение емкости срезов и мап (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">make([]T, 0, expectedSize)</code>).</div>
 <p style="margin-bottom: 6px;">Устранение аллокаций автоматически снизит как время <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mallocgc</code>, так и время <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gcDrain</code> (сборки мусора).</p></div>
@@ -6153,7 +6125,7 @@ func main() {
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/mgcscavenge.go</code> поток Scavenger:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pageAlloc.scavenge(maxPages)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сканирует битовую карту свободных страниц и находит блоки, не тронутые дольше определенного времени.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysUnused(addr, size)</code> -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">madvise(addr, size, MADV_DONTNEED)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysUnused(addr, size)</code> -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">madvise(addr, size, MADV_DONTNEED)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Ядро Linux сбрасывает аппаратные таблицы страниц (PTE), уменьшая счетчик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RSS</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">task_struct</code> процесса.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> При этом виртуальный диапазон <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HeapSys</code> остается зарезервированным.</div></div>
   </div>
@@ -6309,7 +6281,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Каково среднее амортизированное время аллокации мелкого объекта в Go и почему оно близко к времени аллокации на стеке?</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Амортизированное время аллокации составляет <strong>5–15 наносекунд</strong>. Благодаря трехуровневой архитектуре TCMalloc подавляющее большинство запросов (< 32 КБ) удовлетворяется локальным кэшем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> без единого системного вызова и без единого мьютекса. Операция сводится к поиску бита в 64-битном регистре <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">allocCache</code> и инкременту указателя.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Амортизированное время аллокации составляет <strong>5–15 наносекунд</strong>. Благодаря трехуровневой архитектуре TCMalloc подавляющее большинство запросов (&lt; 32 КБ) удовлетворяется локальным кэшем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> без единого системного вызова и без единого мьютекса. Операция сводится к поиску бита в 64-битном регистре <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">allocCache</code> и инкременту указателя.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-47">
@@ -6327,7 +6299,7 @@ func main() {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Размер $10 \times 1024 \times 1024 = 10\,485\,760$ байт.</li>
 <li style="margin-bottom: 4px;">Это ровно <strong>1280 страниц по 8192 байта</strong>.</li>
-<li style="margin-bottom: 4px;">Аллокатор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mallocgc</code> мгновенно определяет, что $10 \text{ МБ} > 32 \text{ КБ}$ (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxSmallSize</code>), и переключается на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">largeAlloc()</code>.</li>
+<li style="margin-bottom: 4px;">Аллокатор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mallocgc</code> мгновенно определяет, что $10 \text{ МБ} &gt; 32 \text{ КБ}$ (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxSmallSize</code>), и переключается на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">largeAlloc()</code>.</li>
 <li style="margin-bottom: 4px;">Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">largeAlloc</code> напрямую захватывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap_.lock</code> и запрашивает непрерывный блок из 1280 страниц в Radix Tree аллокатора страниц.</li>
 <li style="margin-bottom: 4px;">Никаких поисков по классам размеров, никаких списков <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral</code>.</li>
 </ul></div>
@@ -6408,7 +6380,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Почему при частых аллокациях крупных срезов (например, 10 МБ) сервис начинает испытывать задержки даже при наличии свободного CPU?</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что аллокация объектов $> 32$ КБ требует захвата глобальной блокировки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap_.lock</code>. Если несколько потоков или горутин параллельно обрабатывают большие файлы или медиа-буферы, они выстраиваются в очередь к одному мьютексу кучи. Решение — использовать переиспользуемые пулы буферов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Pool</code>) или потоковую обработку (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Reader</code>/<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Writer</code>) чанками фиксированного размера.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что аллокация объектов $&gt; 32$ КБ требует захвата глобальной блокировки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap_.lock</code>. Если несколько потоков или горутин параллельно обрабатывают большие файлы или медиа-буферы, они выстраиваются в очередь к одному мьютексу кучи. Решение — использовать переиспользуемые пулы буферов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Pool</code>) или потоковую обработку (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Reader</code>/<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Writer</code>) чанками фиксированного размера.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-48">
@@ -6647,12 +6619,10 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/memclr_amd64.s</code> процедура <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">memclrNoHeapPointers</code>:</p>
 <p style="margin-bottom: 6px;">Использует SIMD-векторизацию AVX2:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`text</p>
-<p style="margin-bottom: 6px;">VZEROUPPER</p>
-<p style="margin-bottom: 6px;">VPXOR Y0, Y0, Y0</p>
-<p style="margin-bottom: 6px;">VMOVDQU Y0, (DI)</p>
-<p style="margin-bottom: 6px;">VMOVDQU Y0, 32(DI)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-text"><code class="language-text">VZEROUPPER
+VPXOR Y0, Y0, Y0
+VMOVDQU Y0, (DI)
+VMOVDQU Y0, 32(DI)</code></pre></div>
 <p style="margin-bottom: 6px;">Она зануляет память блоками по 256 бит (32 байта) за один такт процессора, достигая скорости очистки до 30–40 ГБ/сек на современных процессорах!</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -6757,15 +6727,13 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/mheap.go</code>:</p>
 <p style="margin-bottom: 6px;">Когда свободных страниц нет:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func (h *mheap) grow(npage uintptr) bool {</p>
-<p style="margin-bottom: 6px;">ask := alignUp(npage, pallocChunkPages) * pageSize</p>
-<p style="margin-bottom: 6px;">if ask < heapArenaBytes {</p>
-<p style="margin-bottom: 6px;">ask = heapArenaBytes // Минимум 64 МБ!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">// mmap(PROT_READ|PROT_WRITE, MAP_ANONYMOUS)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">func (h *mheap) grow(npage uintptr) bool {
+    ask := alignUp(npage, pallocChunkPages) * pageSize
+    if ask &lt; heapArenaBytes {
+        ask = heapArenaBytes // Минимум 64 МБ!
+    }
+    // mmap(PROT_READ|PROT_WRITE, MAP_ANONYMOUS)
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Куча Go физически не может запросить у ядра Linux меньше 64 МБ за один раз на 64-битных ОС, поэтому рост <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HeapSys</code> строго ступенчатый.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -6905,7 +6873,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Почему в Go пустое поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">struct{}</code> в конце структуры увеличивает размер структуры на машинное слово, а в начале или середине — нет?</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если поле нулевого размера <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">struct{}</code> стоит в самом конце структуры, взятие его адреса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&s.lastField</code> дало бы указатель, указывающий ровно на байт за границей структуры (на следующий объект в памяти). Для сборщика мусора GC это выглядело бы как висячий указатель или ссылка на соседний чужой объект в спане. Чтобы предотвратить этот краевой баг, компилятор добавляет паддинг в 1 слово (8 байт) в конец структуры.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если поле нулевого размера <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">struct{}</code> стоит в самом конце структуры, взятие его адреса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;s.lastField</code> дало бы указатель, указывающий ровно на байт за границей структуры (на следующий объект в памяти). Для сборщика мусора GC это выглядело бы как висячий указатель или ссылка на соседний чужой объект в спане. Чтобы предотвратить этот краевой баг, компилятор добавляет паддинг в 1 слово (8 байт) в конец структуры.</p></div>
   </div>
 </div>
 
@@ -6929,7 +6897,7 @@ func main() {
 <p style="margin-bottom: 6px;">Пошаговый конвейер аллокации:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Fast Path (Lock-free, L1):</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Проверка размера: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">size <= maxSmallSize</code> (32 КБ).</li>
+<li style="margin-bottom: 4px;">Проверка размера: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">size &lt;= maxSmallSize</code> (32 КБ).</li>
 <li style="margin-bottom: 4px;">Определение подкласса размера <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">spanClass</code>.</li>
 <li style="margin-bottom: 4px;">Извлечение спана из локального кэша <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c := getg().m.p.ptr().mcache; s := c.alloc[spc]</code>.</li>
 <li style="margin-bottom: 4px;">Поиск свободного слота за 1 такт: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v := nextFreeFast(s)</code>.</li>
@@ -6939,14 +6907,14 @@ func main() {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Если в текущем спане кончились ячейки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s.empty()</code>), вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c.refill(spc)</code>.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">refill</code> вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral.cacheSpan()</code>:</li>
-<li style="margin-bottom: 4px;">Захватывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lock(&c.lock)</code> центрального пула.</li>
+<li style="margin-bottom: 4px;">Захватывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lock(&amp;c.lock)</code> центрального пула.</li>
 <li style="margin-bottom: 4px;">Извлекается свободный спан из списка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">partial</code>.</li>
 <li style="margin-bottom: 4px;">Спан устанавливается в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c.alloc[spc]</code>.</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Slower Path (Global Lock / OS, L3):</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Если в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral</code> нет свободных спанов, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral.grow()</code>.</li>
-<li style="margin-bottom: 4px;">Захватывается глобальный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lock(&mheap_.lock)</code>.</li>
+<li style="margin-bottom: 4px;">Захватывается глобальный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lock(&amp;mheap_.lock)</code>.</li>
 <li style="margin-bottom: 4px;">Вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap_.alloc(npages, spc)</code>: поиск свободных 8 КБ страниц в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pageAlloc</code>.</li>
 <li style="margin-bottom: 4px;">Если страниц нет — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap_.grow()</code> $\to$ системный вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mmap</code> у ОС.</li>
 </ul></div>
@@ -7007,14 +6975,12 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В начале <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mallocgc</code> всегда проверяется флаг ассистирования:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">if gcBlackenEnabled != 0 {</p>
-<p style="margin-bottom: 6px;">assistG = getg()</p>
-<p style="margin-bottom: 6px;">if assistG.gcAssistBytes < 0 {</p>
-<p style="margin-bottom: 6px;">gcAssistAlloc(assistG)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">if gcBlackenEnabled != 0 {
+    assistG = getg()
+    if assistG.gcAssistBytes &lt; 0 {
+        gcAssistAlloc(assistG)
+    }
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Если в системе идет конкурентная фаза сборщика мусора, рантайм Go не позволяет горутине выделить память до тех пор, пока она не «отработает долг» по маркировке памяти, защищая процесс от исчерпания RAM.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -7156,24 +7122,22 @@ func main() {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Детальная структура <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> (файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/mcache.go</code>):</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">type mcache struct {</p>
-<p style="margin-bottom: 6px;">// Вспомогательные счетчики аллокаций</p>
-<p style="margin-bottom: 6px;">nextSample uintptr</p>
-<p style="margin-bottom: 6px;">scanAlloc  uintptr</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">// Буфер крошечных объектов</p>
-<p style="margin-bottom: 6px;">tiny       uintptr</p>
-<p style="margin-bottom: 6px;">tinyoffset uintptr</p>
-<p style="margin-bottom: 6px;">tinyAllocs uintptr</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">// Массив указателей на активные спаны</p>
-<p style="margin-bottom: 6px;">alloc [numSpanClasses]*mspan</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">// Стековые пулы для быстрого выделения стеков горутин</p>
-<p style="margin-bottom: 6px;">stackcache [_NumStackOrders]stackfreelist</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">type mcache struct {
+    // Вспомогательные счетчики аллокаций
+    nextSample uintptr
+    scanAlloc  uintptr
+    
+    // Буфер крошечных объектов
+    tiny       uintptr
+    tinyoffset uintptr
+    tinyAllocs uintptr
+
+    // Массив указателей на активные спаны
+    alloc [numSpanClasses]*mspan
+    
+    // Стековые пулы для быстрого выделения стеков горутин
+    stackcache [_NumStackOrders]stackfreelist
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Всего классов спанов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">numSpanClasses = 136</code> (68 классов $\times 2$: один для объектов с указателями <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scan</code>, другой без указателей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">noscan</code>).</p>
 <p style="margin-bottom: 6px;">При исчерпании слотов в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">alloc[spc]</code> вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c.refill(spc)</code>. Эта процедура захватывает спинлок соответствующего <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcentral[spc].lock</code> и меняет исчерпанный спан на новый свободный.</p></div>
   </div>
@@ -7241,7 +7205,7 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Вычисление <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">spanClass</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">spc = spanClass(sizeclass<<1 | noscan)</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">spc = spanClass(sizeclass&lt;&lt;1 | noscan)</code></p>
 <p style="margin-bottom: 6px;">Младший бит (0 или 1) кодирует наличие указателей:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">noscan == 1</code>, сборщик мусора в фазе Mark вообще не заглядывает внутрь этого спана! Он помечает весь объект черным за 1 такт.</li>
@@ -7266,7 +7230,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Захват памяти у ОС (Memory Scavenger)</strong>: Создай слайс на 1 Гигабайт. ОС выделит память (посмотри в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">top</code> на метрику RES). Обнули указатель на слайс. Вызови <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.GC()</code>. Посмотри в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">top</code> снова. Память не сразу вернется в ОС! Go запускает фоновый процесс "scavenger", который постепенно (чтобы не грузить CPU) возвращает свободные страницы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>) операционной системе.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Захват памяти у ОС (Memory Scavenger)</strong>: Создай слайс на 1 Гигабайт. ОС выделит память (посмотри в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">top</code> на метрику RES). Обнули указатель на слайс. Вызови <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.GC()</code>. Посмотри в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">top</code> снова. Память не сразу вернется в ОС! Go запускает фоновый процесс &quot;scavenger&quot;, который постепенно (чтобы не грузить CPU) возвращает свободные страницы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mspan</code>) операционной системе.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7366,15 +7330,13 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/mgcscavenge.go</code>:</p>
 <p style="margin-bottom: 6px;">Координатор скейвенджера использует спящий режим с адаптивным таймером:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func bgscavenge(c chan int) {</p>
-<p style="margin-bottom: 6px;">for {</p>
-<p style="margin-bottom: 6px;">// Засыпает, рассчитывая время до следующего цикла</p>
-<p style="margin-bottom: 6px;">// Лимит потребления CPU строго 1%</p>
-<p style="margin-bottom: 6px;">released := pageAlloc.scavenge(scavengeWork)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">func bgscavenge(c chan int) {
+    for {
+        // Засыпает, рассчитывая время до следующего цикла
+        // Лимит потребления CPU строго 1%
+        released := pageAlloc.scavenge(scavengeWork)
+    }
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Если в системе начинается дефицит памяти (сигнал от cgroups или приближение к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOMEMLIMIT</code>), рантайм будит скейвенджер принудительно, выполняя агрессивную очистку страниц.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -7733,11 +7695,9 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/mgcscavenge.go</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">const (</p>
-<p style="margin-bottom: 6px;">scavengePercent = 1 // Целевой лимит потребления 1% CPU</p>
-<p style="margin-bottom: 6px;">)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">const (
+    scavengePercent = 1 // Целевой лимит потребления 1% CPU
+)</code></pre></div>
 <p style="margin-bottom: 6px;">Поток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> каждые 10 мс проверяет: если с момента последней активности прошло достаточно времени, он будит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scavenger</code> горутину через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ready(scavenger.g)</code>.</p>
 <p style="margin-bottom: 6px;">Scavenger освобождает страницы крупными чанками по 512 КБ (64 страницы), что минимизирует системный оверхед на context switch ядра Linux.</p></div>
   </div>
@@ -8081,10 +8041,8 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/mgcpacer.go</code>:</p>
 <p style="margin-bottom: 6px;">Контроллер вычисляет пространство до границы:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">memoryLimit := gcController.memoryLimit.Load()</p>
-<p style="margin-bottom: 6px;">runway := memoryLimit - currentTotalMemory</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">memoryLimit := gcController.memoryLimit.Load()
+runway := memoryLimit - currentTotalMemory</code></pre></div>
 <p style="margin-bottom: 6px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runway</code> сокращается, Pacer пересчитывает триггер:</p>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trigger = min(triggerFromGOGC, memoryLimit - headroom)</code></p>
 <p style="margin-bottom: 6px;">В результате целевой порог <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NextGC</code> сжимается, заставляя GC собирать мусор заблаговременно до исчерпания доступной оперативной памяти.</p></div>
@@ -8226,9 +8184,9 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Пропускная способность аллокатора памяти (Throughput) измеряется в мегабайтах или гигабайтах в секунду, которые аллокатор способен предоставить горутинам:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><strong>Tiny Allocator (< 16B):</strong> Скорость огромна в штуках объектов (десятки миллионов операций в секунду), но в абсолютных байтах скромна из-за крошечного размера.</li>
+<li style="margin-bottom: 4px;"><strong>Tiny Allocator (&lt; 16B):</strong> Скорость огромна в штуках объектов (десятки миллионов операций в секунду), но в абсолютных байтах скромна из-за крошечного размера.</li>
 <li style="margin-bottom: 4px;"><strong>Small Allocator (16B – 32KB):</strong> Пиковая сбалансированная производительность: сотни мегабайт в секунду за счет Lock-Free <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code>.</li>
-<li style="margin-bottom: 4px;"><strong>Large Allocator (> 32KB):</strong> Максимальная пропускная способность в байтах (гигабайты в секунду), так как на один захват <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap.lock</code> выделяются мегабайты памяти.</li>
+<li style="margin-bottom: 4px;"><strong>Large Allocator (&gt; 32KB):</strong> Максимальная пропускная способность в байтах (гигабайты в секунду), так как на один захват <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mheap.lock</code> выделяются мегабайты памяти.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -8333,7 +8291,7 @@ func main() {
 <p style="margin-bottom: 6px;">$$\text{Fragmentation Ratio} = 1 - \frac{\text{HeapAlloc}}{\text{HeapSys}}$$</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Нормальный диапазон:</strong> 0.15 – 0.35 (15–35% оверхеда на спаны, кэши и технологические запасы).</li>
-<li style="margin-bottom: 4px;"><strong>Критическая фрагментация:</strong> $> 0.60$ (более 60% памяти процесса удерживается впустую).</li>
+<li style="margin-bottom: 4px;"><strong>Критическая фрагментация:</strong> $&gt; 0.60$ (более 60% памяти процесса удерживается впустую).</li>
 </ul>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Причины высокой фрагментации:</p>
@@ -8432,7 +8390,7 @@ func main() {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Как в production мониторинге настроить алерт на аномальную фрагментацию памяти Go сервиса?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> В Prometheus настраивается вычисляемое правило:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1 - (go_memstats_heap_alloc_bytes / go_memstats_heap_sys_bytes) > 0.65</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1 - (go_memstats_heap_alloc_bytes / go_memstats_heap_sys_bytes) &gt; 0.65</code></p>
 <p style="margin-bottom: 6px;">Если в течение 15 минут коэффициент фрагментации держится выше 65% при стабильном RPS, это означает, что сервис страдает от утечки спанов (Span Pinning) или неоптимальных кэшей. Срабатывает алерт на необходимость оптимизации структур данных.</p></div>
   </div>
 </div>
@@ -8534,12 +8492,10 @@ go tool pprof -top -inuse_space leak_audit.pprof</code></pre>
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">При открытии <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof -inuse_space leak_audit.pprof</code>:</p>
 <p style="margin-bottom: 6px;">Команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">top</code> выводит:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`text</p>
-<p style="margin-bottom: 6px;">(pprof) top</p>
-<p style="margin-bottom: 6px;">Showing nodes accounting for 10MB, 100% of 10MB total</p>
-<p style="margin-bottom: 6px;">flat  flat%   sum%        cum   cum%</p>
-<p style="margin-bottom: 6px;">10MB   100%   100%       10MB   100%  main.leakHandler</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-text"><code class="language-text">(pprof) top
+Showing nodes accounting for 10MB, 100% of 10MB total
+      flat  flat%   sum%        cum   cum%
+      10MB   100%   100%       10MB   100%  main.leakHandler</code></pre></div>
 <p style="margin-bottom: 6px;">Команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">list leakHandler</code> точно указывает на строку:</p>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">chunk := make([]byte, 2*1024*1024)</code></p>
 <p style="margin-bottom: 6px;">и показывает, что 10 МБ активны и удерживаются глобальным массивом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">leakedStore</code>.</p></div>
@@ -8553,8 +8509,8 @@ go tool pprof -top -inuse_space leak_audit.pprof</code></pre>
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Как с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof</code> найти дифференциал утечки (разницу памяти) между двумя точками во времени?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Используется флаг базового профиля <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-base</code>:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> В момент времени $T_1$ снимается первый профиль: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">curl -s http://localhost:6060/debug/pprof/heap > base.pprof</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В момент времени $T_2$ (после нагрузки) снимается второй: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">curl -s http://localhost:6060/debug/pprof/heap > current.pprof</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> В момент времени $T_1$ снимается первый профиль: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">curl -s http://localhost:6060/debug/pprof/heap &gt; base.pprof</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В момент времени $T_2$ (после нагрузки) снимается второй: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">curl -s http://localhost:6060/debug/pprof/heap &gt; current.pprof</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запускается сравнительный анализ:</div>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof -inuse_space -base base.pprof current.pprof</code></p>
 <p style="margin-bottom: 6px;">pprof покажет дельту (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">+X MB</code>): будут отображены <strong>только те строки кода, которые увеличили объем удерживаемой памяти за прошедший интервал</strong>.</p></div>

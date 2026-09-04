@@ -1204,12 +1204,12 @@ func TestAdd(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Первый тест</strong>: Напиши простую функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Add(a, b int) int</code> в файле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math.go</code>. Создай файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math_test.go</code> (правило именования!). Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TestAdd(t *testing.T)</code>. Вызови <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Add(2, 2)</code> и сравни с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">4</code>. Если не равно — вызови <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Errorf("Ожидалось 4, получили %d", result)</code>. Запусти <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Первый тест</strong>: Напиши простую функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Add(a, b int) int</code> в файле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math.go</code>. Создай файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math_test.go</code> (правило именования!). Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TestAdd(t *testing.T)</code>. Вызови <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Add(2, 2)</code> и сравни с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">4</code>. Если не равно — вызови <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Errorf(&quot;Ожидалось 4, получили %d&quot;, result)</code>. Запусти <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Стандарт кодстайла Google и команды Go (Go Code Review Comments) предписывает единый формат сообщений об ошибках тестирования:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Errorf("FunctionName(%v) = %v, want %v", args, got, want)</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Errorf(&quot;FunctionName(%v) = %v, want %v&quot;, args, got, want)</code></p>
 <p style="margin-bottom: 6px;">Сначала указывается фактически полученное значение (<strong>got</strong>), затем ожидаемое (<strong>want</strong>). Это исключает путаницу при анализе логов упавших тестов в CI/CD.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -1269,7 +1269,7 @@ func TestAdd(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Писать в сообщении только <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Error!"</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Test failed"</code>. Без указания входных параметров, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">got</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">want</code> разработчику придется лезть в отладчик, чтобы понять, на каких именно данных сломалась функция.</p></div>
+    <div><p style="margin-bottom: 6px;">Писать в сообщении только <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Error!&quot;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Test failed&quot;</code>. Без указания входных параметров, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">got</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">want</code> разработчику придется лезть в отладчик, чтобы понять, на каких именно данных сломалась функция.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1356,7 +1356,7 @@ func TestAdd(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Можно ли протестировать функции пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> из другого пакета?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Напрямую нет — пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> нельзя импортировать (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">import "app/main"</code> вызовет ошибку компиляции). Если логика требует тестирования как внешнего пакета (Black-Box testing), всю бизнес-логику выносят во внутренние пакеты (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">internal/app</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pkg/calc</code>), оставляя в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main.go</code> лишь тонкую обертку инициализации.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Напрямую нет — пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> нельзя импортировать (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">import &quot;app/main&quot;</code> вызовет ошибку компиляции). Если логика требует тестирования как внешнего пакета (Black-Box testing), всю бизнес-логику выносят во внутренние пакеты (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">internal/app</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pkg/calc</code>), оставляя в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main.go</code> лишь тонкую обертку инициализации.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-4">
@@ -1366,7 +1366,7 @@ func TestAdd(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>табличный тест (table-driven test)</strong> для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Add</code>: слайс структур <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{a, b, want int}</code>. Пройди циклом, вызывай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Run(fmt.Sprintf("%d+%d", tc.a, tc.b), func(t *testing.T) { ... })</code>. Покажи, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Run</code> создаёт подтесты с именами.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>табличный тест (table-driven test)</strong> для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Add</code>: слайс структур <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{a, b, want int}</code>. Пройди циклом, вызывай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Run(fmt.Sprintf(&quot;%d+%d&quot;, tc.a, tc.b), func(t *testing.T) { ... })</code>. Покажи, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Run</code> создаёт подтесты с именами.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1481,7 +1481,7 @@ func TestAddTableDriven(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши тест с <strong>несколькими <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Run</code> в цикле</strong>, где один case падает. Покажи, что остальные case'и <strong>продолжают выполняться</strong> (Go 1.7+). До этого — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Fatalf</code> останавливал весь тест.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши тест с <strong>несколькими <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Run</code> в цикле</strong>, где один case падает. Покажи, что остальные case&#x27;и <strong>продолжают выполняться</strong> (Go 1.7+). До этого — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Fatalf</code> останавливал весь тест.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1677,7 +1677,7 @@ go test -v
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Error vs Fatal</strong>: В тесте добавь вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Error()</code>, а затем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Log("Продолжение")</code>. Убедись, что после <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Error</code> тест продолжается. Замени <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Error</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Fatal()</code>. Убедись, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Fatal</code> немедленно прерывает выполнение текущего теста.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Error vs Fatal</strong>: В тесте добавь вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Error()</code>, а затем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Log(&quot;Продолжение&quot;)</code>. Убедись, что после <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Error</code> тест продолжается. Замени <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Error</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Fatal()</code>. Убедись, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Fatal</code> немедленно прерывает выполнение текущего теста.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1691,7 +1691,7 @@ go test -v
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите демонстрационный тест с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Error</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Log("Шаг 2")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите демонстрационный тест с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Error</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Log(&quot;Шаг 2&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запустите и убедитесь, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Шаг 2</code> выполнился.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Замените на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Fatal</code> и убедитесь, что последующий код не вызывается.</div></div>
   </div>
@@ -1742,7 +1742,7 @@ func TestFatalFlow(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Можно ли вызывать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.FailNow()</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Fatalf()</code> из вспомогательной горутины <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go func() { ... }()</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Категорически нет! Документация Go прямо запрещает вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.FailNow</code> вне горутины, запустившей тестовую функцию. Для передачи ошибок из фоновых горутин используются каналы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errCh := make(chan error, 1)</code> с последующей проверкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err := <-errCh</code> в основной горутине теста.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Категорически нет! Документация Go прямо запрещает вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.FailNow</code> вне горутины, запустившей тестовую функцию. Для передачи ошибок из фоновых горутин используются каналы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errCh := make(chan error, 1)</code> с последующей проверкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err := &lt;-errCh</code> в основной горутине теста.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-8">
@@ -1757,8 +1757,8 @@ func TestFatalFlow(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Тестирование функций, возвращающих пару <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(T, error)</code>, требует обязательной проверки обоих возвращаемых значений:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> При ожидании успеха: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err != nil { t.Fatalf("unexpected error: %v", err) }</code> и сравнение результата.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> При ожидании ошибки: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err == nil { t.Fatalf("expected error, got nil") }</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> При ожидании успеха: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err != nil { t.Fatalf(&quot;unexpected error: %v&quot;, err) }</code> и сравнение результата.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> При ожидании ошибки: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err == nil { t.Fatalf(&quot;expected error, got nil&quot;) }</code>.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -1766,7 +1766,7 @@ func TestFatalFlow(t *testing.T) {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Divide(a, b float64) (float64, error)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создайте табличный тест, покрывающий валидное деление, отрицательные делители и деление на ноль.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверьте результат с допустимой погрешностью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math.Abs(got - want) < 1e-9</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверьте результат с допустимой погрешностью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math.Abs(got - want) &lt; 1e-9</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -1855,7 +1855,7 @@ func TestDivide(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math.Abs(got - tc.want) > 1e-9</code> необходимо при сравнении чисел с плавающей точкой (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">float64</code>), так как стандарты IEEE 754 допускают микроскопические погрешности округления в младших битах мантиссы.</p></div>
+    <div><p style="margin-bottom: 6px;">Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math.Abs(got - tc.want) &gt; 1e-9</code> необходимо при сравнении чисел с плавающей точкой (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">float64</code>), так как стандарты IEEE 754 допускают микроскопические погрешности округления в младших битах мантиссы.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1936,7 +1936,7 @@ func TestDivide_ZeroDivision(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Именование функций с нижним подчеркиванием <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Test<Target>_<Scenario></code> является общепринятым исключением из camelCase в Go для наглядной группировки сценариев в логах.</p></div>
+    <div><p style="margin-bottom: 6px;">Именование функций с нижним подчеркиванием <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Test&lt;Target&gt;_&lt;Scenario&gt;</code> является общепринятым исключением из camelCase в Go для наглядной группировки сценариев в логах.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1946,14 +1946,12 @@ func TestDivide_ZeroDivision(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как протестировать функцию, которая вместо возврата ошибки вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic()</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> С помощью отложенного восстановления в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer recover()</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">defer func() {</p>
-<p style="margin-bottom: 6px;">if r := recover(); r == nil {</p>
-<p style="margin-bottom: 6px;">t.Errorf("код должен был запаниковать, но паники не произошло")</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}()</p>
-<p style="margin-bottom: 6px;">TargetFunction()</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p></div>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">defer func() {
+    if r := recover(); r == nil {
+        t.Errorf(&quot;код должен был запаниковать, но паники не произошло&quot;)
+    }
+}()
+TargetFunction()</code></pre></div></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-10">
@@ -1963,15 +1961,15 @@ func TestDivide_ZeroDivision(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Запустите тесты конкретной функции с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-run TestAdd</code>. Используйте регулярные выражения (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-run "TestAdd|TestSubtract"</code>) для запуска нескольких тестов.</p></div>
+    <div><p style="margin-bottom: 6px;">Запустите тесты конкретной функции с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-run TestAdd</code>. Используйте регулярные выражения (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-run &quot;TestAdd|TestSubtract&quot;</code>) для запуска нескольких тестов.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-run <regexp></code> принимает регулярное выражение синтаксиса Go RE2:</p>
+    <div><p style="margin-bottom: 6px;">Флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-run &lt;regexp&gt;</code> принимает регулярное выражение синтаксиса Go RE2:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-run TestAdd</code>: запустит все тесты, имя которых содержит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TestAdd</code> (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TestAdd</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TestAddPositive</code>).</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-run ^TestAdd$</code>: запустит СТРОГО тест с именем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TestAdd</code> (точное совпадение).</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-run "TestAdd|TestSubtract"</code>: запустит тесты сложения или вычитания.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-run &quot;TestAdd|TestSubtract&quot;</code>: запустит тесты сложения или вычитания.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-run TestMath/Positive</code>: запустит конкретный подтест внутри родительского теста <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TestMath</code>.</li>
 </ul></div>
   </div>
@@ -2035,7 +2033,7 @@ go test -v -run &quot;TestAdd|TestSubtract&quot;
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Забывать экранировать спецсимволы в шелле: команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -run TestA|TestB</code> без кавычек будет интерпретирована bash как конвейер (pipe) в программу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TestB</code>! Всегда берите выражение в кавычки: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -run "TestA|TestB"</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Забывать экранировать спецсимволы в шелле: команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -run TestA|TestB</code> без кавычек будет интерпретирована bash как конвейер (pipe) в программу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TestB</code>! Всегда берите выражение в кавычки: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -run &quot;TestA|TestB&quot;</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2151,7 +2149,7 @@ func TestIsPalindrome(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Спецификатор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%q</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Errorf("IsPalindrome(%q)...")</code> выводит строку в кавычках с безопасным экранированием спецсимволов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\n</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\t</code>, невидимые пробелы), что делает диагностику ошибок ввода тривиальной.</p></div>
+    <div><p style="margin-bottom: 6px;">Спецификатор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%q</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Errorf(&quot;IsPalindrome(%q)...&quot;)</code> выводит строку в кавычках с безопасным экранированием спецсимволов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\n</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\t</code>, невидимые пробелы), что делает диагностику ошибок ввода тривиальной.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -2272,13 +2270,11 @@ func TestDatabaseOperation(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Классическая ошибка в тестах:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">user, err := FetchUser(10)</p>
-<p style="margin-bottom: 6px;">if err != nil {</p>
-<p style="margin-bottom: 6px;">t.Errorf("Fetch failed: %v", err) // Ошибка залогирована, но выполнение продолжается!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">fmt.Println(user.Name) // ПАНИКА: nil pointer dereference!</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">user, err := FetchUser(10)
+if err != nil {
+    t.Errorf(&quot;Fetch failed: %v&quot;, err) // Ошибка залогирована, но выполнение продолжается!
+}
+fmt.Println(user.Name) // ПАНИКА: nil pointer dereference!</code></pre></div>
 <p style="margin-bottom: 6px;">Если вызов вернул <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err != nil</code>, указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user</code> равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>. Любое обращение к полям <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user.Name</code> на следующей строке вызовет панику рантайма, прервав весь тестовый процесс.</p>
 <p style="margin-bottom: 6px;"><strong>Правило:</strong> Если дальнейшие строки кода упадут по панике при нарушении текущего условия — ОБЯЗАТЕЛЬНО используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Fatalf</code>!</p></div>
   </div>
@@ -2371,7 +2367,7 @@ func TestFetchUserSafe(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши тест с <strong><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Skip</code></strong>: если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.GOOS == "windows"</code> — пропусти тест с сообщением <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"unix-specific test"</code>. Покажи, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test</code> отмечает его как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SKIP</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши тест с <strong><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Skip</code></strong>: если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.GOOS == &quot;windows&quot;</code> — пропусти тест с сообщением <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;unix-specific test&quot;</code>. Покажи, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test</code> отмечает его как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SKIP</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2386,7 +2382,7 @@ func TestFetchUserSafe(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Проверьте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.GOOS</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если условие совпадает, вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Skip("сообщение")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если условие совпадает, вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Skip(&quot;сообщение&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запустите тест и убедитесь в выводе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">--- SKIP:</code>.</div></div>
   </div>
   <div class="code-container">
@@ -2457,11 +2453,9 @@ func TestConditionalSkipDemo(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">До появления Go 1.17 изменение переменных окружения в тестах требовало ручного восстановления:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">old := os.Getenv("APP_ENV")</p>
-<p style="margin-bottom: 6px;">os.Setenv("APP_ENV", "production")</p>
-<p style="margin-bottom: 6px;">defer os.Setenv("APP_ENV", old)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">old := os.Getenv(&quot;APP_ENV&quot;)
+os.Setenv(&quot;APP_ENV&quot;, &quot;production&quot;)
+defer os.Setenv(&quot;APP_ENV&quot;, old)</code></pre></div>
 <p style="margin-bottom: 6px;">Это приводило к утечкам окружения, если тест падал или забывал восстановить значение.</p>
 <p style="margin-bottom: 6px;">В Go 1.17 появился метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Setenv(key, value)</code>:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Он автоматически сохраняет предыдущее значение.</div>
@@ -2473,7 +2467,7 @@ func TestConditionalSkipDemo(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Проверьте исходное значение переменной окружения.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Внутри теста установите новое значение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Setenv("APP_PORT", "9090")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Внутри теста установите новое значение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Setenv(&quot;APP_PORT&quot;, &quot;9090&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убедитесь в автоматическом сбросе значения после завершения теста.</div></div>
   </div>
   <div class="code-container">
@@ -2760,11 +2754,11 @@ func TestSlowB(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">При тестировании бизнес-логики таблица должна проверять не только стандартные кейсы, но и экстремальные граничные условия:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Пустая строка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code> (является ли палиндромом по определению?).</li>
-<li style="margin-bottom: 4px;">Строка из одних пробелов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"   "</code>.</li>
-<li style="margin-bottom: 4px;">Несимметричные знаки пунктуации: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Madam, I'm Adam"</code>.</li>
-<li style="margin-bottom: 4px;">Регистронезависимость: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Anna"</code>.</li>
-<li style="margin-bottom: 4px;">Односимвольные строки: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"x"</code>.</li>
+<li style="margin-bottom: 4px;">Пустая строка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code> (является ли палиндромом по определению?).</li>
+<li style="margin-bottom: 4px;">Строка из одних пробелов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;   &quot;</code>.</li>
+<li style="margin-bottom: 4px;">Несимметричные знаки пунктуации: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Madam, I&#x27;m Adam&quot;</code>.</li>
+<li style="margin-bottom: 4px;">Регистронезависимость: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Anna&quot;</code>.</li>
+<li style="margin-bottom: 4px;">Односимвольные строки: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;x&quot;</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -2887,10 +2881,8 @@ func TestIsPalindrome_EdgeCases(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">До Go 1.15 работа с временными файлами в тестах требовала шаблонного кода:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">dir, err := os.MkdirTemp("", "test_*")</p>
-<p style="margin-bottom: 6px;">defer os.RemoveAll(dir)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">dir, err := os.MkdirTemp(&quot;&quot;, &quot;test_*&quot;)
+defer os.RemoveAll(dir)</code></pre></div>
 <p style="margin-bottom: 6px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.TempDir()</code> (появился в Go 1.15):</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Создает гарантированно уникальную временную папку.</li>
@@ -2964,7 +2956,7 @@ func TestFileCreationWithTempDir(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Создавать временные файлы прямо в каталоге проекта <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.WriteFile("test.tmp", ...)</code>. Файл попадет в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">git status</code>, может перезаписать реальный файл разработчика и вызовет конфликт при параллельном запуске тестов.</p></div>
+    <div><p style="margin-bottom: 6px;">Создавать временные файлы прямо в каталоге проекта <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.WriteFile(&quot;test.tmp&quot;, ...)</code>. Файл попадет в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">git status</code>, может перезаписать реальный файл разработчика и вызовет конфликт при параллельном запуске тестов.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3152,12 +3144,12 @@ func TestSubtract(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Забывать инициализировать поля в структуре кейса: неинициализированные поля получат нулевые значения Go (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>), что может привести к ложноположительным тестам.</p></div>
+    <div><p style="margin-bottom: 6px;">Забывать инициализировать поля в структуре кейса: неинициализированные поля получат нулевые значения Go (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>), что может привести к ложноположительным тестам.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как проверить в табличном тесте функцию, возвращающую срез или мапу?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reflect.DeepEqual(got, want)</code> или библиотеку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/google/go-cmp/cmp</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">diff := cmp.Diff(want, got); if diff != "" { t.Errorf(...) }</code>), так как стандартный оператор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">!=</code> в Go не применим к срезам и мапам.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reflect.DeepEqual(got, want)</code> или библиотеку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/google/go-cmp/cmp</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">diff := cmp.Diff(want, got); if diff != &quot;&quot; { t.Errorf(...) }</code>), так как стандартный оператор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">!=</code> в Go не применим к срезам и мапам.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-22">
@@ -3182,7 +3174,7 @@ func TestSubtract(t *testing.T) {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MustPositive(n int)</code>, вызывающую панику при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n <= 0</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MustPositive(n int)</code>, вызывающую панику при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n &lt;= 0</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишите тест <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TestMustPositive_Panics</code> с блоком <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer recover()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убедитесь, что тест проходит успешно при возникновении паники.</div></div>
   </div>
@@ -3431,7 +3423,7 @@ func TestStringsToUpperHierarchy(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Раннер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">testing</code> использует префикс родительского теста при формировании полного имени подтеста: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ParentName/ChildName</code>. Это позволяет обращаться к подтестам через фильтры регулярных выражений <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-run "^TestParent/Child"</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Раннер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">testing</code> использует префикс родительского теста при формировании полного имени подтеста: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ParentName/ChildName</code>. Это позволяет обращаться к подтестам через фильтры регулярных выражений <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-run &quot;^TestParent/Child&quot;</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -3440,7 +3432,7 @@ func TestStringsToUpperHierarchy(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Можно ли создавать подтесты внутри других подтестов (многоуровневая вложенность)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Run</code> может вызываться рекурсивно на любую глубину: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Run("Level1", func(t *testing.T) { t.Run("Level2", ...) })</code>. Это полезно при тестировании сложных матриц состояний (Matrix Testing).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Run</code> может вызываться рекурсивно на любую глубину: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Run(&quot;Level1&quot;, func(t *testing.T) { t.Run(&quot;Level2&quot;, ...) })</code>. Это полезно при тестировании сложных матриц состояний (Matrix Testing).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-25">
@@ -3552,8 +3544,8 @@ func TestDemonstrateFatalf(t *testing.T) {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Проверьте переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Getenv("RUN_INTEGRATION_TESTS")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если она не равна <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"1"</code>, вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Skip(...)</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Проверьте переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Getenv(&quot;RUN_INTEGRATION_TESTS&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если она не равна <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;1&quot;</code>, вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Skip(...)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Продемонстрируйте запуск теста без переменной (SKIP) и с переменной (PASS).</div></div>
   </div>
   <div class="code-container">
@@ -3614,11 +3606,9 @@ RUN_INTEGRATION_TESTS=1 go test -v integration_test.go
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как использовать встроенный флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-short</code> для разделения коротких и длинных тестов?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> С помощью функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">testing.Short()</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">if testing.Short() {</p>
-<p style="margin-bottom: 6px;">t.Skip("пропуск медленного теста в режиме -short")</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">if testing.Short() {
+    t.Skip(&quot;пропуск медленного теста в режиме -short&quot;)
+}</code></pre></div>
 <p style="margin-bottom: 6px;">При запуске <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -short</code> будут выполнены только быстрые модульные тесты.</p></div>
   </div>
 </div>
@@ -3899,7 +3889,7 @@ func TestCounterInstanceB(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как изолировать параллельные тесты при работе с реальной СУБД PostgreSQL?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1. Каждый тест запускается в собственной изолированной транзакции с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ROLLBACK</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Cleanup()</code>. 2. Либо каждый тест создает временную схему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CREATE SCHEMA test_<uuid></code> и выставляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">search_path</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1. Каждый тест запускается в собственной изолированной транзакции с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ROLLBACK</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Cleanup()</code>. 2. Либо каждый тест создает временную схему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CREATE SCHEMA test_&lt;uuid&gt;</code> и выставляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">search_path</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-30">
@@ -4064,7 +4054,7 @@ func TestMul(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как запустить все тесты пакета, КРОМЕ одного конкретного медленного теста?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать отрицательное регулярное выражение с инверсией или отрицательным просмотром вперед, либо запустить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -run "^((?!TestSlow).)*$"</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать отрицательное регулярное выражение с инверсией или отрицательным просмотром вперед, либо запустить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -run &quot;^((?!TestSlow).)*$&quot;</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-32">
@@ -4175,11 +4165,9 @@ func TestWithCleanup(t *testing.T) {
 <li style="margin-bottom: 4px;">Появился метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Chdir(dir)</code>. Он меняет текущую директорию процесса на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dir</code> и автоматически возвращает исходную рабочую директорию после окончания теста через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Cleanup()</code>.</li>
 <li style="margin-bottom: 4px;">В более ранних версиях используется паттерн:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">orig, _ := os.Getwd()</p>
-<p style="margin-bottom: 6px;">os.Chdir(tempDir)</p>
-<p style="margin-bottom: 6px;">defer os.Chdir(orig)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p></div>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">orig, _ := os.Getwd()
+os.Chdir(tempDir)
+defer os.Chdir(orig)</code></pre></div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -4520,8 +4508,8 @@ func TestIsPalindrome(t *testing.T) {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как запустить все субтесты, содержащие слово 'error'?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Командой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -run="/error" ./...</code>. Слэш в начале выражения указывает раннеру сопоставлять паттерн на уровне субтестов любого теста.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как запустить все субтесты, содержащие слово &#x27;error&#x27;?»</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Командой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -run=&quot;/error&quot; ./...</code>. Слэш в начале выражения указывает раннеру сопоставлять паттерн на уровне субтестов любого теста.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-37">
@@ -4531,7 +4519,7 @@ func TestIsPalindrome(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Каверзный кейс]</strong>: Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Skip("Skipping because feature is not ready")</code> внутри теста. Запусти <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -v</code> и убедись, что тест помечен как SKIP, а не FAIL.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Каверзный кейс]</strong>: Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Skip(&quot;Skipping because feature is not ready&quot;)</code> внутри теста. Запусти <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -v</code> и убедись, что тест помечен как SKIP, а не FAIL.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4693,7 +4681,7 @@ func TestHelperTrace(t *testing.T) {
 <li style="margin-bottom: 4px;">Входные данные.</li>
 <li style="margin-bottom: 4px;">Ожидаемый результат.</li>
 </ul>
-<p style="margin-bottom: 6px;">Пример: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tc.name = "отрицательный баланс приводит к ошибке 400"</code>.</p></div>
+<p style="margin-bottom: 6px;">Пример: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tc.name = &quot;отрицательный баланс приводит к ошибке 400&quot;</code>.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -4774,7 +4762,7 @@ func TestValidateAge(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Покрытие кода (Coverage)</strong>: Напиши функцию с ветвлением (например, валидацию возраста: <0 ошибка, 0-18 ребенок, 18+ взрослый). Напиши тест только для одного условия. Запусти <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -cover</code>. Посмотри процент покрытия.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Покрытие кода (Coverage)</strong>: Напиши функцию с ветвлением (например, валидацию возраста: &lt;0 ошибка, 0-18 ребенок, 18+ взрослый). Напиши тест только для одного условия. Запусти <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -cover</code>. Посмотри процент покрытия.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4955,21 +4943,17 @@ func TestCollectionsWithAssert(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Стандартный Go:</strong></li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">if err != nil {</p>
-<p style="margin-bottom: 6px;">t.Fatalf("unexpected err: %v", err)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">if got != want {</p>
-<p style="margin-bottom: 6px;">t.Errorf("got %v, want %v", got, want)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">if err != nil {
+    t.Fatalf(&quot;unexpected err: %v&quot;, err)
+}
+if got != want {
+    t.Errorf(&quot;got %v, want %v&quot;, got, want)
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>С <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">testify/assert</code>:</strong></li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">assert.NoError(t, err)</p>
-<p style="margin-bottom: 6px;">assert.Equal(t, want, got)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">assert.NoError(t, err)
+assert.Equal(t, want, got)</code></pre></div>
 <p style="margin-bottom: 6px;">Код сокращается в 3 раза, становясь декларативным.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -5821,7 +5805,7 @@ func TestSumSlice_EdgeCases(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">testing.Short() bool</code> возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">true</code>, если команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test</code> запущена с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-short</code>.</p>
 <p style="margin-bottom: 6px;">Это позволяет разделить тестовый набор на две категории:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Быстрые юнит-тесты (Default):</strong> запускаются всегда, отрабатывают за миллисекунды.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Тяжелые тесты (E2E, стресс-тесты, бенчмарки):</strong> оборачиваются в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if testing.Short() { t.Skip("пропуск в режиме -short") }</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Тяжелые тесты (E2E, стресс-тесты, бенчмарки):</strong> оборачиваются в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if testing.Short() { t.Skip(&quot;пропуск в режиме -short&quot;) }</code>.</div>
 <p style="margin-bottom: 6px;">Разработчики используют <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -short</code> перед каждым коммитом, экономя время.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -6080,7 +6064,7 @@ func TestLoadProfileBestPractice(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Пропуск тестов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Skip</code>)</strong>: Напиши тест, который проверяет что-то тяжелое (или требует интернета). В начале теста добавь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if testing.Short() { t.Skip("Пропуск долгого теста") }</code>. Запусти обычный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -v</code> (тест пройдет), а затем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -v -short</code> (тест будет пропущен).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Пропуск тестов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Skip</code>)</strong>: Напиши тест, который проверяет что-то тяжелое (или требует интернета). В начале теста добавь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if testing.Short() { t.Skip(&quot;Пропуск долгого теста&quot;) }</code>. Запусти обычный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -v</code> (тест пройдет), а затем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -v -short</code> (тест будет пропущен).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6171,7 +6155,7 @@ go test -v -short short_comparison_test.go
     <div><p style="margin-bottom: 6px;">Простой проверки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err != nil</code> недостаточно для надежного тестирования:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Функция может вернуть непредвиденную ошибку (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.Canceled</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ErrNotFound</code>).</li>
-<li style="margin-bottom: 4px;">Тест обязан проверить либо точный сигнальный объект ошибки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, target)</code>, либо соответствие типу через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, &targetStruct)</code>, либо текст через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Contains(err.Error(), "ожидаемый фрагмент")</code>.</li>
+<li style="margin-bottom: 4px;">Тест обязан проверить либо точный сигнальный объект ошибки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, target)</code>, либо соответствие типу через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, &amp;targetStruct)</code>, либо текст через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Contains(err.Error(), &quot;ожидаемый фрагмент&quot;)</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -6257,12 +6241,12 @@ func TestParsePortValidation(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Проверять точное совпадение всей строки ошибки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err.Error() == "невалидный формат..."</code>. Если внутренняя библиотека изменит одну букву в тексте ошибки, тесты сломаются. Проверяйте sentinel errors через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> или стабильные подстроки.</p></div>
+    <div><p style="margin-bottom: 6px;">Проверять точное совпадение всей строки ошибки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err.Error() == &quot;невалидный формат...&quot;</code>. Если внутренняя библиотека изменит одну букву в тексте ошибки, тесты сломаются. Проверяйте sentinel errors через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> или стабильные подстроки.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в Go 1.13 отказались от проверки типов ошибок через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch err.(type)</code> в пользу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Приведение типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err.(type)</code> не работает, если ошибка была обернута через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("...: %w", err)</code>. Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> рекурсивно обходит всё дерево обернутых ошибок, гарантированно находя целевой тип на любой глубине вложенности.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Приведение типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err.(type)</code> не работает, если ошибка была обернута через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;...: %w&quot;, err)</code>. Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> рекурсивно обходит всё дерево обернутых ошибок, гарантированно находя целевой тип на любой глубине вложенности.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-56">
@@ -6360,7 +6344,7 @@ go tool cover -html=coverage.out -o coverage.html
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Профиль <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">coverage.out</code> содержит записи вида:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">security.go:6.18,8.3 1 1</code> (файл:строка.колонка,строка.колонка число_операторов счетчик). Если счетчик равен 0, генератор HTML окрашивает блок в красный цвет (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">style="color: rgb(192, 0, 0)"</code>).</p></div>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">security.go:6.18,8.3 1 1</code> (файл:строка.колонка,строка.колонка число_операторов счетчик). Если счетчик равен 0, генератор HTML окрашивает блок в красный цвет (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">style=&quot;color: rgb(192, 0, 0)&quot;</code>).</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -6386,7 +6370,7 @@ go tool cover -html=coverage.out -o coverage.html
     <div><p style="margin-bottom: 6px;">Механика <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Cleanup</code>:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Функции регистрируются в стек (Last-In, First-Out).</li>
-<li style="margin-bottom: 4px;">Если зарегистрированы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Cleanup A</code>, затем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Cleanup B</code>, затем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Cleanup C</code>, при выходе они выполнятся строго в порядке: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">C -> B -> A</code>.</li>
+<li style="margin-bottom: 4px;">Если зарегистрированы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Cleanup A</code>, затем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Cleanup B</code>, затем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Cleanup C</code>, при выходе они выполнятся строго в порядке: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">C -&gt; B -&gt; A</code>.</li>
 <li style="margin-bottom: 4px;">Это критично для зависимых ресурсов: например, сначала нужно закрыть транзакцию базы данных (C), затем закрыть соединение с БД (B), и только затем остановить контейнер с СУБД (A).</li>
 <li style="margin-bottom: 4px;">Порядок гарантирован даже при вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Fatal()</code>!</li>
 </ul></div>
@@ -6469,13 +6453,13 @@ func TestCleanupLIFOOrder(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши функцию, возвращающую sentinel error <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New("not found")</code>. Напиши тест, проверяющий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, ErrNotFound)</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.ErrorIs</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши функцию, возвращающую sentinel error <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New(&quot;not found&quot;)</code>. Напиши тест, проверяющий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, ErrNotFound)</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.ErrorIs</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Sentinel Errors (ошибки-метки):</p>
 <p style="margin-bottom: 6px;">Объявляются как глобальные неизменяемые переменные пакета:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New("not found")</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New(&quot;not found&quot;)</code></p>
 <p style="margin-bottom: 6px;">Они позволяют вызывающему коду сравнивать ошибки по идентичности адреса в памяти (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">==</code>).</p>
 <p style="margin-bottom: 6px;">Начиная с Go 1.13, прямое сравнение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err == ErrNotFound</code> заменяют на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, ErrNotFound)</code>, что позволяет находить ошибку даже если она была обернута дополнительным контекстом.</p></div>
   </div>
@@ -6483,7 +6467,7 @@ func TestCleanupLIFOOrder(t *testing.T) {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New("запись не найдена")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New(&quot;запись не найдена&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишите функцию поиска в репозитории <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">FindUser(id int) (*User, error)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверьте ошибку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.ErrorIs(t, err, ErrNotFound)</code>.</div></div>
   </div>
@@ -6561,7 +6545,7 @@ func TestFindUserSentinel(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Создавать новую ошибку внутри функции: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">return errors.New("запись не найдена")</code>. Каждое создание через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.New</code> выделяет новый адрес в памяти, поэтому <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> не сможет обнаружить совпадение! Sentinel errors ОБЯЗАНЫ быть объявлены в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var</code> на уровне пакета.</p></div>
+    <div><p style="margin-bottom: 6px;">Создавать новую ошибку внутри функции: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">return errors.New(&quot;запись не найдена&quot;)</code>. Каждое создание через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.New</code> выделяет новый адрес в памяти, поэтому <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> не сможет обнаружить совпадение! Sentinel errors ОБЯЗАНЫ быть объявлены в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var</code> на уровне пакета.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -6589,7 +6573,7 @@ func TestFindUserSentinel(t *testing.T) {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте временный файл с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.CreateTemp("", "workout_*.txt")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте временный файл с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.CreateTemp(&quot;&quot;, &quot;workout_*.txt&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зарегистрируйте его удаление и закрытие через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Cleanup</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запишите и прочитайте тестовые данные.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Убедитесь в отсутствии файла на диске после завершения теста.</div></div>
@@ -6678,7 +6662,7 @@ func TestTempFileWithCleanup(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создайте отдельный пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">testdata/</code> с тестовыми данными (JSON-файлы, CSV). Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.ReadFile("testdata/sample.json")</code> — Go игнорирует эту директорию при сборке бинарника.</p></div>
+    <div><p style="margin-bottom: 6px;">Создайте отдельный пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">testdata/</code> с тестовыми данными (JSON-файлы, CSV). Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.ReadFile(&quot;testdata/sample.json&quot;)</code> — Go игнорирует эту директорию при сборке бинарника.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6686,7 +6670,7 @@ func TestTempFileWithCleanup(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Специальное соглашение в компиляторе и инструментарии Go.</li>
 <li style="margin-bottom: 4px;">Каталоги с именем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">testdata</code> <strong>полностью игнорируются</strong> при сборке бинарников (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go install</code>), не раздувая размер продакшн-артефакта.</li>
-<li style="margin-bottom: 4px;">Доступны тестам пакета по относительному пути: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.ReadFile("testdata/config.json")</code>.</li>
+<li style="margin-bottom: 4px;">Доступны тестам пакета по относительному пути: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.ReadFile(&quot;testdata/config.json&quot;)</code>.</li>
 <li style="margin-bottom: 4px;">Идеальное место для хранения моковых ответов API, больших JSON-дампов, сертификатов x509 и тестовых CSV-таблиц.</li>
 </ul></div>
   </div>
@@ -6784,10 +6768,8 @@ func TestLoadFixtureFromTestdata(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как протестировать функцию парсинга файлов с помощью директивы //go:embed?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Можно встроить файл фикстуры прямо в тестовую переменную:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">//go:embed testdata/response.json</p>
-<p style="margin-bottom: 6px;">var mockResponse []byte</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">//go:embed testdata/response.json
+var mockResponse []byte</code></pre></div>
 <p style="margin-bottom: 6px;">В этом случае тестовый бинарник становится полностью автономным и не требует наличия исходных файлов на файловой системе раннера CI.</p></div>
   </div>
 </div>
@@ -6883,7 +6865,7 @@ func TestCleanupResilienceToFatal(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши кастомный тип ошибки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ValidationError</code>. Напиши тест, проверяющий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, &ve)</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.ErrorAs</code>. Убедись, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ve</code> заполнена корректно.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши кастомный тип ошибки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ValidationError</code>. Напиши тест, проверяющий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, &amp;ve)</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.ErrorAs</code>. Убедись, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ve</code> заполнена корректно.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6894,7 +6876,7 @@ func TestCleanupResilienceToFatal(t *testing.T) {
 <li style="margin-bottom: 4px;">Проверяет, является ли ошибка в цепочке экземпляром целевого типа.</li>
 <li style="margin-bottom: 4px;">При совпадении копирует значение ошибки в переданный указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">target</code>.</li>
 </ul>
-<p style="margin-bottom: 6px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.ErrorAs(t, err, &target)</code> из testify автоматизирует эту проверку в одну строку.</p></div>
+<p style="margin-bottom: 6px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.ErrorAs(t, err, &amp;target)</code> из testify автоматизирует эту проверку в одну строку.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -6974,7 +6956,7 @@ func TestValidationErrorAs(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Передавать в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> значение вместо указателя на указатель: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, valErr)</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, &valErr)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Передавать в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> значение вместо указателя на указатель: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, valErr)</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, &amp;valErr)</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -7070,13 +7052,13 @@ func TestElementsMatchComparison(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши тест на <strong>обёрнутую ошибку</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("context: %w", ErrNotFound)</code>. Проверь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> — должно работать через цепочку обёрток. Проверь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.ErrorIs</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши тест на <strong>обёрнутую ошибку</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;context: %w&quot;, ErrNotFound)</code>. Проверь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> — должно работать через цепочку обёрток. Проверь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.ErrorIs</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Цепочка обертывания ошибок (Error Wrapping Chain):</p>
 <p style="margin-bottom: 6px;">В многослойной архитектуре (Clean Architecture / DDD) ошибка пробрасывается через несколько слоев:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Repository (ErrNotFound)</code> -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Service ("userService.Get: %w")</code> -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Handler ("httpHandler: %w")</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Repository (ErrNotFound)</code> -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Service (&quot;userService.Get: %w&quot;)</code> -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Handler (&quot;httpHandler: %w&quot;)</code>.</p>
 <p style="margin-bottom: 6px;">Директива <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%w</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf</code>:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Оборачивает ошибку, сохраняя доступ к исходной ошибке.</li>
@@ -7169,7 +7151,7 @@ func TestWrappedErrorChain(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Каждый вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("...: %w", err)</code> создает структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wrapError</code>, содержащую поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err error</code>. При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Unwrap()</code> вызывается по цепочке до тех пор, пока <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err</code> не совпадет с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">target</code> или не вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Каждый вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;...: %w&quot;, err)</code> создает структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wrapError</code>, содержащую поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err error</code>. При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Unwrap()</code> вызывается по цепочке до тех пор, пока <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err</code> не совпадет с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">target</code> или не вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -7200,7 +7182,7 @@ func TestWrappedErrorChain(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">В современном Go классическое сравнение через оператор равенства <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err == ErrTimeout</code> считается антипаттерном:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Если внутренняя библиотека добавит стек вызовов или обернет ошибку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("db failure: %w", err)</code>, равенство <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">==</code> вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>.</li>
+<li style="margin-bottom: 4px;">Если внутренняя библиотека добавит стек вызовов или обернет ошибку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;db failure: %w&quot;, err)</code>, равенство <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">==</code> вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>.</li>
 <li style="margin-bottom: 4px;">Стандартная функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, target)</code> корректно раскручивает всю цепочку оберток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Unwrap()</code> и гарантирует правильный результат.</li>
 </ul></div>
   </div>
@@ -7208,7 +7190,7 @@ func TestWrappedErrorChain(t *testing.T) {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте sentinel-ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrTimeout = errors.New("превышен таймаут")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте sentinel-ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrTimeout = errors.New(&quot;превышен таймаут&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишите функцию, возвращающую обернутую ошибку.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверьте совпадение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code>.</div></div>
   </div>
@@ -7461,20 +7443,18 @@ func TestMustParseURLPanics(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши функцию, которая паникует при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> аргументе. Напиши тест с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer func() { if r := recover(); r == nil { t.Error("expected panic") } }()</code>. Покажи ручной способ тестирования panic.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши функцию, которая паникует при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> аргументе. Напиши тест с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer func() { if r := recover(); r == nil { t.Error(&quot;expected panic&quot;) } }()</code>. Покажи ручной способ тестирования panic.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">В стандартной библиотеке Go и во многих проектах с политикой Zero-Dependencies сторонние пакеты (testify) запрещены.</p>
 <p style="margin-bottom: 6px;">Идиоматичный стандартный способ проверки паники в Go:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">defer func() {</p>
-<p style="margin-bottom: 6px;">if r := recover(); r == nil {</p>
-<p style="margin-bottom: 6px;">t.Errorf("функция должна была запаниковать")</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}()</p>
-<p style="margin-bottom: 6px;">TargetCall()</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">defer func() {
+    if r := recover(); r == nil {
+        t.Errorf(&quot;функция должна была запаниковать&quot;)
+    }
+}()
+TargetCall()</code></pre></div>
 <p style="margin-bottom: 6px;">Это полностью эквивалентно библиотечным оберткам, не требуя внешних модулей в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go.mod</code>.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -7570,7 +7550,7 @@ func TestProcessUserPanicStdlib(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.NoError(t, err)</code>: проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err == nil</code>.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.Nil(t, object)</code>: проверяет, что указатель, интерфейс, канал или мапа равны <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>.</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.Empty(t, collection)</code>: проверяет, что длина среза/мапы равна 0, число равно 0 или строка пуста <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code>.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.Empty(t, collection)</code>: проверяет, что длина среза/мапы равна 0, число равно 0 или строка пуста <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code>.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.Contains(t, collection, item)</code>: проверяет вхождение элемента в срез, ключа в мапу или подстроки в строку.</li>
 </ul></div>
   </div>
@@ -7657,7 +7637,7 @@ func TestTestifyToolbox(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Перепиши тест на panic с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.PanicsWithValue(t, "nil argument", func() { ... })</code>. Проверь точное сообщение паники.</p></div>
+    <div><p style="margin-bottom: 6px;">Перепиши тест на panic с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.PanicsWithValue(t, &quot;nil argument&quot;, func() { ... })</code>. Проверь точное сообщение паники.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7672,7 +7652,7 @@ func TestTestifyToolbox(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Withdraw(amount int)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Выбросите панику с точным текстом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"insufficient funds"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Выбросите панику с точным текстом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;insufficient funds&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверьте точное совпадение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.PanicsWithValue</code>.</div></div>
   </div>
   <div class="code-container">
@@ -7735,7 +7715,7 @@ func TestWithdrawPanicsExactValue(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Передавать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.New("msg")</code> в ожидаемое значение, если функция бросает простую строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"msg"</code> (несовпадение типов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">error</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string</code>).</p></div>
+    <div><p style="margin-bottom: 6px;">Передавать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.New(&quot;msg&quot;)</code> в ожидаемое значение, если функция бросает простую строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;msg&quot;</code> (несовпадение типов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">error</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string</code>).</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -7760,7 +7740,7 @@ func TestWithdrawPanicsExactValue(t *testing.T) {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Черный ящик (Black-Box Testing):</strong></div>
 <p style="margin-bottom: 6px;">Тест объявляется в отдельном пакете: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">package calculator_test</code>.</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Тест вынужден явно импортировать тестируемый пакет: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">import "myproject/calculator"</code>.</li>
+<li style="margin-bottom: 4px;">Тест вынужден явно импортировать тестируемый пакет: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">import &quot;myproject/calculator&quot;</code>.</li>
 <li style="margin-bottom: 4px;">Тест имеет доступ <strong>ТОЛЬКО к публичному экспортированному API</strong> пакета.</li>
 <li style="margin-bottom: 4px;">Это гарантирует чистоту публичного интерфейса библиотеки и защищает от зависимости тестов от деталей внутренней реализации.</li>
 </ul></div>
@@ -8219,7 +8199,7 @@ func TestSample(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Тестирование недетерминированного кода</strong>: Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Greet() string</code>, которая возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Доброе утро"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Добрый день"</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Добрый вечер"</code> в зависимости от текущего системного времени (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Now()</code>). Сделайте эту функцию тестируемой, передав интерфейс-зависимость <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Clock</code> (с методом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Now() time.Time</code>) в качестве параметра. Напишите тест, передав туда фейковые (mock) часы, возвращающие фиксированное время.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Тестирование недетерминированного кода</strong>: Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Greet() string</code>, которая возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Доброе утро&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Добрый день&quot;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Добрый вечер&quot;</code> в зависимости от текущего системного времени (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Now()</code>). Сделайте эту функцию тестируемой, передав интерфейс-зависимость <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Clock</code> (с методом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Now() time.Time</code>) в качестве параметра. Напишите тест, передав туда фейковые (mock) часы, возвращающие фиксированное время.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8465,7 +8445,7 @@ func TestMockUserRepository(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем преимущество генератора mockgen (gomock) перед ручным написанием testify/mock?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mockgen</code> автоматически генерирует строго типизированный код мока по интерфейсу Go без рефлексии и приведения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">args.Get(0).(*User)</code>, исключая опечатки в названиях методов в строках <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.On("MethodName")</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mockgen</code> автоматически генерирует строго типизированный код мока по интерфейсу Go без рефлексии и приведения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">args.Get(0).(*User)</code>, исключая опечатки в названиях методов в строках <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.On(&quot;MethodName&quot;)</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-78">
@@ -8475,15 +8455,15 @@ func TestMockUserRepository(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.On("MethodName", args...).Return(result)</code> для настройки поведения мока.</p></div>
+    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.On(&quot;MethodName&quot;, args...).Return(result)</code> для настройки поведения мока.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.On()</code> поддерживает гибкое сопоставление аргументов:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Точные значения: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.On("Save", 42, "data")</code>.</li>
-<li style="margin-bottom: 4px;">Любое значение (Any): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.On("Save", mock.Anything, mock.Anything)</code>.</li>
-<li style="margin-bottom: 4px;">Сопоставление по типу: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.On("Save", mock.AnythingOfType("int"))</code>.</li>
+<li style="margin-bottom: 4px;">Точные значения: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.On(&quot;Save&quot;, 42, &quot;data&quot;)</code>.</li>
+<li style="margin-bottom: 4px;">Любое значение (Any): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.On(&quot;Save&quot;, mock.Anything, mock.Anything)</code>.</li>
+<li style="margin-bottom: 4px;">Сопоставление по типу: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.On(&quot;Save&quot;, mock.AnythingOfType(&quot;int&quot;))</code>.</li>
 <li style="margin-bottom: 4px;">Возврат нескольких значений: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.Return(data, nil)</code>.</li>
 </ul></div>
   </div>
@@ -8559,7 +8539,7 @@ func TestNotifierMocking(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как сымитировать падение метода мока по таймауту?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> С помощью метода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.After(duration)</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.On("Fetch").After(2 * time.Second).Return(nil, context.DeadlineExceeded)</code>. Это позволяет тестировать таймауты и отмену контекстов в вызывающем коде.</p></div>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.On(&quot;Fetch&quot;).After(2 * time.Second).Return(nil, context.DeadlineExceeded)</code>. Это позволяет тестировать таймауты и отмену контекстов в вызывающем коде.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-79">
@@ -8575,8 +8555,8 @@ func TestNotifierMocking(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">При тестировании идемпотентности, кэширования или ретраев (Retry Policy) критично проверить, сколько раз был вызван нижележащий метод:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.AssertNumberOfCalls(t, "MethodName", expectedCount)</code>: проверяет точное число вызовов.</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.AssertNotCalled(t, "MethodName")</code>: гарантирует, что метод ни разу не вызывался (например, при попадании в кэш).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.AssertNumberOfCalls(t, &quot;MethodName&quot;, expectedCount)</code>: проверяет точное число вызовов.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mock.AssertNotCalled(t, &quot;MethodName&quot;)</code>: гарантирует, что метод ни разу не вызывался (например, при попадании в кэш).</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -8667,14 +8647,12 @@ func TestRetryAttemptsCount(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Классическая ловушка параллелизма в Go (Loop Variable Shadowing):</p>
 <p style="margin-bottom: 6px;">В Go $\le$ 1.21:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">for _, tc := range tests {</p>
-<p style="margin-bottom: 6px;">t.Run(tc.name, func(t *testing.T) {</p>
-<p style="margin-bottom: 6px;">t.Parallel()</p>
-<p style="margin-bottom: 6px;">// БАГ: все горутины прочитают последний tc, когда цикл завершится!</p>
-<p style="margin-bottom: 6px;">})</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">for _, tc := range tests {
+    t.Run(tc.name, func(t *testing.T) {
+        t.Parallel()
+        // БАГ: все горутины прочитают последний tc, когда цикл завершится!
+    })
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Причина: переменная <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tc</code> аллоцировалась один раз на весь цикл.</p>
 <p style="margin-bottom: 6px;">Историческое исправление: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tc := tc</code> внутри тела цикла (создание локальной копии в стеке).</p>
 <p style="margin-bottom: 6px;">Начиная с <strong>Go 1.22</strong>: спецификация изменена, цикл сам создает новую переменную на каждой итерации.</p></div>
@@ -8853,7 +8831,7 @@ func TestTestifyDichotomy(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в некоторых репозиториях Google запрещают использовать testify?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В Google предпочитают стандартную библиотеку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">testing</code> и библиотеку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">google/go-cmp</code>. Причина: testify скрывает детали проверок, а разработчики начинают полагаться на автоматические сообщения вместо формулирования понятных бизнесовых описаний ошибок через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Errorf("got %v, want %v", got, want)</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В Google предпочитают стандартную библиотеку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">testing</code> и библиотеку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">google/go-cmp</code>. Причина: testify скрывает детали проверок, а разработчики начинают полагаться на автоматические сообщения вместо формулирования понятных бизнесовых описаний ошибок через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Errorf(&quot;got %v, want %v&quot;, got, want)</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-82">
@@ -8871,17 +8849,13 @@ func TestTestifyDichotomy(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Было (4 строки на каждое сравнение):</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">if expected != result {</p>
-<p style="margin-bottom: 6px;">t.Errorf("Add(2, 3) = %d; want %d", result, expected)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">if expected != result {
+    t.Errorf(&quot;Add(2, 3) = %d; want %d&quot;, result, expected)
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Стало (1 строка):</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">assert.Equal(t, expected, result)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">assert.Equal(t, expected, result)</code></pre></div>
 <p style="margin-bottom: 6px;">Кроме лаконичности, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.Equal</code> автоматически форматирует читаемый diff в консоли при несовпадении строк, срезов или сложных структур!</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -8965,7 +8939,7 @@ func TestSumExpressive(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Управление инфраструктурой логов через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TestMain</code>:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Если тесты пишут в локальные файлы логов (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/var/log/app.log</code>), тесты сломаются на машинах разработчиков из-за прав доступа.</li>
-<li style="margin-bottom: 4px;">Внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TestMain</code> создается временная папка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.MkdirTemp("", "test_logs_*")</code>.</li>
+<li style="margin-bottom: 4px;">Внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TestMain</code> создается временная папка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.MkdirTemp(&quot;&quot;, &quot;test_logs_*&quot;)</code>.</li>
 <li style="margin-bottom: 4px;">Путь передается в систему логирования пакета.</li>
 <li style="margin-bottom: 4px;">После <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Run()</code> папка гарантированно удаляется через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.RemoveAll()</code>, не оставляя мусора на хосте.</li>
 </ul></div>
@@ -9062,7 +9036,7 @@ func TestWriteLogFile(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Настройка окружения (Setenv)</strong>: Напиши функцию, читающую конфигурацию из переменной окружения (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PORT</code>). В тесте используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Setenv("PORT", "8080")</code>. (Go сам вернет старое значение после завершения теста).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Настройка окружения (Setenv)</strong>: Напиши функцию, читающую конфигурацию из переменной окружения (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PORT</code>). В тесте используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Setenv(&quot;PORT&quot;, &quot;8080&quot;)</code>. (Go сам вернет старое значение после завершения теста).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9078,7 +9052,7 @@ func TestWriteLogFile(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GetServerPort() string</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В тесте вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Setenv("PORT", "8080")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В тесте вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Setenv(&quot;PORT&quot;, &quot;8080&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверьте результат чтения.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверьте в отдельном тесте, что переменная сбросилась.</div></div>
   </div>
@@ -9156,7 +9130,7 @@ func TestGetServerPortDefault(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Можно ли протестировать функцию os.Exit(1) внутри юнит-теста?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Прямой вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Exit</code> немедленно завершит тестовый процесс. Для тестирования <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Exit</code> используют запуск теста в подпроцессе (Subprocess Pattern): тест перезапускает сам себя через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">exec.Command(os.Args[0], "-test.run=TestHelperProcess")</code> с переменной окружения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GO_WANT_HELPER_PROCESS=1</code> и проверяет код возврата подпроцесса.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Прямой вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Exit</code> немедленно завершит тестовый процесс. Для тестирования <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Exit</code> используют запуск теста в подпроцессе (Subprocess Pattern): тест перезапускает сам себя через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">exec.Command(os.Args[0], &quot;-test.run=TestHelperProcess&quot;)</code> с переменной окружения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GO_WANT_HELPER_PROCESS=1</code> и проверяет код возврата подпроцесса.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-85">
@@ -9602,12 +9576,10 @@ func ExampleFormatRubles() {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Сценарий десериализации JSON — хрестоматийный пример необходимости <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">require</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">var user *User</p>
-<p style="margin-bottom: 6px;">err := json.Unmarshal(badPayload, &user)</p>
-<p style="margin-bottom: 6px;">assert.NoError(t, err) // Если упадет, код пойдет дальше!</p>
-<p style="margin-bottom: 6px;">assert.Equal(t, "Alex", user.Name) // ПАНИКА: nil pointer dereference!</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">var user *User
+err := json.Unmarshal(badPayload, &amp;user)
+assert.NoError(t, err) // Если упадет, код пойдет дальше!
+assert.Equal(t, &quot;Alex&quot;, user.Name) // ПАНИКА: nil pointer dereference!</code></pre></div>
 <p style="margin-bottom: 6px;">Если произошла ошибка парсинга, объект <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user</code> останется <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>.</p>
 <p style="margin-bottom: 6px;">Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">require.NoError(t, err)</code> останавливает выполнение немедленно, предотвращая крах тестового раннера.</p></div>
   </div>
@@ -9699,7 +9671,7 @@ func TestJSONParsingSafety(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">При сериализации мап в JSON в разных версиях Go или разных микросервисах порядок ключей может варьироваться:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"status":"ok","code":200}</code> vs <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"code":200,"status":"ok"}</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;status&quot;:&quot;ok&quot;,&quot;code&quot;:200}</code> vs <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;code&quot;:200,&quot;status&quot;:&quot;ok&quot;}</code>.</p>
 <p style="margin-bottom: 6px;">Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">testify/assert</code> предоставляет метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.JSONEq</code>:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Разбирает обе строки в абстрактные структуры.</li>
@@ -9991,7 +9963,7 @@ go tool cover -func=coverage.out
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Профиль покрытия сохраняет номера колонок и строк, что позволяет утилите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cover</code> подсвечивать даже отдельные части составных булевых выражений <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if A && B</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Профиль покрытия сохраняет номера колонок и строк, что позволяет утилите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cover</code> подсвечивать даже отдельные части составных булевых выражений <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if A &amp;&amp; B</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -10000,7 +9972,7 @@ go tool cover -func=coverage.out
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в Go исключить автосгенерированные файлы (например *.pb.go от protobuf) из отчета покрытия?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Компилятор Go автоматически игнорирует файлы с комментарием в первой строке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">// Code generated by ... DO NOT EDIT.</code>. Для сторонних инструментов используют скрипты фильтрации <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grep -v "\.pb\.go" coverage.out > clean_coverage.out</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Компилятор Go автоматически игнорирует файлы с комментарием в первой строке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">// Code generated by ... DO NOT EDIT.</code>. Для сторонних инструментов используют скрипты фильтрации <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grep -v &quot;\.pb\.go&quot; coverage.out &gt; clean_coverage.out</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-94">
@@ -10201,21 +10173,19 @@ func TestPoolLifecycle(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Иногда в legacy-коде или сторонних SDK базовый URL или таймаут задан глобальной переменной пакета:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var DefaultAPIURL = "https://api.production.com"</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var DefaultAPIURL = &quot;https://api.production.com&quot;</code></p>
 <p style="margin-bottom: 6px;">Для тестирования её нужно временно перенаправить на локальный тестовый мок-сервер.</p>
 <p style="margin-bottom: 6px;"><strong>Идиоматичный паттерн восстановления:</strong></p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">orig := DefaultAPIURL</p>
-<p style="margin-bottom: 6px;">DefaultAPIURL = mockServer.URL</p>
-<p style="margin-bottom: 6px;">t.Cleanup(func() { DefaultAPIURL = orig })</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">orig := DefaultAPIURL
+DefaultAPIURL = mockServer.URL
+t.Cleanup(func() { DefaultAPIURL = orig })</code></pre></div>
 <p style="margin-bottom: 6px;">Гарантирует 100% восстановление исходного URL даже при падении теста.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявите глобальную переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var APIBaseURL = "https://prod.api.com"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявите глобальную переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var APIBaseURL = &quot;https://prod.api.com&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В тесте переопределите её на тестовый эндпоинт.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Зарегистрируйте возврат значения через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Cleanup</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверьте в следующем тесте, что переменная вернулась к исходному продакшн-значению.</div></div>

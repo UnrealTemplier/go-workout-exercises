@@ -152,9 +152,36 @@ def format_text(txt):
     lines = txt.strip().split('\n')
     out_lines = []
     in_list = False
+    in_code = False
+    code_lang = ""
+    code_lines = []
     
     for line in lines:
         stripped = line.strip()
+        
+        # Multi-line code block handling (```lang ... ```)
+        if stripped.startswith('```'):
+            if in_code:
+                in_code = False
+                code_text = '\n'.join(code_lines)
+                escaped_code = html.escape(code_text)
+                lang_cls = f"language-{code_lang}" if code_lang else "language-none"
+                out_lines.append(f'<div class="code-container" style="margin: 10px 0;"><pre class="{lang_cls}"><code class="{lang_cls}">{escaped_code}</code></pre></div>')
+                code_lines = []
+                code_lang = ""
+            else:
+                if in_list:
+                    out_lines.append('</ul>')
+                    in_list = False
+                in_code = True
+                code_lang = stripped[3:].strip()
+                code_lines = []
+            continue
+            
+        if in_code:
+            code_lines.append(line)
+            continue
+            
         if not stripped:
             if in_list:
                 out_lines.append('</ul>')
@@ -162,12 +189,33 @@ def format_text(txt):
             out_lines.append('<div style="height: 8px;"></div>')
             continue
             
+        # Headings
+        if stripped.startswith('### '):
+            if in_list:
+                out_lines.append('</ul>')
+                in_list = False
+            content = html.escape(stripped[4:])
+            content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
+            content = re.sub(r'`(.*?)`', r'<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\1</code>', content)
+            out_lines.append(f'<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">{content}</h5>')
+            continue
+            
+        if stripped.startswith('#### '):
+            if in_list:
+                out_lines.append('</ul>')
+                in_list = False
+            content = html.escape(stripped[5:])
+            content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
+            content = re.sub(r'`(.*?)`', r'<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\1</code>', content)
+            out_lines.append(f'<h6 style="color: #94a3b8; font-size: 0.95rem; margin: 10px 0 4px 0; font-weight: 600;">{content}</h6>')
+            continue
+
         # Bullet list
         if stripped.startswith('- ') or stripped.startswith('* '):
             if not in_list:
                 out_lines.append('<ul style="margin: 8px 0 8px 20px;">')
                 in_list = True
-            content = stripped[2:]
+            content = html.escape(stripped[2:])
             content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
             content = re.sub(r'`(.*?)`', r'<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\1</code>', content)
             out_lines.append(f'<li style="margin-bottom: 4px;">{content}</li>')
@@ -180,7 +228,7 @@ def format_text(txt):
                 out_lines.append('</ul>')
                 in_list = False
             num_idx = m_num.group(1)
-            content = m_num.group(2)
+            content = html.escape(m_num.group(2))
             content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
             content = re.sub(r'`(.*?)`', r'<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\1</code>', content)
             out_lines.append(f'<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">{num_idx}.</span> {content}</div>')
@@ -190,10 +238,16 @@ def format_text(txt):
             out_lines.append('</ul>')
             in_list = False
             
-        content = stripped
+        content = html.escape(stripped)
         content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
         content = re.sub(r'`(.*?)`', r'<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\1</code>', content)
         out_lines.append(f'<p style="margin-bottom: 6px;">{content}</p>')
+        
+    if in_code:
+        code_text = '\n'.join(code_lines)
+        escaped_code = html.escape(code_text)
+        lang_cls = f"language-{code_lang}" if code_lang else "language-none"
+        out_lines.append(f'<div class="code-container" style="margin: 10px 0;"><pre class="{lang_cls}"><code class="{lang_cls}">{escaped_code}</code></pre></div>')
         
     if in_list:
         out_lines.append('</ul>')
@@ -287,21 +341,22 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             href, badge = status_map[num]
             if active_chapter_num == num:
                 sb.append('    <a href="javascript:void(0)" class="chapter-link active" id="active-chapter-toggle" title="Нажмите, чтобы свернуть/развернуть список упражнений">')
-                sb.append(f'      <span><strong>{num}. {title}</strong></span>')
+                sb.append(f'      <span><strong>{num}. {html.escape(title)}</strong></span>')
                 sb.append(f'      <span class="status-badge done">{badge}</span>')
                 sb.append('    </a>')
                 sb.append('    <div class="sub-exercises-list" id="active-sub-exercises">')
                 for ex in current_exercises:
-                    sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {ex["title"]}">{ex["num"]}. {ex["title"]}</a>')
+                    t_esc = html.escape(ex["title"])
+                    sb.append(f'      <a href="#ex-{ex["num"]}" class="sub-exercise-link" title="Упр {ex["num"]}: {t_esc}">{ex["num"]}. {t_esc}</a>')
                 sb.append('    </div>')
             else:
                 sb.append(f'    <a href="{href}" class="chapter-link">')
-                sb.append(f'      <span>{num}. {title}</span>')
+                sb.append(f'      <span>{num}. {html.escape(title)}</span>')
                 sb.append(f'      <span class="status-badge done">{badge}</span>')
                 sb.append('    </a>')
         else:
             sb.append('    <a href="javascript:void(0)" class="chapter-link" style="opacity: 0.65;" title="Глава в разработке">')
-            sb.append(f'      <span>{num}. {title}</span>')
+            sb.append(f'      <span>{num}. {html.escape(title)}</span>')
             sb.append('      <span class="status-badge soon">Скоро</span>')
             sb.append('    </a>')
             
@@ -317,7 +372,7 @@ def build_exercise_card(ex):
     # Header
     ec.append('  <div class="exercise-header">')
     ec.append(f'    <div class="exercise-num-badge">Упражнение #{ex["num"]}</div>')
-    ec.append(f'    <div style="flex: 1;"><h3 class="exercise-title">{ex["title"]}</h3></div>')
+    ec.append(f'    <div style="flex: 1;"><h3 class="exercise-title">{html.escape(ex["title"])}</h3></div>')
     ec.append('  </div>')
     
     # 1. Task Callout

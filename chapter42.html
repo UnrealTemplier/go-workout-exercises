@@ -842,12 +842,12 @@
       <a href="#ex-11" class="sub-exercise-link" title="Упр 11: Управление конфигурацией (Configuration Management): приоритеты env, файлов и валидация значений">11. Управление конфигурацией (Configuration Management): приоритеты env, файлов и валидация значений</a>
       <a href="#ex-12" class="sub-exercise-link" title="Упр 12: Ликвидация глобального состояния (Global State): контейнер Dependencies и явная передача в main">12. Ликвидация глобального состояния (Global State): контейнер Dependencies и явная передача в main</a>
       <a href="#ex-13" class="sub-exercise-link" title="Упр 13: Ручное связывание графа зависимостей (Pure DI): композиция объектов в Composition Root">13. Ручное связывание графа зависимостей (Pure DI): композиция объектов в Composition Root</a>
-      <a href="#ex-14" class="sub-exercise-link" title="Упр 14: Гексагональная архитектура (Hexagonal Architecture / Ports & Adapters): домен в центре и заменяемые адаптеры">14. Гексагональная архитектура (Hexagonal Architecture / Ports & Adapters): домен в центре и заменяемые адаптеры</a>
+      <a href="#ex-14" class="sub-exercise-link" title="Упр 14: Гексагональная архитектура (Hexagonal Architecture / Ports &amp; Adapters): домен в центре и заменяемые адаптеры">14. Гексагональная архитектура (Hexagonal Architecture / Ports &amp; Adapters): домен в центре и заменяемые адаптеры</a>
       <a href="#ex-15" class="sub-exercise-link" title="Упр 15: Корректное завершение работы сервиса (Graceful Shutdown): перехват сигналов ОС и сброс соединений">15. Корректное завершение работы сервиса (Graceful Shutdown): перехват сигналов ОС и сброс соединений</a>
       <a href="#ex-16" class="sub-exercise-link" title="Упр 16: Архитектура вертикальных срезов (Vertical Slice Architecture): группировка по сценариям фичи">16. Архитектура вертикальных срезов (Vertical Slice Architecture): группировка по сценариям фичи</a>
       <a href="#ex-17" class="sub-exercise-link" title="Упр 17: Сценарий регистрации пользователя в Clean Architecture: соблюдение правила зависимостей">17. Сценарий регистрации пользователя в Clean Architecture: соблюдение правила зависимостей</a>
       <a href="#ex-18" class="sub-exercise-link" title="Упр 18: Стратегия Monolith First: проектирование модульного монолита с четкими границами доменов">18. Стратегия Monolith First: проектирование модульного монолита с четкими границами доменов</a>
-      <a href="#ex-19" class="sub-exercise-link" title="Упр 19: Модули фичей с общим ядром (Feature Modules & Shared Kernel): асинхронные доменные события">19. Модули фичей с общим ядром (Feature Modules & Shared Kernel): асинхронные доменные события</a>
+      <a href="#ex-19" class="sub-exercise-link" title="Упр 19: Модули фичей с общим ядром (Feature Modules &amp; Shared Kernel): асинхронные доменные события">19. Модули фичей с общим ядром (Feature Modules &amp; Shared Kernel): асинхронные доменные события</a>
       <a href="#ex-20" class="sub-exercise-link" title="Упр 20: Модульный монолит (Modular Monolith): приватные internal-пакеты и публичные контракты модулей">20. Модульный монолит (Modular Monolith): приватные internal-пакеты и публичные контракты модулей</a>
       <a href="#ex-21" class="sub-exercise-link" title="Упр 21: Инверсия зависимостей в стиле Go: размещение интерфейса в пакете бизнес-логики">21. Инверсия зависимостей в стиле Go: размещение интерфейса в пакете бизнес-логики</a>
       <a href="#ex-22" class="sub-exercise-link" title="Упр 22: Гибкая конфигурация сервиса: слияние настроек YAML/JSON файлов и переменных окружения">22. Гибкая конфигурация сервиса: слияние настроек YAML/JSON файлов и переменных окружения</a>
@@ -2159,7 +2159,7 @@ func TestDIPConsumerInterfaces(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Идиома Go — ручной DI (Explicit Constructor Injection):</strong></li>
 </ul>
-<p style="margin-bottom: 6px;">Все зависимости явно передаются аргументами в функции-конструкторы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">New<Entity>(deps...)</code>. Ошибки типов выявляются мгновенно при компиляции!</p></div>
+<p style="margin-bottom: 6px;">Все зависимости явно передаются аргументами в функции-конструкторы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">New&lt;Entity&gt;(deps...)</code>. Ошибки типов выявляются мгновенно при компиляции!</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -2274,7 +2274,7 @@ func TestManualDIConstructors(t *testing.T) {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Entities (Предметная область):</strong> Бизнес-правила масштаба предприятия, чистые структуры и валидаторы. Ноль внешних импортов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Use Cases (Сценарии использования):</strong> Интеракторы бизнес-процессов (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RegisterUserUseCase</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Interface Adapters:</strong> Адаптеры представления и хранения данных (HTTP контроллеры, презентеры, репозитории).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Frameworks & Drivers:</strong> Внешний мир (веб-фреймворк Gin/Chi, PostgreSQL, Kafka, Redis).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Frameworks &amp; Drivers:</strong> Внешний мир (веб-фреймворк Gin/Chi, PostgreSQL, Kafka, Redis).</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Главный инвариант:</strong> Ничто из внутреннего круга не знает о внешнем круге!</li>
 </ul></div>
@@ -2547,12 +2547,12 @@ func TestConfigHierarchy(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Вызывать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Getenv("SOME_VAR")</code> глубоко внутри бизнес-логики: это делает компонент нетестируемым, скрывает зависимости и нарушает изоляцию. Все переменные окружения должны считываться <strong>только</strong> на уровне конфигурации при старте приложения.</p></div>
+    <div><p style="margin-bottom: 6px;">Вызывать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Getenv(&quot;SOME_VAR&quot;)</code> глубоко внутри бизнес-логики: это делает компонент нетестируемым, скрывает зависимости и нарушает изоляцию. Все переменные окружения должны считываться <strong>только</strong> на уровне конфигурации при старте приложения.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему небезопасно логировать всю распарсенную структуру AppConfig целиком при старте?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Структура конфигурации часто содержит пароли к БД, секретные ключи JWT или токены внешних API. Логирование объекта целиком приведет к утечке секретов в Elasticsearch / Loki. Для полей с паролями реализуют метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Stringer</code>, маскирующий секреты (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">***</code>), либо помечают их кастомными тегами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">log:"-"</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Структура конфигурации часто содержит пароли к БД, секретные ключи JWT или токены внешних API. Логирование объекта целиком приведет к утечке секретов в Elasticsearch / Loki. Для полей с паролями реализуют метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Stringer</code>, маскирующий секреты (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">***</code>), либо помечают их кастомными тегами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">log:&quot;-&quot;</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-12">
@@ -2789,17 +2789,17 @@ func TestPureDIBootstrap(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему паттерн Service Locator считается антипаттерном по сравнению с Constructor Injection?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Service Locator скрывает реальные зависимости класса внутри тела методов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">locator.Get("Database")</code>). Вы не можете понять по конструктору, что нужно компоненту для работы, а при отсутствии зависимости в локаторе программа падает в рантайме с паникой вместо ошибки компиляции.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Service Locator скрывает реальные зависимости класса внутри тела методов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">locator.Get(&quot;Database&quot;)</code>). Вы не можете понять по конструктору, что нужно компоненту для работы, а при отсутствии зависимости в локаторе программа падает в рантайме с паникой вместо ошибки компиляции.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-14">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #14</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Гексагональная архитектура (Hexagonal Architecture / Ports & Adapters): домен в центре и заменяемые адаптеры</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Гексагональная архитектура (Hexagonal Architecture / Ports &amp; Adapters): домен в центре и заменяемые адаптеры</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Hexagonal Architecture (Ports & Adapters)</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">domain/</code> (business logic), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ports/</code> (interfaces: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ForStoringUsers</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ForSendingEmails</code>), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">adapters/</code> (реализации: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PostgresUserStore</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SMTPEmailSender</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MockEmailSender</code>). Покажи, что домен — центр, всё остальное — заменяемые адаптеры.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Hexagonal Architecture (Ports &amp; Adapters)</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">domain/</code> (business logic), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ports/</code> (interfaces: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ForStoringUsers</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ForSendingEmails</code>), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">adapters/</code> (реализации: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PostgresUserStore</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SMTPEmailSender</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MockEmailSender</code>). Покажи, что домен — центр, всё остальное — заменяемые адаптеры.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3519,14 +3519,14 @@ func TestMonolithFirstEcommerce(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Когда модульный монолит пора распиливать на микросервисы?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Монолит распиливают не из-за объемов кода, а по двум причинам:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Организационная (Conway's Law):</strong> когда над монолитом работают более 5–8 независимых продуктовых команд, начинаются постоянные конфликты деплоя и релизные блокировки.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Организационная (Conway&#x27;s Law):</strong> когда над монолитом работают более 5–8 независимых продуктовых команд, начинаются постоянные конфликты деплоя и релизные блокировки.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Асимметричное масштабирование:</strong> когда один модуль (например, видео-транскодер) требует 100 ядер CPU, а остальные модули — 1 ядро.</div></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-19">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #19</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Модули фичей с общим ядром (Feature Modules & Shared Kernel): асинхронные доменные события</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Модули фичей с общим ядром (Feature Modules &amp; Shared Kernel): асинхронные доменные события</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -4263,7 +4263,7 @@ func TestAPIVersioningRoutes(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В Go 1.22+ стандартный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.ServeMux</code> поддерживает сопоставление путей с шаблонами и методами (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mux.HandleFunc("GET /api/v2/users/{id}", ...)</code>), что позволяет реализовывать версионирование маршрутов без использования тяжелых сторонних фреймворков.</p></div>
+    <div><p style="margin-bottom: 6px;">В Go 1.22+ стандартный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.ServeMux</code> поддерживает сопоставление путей с шаблонами и методами (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mux.HandleFunc(&quot;GET /api/v2/users/{id}&quot;, ...)</code>), что позволяет реализовывать версионирование маршрутов без использования тяжелых сторонних фреймворков.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -4697,7 +4697,7 @@ func TestRichDomainModel(t *testing.T) {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Концепция Агрегатов в DDD (Aggregate & Aggregate Root):</p>
+    <div><p style="margin-bottom: 6px;">Концепция Агрегатов в DDD (Aggregate &amp; Aggregate Root):</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Агрегат</strong> — это кластер связанных доменных объектов (Entities и Value Objects), которые рассматриваются как единое целое при любых изменениях данных.</li>
 <li style="margin-bottom: 4px;"><strong>Корень агрегата (Aggregate Root):</strong></li>
@@ -5101,11 +5101,11 @@ func TestBreakImportCycle(t *testing.T) {
 <li style="margin-bottom: 4px;">Посылаем сигнал отмены в контекст фоновых горутин (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code>).</li>
 <li style="margin-bottom: 4px;">Дожидаемся через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.WaitGroup</code>, пока воркеры завершат текущие сообщения из Kafka/RabbitMQ.</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Фаза 3: Сброс буферов и остановка очередей (Brokers & Flush).</strong></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Фаза 3: Сброс буферов и остановка очередей (Brokers &amp; Flush).</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Вызываем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kafkaProducer.Flush()</code> / сбрасываем батчи метрик и трейсов.</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Фаза 4: Закрытие хранилищ (Databases & Storage).</strong></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Фаза 4: Закрытие хранилищ (Databases &amp; Storage).</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Закрываем пул соединений <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sql.DB.Close()</code> и Redis.</li>
 </ul>
@@ -5216,7 +5216,7 @@ func TestHierarchicalShutdown(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Порты и Адаптеры (Hexagonal Architecture)</strong>: Перепишите простой сценарий регистрации пользователя в Clean Architecture в соответствии с концепцией гексагональной архитектуры. Опишите "порты" (входящие и исходящие интерфейсы, например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserRepository</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserService</code>) во внутреннем ядре. Реализуйте "адаптеры" (внешние элементы, такие как хранилище Postgres или HTTP-сервер) во внешнем слое. Продемонстрируйте инверсию зависимостей (Dependency Inversion Principle) в действии.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Порты и Адаптеры (Hexagonal Architecture)</strong>: Перепишите простой сценарий регистрации пользователя в Clean Architecture в соответствии с концепцией гексагональной архитектуры. Опишите &quot;порты&quot; (входящие и исходящие интерфейсы, например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserRepository</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserService</code>) во внутреннем ядре. Реализуйте &quot;адаптеры&quot; (внешние элементы, такие как хранилище Postgres или HTTP-сервер) во внешнем слое. Продемонстрируйте инверсию зависимостей (Dependency Inversion Principle) в действии.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5355,7 +5355,7 @@ func TestHexagonalUserReg(t *testing.T) {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Слой 1: Entities.</strong> Предметная область: правила, инварианты, Value Objects, чистые доменные ошибки.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Слой 2: Use Cases.</strong> Сценарии бизнес-процессов: координация сущностей, транзакции, вызовы портов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Слой 3: Interface Adapters.</strong> Контроллеры, шлюзы, мапперы, форматирование ответов, presenters.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Слой 4: Frameworks & Drivers.</strong> Базы данных (pgx, gorm), веб-роутеры (chi, gin), консоль, очереди (Kafka).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Слой 4: Frameworks &amp; Drivers.</strong> Базы данных (pgx, gorm), веб-роутеры (chi, gin), консоль, очереди (Kafka).</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Правило стрелок:</strong> Стрелки зависимостей на диаграмме архитектуры указывают строго от слоя 4 к слою 1.</li>
 </ul></div>
@@ -5455,12 +5455,12 @@ func TestFourLayerCleanArch(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать теги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"..."</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gorm:"..."</code> прямо в слое <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Entities</code>: это нарушает чистоту 1-го слоя, связывая доменную сущность с конкретным форматом JSON или ORM. Для ORM создают слой моделей персистентности в слое 4.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать теги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;...&quot;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gorm:&quot;...&quot;</code> прямо в слое <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Entities</code>: это нарушает чистоту 1-го слоя, связывая доменную сущность с конкретным форматом JSON или ORM. Для ORM создают слой моделей персистентности в слое 4.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Стоит ли заводить отдельные DTO структуры для каждого слоя Clean Architecture?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В строгом академическом подходе — да, каждый слой имеет свои DTO (HTTP Request DTO -> UseCase Input DTO -> Entity -> Database Row DTO -> Presenter View Model). Но в практической HighLoad разработке на Go это создает огромный бойлерплейт и аллокации памяти. На практике часто объединяют UseCase Input с Entity, оставляя отдельными только HTTP DTO и DB DTO.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В строгом академическом подходе — да, каждый слой имеет свои DTO (HTTP Request DTO -&gt; UseCase Input DTO -&gt; Entity -&gt; Database Row DTO -&gt; Presenter View Model). Но в практической HighLoad разработке на Go это создает огромный бойлерплейт и аллокации памяти. На практике часто объединяют UseCase Input с Entity, оставляя отдельными только HTTP DTO и DB DTO.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-34">
@@ -5470,7 +5470,7 @@ func TestFourLayerCleanArch(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Anti-Corruption Layer (ACL)</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Order Service</code> интегрируется с legacy <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Payment Gateway</code>. Создай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PaymentGatewayAdapter</code> (переводит наш <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PaymentRequest</code> в их XML), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PaymentGatewayTranslator</code> (их callback → наши <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PaymentProcessed</code> event). Legacy не "загрязняет" наш домен.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Anti-Corruption Layer (ACL)</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Order Service</code> интегрируется с legacy <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Payment Gateway</code>. Создай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PaymentGatewayAdapter</code> (переводит наш <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PaymentRequest</code> в их XML), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PaymentGatewayTranslator</code> (их callback → наши <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PaymentProcessed</code> event). Legacy не &quot;загрязняет&quot; наш домен.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5478,10 +5478,10 @@ func TestFourLayerCleanArch(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Исходящий поток (Egress):</strong></li>
 <li style="margin-bottom: 4px;">Домен вызывает чистый метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gateway.Charge(ctx, PaymentRequest)</code>.</li>
-<li style="margin-bottom: 4px;">Адаптер сериализует запрос в legacy XML формат (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><soap:Envelope>...</code>).</li>
+<li style="margin-bottom: 4px;">Адаптер сериализует запрос в legacy XML формат (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;soap:Envelope&gt;...</code>).</li>
 <li style="margin-bottom: 4px;">Адаптер отправляет HTTP POST во внешний шлюз.</li>
 <li style="margin-bottom: 4px;"><strong>Входящий поток (Ingress Callback):</strong></li>
-<li style="margin-bottom: 4px;">Внешний legacy шлюз присылает XML вебхук с кодами ошибок (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><ERR_CODE>ERR_CARD_EXPIRED</ERR_CODE></code>).</li>
+<li style="margin-bottom: 4px;">Внешний legacy шлюз присылает XML вебхук с кодами ошибок (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;ERR_CODE&gt;ERR_CARD_EXPIRED&lt;/ERR_CODE&gt;</code>).</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PaymentGatewayTranslator</code> перехватывает вебхук и транслирует его в каноническое доменное событие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PaymentFailedEvent{Reason: CardExpired}</code>.</li>
 <li style="margin-bottom: 4px;">Внутренняя система ничего не подозревает о существовании SOAP/XML!</li>
 </ul></div>
@@ -5598,7 +5598,7 @@ func TestACLProtocolTranslator(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Hexagonal Architecture (Ports & Adapters)</strong>: Определите "порты" (интерфейсы) для внешних зависимостей (UserRepository, EmailSender) и реализуйте "адаптеры" (PostgresUserRepository, SendGridEmailSender).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Hexagonal Architecture (Ports &amp; Adapters)</strong>: Определите &quot;порты&quot; (интерфейсы) для внешних зависимостей (UserRepository, EmailSender) и реализуйте &quot;адаптеры&quot; (PostgresUserRepository, SendGridEmailSender).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5845,7 +5845,7 @@ func TestSagaOrchestrator(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем ключевой недостаток распределенных саг по сравнению с классическими ACID-транзакциями?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Отсутствие свойства <strong>Изоляции (Isolation)</strong> — буква 'I' в ACID. Во время выполнения саги промежуточные изменения видны другим параллельным транзакциям (грязное чтение). Если сага откатится через 10 секунд, другой пользователь успеет увидеть товар, который на самом деле не был куплен. Это решается семантическими блокировками (Semantic Locks, статус PENDING).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Отсутствие свойства <strong>Изоляции (Isolation)</strong> — буква &#x27;I&#x27; в ACID. Во время выполнения саги промежуточные изменения видны другим параллельным транзакциям (грязное чтение). Если сага откатится через 10 секунд, другой пользователь успеет увидеть товар, который на самом деле не был куплен. Это решается семантическими блокировками (Semantic Locks, статус PENDING).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-37">
@@ -5986,7 +5986,7 @@ func TestDomainEntityMethods(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Спроектируй <strong>Saga Choreography</strong>: нет центрального orchestrator'а. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderService</code> публикует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderCreated</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">InventoryService</code> подписывается, резервирует, публикует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">InventoryReserved</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PaymentService</code> подписывается... Покажи децентрализацию, но сложность отслеживания.</p></div>
+    <div><p style="margin-bottom: 6px;">Спроектируй <strong>Saga Choreography</strong>: нет центрального orchestrator&#x27;а. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderService</code> публикует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderCreated</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">InventoryService</code> подписывается, резервирует, публикует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">InventoryReserved</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PaymentService</code> подписывается... Покажи децентрализацию, но сложность отслеживания.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6114,9 +6114,7 @@ func TestSagaChoreography(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Самая частая причина гибели монолитов: разработчики начинают писать кросс-модульные SQL-запросы:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`sql</p>
-<p style="margin-bottom: 6px;">SELECT * FROM billing_invoices b JOIN inventory_items i ON b.item_id = i.id;</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-sql"><code class="language-sql">  SELECT * FROM billing_invoices b JOIN inventory_items i ON b.item_id = i.id;</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Почему это катастрофа:</strong></li>
 <li style="margin-bottom: 4px;">Любое изменение структуры колонок склада ломает биллинг.</li>
@@ -6738,7 +6736,7 @@ func TestDomainEventsDispatch(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в доменные события не стоит класть гигантские бинарные пейлоады (например весь PDF счет на 20 МБ)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это антипаттерн «Fat Event». Брокеры сообщений (Kafka) деградируют по производительности при пересылке сообщений больше 1 МБ. В событие помещают метаданные и ссылку на объектное хранилище (Claim-Check Pattern): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PDFUrl: "s3://bucket/invoices/123.pdf"</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это антипаттерн «Fat Event». Брокеры сообщений (Kafka) деградируют по производительности при пересылке сообщений больше 1 МБ. В событие помещают метаданные и ссылку на объектное хранилище (Claim-Check Pattern): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PDFUrl: &quot;s3://bucket/invoices/123.pdf&quot;</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-44">
@@ -6754,7 +6752,7 @@ func TestDomainEventsDispatch(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Архитектурный шаблон Event Sourcing (Грег Янг):</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">В классической БД хранится только <strong>текущее состояние строки</strong> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">status = 'SHIPPED'</code>), а вся история изменений перезаписывается через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UPDATE</code>.</li>
+<li style="margin-bottom: 4px;">В классической БД хранится только <strong>текущее состояние строки</strong> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">status = &#x27;SHIPPED&#x27;</code>), а вся история изменений перезаписывается через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UPDATE</code>.</li>
 <li style="margin-bottom: 4px;"><strong>В Event Sourcing:</strong></li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Таблица агрегата — это <strong>Append-Only лог событий</strong>.</div>
@@ -6886,7 +6884,7 @@ func TestEventSourcingFold(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Внедрение зависимостей (Dependency Injection)</strong>: Напишите код инициализации вашего приложения в файле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main.go</code>. Настройте ручное внедрение зависимостей ("manual DI"): создайте экземпляр базы данных, передайте его в конструктор репозитория <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NewSQLRepository(db)</code>, репозиторий передайте в юзкейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NewUsecase(repo)</code>, а юзкейс — в HTTP-обработчик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NewHandler(usecase)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Внедрение зависимостей (Dependency Injection)</strong>: Напишите код инициализации вашего приложения в файле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main.go</code>. Настройте ручное внедрение зависимостей (&quot;manual DI&quot;): создайте экземпляр базы данных, передайте его в конструктор репозитория <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NewSQLRepository(db)</code>, репозиторий передайте в юзкейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NewUsecase(repo)</code>, а юзкейс — в HTTP-обработчик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NewHandler(usecase)</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7522,7 +7520,7 @@ func TestStranglerFigMigration(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Feature Toggles (Флаги фичей)</strong>: Спроектируй сервис, который проверяет флаги. Оберни новую (нестабильную) бизнес-логику в условие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if featureflags.IsEnabled("new_payment_gateway")</code>. Реализуй динамическое переключение флага в памяти (или через Redis) без перезапуска приложения.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Feature Toggles (Флаги фичей)</strong>: Спроектируй сервис, который проверяет флаги. Оберни новую (нестабильную) бизнес-логику в условие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if featureflags.IsEnabled(&quot;new_payment_gateway&quot;)</code>. Реализуй динамическое переключение флага в памяти (или через Redis) без перезапуска приложения.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7782,7 +7780,7 @@ func TestDomainPackagesMonolith(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Application Services</strong>: Создайте use case'ы как тонкие orchestration слои: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CreateOrderUseCase.Execute(dto CreateOrderDTO) (OrderID, error)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Application Services</strong>: Создайте use case&#x27;ы как тонкие orchestration слои: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CreateOrderUseCase.Execute(dto CreateOrderDTO) (OrderID, error)</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7917,7 +7915,7 @@ func TestApplicationServiceUseCase(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Anti-Corruption Layer (ACL)</strong>: При интеграции с legacy-системой создайте адаптер, который транслирует внешнюю модель в вашу доменную модель, защищая её от "загрязнения".</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Anti-Corruption Layer (ACL)</strong>: При интеграции с legacy-системой создайте адаптер, который транслирует внешнюю модель в вашу доменную модель, защищая её от &quot;загрязнения&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8030,7 +8028,7 @@ func TestACLLegacyShield(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Bounded Contexts</strong>: Разделите большую систему на контексты (например, "Inventory", "Billing", "Shipping"), каждый со своей доменной моделью и БД.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Bounded Contexts</strong>: Разделите большую систему на контексты (например, &quot;Inventory&quot;, &quot;Billing&quot;, &quot;Shipping&quot;), каждый со своей доменной моделью и БД.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8410,8 +8408,8 @@ func TestMiddlewarePipelineChain(t *testing.T) {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в middleware нельзя использовать обычный string в качестве ключа контекста (context.WithValue(ctx, "userID", id))?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Строковые ключи вызывают коллизии: если сторонняя библиотека тоже сохранит ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"userID"</code>, она перезапишет ваши данные. В Go для ключей контекста всегда создают собственный неэкспортируемый приватный тип: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type contextKey struct{}; var userIDKey = contextKey{}</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в middleware нельзя использовать обычный string в качестве ключа контекста (context.WithValue(ctx, &quot;userID&quot;, id))?»</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Строковые ключи вызывают коллизии: если сторонняя библиотека тоже сохранит ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;userID&quot;</code>, она перезапишет ваши данные. В Go для ключей контекста всегда создают собственный неэкспортируемый приватный тип: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type contextKey struct{}; var userIDKey = contextKey{}</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-57">
@@ -8429,9 +8427,9 @@ func TestMiddlewarePipelineChain(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В анемичной модели Use Case проверяет 5 условий:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if u.EmailVerified && u.ProfileFilled && !u.Banned && u.Age >= 18 { ... }</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if u.EmailVerified &amp;&amp; u.ProfileFilled &amp;&amp; !u.Banned &amp;&amp; u.Age &gt;= 18 { ... }</code></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><strong>Проблема:</strong> Завтра появится второй сценарий (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ActivateThroughAdminUseCase</code>), и программист забудет проверить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u.Age >= 18</code>.</li>
+<li style="margin-bottom: 4px;"><strong>Проблема:</strong> Завтра появится второй сценарий (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ActivateThroughAdminUseCase</code>), и программист забудет проверить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u.Age &gt;= 18</code>.</li>
 <li style="margin-bottom: 4px;"><strong>Решение в Rich Domain Model:</strong></li>
 <li style="margin-bottom: 4px;">Логика проверки инварианта помещается <strong>внутрь доменной сущности</strong>:</li>
 </ul>
@@ -8766,7 +8764,7 @@ func TestBusinessCapabilityDecomp(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Декомпозиция по бизнес-возможностям напрямую отражает Закон Конвея (Conway's Law): архитектура системы повторяет структуру коммуникаций в организации. За каждый сервис отвечает отдельная кросс-функциональная продуктовая команда (2-Pizza Team).</p></div>
+    <div><p style="margin-bottom: 6px;">Декомпозиция по бизнес-возможностям напрямую отражает Закон Конвея (Conway&#x27;s Law): архитектура системы повторяет структуру коммуникаций в организации. За каждый сервис отвечает отдельная кросс-функциональная продуктовая команда (2-Pizza Team).</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -8798,9 +8796,9 @@ func TestBusinessCapabilityDecomp(t *testing.T) {
 <li style="margin-bottom: 4px;">Клиенты (мобильные приложения, SPA, сторонние API) не должны знать адреса и протоколы 50 внутренних микросервисов.</li>
 <li style="margin-bottom: 4px;"><strong>Обязанности API Gateway:</strong></li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Reverse Proxy & Routing:</strong> маршрутизация <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/users/*</code> $\to$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserService</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/orders/*</code> $\to$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderService</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Security & Auth:</strong> валидация JWT токенов на границе сети, отсечение неавторизованного трафика.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Rate Limiting & WAF:</strong> защита от DDoS и брутфорса.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Reverse Proxy &amp; Routing:</strong> маршрутизация <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/users/*</code> $\to$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserService</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/orders/*</code> $\to$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderService</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Security &amp; Auth:</strong> валидация JWT токенов на границе сети, отсечение неавторизованного трафика.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Rate Limiting &amp; WAF:</strong> защита от DDoS и брутфорса.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Request Aggregation:</strong> сбор данных из 3 сервисов за 1 HTTP-запрос клиента.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -8920,7 +8918,7 @@ func TestAPIGatewayPattern(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Ядро домена (Entities & Use Cases)</strong>: Создай пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">domain</code>. Напиши там структуры (Entities) и чистую бизнес-логику (одобрение кредита по сложным правилам). В этом пакете <strong>не должно быть</strong> ни одного импорта, связанного с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net/http</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sql</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json</code> или внешними либами.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Ядро домена (Entities &amp; Use Cases)</strong>: Создай пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">domain</code>. Напиши там структуры (Entities) и чистую бизнес-логику (одобрение кредита по сложным правилам). В этом пакете <strong>не должно быть</strong> ни одного импорта, связанного с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net/http</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sql</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json</code> или внешними либами.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9022,7 +9020,7 @@ func TestPureDomainCore(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Для проверки соблюдения чистоты пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">domain</code> в CI/CD пайплайне настраивают линтер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">import-boss</code> или простую команду bash: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go list -f '{{ .Imports }}' ./internal/domain/... | grep -E '(http|sql|json)'</code> — если grep находит совпадение, билд падает с ошибкой.</p></div>
+    <div><p style="margin-bottom: 6px;">Для проверки соблюдения чистоты пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">domain</code> в CI/CD пайплайне настраивают линтер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">import-boss</code> или простую команду bash: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go list -f &#x27;{{ .Imports }}&#x27; ./internal/domain/... | grep -E &#x27;(http|sql|json)&#x27;</code> — если grep находит совпадение, билд падает с ошибкой.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -9031,7 +9029,7 @@ func TestPureDomainCore(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему даже пакет encoding/json не должен импортироваться в пакете domain?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что JSON — это деталь транспортного уровня. Если привязать доменную сущность к тегам <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"user_id"</code>, сущность окажется жестко завязана на внешний формат контракта. При смене транспортного формата на Protobuf, gRPC или MessagePack домен придется модифицировать, нарушая Open-Closed Principle (OCP).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что JSON — это деталь транспортного уровня. Если привязать доменную сущность к тегам <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;user_id&quot;</code>, сущность окажется жестко завязана на внешний формат контракта. При смене транспортного формата на Protobuf, gRPC или MessagePack домен придется модифицировать, нарушая Open-Closed Principle (OCP).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-62">
@@ -9052,8 +9050,8 @@ func TestPureDomainCore(t *testing.T) {
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v1</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v2</code> эндпоинты работают на одном HTTP-сервере параллельно.</li>
 <li style="margin-bottom: 4px;">Оба хендлера вызывают один и тот же доменный Use Case!</li>
 <li style="margin-bottom: 4px;">Отличаются только Presentation DTO и презентеры ответов:</li>
-<li style="margin-bottom: 4px;">v1 возвращает плоский <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"full_name": "Анна Иванова"}</code>.</li>
-<li style="margin-bottom: 4px;">v2 возвращает структурированный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"first_name": "Анна", "last_name": "Иванова"}</code>.</li>
+<li style="margin-bottom: 4px;">v1 возвращает плоский <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;full_name&quot;: &quot;Анна Иванова&quot;}</code>.</li>
+<li style="margin-bottom: 4px;">v2 возвращает структурированный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;first_name&quot;: &quot;Анна&quot;, &quot;last_name&quot;: &quot;Иванова&quot;}</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -9167,7 +9165,7 @@ func TestAPIMigrationV1V2(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как отслеживать темпы миграции клиентов с v1 на v2 в продакшене?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через метрики Prometheus в HTTP middleware: счетчик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http_requests_total{handler="v1", client="ios_app"}</code> размечается версией API и User-Agent. В Grafana строится график спада трафика v1. Когда доля v1 падает ниже 0.1%, старый код удаляют.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через метрики Prometheus в HTTP middleware: счетчик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http_requests_total{handler=&quot;v1&quot;, client=&quot;ios_app&quot;}</code> размечается версией API и User-Agent. В Grafana строится график спада трафика v1. Когда доля v1 падает ниже 0.1%, старый код удаляют.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-63">
@@ -9472,7 +9470,7 @@ func TestSyncResilienceCircuit(t *testing.T) {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте доменную ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ErrUserNotFound = errors.New("user not found")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте доменную ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ErrUserNotFound = errors.New(&quot;user not found&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В адаптере базы перехватите фиктивный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sql.ErrNoRows</code> и верните доменную ошибку.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В HTTP хендлере смаппьте доменную ошибку в статус 404.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Верифицируйте чистоту зависимостей.</div></div>
@@ -9563,24 +9561,22 @@ func TestInfraErrorTranslation(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Использование функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> (начиная с Go 1.13) позволяет корректно распознавать доменные ошибки даже в том случае, если репозиторий обернул их контекстом через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("find user %s: %w", id, ErrUserNotFound)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Использование функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> (начиная с Go 1.13) позволяет корректно распознавать доменные ошибки даже в том случае, если репозиторий обернул их контекстом через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;find user %s: %w&quot;, id, ErrUserNotFound)</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Возвращать пользователю сырой текст ошибки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sql.ErrNoRows</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pq: relation "users" does not exist</code> в теле HTTP 500: это утечка деталей реализации (Information Disclosure), которая помогает хакерам исследовать структуру вашей базы данных.</p></div>
+    <div><p style="margin-bottom: 6px;">Возвращать пользователю сырой текст ошибки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sql.ErrNoRows</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pq: relation &quot;users&quot; does not exist</code> в теле HTTP 500: это утечка деталей реализации (Information Disclosure), которая помогает хакерам исследовать структуру вашей базы данных.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как централизованно маппить доменные ошибки в HTTP статус-коды во всем микросервисе?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Создают централизованную таблицу соответствий в слое delivery:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">var statusMap = map[error]int{</p>
-<p style="margin-bottom: 6px;">domain.ErrNotFound:       http.StatusNotFound,</p>
-<p style="margin-bottom: 6px;">domain.ErrAlreadyExists:  http.StatusConflict,</p>
-<p style="margin-bottom: 6px;">domain.ErrForbidden:      http.StatusForbidden,</p>
-<p style="margin-bottom: 6px;">domain.ErrInvalidInput:   http.StatusBadRequest,</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">var statusMap = map[error]int{
+    domain.ErrNotFound:       http.StatusNotFound,
+    domain.ErrAlreadyExists:  http.StatusConflict,
+    domain.ErrForbidden:      http.StatusForbidden,
+    domain.ErrInvalidInput:   http.StatusBadRequest,
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Единый Error Handler middleware сопоставляет ошибку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is()</code> и отдает нужный HTTP-код.</p></div>
   </div>
 </div>
@@ -9702,7 +9698,7 @@ func TestAsyncBrokerDecoupling(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Порты и Адаптеры</strong>: В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">domain</code> объяви "порт" — интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NotificationSender</code>. В пакете <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">infrastructure</code> напиши два "адаптера": <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EmailSender</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SMSSender</code>. В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main.go</code> собери приложение, подставив нужный адаптер в домен.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Порты и Адаптеры</strong>: В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">domain</code> объяви &quot;порт&quot; — интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NotificationSender</code>. В пакете <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">infrastructure</code> напиши два &quot;адаптера&quot;: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EmailSender</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SMSSender</code>. В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main.go</code> собери приложение, подставив нужный адаптер в домен.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9943,7 +9939,7 @@ func TestRepoConfigSwitch(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в Go не принято использовать паттерн Абстрактная Фабрика (Abstract Factory) в тяжелом виде?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что идиоматичный Go ценит простоту (Simplicity). Вместо иерархии фабрик классов из Java (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserRepoFactoryProvider</code>) в Go пишут простую функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch storageType { case "postgres": ... }</code>, которая занимает 10 строк кода и не плодит лишних интерфейсов.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что идиоматичный Go ценит простоту (Simplicity). Вместо иерархии фабрик классов из Java (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserRepoFactoryProvider</code>) в Go пишут простую функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch storageType { case &quot;postgres&quot;: ... }</code>, которая занимает 10 строк кода и не плодит лишних интерфейсов.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-69">
@@ -10335,7 +10331,7 @@ func TestSagaCompensationStack(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Атомарно сохраняется ключ со статусом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PROCESSING</code> (через Redis <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET NX EX 86400</code>).</li>
 <li style="margin-bottom: 4px;">Выполняется платеж.</li>
-<li style="margin-bottom: 4px;">Ответ кэшируется в записи ключа: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"status": "SUCCESS", "tx": "123"}</code>.</li>
+<li style="margin-bottom: 4px;">Ответ кэшируется в записи ключа: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;status&quot;: &quot;SUCCESS&quot;, &quot;tx&quot;: &quot;123&quot;}</code>.</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Если ключ уже существует:</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
@@ -10564,12 +10560,12 @@ func TestLayeredErrorMapping(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать проверку строк <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err.Error() == "not found"</code>: изменение текста ошибки сломает маппинг. Проверку делают строго через sentinel-ошибки и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать проверку строк <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err.Error() == &quot;not found&quot;</code>: изменение текста ошибки сломает маппинг. Проверку делают строго через sentinel-ошибки и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is()</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как скрыть детали ошибки от пользователя, но полностью сохранить их для SRE в логах и трейсах?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Ошибку оборачивают через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("sql query failed: %w", err)</code> и логируют со всеми деталями и TraceID на уровне middleware. Клиенту возвращают стандартный JSON <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{ "error": "Internal Server Error", "trace_id": "abc123xyz" }</code>, по которому дежурный SRE мгновенно найдет полный стек-трейс в Jaeger/Loki.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Ошибку оборачивают через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;sql query failed: %w&quot;, err)</code> и логируют со всеми деталями и TraceID на уровне middleware. Клиенту возвращают стандартный JSON <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{ &quot;error&quot;: &quot;Internal Server Error&quot;, &quot;trace_id&quot;: &quot;abc123xyz&quot; }</code>, по которому дежурный SRE мгновенно найдет полный стек-трейс в Jaeger/Loki.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-74">
@@ -11133,7 +11129,7 @@ func TestSpecificationPattern(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Спецификации строят синтаксическое дерево предикатов (Composite Pattern). В репозиториях Go спецификация может транслироваться в SQL <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WHERE age >= 21 AND income >= 50000</code> через SQL-билдеры (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">squirrel</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gorm</code>), исключая расхождения между логикой в коде и запросом к базе данных.</p></div>
+    <div><p style="margin-bottom: 6px;">Спецификации строят синтаксическое дерево предикатов (Composite Pattern). В репозиториях Go спецификация может транслироваться в SQL <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WHERE age &gt;= 21 AND income &gt;= 50000</code> через SQL-билдеры (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">squirrel</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gorm</code>), исключая расхождения между логикой в коде и запросом к базе данных.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -11270,7 +11266,7 @@ func TestAnemicToRichRefactoring(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В богатой модели состояние объекта всегда валидно в любой момент времени (Always-Valid Domain Model). Это избавляет от необходимости писать защитные проверки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if order.Total < 0</code> во всех сервисах приложения.</p></div>
+    <div><p style="margin-bottom: 6px;">В богатой модели состояние объекта всегда валидно в любой момент времени (Always-Valid Domain Model). Это избавляет от необходимости писать защитные проверки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if order.Total &lt; 0</code> во всех сервисах приложения.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -11432,7 +11428,7 @@ func TestHexagonalPipelineEndToEnd(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Правило зависимостей Роберта Мартина должно соблюдаться автоматически, а не только на словах в code review.</li>
 <li style="margin-bottom: 4px;"><strong>Архитектурный тест:</strong></li>
-<li style="margin-bottom: 4px;">Парсит исходные файлы или считывает вывод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go list -f '{{.ImportPath}}: {{.Imports}}' ./...</code>.</li>
+<li style="margin-bottom: 4px;">Парсит исходные файлы или считывает вывод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go list -f &#x27;{{.ImportPath}}: {{.Imports}}&#x27; ./...</code>.</li>
 <li style="margin-bottom: 4px;">Проверяет матрицу запрещенных импортов:</li>
 <li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">internal/domain</code> импортирует что-то кроме стандартной библиотеки $\implies$ FAIL.</li>
 <li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">internal/usecase</code> импортирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">internal/delivery</code> $\implies$ FAIL.</li>
@@ -12048,7 +12044,7 @@ func TestInProcessDomainEvents(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Доменные события (Domain Events)</strong>: Измените ваш Агрегат <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Order</code> с инкапсулированными OrderItem. Добавьте в структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Order</code> внутренний слайс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events []DomainEvent</code>. При изменении статуса заказа на "Оплачен" агрегат должен сгенерировать и положить в этот слайс событие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderPaidEvent</code>. Напишите юзкейс, который после успешного сохранения транзакции заказа в БД считывает накопившиеся события из агрегата и публикует их в брокер сообщений.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Доменные события (Domain Events)</strong>: Измените ваш Агрегат <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Order</code> с инкапсулированными OrderItem. Добавьте в структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Order</code> внутренний слайс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events []DomainEvent</code>. При изменении статуса заказа на &quot;Оплачен&quot; агрегат должен сгенерировать и положить в этот слайс событие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderPaidEvent</code>. Напишите юзкейс, который после успешного сохранения транзакции заказа в БД считывает накопившиеся события из агрегата и публикует их в брокер сообщений.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -12203,14 +12199,12 @@ func TestTransactionalOutbox(t *testing.T) {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запускается утилита CLI <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wire</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Wire анализирует типы входных и выходных параметров функций-конструкторов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Wire генерирует файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wire_gen.go</code> с обычным, чистым, читаемым кодом на Go:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func InitializeApp() (*App, error) {</p>
-<p style="margin-bottom: 6px;">db := NewDB()</p>
-<p style="margin-bottom: 6px;">repo := NewUserRepo(db)</p>
-<p style="margin-bottom: 6px;">svc := NewUserService(repo)</p>
-<p style="margin-bottom: 6px;">return NewApp(svc), nil</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">     func InitializeApp() (*App, error) {
+         db := NewDB()
+         repo := NewUserRepo(db)
+         svc := NewUserService(repo)
+         return NewApp(svc), nil
+     }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Ошибки пропущенных зависимостей ловятся компилятором при генерации!</li>
 </ul></div>
@@ -12311,16 +12305,14 @@ func TestGoogleWireSimulation(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Для Event Sourcing не обязательно разворачивать экзотические базы данных. PostgreSQL идеально подходит на роль Event Store:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`sql</p>
-<p style="margin-bottom: 6px;">CREATE TABLE event_store (</p>
-<p style="margin-bottom: 6px;">aggregate_id VARCHAR(64) NOT NULL,</p>
-<p style="margin-bottom: 6px;">version INT NOT NULL,</p>
-<p style="margin-bottom: 6px;">event_type VARCHAR(128) NOT NULL,</p>
-<p style="margin-bottom: 6px;">payload JSONB NOT NULL,</p>
-<p style="margin-bottom: 6px;">created_at TIMESTAMPTZ DEFAULT NOW(),</p>
-<p style="margin-bottom: 6px;">PRIMARY KEY (aggregate_id, version)</p>
-<p style="margin-bottom: 6px;">);</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-sql"><code class="language-sql">  CREATE TABLE event_store (
+      aggregate_id VARCHAR(64) NOT NULL,
+      version INT NOT NULL,
+      event_type VARCHAR(128) NOT NULL,
+      payload JSONB NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      PRIMARY KEY (aggregate_id, version)
+  );</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Гарантии PostgreSQL:</strong></li>
 </ul>
@@ -12423,7 +12415,7 @@ func TestPostgresJSONBEventStore(t *testing.T) {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как соблюдать требования закона о персональных данных (GDPR / 152-ФЗ "Право на забвение") в неизменяемом Event Sourcing?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как соблюдать требования закона о персональных данных (GDPR / 152-ФЗ &quot;Право на забвение&quot;) в неизменяемом Event Sourcing?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Паттерн <strong>Crypto-Shredding</strong>: персональные данные в событиях шифруются персональным ключом шифрования пользователя (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserEncryptionKey</code>), который хранится отдельно. Когда пользователь требует удалить свои данные, его ключ шифрования безвозвратно удаляется. Сами события остаются в логе, но их полезная нагрузка превращается в нечитаемый мусор.</p></div>
   </div>
 </div>
@@ -12852,7 +12844,7 @@ func TestGatewayResilience(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Проектирование идемпотентного HTTP-хендлера:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Хэндлер извлекает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">key := r.Header.Get("Idempotency-Key")</code>.</li>
+<li style="margin-bottom: 4px;">Хэндлер извлекает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">key := r.Header.Get(&quot;Idempotency-Key&quot;)</code>.</li>
 <li style="margin-bottom: 4px;">Если ключ отсутствует, сервер возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">400 Bad Request</code>.</li>
 <li style="margin-bottom: 4px;">Вызывается атомарная транзакция сохранения ключа в БД.</li>
 <li style="margin-bottom: 4px;">Если ключ уже существует, хэндлер парсит сохраненный ранее JSON-ответ и отдает его клиенту.</li>
@@ -12998,16 +12990,16 @@ func TestIdempotentPaymentHandler(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Операция чтения (Read Flow):</strong></li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сервис ищет ключ в кэше: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Get("user:101")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сервис ищет ключ в кэше: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Get(&quot;user:101&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если Cache Hit (попадание) $\implies$ мгновенный возврат клиенту (1 мс).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если Cache Miss (промах) $\implies$ запрос в PostgreSQL <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM users WHERE id = 101</code> (15 мс).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запись значения в кэш с TTL: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Set("user:101", user, 10*time.Minute)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запись значения в кэш с TTL: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Set(&quot;user:101&quot;, user, 10*time.Minute)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Возврат клиенту.</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Операция записи (Invalidation Flow):</strong></li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Обновление записи в PostgreSQL.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Инвалидация (удаление) ключа из кэша: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Del("user:101")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Инвалидация (удаление) ключа из кэша: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Del(&quot;user:101&quot;)</code>.</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Удаление ключа предпочтительнее перезаписи, так как защищает от race conditions.</li>
 </ul></div>
@@ -13240,7 +13232,7 @@ func TestApplicationLevelSharding(t *testing.T) {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как выполнить кросс-шардовый поиск (Cross-Shard Query) при шардировании по user_id (например SELECT * WHERE created_at > yesterday)?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как выполнить кросс-шардовый поиск (Cross-Shard Query) при шардировании по user_id (например SELECT * WHERE created_at &gt; yesterday)?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Паттерн Scatter-Gather (Рассылка-Сбор): Go сервис параллельно запускает горутины ко всем $N$ шардам через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.WaitGroup</code>, собирает результаты выборок в память и выполняет итоговую сортировку (Merge Sort). Если таких запросов много — строят денормализованный индекс в Elasticsearch.</p></div>
   </div>
 </div>
@@ -13264,7 +13256,7 @@ func TestApplicationLevelSharding(t *testing.T) {
 <li style="margin-bottom: 4px;">Сервис падает по OOMKilled.</li>
 <li style="margin-bottom: 4px;"><strong>Стратегия Shedding (Сброс нагрузки):</strong></li>
 <li style="margin-bottom: 4px;">Буферизированный канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sem := make(chan struct{}, maxConcurrency)</code> используется как семафор.</li>
-<li style="margin-bottom: 4px;">Если канал полон (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select { case sem <- struct{}{}: default: return 503 }</code>):</li>
+<li style="margin-bottom: 4px;">Если канал полон (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select { case sem &lt;- struct{}{}: default: return 503 }</code>):</li>
 <li style="margin-bottom: 4px;">Сервер <strong>мгновенно возвращает HTTP 503 Service Unavailable</strong> с заголовком <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Retry-After: 5</code>.</li>
 <li style="margin-bottom: 4px;">Это спасает сервер от падения и сохраняет работоспособность для уже принятых 200 запросов!</li>
 </ul></div>
@@ -13401,8 +13393,8 @@ func TestBackpressureShedding(t *testing.T) {
 <li style="margin-bottom: 4px;">Технических метрик (CPU, RAM, HTTP 500) недостаточно: сервис может отдавать HTTP 200 OK, но при этом бизнес-конверсия упала до нуля (например, сторонний банк отклоняет 100% платежей).</li>
 <li style="margin-bottom: 4px;"><strong>Архитектурные метрики домена:</strong></li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">domain_order_actions_total{action="create", status="success|failure"}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">domain_payment_declines_total{reason="insufficient_funds|fraud"}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">domain_order_actions_total{action=&quot;create&quot;, status=&quot;success|failure&quot;}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">domain_payment_declines_total{reason=&quot;insufficient_funds|fraud&quot;}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Коэффициент успешности бизнес-операций:</div>
 <p style="margin-bottom: 6px;">$$\text{SuccessRate} = \frac{\text{OrdersPlaced}_{success}}{\text{OrdersPlaced}_{total}} \times 100\%$$</p>
 <ul style="margin: 8px 0 8px 20px;">
@@ -13500,7 +13492,7 @@ func TestBusinessObservability(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Добавлять <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user_id</code> в лейблы метрик Prometheus: это приведет к взрыву кардинальности (Cardinality Explosion) и обрушит Prometheus. В метрики добавляют только дискретные статусы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">status="declined"</code>).</p></div>
+    <div><p style="margin-bottom: 6px;">Добавлять <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user_id</code> в лейблы метрик Prometheus: это приведет к взрыву кардинальности (Cardinality Explosion) и обрушит Prometheus. В метрики добавляют только дискретные статусы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">status=&quot;declined&quot;</code>).</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -13629,7 +13621,7 @@ func TestStranglerReverseProxy(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как синхронизировать сессии пользователей между монолитом и новым Go сервисом во время миграции Strangler Fig?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Сессии выносят из памяти монолита в общий распределенный Redis. Либо API Gateway расшифровывает старую cookie-сессию, конвертирует ее в стандартизированный JWT-токен и пробрасывает в Go-сервис в заголовке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Authorization: Bearer <jwt></code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Сессии выносят из памяти монолита в общий распределенный Redis. Либо API Gateway расшифровывает старую cookie-сессию, конвертирует ее в стандартизированный JWT-токен и пробрасывает в Go-сервис в заголовке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Authorization: Bearer &lt;jwt&gt;</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-97">

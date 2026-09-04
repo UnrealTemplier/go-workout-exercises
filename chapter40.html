@@ -832,7 +832,7 @@
       <a href="#ex-9" class="sub-exercise-link" title="Упр 9: Автоматическое инструментирование HTTP-сервера: библиотека otelhttp, форматирование имени спана и атрибуты">9. Автоматическое инструментирование HTTP-сервера: библиотека otelhttp, форматирование имени спана и атрибуты</a>
       <a href="#ex-10" class="sub-exercise-link" title="Упр 10: Автоматическое инструментирование HTTP-клиента: otelhttp.NewTransport и бесшовная передача трейсов">10. Автоматическое инструментирование HTTP-клиента: otelhttp.NewTransport и бесшовная передача трейсов</a>
       <a href="#ex-11" class="sub-exercise-link" title="Упр 11: Инструментирование gRPC-сервера: интерцепторы otelgrpc для Unary и Streaming RPC">11. Инструментирование gRPC-сервера: интерцепторы otelgrpc для Unary и Streaming RPC</a>
-      <a href="#ex-12" class="sub-exercise-link" title="Упр 12: Инструментирование gRPC-клиента: цепочка client span -> server span -> database span">12. Инструментирование gRPC-клиента: цепочка client span -> server span -> database span</a>
+      <a href="#ex-12" class="sub-exercise-link" title="Упр 12: Инструментирование gRPC-клиента: цепочка client span -&gt; server span -&gt; database span">12. Инструментирование gRPC-клиента: цепочка client span -&gt; server span -&gt; database span</a>
       <a href="#ex-13" class="sub-exercise-link" title="Упр 13: Структурированные атрибуты спана (Span Attributes): типизация и обогащение метаданными">13. Структурированные атрибуты спана (Span Attributes): типизация и обогащение метаданными</a>
       <a href="#ex-14" class="sub-exercise-link" title="Упр 14: Инструментирование слоя базы данных: библиотека otelsql для перехвата запросов database/sql">14. Инструментирование слоя базы данных: библиотека otelsql для перехвата запросов database/sql</a>
       <a href="#ex-15" class="sub-exercise-link" title="Упр 15: События спана (Span Events): фиксация ключевых этапов внутри долгоживущих транзакций">15. События спана (Span Events): фиксация ключевых этапов внутри долгоживущих транзакций</a>
@@ -857,19 +857,19 @@
       <a href="#ex-34" class="sub-exercise-link" title="Упр 34: Инструментирование Redis через redisotel: замер задержек кэша и команды pipeline">34. Инструментирование Redis через redisotel: замер задержек кэша и команды pipeline</a>
       <a href="#ex-35" class="sub-exercise-link" title="Упр 35: Пользовательские теги спана: фильтрация и структурированный поиск по user.id в UI Jaeger">35. Пользовательские теги спана: фильтрация и структурированный поиск по user.id в UI Jaeger</a>
       <a href="#ex-36" class="sub-exercise-link" title="Упр 36: Межсервисный контекст W3C Trace Context: глубокий разбор traceparent и tracestate">36. Межсервисный контекст W3C Trace Context: глубокий разбор traceparent и tracestate</a>
-      <a href="#ex-37" class="sub-exercise-link" title="Упр 37: Бизнес-цепочка custom spans: иерархия createOrder -> validateOrder, reserveInventory, processPayment">37. Бизнес-цепочка custom spans: иерархия createOrder -> validateOrder, reserveInventory, processPayment</a>
+      <a href="#ex-37" class="sub-exercise-link" title="Упр 37: Бизнес-цепочка custom spans: иерархия createOrder -&gt; validateOrder, reserveInventory, processPayment">37. Бизнес-цепочка custom spans: иерархия createOrder -&gt; validateOrder, reserveInventory, processPayment</a>
       <a href="#ex-38" class="sub-exercise-link" title="Упр 38: Span Links в пакетной обработке (Batch Processing): связывание независимых клиентских запросов">38. Span Links в пакетной обработке (Batch Processing): связывание независимых клиентских запросов</a>
       <a href="#ex-39" class="sub-exercise-link" title="Упр 39: Стратегии сэмплирования: процентное вероятностное сэмплирование TraceIDRatioBased(0.1) в HighLoad">39. Стратегии сэмплирования: процентное вероятностное сэмплирование TraceIDRatioBased(0.1) в HighLoad</a>
       <a href="#ex-40" class="sub-exercise-link" title="Упр 40: Внутрипроцессный Context-Propagation: вложенность спана SaveToDB(ctx) внутри родителя">40. Внутрипроцессный Context-Propagation: вложенность спана SaveToDB(ctx) внутри родителя</a>
       <a href="#ex-41" class="sub-exercise-link" title="Упр 41: Хвостовое сэмплирование (Tail-Based Sampling) в OTel Collector: 100% ошибок и 1% успешных">41. Хвостовое сэмплирование (Tail-Based Sampling) в OTel Collector: 100% ошибок и 1% успешных</a>
       <a href="#ex-42" class="sub-exercise-link" title="Упр 42: Межсервисный W3C Trace Context: подтверждение связности цепочки вызовов в Jaeger">42. Межсервисный W3C Trace Context: подтверждение связности цепочки вызовов в Jaeger</a>
       <a href="#ex-43" class="sub-exercise-link" title="Упр 43: Сквозной проброс метаданных через baggage: контекст tenant_id и feature_flag через всю цепочку">43. Сквозной проброс метаданных через baggage: контекст tenant_id и feature_flag через всю цепочку</a>
-      <a href="#ex-44" class="sub-exercise-link" title="Упр 44: Межсервисный Context-Propagation: сетевое взаимодействие Сервис А (клиент) -> Сервис Б (сервер)">44. Межсервисный Context-Propagation: сетевое взаимодействие Сервис А (клиент) -> Сервис Б (сервер)</a>
+      <a href="#ex-44" class="sub-exercise-link" title="Упр 44: Межсервисный Context-Propagation: сетевое взаимодействие Сервис А (клиент) -&gt; Сервис Б (сервер)">44. Межсервисный Context-Propagation: сетевое взаимодействие Сервис А (клиент) -&gt; Сервис Б (сервер)</a>
       <a href="#ex-45" class="sub-exercise-link" title="Упр 45: Инструментирование PostgreSQL через pgx/v5: библиотека pgxotel для перехвата запросов и пулов">45. Инструментирование PostgreSQL через pgx/v5: библиотека pgxotel для перехвата запросов и пулов</a>
       <a href="#ex-46" class="sub-exercise-link" title="Упр 46: Инициализация OTel SDK: экспорт трейсов в консоль (stdouttrace) для локального визуального аудита">46. Инициализация OTel SDK: экспорт трейсов в консоль (stdouttrace) для локального визуального аудита</a>
       <a href="#ex-47" class="sub-exercise-link" title="Упр 47: Паттерн InitTracer(): инициализация OTLP экспортера и гарантированный сброс буфера Shutdown()">47. Паттерн InitTracer(): инициализация OTLP экспортера и гарантированный сброс буфера Shutdown()</a>
       <a href="#ex-48" class="sub-exercise-link" title="Упр 48: Маркировка синтетического трафика через Baggage: флаг synthetic=true и вывод в логи сервера">48. Маркировка синтетического трафика через Baggage: флаг synthetic=true и вывод в логи сервера</a>
-      <a href="#ex-49" class="sub-exercise-link" title="Упр 49: Вложенные ручные спаны: calculate_tax -> db_query с наследованием контекста">49. Вложенные ручные спаны: calculate_tax -> db_query с наследованием контекста</a>
+      <a href="#ex-49" class="sub-exercise-link" title="Упр 49: Вложенные ручные спаны: calculate_tax -&gt; db_query с наследованием контекста">49. Вложенные ручные спаны: calculate_tax -&gt; db_query с наследованием контекста</a>
       <a href="#ex-50" class="sub-exercise-link" title="Упр 50: Каверзный кейс: передача контекста в горутины и context.WithoutCancel для долгоживущих задач">50. Каверзный кейс: передача контекста в горутины и context.WithoutCancel для долгоживущих задач</a>
       <a href="#ex-51" class="sub-exercise-link" title="Упр 51: Создание ручных спанов ProcessOrder: именование, атрибуты order.id и события validation_started">51. Создание ручных спанов ProcessOrder: именование, атрибуты order.id и события validation_started</a>
       <a href="#ex-52" class="sub-exercise-link" title="Упр 52: Экспорт в Jaeger через OTLP HTTP/gRPC (otlptracehttp) и визуальный поиск по TraceID">52. Экспорт в Jaeger через OTLP HTTP/gRPC (otlptracehttp) и визуальный поиск по TraceID</a>
@@ -878,7 +878,7 @@
       <a href="#ex-55" class="sub-exercise-link" title="Упр 55: Обработка паник в трейсах: связка recover(), span.RecordError и codes.Error перед повторным паникованием">55. Обработка паник в трейсах: связка recover(), span.RecordError и codes.Error перед повторным паникованием</a>
       <a href="#ex-56" class="sub-exercise-link" title="Упр 56: Архитектура OpenTelemetry Collector: топология агента (Sidecar / DaemonSet) против централизованного Gateway">56. Архитектура OpenTelemetry Collector: топология агента (Sidecar / DaemonSet) против централизованного Gateway</a>
       <a href="#ex-57" class="sub-exercise-link" title="Упр 57: Комплексное авто-инструментирование: совместное использование otelhttp и otelgrpc в монорепозитории">57. Комплексное авто-инструментирование: совместное использование otelhttp и otelgrpc в монорепозитории</a>
-      <a href="#ex-58" class="sub-exercise-link" title="Упр 58: Единый конвейер телеметрии OTel Collector: архитектура receivers -> processors -> exporters">58. Единый конвейер телеметрии OTel Collector: архитектура receivers -> processors -> exporters</a>
+      <a href="#ex-58" class="sub-exercise-link" title="Упр 58: Единый конвейер телеметрии OTel Collector: архитектура receivers -&gt; processors -&gt; exporters">58. Единый конвейер телеметрии OTel Collector: архитектура receivers -&gt; processors -&gt; exporters</a>
       <a href="#ex-59" class="sub-exercise-link" title="Упр 59: Пакетный процессор batch в OpenTelemetry Collector: буферизация, сжатие и снижение нагрузки на бэкенд">59. Пакетный процессор batch в OpenTelemetry Collector: буферизация, сжатие и снижение нагрузки на бэкенд</a>
       <a href="#ex-60" class="sub-exercise-link" title="Упр 60: Защита OTel Collector от OOM: процессор memory_limiter, check_interval и процентные лимиты">60. Защита OTel Collector от OOM: процессор memory_limiter, check_interval и процентные лимиты</a>
       <a href="#ex-61" class="sub-exercise-link" title="Упр 61: Сквозная трассировка HTTP: ручная реализация Inject и Extract по спецификации W3C Trace Context">61. Сквозная трассировка HTTP: ручная реализация Inject и Extract по спецификации W3C Trace Context</a>
@@ -896,7 +896,7 @@
       <a href="#ex-73" class="sub-exercise-link" title="Упр 73: Сквозной багаж через 4 микросервиса: проброс tenant_id до глубокого слоя без изменения API">73. Сквозной багаж через 4 микросервиса: проброс tenant_id до глубокого слоя без изменения API</a>
       <a href="#ex-74" class="sub-exercise-link" title="Упр 74: Семантические конвенции semconv: использование стандартных атрибутов http.method и http.route">74. Семантические конвенции semconv: использование стандартных атрибутов http.method и http.route</a>
       <a href="#ex-75" class="sub-exercise-link" title="Упр 75: Сэмплирование ParentBased(TraceIDRatioBased(0.1)) с сохранением ошибок и аварий">75. Сэмплирование ParentBased(TraceIDRatioBased(0.1)) с сохранением ошибок и аварий</a>
-      <a href="#ex-76" class="sub-exercise-link" title="Упр 76: Связка Metrics + Traces (Exemplars для продвинутых): сохранение Exemplar при задержке > 2с для перехода на пик">76. Связка Metrics + Traces (Exemplars для продвинутых): сохранение Exemplar при задержке > 2с для перехода на пик</a>
+      <a href="#ex-76" class="sub-exercise-link" title="Упр 76: Связка Metrics + Traces (Exemplars для продвинутых): сохранение Exemplar при задержке &gt; 2с для перехода на пик">76. Связка Metrics + Traces (Exemplars для продвинутых): сохранение Exemplar при задержке &gt; 2с для перехода на пик</a>
       <a href="#ex-77" class="sub-exercise-link" title="Упр 77: Распределенный анализ трейсов (Distributed Trace Analysis): локализация блокировок в POST /orders">77. Распределенный анализ трейсов (Distributed Trace Analysis): локализация блокировок в POST /orders</a>
       <a href="#ex-78" class="sub-exercise-link" title="Упр 78: Утечка трейсов при завершении процесса: интеграция defer tracerProvider.Shutdown() в Graceful Shutdown">78. Утечка трейсов при завершении процесса: интеграция defer tracerProvider.Shutdown() в Graceful Shutdown</a>
       <a href="#ex-79" class="sub-exercise-link" title="Упр 79: Детектор медленных SQL-запросов (Slow Query Alert): middleware замера задержек, тег slow_query и метрика">79. Детектор медленных SQL-запросов (Slow Query Alert): middleware замера задержек, тег slow_query и метрика</a>
@@ -1099,7 +1099,7 @@
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Установи OpenTelemetry SDK: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go.opentelemetry.io/otel</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go.opentelemetry.io/otel/sdk</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go.opentelemetry.io/otel/exporters/stdout/stdouttrace</code>. Создай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TracerProvider</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">BatchSpanProcessor</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">stdout</code> exporter. Получи tracer: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tp.Tracer("my-service")</code>. Создай span: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, span := tracer.Start(ctx, "operation-name")</code>. Заверши <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer span.End()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Установи OpenTelemetry SDK: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go.opentelemetry.io/otel</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go.opentelemetry.io/otel/sdk</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go.opentelemetry.io/otel/exporters/stdout/stdouttrace</code>. Создай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TracerProvider</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">BatchSpanProcessor</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">stdout</code> exporter. Получи tracer: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tp.Tracer(&quot;my-service&quot;)</code>. Создай span: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, span := tracer.Start(ctx, &quot;operation-name&quot;)</code>. Заверши <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer span.End()</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1111,7 +1111,7 @@
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Exporter</code>: отвечает за доставку данных во внешние системы (stdout, OTLP gRPC, Jaeger, Tempo).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SpanProcessor</code>: управляет жизненным циклом спанов. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">BatchSpanProcessor</code> накапливает спаны в буфере и отправляет их пакетами в фоновой горутине, минимизируя накладные расходы на горячем пути.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TracerProvider</code>: фабрика трейсеров с зарегистрированными процессорами и ресурсами.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Tracer</code>: точка создания спанов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tracer.Start(ctx, "op")</code>).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Tracer</code>: точка создания спанов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tracer.Start(ctx, &quot;op&quot;)</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.End()</code>: фиксирует точное время окончания операции и передает спан процессору.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -1121,7 +1121,7 @@
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте экземпляр экспортера и процессора спанов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Инициализируйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TracerProvider</code> и зарегистрируйте его.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Получите именованный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Tracer</code> сервиса.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Создайте корневой спан через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tracer.Start(ctx, "operation-name")</code> и завершите его через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer span.End()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Создайте корневой спан через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tracer.Start(ctx, &quot;operation-name&quot;)</code> и завершите его через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer span.End()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Проверьте корректное формирование TraceID и SpanID.</div></div>
   </div>
   <div class="code-container">
@@ -1246,7 +1246,7 @@ func TestOTelBasicLifecycle(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Добави <strong>status и error recording</strong>: при ошибке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetStatus(codes.Error, "database connection failed")</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.RecordError(err, trace.WithAttributes(attribute.String("db.instance", "postgres-primary")))</code>. Покажи разницу между status (semantic) и error event (detailed).</p></div>
+    <div><p style="margin-bottom: 6px;">Добави <strong>status и error recording</strong>: при ошибке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetStatus(codes.Error, &quot;database connection failed&quot;)</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.RecordError(err, trace.WithAttributes(attribute.String(&quot;db.instance&quot;, &quot;postgres-primary&quot;)))</code>. Покажи разницу между status (semantic) и error event (detailed).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1398,7 +1398,7 @@ func TestStatusVsErrorEvent(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Иерархия распределенной трассировки:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Трейс — это направленный ациклический граф (DAG) спанов, объединенных одним общим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TraceID</code>.</li>
-<li style="margin-bottom: 4px;">При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, childSpan := tracer.Start(ctx, "childOperation")</code>:</li>
+<li style="margin-bottom: 4px;">При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, childSpan := tracer.Start(ctx, &quot;childOperation&quot;)</code>:</li>
 <li style="margin-bottom: 4px;">OTel извлекает родительский спан из входящего <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code>.</li>
 <li style="margin-bottom: 4px;">Присваивает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">childSpan.TraceID = parent.TraceID</code>.</li>
 <li style="margin-bottom: 4px;">Присваивает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">childSpan.ParentSpanID = parent.SpanID</code>.</li>
@@ -1523,13 +1523,13 @@ func TestNestedSpansHierarchy(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создай <strong>span links</strong>: при обработке batch сообщения из Kafka — создай span для каждого сообщения, но link'ай к span'у producer'а через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.AddLink(trace.Link{SpanContext: producerSpanCtx})</code>. Покажи, что link — не parent-child, а causal connection.</p></div>
+    <div><p style="margin-bottom: 6px;">Создай <strong>span links</strong>: при обработке batch сообщения из Kafka — создай span для каждого сообщения, но link&#x27;ай к span&#x27;у producer&#x27;а через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.AddLink(trace.Link{SpanContext: producerSpanCtx})</code>. Покажи, что link — не parent-child, а causal connection.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Причинно-следственные связи Span Links против Parent-Child:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">В классическом синхронном HTTP родительский спан длится дольше дочернего (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Parent.Start < Child.Start < Child.End < Parent.End</code>).</li>
+<li style="margin-bottom: 4px;">В классическом синхронном HTTP родительский спан длится дольше дочернего (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Parent.Start &lt; Child.Start &lt; Child.End &lt; Parent.End</code>).</li>
 <li style="margin-bottom: 4px;"><strong>Специфика пакетных очередей сообщений (Kafka / RabbitMQ):</strong></li>
 <li style="margin-bottom: 4px;">Продюсер опубликовал 500 сообщений в разное время и завершил свои спаны.</li>
 <li style="margin-bottom: 4px;">Консьюмер вычитал батч из 500 сообщений в одном общем цикле.</li>
@@ -1629,7 +1629,7 @@ func TestSpanLinksKafkaBatch(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В спецификации OTel спан-ссылки могут содержать собственные атрибуты: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace.Link{SpanContext: sc, Attributes: []attribute.KeyValue{attribute.Int("messaging.batch_index", 4)}}</code>, что позволяет фиксировать позицию сообщения в батче.</p></div>
+    <div><p style="margin-bottom: 6px;">В спецификации OTel спан-ссылки могут содержать собственные атрибуты: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace.Link{SpanContext: sc, Attributes: []attribute.KeyValue{attribute.Int(&quot;messaging.batch_index&quot;, 4)}}</code>, что позволяет фиксировать позицию сообщения в батче.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1781,7 +1781,7 @@ func TestW3CTracePropagation(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Настрой <strong>Baggage</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx = baggage.ContextWithBaggage(ctx, baggage.MustNewMember("tenant.id", "acme-corp"))</code>. Читай: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenantID := baggage.FromContext(ctx).Member("tenant.id").Value()</code>. Покажи, как baggage передаёт бизнес-контекст через все span'ы.</p></div>
+    <div><p style="margin-bottom: 6px;">Настрой <strong>Baggage</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx = baggage.ContextWithBaggage(ctx, baggage.MustNewMember(&quot;tenant.id&quot;, &quot;acme-corp&quot;))</code>. Читай: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenantID := baggage.FromContext(ctx).Member(&quot;tenant.id&quot;).Value()</code>. Покажи, как baggage передаёт бизнес-контекст через все span&#x27;ы.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1892,7 +1892,7 @@ func TestBaggagePropagation(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В отличие от спан-атрибутов, элементы Baggage не индексируются в TSDB трейсинга автоматически: если downstream-сервису нужно видеть значение в Jaeger, он явно копирует его из Baggage в атрибуты текущего спана: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetAttributes(attribute.String("tenant.id", val))</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">В отличие от спан-атрибутов, элементы Baggage не индексируются в TSDB трейсинга автоматически: если downstream-сервису нужно видеть значение в Jaeger, он явно копирует его из Baggage в атрибуты текущего спана: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetAttributes(attribute.String(&quot;tenant.id&quot;, val))</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1911,7 +1911,7 @@ func TestBaggagePropagation(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Настрой <strong>OTLP exporter</strong> (OpenTelemetry Protocol): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otlptracegrpc.New(ctx, otlptracegrpc.WithEndpoint("localhost:4317"), otlptracegrpc.WithInsecure())</code>. Отправляй spans в <strong>Jaeger</strong> или <strong>Tempo</strong>. Проверь в UI.</p></div>
+    <div><p style="margin-bottom: 6px;">Настрой <strong>OTLP exporter</strong> (OpenTelemetry Protocol): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otlptracegrpc.New(ctx, otlptracegrpc.WithEndpoint(&quot;localhost:4317&quot;), otlptracegrpc.WithInsecure())</code>. Отправляй spans в <strong>Jaeger</strong> или <strong>Tempo</strong>. Проверь в UI.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2028,7 +2028,7 @@ func TestOTLPGRPCExporterConfig(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Настрой <strong>Resource</strong> для идентификации сервиса: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">resource.NewWithAttributes(semconv.SchemaURL, semconv.ServiceNameKey.String("order-service"), semconv.ServiceVersionKey.String("v2.1.0"), semconv.DeploymentEnvironmentKey.String("production"), attribute.String("k8s.pod.name", os.Getenv("HOSTNAME")))</code>. Покажи, как resource атрибуты группируют spans в Jaeger.</p></div>
+    <div><p style="margin-bottom: 6px;">Настрой <strong>Resource</strong> для идентификации сервиса: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">resource.NewWithAttributes(semconv.SchemaURL, semconv.ServiceNameKey.String(&quot;order-service&quot;), semconv.ServiceVersionKey.String(&quot;v2.1.0&quot;), semconv.DeploymentEnvironmentKey.String(&quot;production&quot;), attribute.String(&quot;k8s.pod.name&quot;, os.Getenv(&quot;HOSTNAME&quot;)))</code>. Покажи, как resource атрибуты группируют spans в Jaeger.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2142,7 +2142,7 @@ func TestOTelResourceSemconv(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Инструментируй <strong>HTTP server</strong> автоматически: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelhttp.NewHandler(next, "http-server", otelhttp.WithPropagators(prop), otelhttp.WithSpanNameFormatter(func(operation string, r *http.Request) string { return r.Method + " " + r.URL.Path }))</code>. Каждый request — span с атрибутами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.method</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.url</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.status_code</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Инструментируй <strong>HTTP server</strong> автоматически: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelhttp.NewHandler(next, &quot;http-server&quot;, otelhttp.WithPropagators(prop), otelhttp.WithSpanNameFormatter(func(operation string, r *http.Request) string { return r.Method + &quot; &quot; + r.URL.Path }))</code>. Каждый request — span с атрибутами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.method</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.url</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.status_code</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2280,11 +2280,9 @@ func TestOTelHTTPServerInstrumentation(t *testing.T) {
 <li style="margin-bottom: 4px;">Проблема: при каждом исходящем вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.Post</code> разработчик вынужден вручную создавать спан клиента и вызывать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">prop.Inject</code>.</li>
 <li style="margin-bottom: 4px;"><strong>Решение:</strong></li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">client := &http.Client{</p>
-<p style="margin-bottom: 6px;">Transport: otelhttp.NewTransport(http.DefaultTransport),</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  client := &amp;http.Client{
+      Transport: otelhttp.NewTransport(http.DefaultTransport),
+  }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Обертка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelhttp.NewTransport</code>:</li>
 </ul>
@@ -2414,9 +2412,9 @@ func TestOTelHTTPClientTransport(t *testing.T) {
 <p style="margin-bottom: 6px;">ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">traceparent</code> передается внутри HTTP/2 заголовков.</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Спаны обогащаются стандартом semconv:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rpc.system = "grpc"</code></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rpc.service = "orders.v1.OrderService"</code></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rpc.method = "CreateOrder"</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rpc.system = &quot;grpc&quot;</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rpc.service = &quot;orders.v1.OrderService&quot;</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rpc.method = &quot;CreateOrder&quot;</code></li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rpc.grpc.status_code = 0</code> (codes.OK).</li>
 </ul></div>
   </div>
@@ -2527,7 +2525,7 @@ func TestOTelGRPCServerInterceptor(t *testing.T) {
 <div class="exercise-card" id="ex-12">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #12</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Инструментирование gRPC-клиента: цепочка client span -> server span -> database span</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Инструментирование gRPC-клиента: цепочка client span -&gt; server span -&gt; database span</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -2658,7 +2656,7 @@ func TestGRPCClientDistributedTrace(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Добави <strong>attributes</strong> в span: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetAttributes(attribute.String("user.id", "123"), attribute.Int("http.status_code", 200))</code>. Покажи, как structured metadata обогащает трассировку.</p></div>
+    <div><p style="margin-bottom: 6px;">Добави <strong>attributes</strong> в span: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetAttributes(attribute.String(&quot;user.id&quot;, &quot;123&quot;), attribute.Int(&quot;http.status_code&quot;, 200))</code>. Покажи, как structured metadata обогащает трассировку.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2672,7 +2670,7 @@ func TestGRPCClientDistributedTrace(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Преимущества перед строковыми логами:</strong></li>
 <li style="margin-bottom: 4px;">Системы хранения (Tempo, ClickHouse, Elasticsearch) индексируют атрибуты колоночно.</li>
-<li style="margin-bottom: 4px;">Позволяет фильтровать запросы по условию: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user.id == "123" && http.status_code >= 500</code> с миллисекундным откликом по терабайтам данных!</li>
+<li style="margin-bottom: 4px;">Позволяет фильтровать запросы по условию: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user.id == &quot;123&quot; &amp;&amp; http.status_code &gt;= 500</code> с миллисекундным откликом по терабайтам данных!</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -2760,7 +2758,7 @@ func TestSpanAttributesEnrichment(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Добавлять в атрибуты гигантские JSON-тела запросов (> 50 КБ): хранилища трассировки ограничат размер строки или отбросят спан целиком. Большие пейлоады сохраняют в объектное хранилище S3, а в спан пишут только URL или ключ.</p></div>
+    <div><p style="margin-bottom: 6px;">Добавлять в атрибуты гигантские JSON-тела запросов (&gt; 50 КБ): хранилища трассировки ограничат размер строки или отбросят спан целиком. Большие пейлоады сохраняют в объектное хранилище S3, а в спан пишут только URL или ключ.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2775,7 +2773,7 @@ func TestSpanAttributesEnrichment(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Инструментируй <strong>database/sql</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/XSAM/otelsql</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db, _ := otelsql.Open("postgres", dsn, otelsql.WithAttributes(semconv.DBSystemPostgreSQL))</code>. Каждый query — span с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.statement</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.operation</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.sql.table</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Инструментируй <strong>database/sql</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/XSAM/otelsql</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db, _ := otelsql.Open(&quot;postgres&quot;, dsn, otelsql.WithAttributes(semconv.DBSystemPostgreSQL))</code>. Каждый query — span с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.statement</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.operation</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.sql.table</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2788,9 +2786,9 @@ func TestSpanAttributesEnrichment(t *testing.T) {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Автоматически создает дочерний спан с именем базы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT users</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Заполняет семантические атрибуты:</div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.system = "postgresql"</code></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.statement = "SELECT id, name FROM users WHERE id = $1"</code></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.operation = "SELECT"</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.system = &quot;postgresql&quot;</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.statement = &quot;SELECT id, name FROM users WHERE id = $1&quot;</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.operation = &quot;SELECT&quot;</code></li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Замеряет точную длительность выполнения SQL-запроса на сокете СУБД.</div></div>
   </div>
@@ -2890,7 +2888,7 @@ func TestOTELSQLDatabaseInstrumentation(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в проде для db.statement часто включают маскирование строковых литералов (SQL Sanitization)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если разработчик написал наивный запрос <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM users WHERE password = 'my_secret_password'</code>, без маскирования пароль попадет в открытом виде в централизованную базу Jaeger/Tempo. Санитизатор заменяет все литералы на знаки вопроса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">?</code>, гарантируя соблюдение стандартов безопасности.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если разработчик написал наивный запрос <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM users WHERE password = &#x27;my_secret_password&#x27;</code>, без маскирования пароль попадет в открытом виде в централизованную базу Jaeger/Tempo. Санитизатор заменяет все литералы на знаки вопроса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">?</code>, гарантируя соблюдение стандартов безопасности.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-15">
@@ -2900,7 +2898,7 @@ func TestOTELSQLDatabaseInstrumentation(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Добави <strong>events</strong> в span: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.AddEvent("cache-miss", trace.WithAttributes(attribute.String("key", "user:123")))</code>. Используй для отметки значимых моментов внутри операции.</p></div>
+    <div><p style="margin-bottom: 6px;">Добави <strong>events</strong> в span: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.AddEvent(&quot;cache-miss&quot;, trace.WithAttributes(attribute.String(&quot;key&quot;, &quot;user:123&quot;)))</code>. Используй для отметки значимых моментов внутри операции.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2908,9 +2906,9 @@ func TestOTELSQLDatabaseInstrumentation(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Спан отражает <strong>интервал времени</strong> (от <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Start</code> до <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">End</code>).</li>
 <li style="margin-bottom: 4px;">Иногда внутри одной длинной операции (например, обработка заказа за 500 мс) происходят мгновенные важные вехи:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"cache-miss"</code> (промах кэша).</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"db-retry-attempt-2"</code> (повторная попытка запроса).</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"mutex-acquired"</code> (захват блокировки).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;cache-miss&quot;</code> (промах кэша).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;db-retry-attempt-2&quot;</code> (повторная попытка запроса).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;mutex-acquired&quot;</code> (захват блокировки).</li>
 <li style="margin-bottom: 4px;"><strong>Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.AddEvent(name, attrs)</code>:</strong></li>
 <li style="margin-bottom: 4px;">Записывает точную наносекундную временную метку.</li>
 <li style="margin-bottom: 4px;">Прикрепляет структурированные атрибуты события.</li>
@@ -3032,7 +3030,7 @@ func TestSpanEventsMilestones(t *testing.T) {
 <li style="margin-bottom: 4px;">Использует встроенную систему перехвата вызовов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.AddHook(...)</code>.</li>
 <li style="margin-bottom: 4px;">Перед отправкой команды (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ProcessHook</code>):</li>
 <li style="margin-bottom: 4px;">Создает дочерний спан с именем команды (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.GET</code>).</li>
-<li style="margin-bottom: 4px;">Заполняет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.system = "redis"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.statement = "GET user:123"</code>.</li>
+<li style="margin-bottom: 4px;">Заполняет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.system = &quot;redis&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.statement = &quot;GET user:123&quot;</code>.</li>
 <li style="margin-bottom: 4px;">Измеряет время сетевого RTT до инстанса Redis.</li>
 <li style="margin-bottom: 4px;">Обрабатывает ошибки типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil</code> (ключ отсутствует в кэше — не считается ошибкой сервиса!).</li>
 </ul></div>
@@ -3132,11 +3130,11 @@ func TestRedisOTelClientHook(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Включать в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.statement</code> гигантские бинарные значения команды <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET key <blob></code>: в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redisotel</code> передается только имя команды и ключ, а само тело полезной нагрузки отсекается для экономии памяти.</p></div>
+    <div><p style="margin-bottom: 6px;">Включать в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.statement</code> гигантские бинарные значения команды <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET key &lt;blob&gt;</code>: в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redisotel</code> передается только имя команды и ключ, а само тело полезной нагрузки отсекается для экономии памяти.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как с помощью трассировки Redis выявить паттерн "N+1 Queries" при обращении к кэшу?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как с помощью трассировки Redis выявить паттерн &quot;N+1 Queries&quot; при обращении к кэшу?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> На диаграмме водопада в Jaeger/Tempo видна цепочка из 50 последовательных спанов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GET user:1</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GET user:2</code> ... <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GET user:50</code>, каждый по 1 мс, суммарно съедающих 50 мс. Оптимизация заключается в объединении вызовов в один пакетный спан <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MGET</code> или pipeline.</p></div>
   </div>
 </div>
@@ -3158,15 +3156,15 @@ func TestRedisOTelClientHook(t *testing.T) {
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Producer:</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Создает спан публикации (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">messaging.destination = "orders-topic"</code>).</li>
-<li style="margin-bottom: 4px;">Вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">prop.Inject(ctx, otelkafka.NewMessageCarrier(&msg))</code>.</li>
+<li style="margin-bottom: 4px;">Создает спан публикации (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">messaging.destination = &quot;orders-topic&quot;</code>).</li>
+<li style="margin-bottom: 4px;">Вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">prop.Inject(ctx, otelkafka.NewMessageCarrier(&amp;msg))</code>.</li>
 <li style="margin-bottom: 4px;">Заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">traceparent</code> упаковывается в байты заголовков Kafka.</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Broker:</strong> хранит сообщение с заголовками в логе партиции.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Consumer:</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Вычитывает сообщение.</li>
-<li style="margin-bottom: 4px;">Вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx = prop.Extract(ctx, otelkafka.NewMessageCarrier(&msg))</code>.</li>
+<li style="margin-bottom: 4px;">Вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx = prop.Extract(ctx, otelkafka.NewMessageCarrier(&amp;msg))</code>.</li>
 <li style="margin-bottom: 4px;">Создает дочерний спан обработки, замыкая сквозной трейс!</li>
 </ul></div>
   </div>
@@ -3277,7 +3275,7 @@ func TestKafkaHeadersPropagation(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Инструментируй <strong>NATS</strong>: вручную inject/extract через message headers. Producer: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Header.Set("traceparent", carrier.Get("traceparent"))</code>. Consumer: extract, создай span с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace.WithLinks()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Инструментируй <strong>NATS</strong>: вручную inject/extract через message headers. Producer: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Header.Set(&quot;traceparent&quot;, carrier.Get(&quot;traceparent&quot;))</code>. Consumer: extract, создай span с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace.WithLinks()</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3290,7 +3288,7 @@ func TestKafkaHeadersPropagation(t *testing.T) {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Публикует сообщение в тему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.created</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Консьюмер (подписчик) извлекает спан-контекст из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Header</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запускает обработку:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, span := tracer.Start(ctx, "HandleNATSOrder", trace.WithLinks(trace.Link{SpanContext: producerSC}))</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, span := tracer.Start(ctx, &quot;HandleNATSOrder&quot;, trace.WithLinks(trace.Link{SpanContext: producerSC}))</code></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Обеспечивает полную наблюдаемость брокера NATS без сторонних адаптеров.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -3391,7 +3389,7 @@ func TestNATSManualInstrumentation(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создай <strong>custom instrumentation</strong> для бизнес-логики: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func ProcessOrder(ctx context.Context, orderID string) error { ctx, span := tracer.Start(ctx, "ProcessOrder", trace.WithAttributes(attribute.String("order.id", orderID))); defer span.End(); ... }</code>. Добави sub-spans для каждого шага.</p></div>
+    <div><p style="margin-bottom: 6px;">Создай <strong>custom instrumentation</strong> для бизнес-логики: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func ProcessOrder(ctx context.Context, orderID string) error { ctx, span := tracer.Start(ctx, &quot;ProcessOrder&quot;, trace.WithAttributes(attribute.String(&quot;order.id&quot;, orderID))); defer span.End(); ... }</code>. Добави sub-spans для каждого шага.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3510,7 +3508,7 @@ func TestCustomBusinessInstrumentation(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как именовать спаны в соответствии со стандартами OpenTelemetry Semantic Conventions?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Имя спана должно быть кратким и не содержать динамических данных: глагол + существительное низкой кардинальности (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ValidateCart</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ProcessOrder</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">FetchUser</code>). Динамические данные (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">order.id = "123"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user.id = "456"</code>) передаются строго через <strong>атрибуты</strong>, а не через имя спана.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Имя спана должно быть кратким и не содержать динамических данных: глагол + существительное низкой кардинальности (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ValidateCart</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ProcessOrder</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">FetchUser</code>). Динамические данные (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">order.id = &quot;123&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user.id = &quot;456&quot;</code>) передаются строго через <strong>атрибуты</strong>, а не через имя спана.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-20">
@@ -3756,13 +3754,13 @@ func TestOTelSDKDependencies(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создайте первый <strong>span</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tracer.Start(ctx, "processOrder")</code>. Убедитесь, что он отображается в Jaeger UI.</p></div>
+    <div><p style="margin-bottom: 6px;">Создайте первый <strong>span</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tracer.Start(ctx, &quot;processOrder&quot;)</code>. Убедитесь, что он отображается в Jaeger UI.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Анатомия вызова tracer.Start:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tracer.Start(parentCtx, "operationName")</code> выполняет следующие действия:</li>
+<li style="margin-bottom: 4px;">Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tracer.Start(parentCtx, &quot;operationName&quot;)</code> выполняет следующие действия:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Генерирует новый 64-битный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SpanID</code> (псевдослучайное криптостойкое число).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">parentCtx</code> есть родительский спан — наследует его <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TraceID</code>, иначе генерирует новый 128-битный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TraceID</code>.</div>
@@ -3886,7 +3884,7 @@ func TestTracerStartProcessOrder(t *testing.T) {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Развертывание стека трассировки (Jaeger & Tempo):</p>
+    <div><p style="margin-bottom: 6px;">Развертывание стека трассировки (Jaeger &amp; Tempo):</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Jaeger:</strong> классическое All-in-One решение (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">docker run -d -p 16686:16686 -p 4317:4317 jaegertracing/all-in-one</code>).</li>
 <li style="margin-bottom: 4px;"><strong>Grafana Tempo:</strong> высокомасштабируемое распределенное хранилище спанов поверх объектных хранилищ S3/MinIO.</li>
@@ -3990,7 +3988,7 @@ func TestJaegerTempoBootstrap(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используйте <strong>context propagation</strong>: передавайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> через все функции, чтобы дочерние span'ы автоматически привязывались к родительским.</p></div>
+    <div><p style="margin-bottom: 6px;">Используйте <strong>context propagation</strong>: передавайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> через все функции, чтобы дочерние span&#x27;ы автоматически привязывались к родительским.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4000,9 +3998,9 @@ func TestJaegerTempoBootstrap(t *testing.T) {
 <li style="margin-bottom: 4px;">Единственный канонический способ передать спан вглубь стека вызовов — <strong>первый параметр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx context.Context</code></strong>.</li>
 <li style="margin-bottom: 4px;">Механика связывания:</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Вызывающая функция: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, parent := tracer.Start(ctx, "Parent")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Вызывающая функция: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, parent := tracer.Start(ctx, &quot;Parent&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Передача: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">childFunc(ctx)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Внутри: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_, child := tracer.Start(ctx, "Child")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Внутри: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_, child := tracer.Start(ctx, &quot;Child&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> OTel автоматически читает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">parent.SpanID</code> из входящего <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> и связывает их!</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -4126,7 +4124,7 @@ func TestInProcessContextPropagation(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otel.SetTracerProvider(tp)</code>:</li>
 <li style="margin-bottom: 4px;">Устанавливает синглтон провайдера в глобальной памяти рантайма.</li>
-<li style="margin-bottom: 4px;">Любая сторонняя библиотека, вызывающая <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otel.Tracer("lib-name")</code>, автоматически получит настроенный трейсер вашего сервиса.</li>
+<li style="margin-bottom: 4px;">Любая сторонняя библиотека, вызывающая <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otel.Tracer(&quot;lib-name&quot;)</code>, автоматически получит настроенный трейсер вашего сервиса.</li>
 <li style="margin-bottom: 4px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tp.Shutdown(ctx)</code>:</li>
 <li style="margin-bottom: 4px;">Обязателен при Graceful Shutdown:</li>
 <li style="margin-bottom: 4px;">Останавливает прием новых спанов.</li>
@@ -4320,7 +4318,7 @@ func TestOTelHTTPClientServerPair(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Забыть передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">req.Context()</code> в исходящий клиентский запрос: если написать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.NewRequest("GET", url, nil)</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NewRequestWithContext(ctx, ...)</code>, клиентский транспорт сгенерирует новый случайный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TraceID</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Забыть передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">req.Context()</code> в исходящий клиентский запрос: если написать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.NewRequest(&quot;GET&quot;, url, nil)</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NewRequestWithContext(ctx, ...)</code>, клиентский транспорт сгенерирует новый случайный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TraceID</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -4335,7 +4333,7 @@ func TestOTelHTTPClientServerPair(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Установите <strong>status</strong> span'а: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetStatus(codes.Error, "database timeout")</code> при ошибке.</p></div>
+    <div><p style="margin-bottom: 6px;">Установите <strong>status</strong> span&#x27;а: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetStatus(codes.Error, &quot;database timeout&quot;)</code> при ошибке.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4344,13 +4342,11 @@ func TestOTelHTTPClientServerPair(t *testing.T) {
 <li style="margin-bottom: 4px;">По умолчанию статус спана — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">codes.Unset</code>.</li>
 <li style="margin-bottom: 4px;">При возникновении ошибки:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">if err != nil {</p>
-<p style="margin-bottom: 6px;">span.RecordError(err)</p>
-<p style="margin-bottom: 6px;">span.SetStatus(codes.Error, "database timeout")</p>
-<p style="margin-bottom: 6px;">return err</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  if err != nil {
+      span.RecordError(err)
+      span.SetStatus(codes.Error, &quot;database timeout&quot;)
+      return err
+  }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Значение описания (Description):</strong></li>
 <li style="margin-bottom: 4px;">Описание статуса ошибки должно быть кратким понятным сообщением (human-readable summary), отражающим суть проблемы, а не гигантским дампом памяти.</li>
@@ -4446,7 +4442,7 @@ func TestSpanSetStatusError(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используйте <strong>OTEL HTTP middleware</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelhttp.NewHandler(handler, "server")</code> для автоматического создания span'ов на каждый HTTP-запрос.</p></div>
+    <div><p style="margin-bottom: 6px;">Используйте <strong>OTEL HTTP middleware</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelhttp.NewHandler(handler, &quot;server&quot;)</code> для автоматического создания span&#x27;ов на каждый HTTP-запрос.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4454,14 +4450,12 @@ func TestSpanSetStatusError(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Стандартное внедрение в веб-сервер Go:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">mux := http.NewServeMux()</p>
-<p style="margin-bottom: 6px;">mux.HandleFunc("/users", handleUsers)</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">// Оборачиваем весь роутер</p>
-<p style="margin-bottom: 6px;">wrappedHandler := otelhttp.NewHandler(mux, "user-service-api")</p>
-<p style="margin-bottom: 6px;">http.ListenAndServe(":8080", wrappedHandler)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  mux := http.NewServeMux()
+  mux.HandleFunc(&quot;/users&quot;, handleUsers)
+  
+  // Оборачиваем весь роутер
+  wrappedHandler := otelhttp.NewHandler(mux, &quot;user-service-api&quot;)
+  http.ListenAndServe(&quot;:8080&quot;, wrappedHandler)</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Каждое входящее TCP соединение получает готовый контекст трассировки, доступный внутри обработчика через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.Context()</code>.</li>
 </ul></div>
@@ -4554,7 +4548,7 @@ func TestOTelHTTPMiddlewareServer(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в otelhttp исключить эндпоинты healthcheck (/livez, /readyz) из трассировки, чтобы не захламлять базу спанами?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Используют опцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelhttp.WithFilter(func(r *http.Request) bool { return r.URL.Path != "/livez" && r.URL.Path != "/readyz" })</code>. Все запросы, возвращающие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, обрабатываются сервером без создания спанов и без накладных расходов на экспорт.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Используют опцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelhttp.WithFilter(func(r *http.Request) bool { return r.URL.Path != &quot;/livez&quot; &amp;&amp; r.URL.Path != &quot;/readyz&quot; })</code>. Все запросы, возвращающие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, обрабатываются сервером без создания спанов и без накладных расходов на экспорт.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-29">
@@ -4572,9 +4566,7 @@ func TestOTelHTTPMiddlewareServer(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Вместо настройки каждого отдельного <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.Client</code> в проекте можно настроить транспорт по умолчанию:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">http.DefaultTransport = otelhttp.NewTransport(http.DefaultTransport)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  http.DefaultTransport = otelhttp.NewTransport(http.DefaultTransport)</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Любой вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.Get(...)</code> или стандартный клиент любой библиотеки начнет автоматически инжектировать заголовки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">traceparent</code> и создавать клиентские спаны.</li>
 </ul></div>
@@ -4664,7 +4656,7 @@ func TestClientTransportAutoInject(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создай span для HTTP-обработчика: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tracer.Start(ctx, "handleRequest")</code>. Обязательно вызови <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.End()</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Создай span для HTTP-обработчика: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tracer.Start(ctx, &quot;handleRequest&quot;)</code>. Обязательно вызови <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.End()</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4886,7 +4878,7 @@ func TestGRPCFullInterceptors(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Принцип прозрачного проксирования драйверов СУБД:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В Go драйверы регистрируются в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">database/sql</code> через глобальную таблицу.</li>
-<li style="margin-bottom: 4px;">Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelsql.Register("postgres", ...)</code>:</li>
+<li style="margin-bottom: 4px;">Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelsql.Register(&quot;postgres&quot;, ...)</code>:</li>
 <li style="margin-bottom: 4px;">Регистрирует обернутый драйвер под именем, например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otel-postgres</code>.</li>
 <li style="margin-bottom: 4px;">Перехватывает все методы интерфейса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">driver.Conn</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">driver.Stmt</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">driver.Tx</code>.</li>
 <li style="margin-bottom: 4px;">Автоматически создает спан на каждый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">QueryContext</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ExecContext</code>.</li>
@@ -4967,7 +4959,7 @@ func TestOTELSQLDriverWrapper(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать сырое имя драйвера <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sql.Open("postgres", ...)</code> вместо зарегистрированной OTel обертки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelsql.Open(...)</code>: приложение скомпилируется, но спаны базы данных будут отсутствовать.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать сырое имя драйвера <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sql.Open(&quot;postgres&quot;, ...)</code> вместо зарегистрированной OTel обертки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelsql.Open(...)</code>: приложение скомпилируется, но спаны базы данных будут отсутствовать.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -5107,12 +5099,10 @@ func TestUptraceOTELSQLExtra(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Клиент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis/v9</code> поддерживает интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Hook</code>:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">rdb := redis.NewClient(&redis.Options{Addr: "localhost:6379"})</p>
-<p style="margin-bottom: 6px;">if err := redisotel.InstrumentTracing(rdb); err != nil {</p>
-<p style="margin-bottom: 6px;">log.Fatal(err)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  rdb := redis.NewClient(&amp;redis.Options{Addr: &quot;localhost:6379&quot;})
+  if err := redisotel.InstrumentTracing(rdb); err != nil {
+      log.Fatal(err)
+  }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">InstrumentTracing</code>:</li>
 <li style="margin-bottom: 4px;">Добавляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TracingHook</code>.</li>
@@ -5208,7 +5198,7 @@ func TestRedisPipelineTracing(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Добавь атрибуты (теги) к спану: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetAttributes(attribute.String("user.id", "123"))</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Добавь атрибуты (теги) к спану: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetAttributes(attribute.String(&quot;user.id&quot;, &quot;123&quot;))</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5229,7 +5219,7 @@ func TestRedisPipelineTracing(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте спан с поддержкой установки атрибутов.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зафиксируйте атрибут <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user.id = "123"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зафиксируйте атрибут <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user.id = &quot;123&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте поиск по тегам в поисковом движке Jaeger.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверьте точность фильтрации спанов.</div></div>
   </div>
@@ -5300,7 +5290,7 @@ func TestSpanCustomTagsSearch(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В Grafana Tempo язык запросов TraceQL компилируется в распределенный сканирующий запрос: фильтр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{.user.id == "123"}</code> эффективно фильтрует паркетные колонки блоков памяти без полного чтения тел спанов.</p></div>
+    <div><p style="margin-bottom: 6px;">В Grafana Tempo язык запросов TraceQL компилируется в распределенный сканирующий запрос: фильтр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{.user.id == &quot;123&quot;}</code> эффективно фильтрует паркетные колонки блоков памяти без полного чтения тел спанов.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -5309,7 +5299,7 @@ func TestSpanCustomTagsSearch(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Каковы лучшие практики именования атрибутов в соответствии с OTel Semantic Conventions?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать точечную нотацию в нижнем регистре с префиксом предметной области: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><namespace>.<entity>.<property></code> (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">payment.provider.name</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">order.delivery.type</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.request.header.x_custom</code>). Это исключает конфликты имен при объединении трейсов разных команд.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать точечную нотацию в нижнем регистре с префиксом предметной области: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;namespace&gt;.&lt;entity&gt;.&lt;property&gt;</code> (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">payment.provider.name</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">order.delivery.type</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.request.header.x_custom</code>). Это исключает конфликты имен при объединении трейсов разных команд.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-36">
@@ -5438,7 +5428,7 @@ func TestW3CTraceparentTracestate(t *testing.T) {
 <div class="exercise-card" id="ex-37">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #37</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Бизнес-цепочка custom spans: иерархия createOrder -> validateOrder, reserveInventory, processPayment</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Бизнес-цепочка custom spans: иерархия createOrder -&gt; validateOrder, reserveInventory, processPayment</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -5545,14 +5535,12 @@ func TestBusinessPipelineHierarchy(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как корректно завершать родительский спан, если дочерние этапы выполняются параллельно в sync.WaitGroup?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Родительский спан должен закрываться только <strong>после</strong> вызова <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wg.Wait()</code>. В главной горутине пишут:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">ctx, parentSpan := tracer.Start(ctx, "ParallelJob")</p>
-<p style="margin-bottom: 6px;">defer parentSpan.End()</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">var wg sync.WaitGroup</p>
-<p style="margin-bottom: 6px;">// запуск дочерних горутин</p>
-<p style="margin-bottom: 6px;">wg.Wait()</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">ctx, parentSpan := tracer.Start(ctx, &quot;ParallelJob&quot;)
+defer parentSpan.End()
+
+var wg sync.WaitGroup
+// запуск дочерних горутин
+wg.Wait()</code></pre></div>
 <p style="margin-bottom: 6px;">Это гарантирует, что время родительского спана полностью покроет самую медленную из параллельных веток.</p></div>
   </div>
 </div>
@@ -5687,7 +5675,7 @@ func TestBatchSpanLinksMulticontext(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Стратегии сэмплирования в OpenTelemetry:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В HighLoad системах со 100 000 RPS сохранение 100% трейсов убьет сеть и диски хранилища.</li>
-<li style="margin-bottom: 4px;"><strong>Head-Based Sampler'ы OTel SDK:</strong></li>
+<li style="margin-bottom: 4px;"><strong>Head-Based Sampler&#x27;ы OTel SDK:</strong></li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AlwaysOn()</code>: 100% трейсов (только dev/stage).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AlwaysOff()</code>: трейсинг выключен.</div>
@@ -5783,7 +5771,7 @@ func TestSamplingStrategyRatio(t *testing.T) {
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Head-Based:</strong> решение принимается в момент старта запроса на шлюзе (дешево по памяти, но есть риск отбросить медленный трейс или ошибку 500).</li>
-<li style="margin-bottom: 4px;"><strong>Tail-Based:</strong> все спаны временно буферизуются в памяти OTel Collector, и решение принимается <strong>после</strong> завершения запроса: 100% ошибок и 100% медленных запросов (> 1 сек) сохраняются безусловно, а успешные быстрые запросы сэмплируются на уровне 1%.</li>
+<li style="margin-bottom: 4px;"><strong>Tail-Based:</strong> все спаны временно буферизуются в памяти OTel Collector, и решение принимается <strong>после</strong> завершения запроса: 100% ошибок и 100% медленных запросов (&gt; 1 сек) сохраняются безусловно, а успешные быстрые запросы сэмплируются на уровне 1%.</li>
 </ul></div>
   </div>
 </div>
@@ -5802,22 +5790,20 @@ func TestSamplingStrategyRatio(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Классический паттерн чистого Go кода:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func Handler(w http.ResponseWriter, r *http.Request) {</p>
-<p style="margin-bottom: 6px;">ctx, span := tracer.Start(r.Context(), "Handler")</p>
-<p style="margin-bottom: 6px;">defer span.End()</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">if err := SaveToDB(ctx, data); err != nil {</p>
-<p style="margin-bottom: 6px;">span.RecordError(err)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">func SaveToDB(ctx context.Context, data Data) error {</p>
-<p style="margin-bottom: 6px;">ctx, span := tracer.Start(ctx, "SaveToDB")</p>
-<p style="margin-bottom: 6px;">defer span.End()</p>
-<p style="margin-bottom: 6px;">// ...</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  func Handler(w http.ResponseWriter, r *http.Request) {
+      ctx, span := tracer.Start(r.Context(), &quot;Handler&quot;)
+      defer span.End()
+      
+      if err := SaveToDB(ctx, data); err != nil {
+          span.RecordError(err)
+      }
+  }
+  
+  func SaveToDB(ctx context.Context, data Data) error {
+      ctx, span := tracer.Start(ctx, &quot;SaveToDB&quot;)
+      defer span.End()
+      // ...
+  }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Передача <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> гарантирует, что спан <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SaveToDB</code> всегда будет вложен в спан <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Handler</code>.</li>
 </ul></div>
@@ -5961,9 +5947,9 @@ func TestSaveToDBInProcess(t *testing.T) {
 <li style="margin-bottom: 4px;">Буферизует все спаны трейса в оперативной памяти коллектора в течение окна ожидания (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">decision_wait: 10s</code>).</li>
 <li style="margin-bottom: 4px;">После завершения последнего спана оценивает весь трейс целиком:</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Если статус любого спана в графе равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ERROR</code> -> сохранить <strong>100%</strong>!</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если длительность трейса превысила 2 секунды (медленный запрос) -> сохранить <strong>100%</strong>!</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если все операции успешны и быстры -> сохранить лишь <strong>1%</strong> случайной выборки (проба).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Если статус любого спана в графе равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ERROR</code> -&gt; сохранить <strong>100%</strong>!</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если длительность трейса превысила 2 секунды (медленный запрос) -&gt; сохранить <strong>100%</strong>!</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если все операции успешны и быстры -&gt; сохранить лишь <strong>1%</strong> случайной выборки (проба).</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Это кардинально экономит дисковое пространство хранилища Tempo/Jaeger без потери редких багов.</li>
 </ul></div>
@@ -6210,12 +6196,10 @@ func TestW3CServiceChainDAG(t *testing.T) {
 <li style="margin-bottom: 4px;">Gateway определяет тенант <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant_id=enterprise_alpha</code> и флаг фичи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">feature_flag=new_checkout_v2</code>.</li>
 <li style="margin-bottom: 4px;">Записывает их в Baggage:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">m1, _ := baggage.NewMember("tenant_id", "enterprise_alpha")</p>
-<p style="margin-bottom: 6px;">m2, _ := baggage.NewMember("feature_flag", "new_checkout_v2")</p>
-<p style="margin-bottom: 6px;">b, _ := baggage.New(m1, m2)</p>
-<p style="margin-bottom: 6px;">ctx = baggage.ContextWithBaggage(ctx, b)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">    m1, _ := baggage.NewMember(&quot;tenant_id&quot;, &quot;enterprise_alpha&quot;)
+    m2, _ := baggage.NewMember(&quot;feature_flag&quot;, &quot;new_checkout_v2&quot;)
+    b, _ := baggage.New(m1, m2)
+    ctx = baggage.ContextWithBaggage(ctx, b)</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Вся цепочка из 7 микросервисов имеет мгновенный доступ к этим флагам без изменения DTO структур и контрактов gRPC!</li>
 </ul></div>
@@ -6316,13 +6300,13 @@ func TestBaggageMultiTenant(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как защитить внутренний кластер от инъекции вредоносных данных в Baggage со стороны недоверенных клиентов из Интернета?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> На внешнем API Gateway входящий заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">baggage</code> полностью отбрасывается (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.Header.Del("baggage")</code>). Gateway сам формирует доверенный Baggage на основе проверенного JWT токена пользователя или базы сессий.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> На внешнем API Gateway входящий заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">baggage</code> полностью отбрасывается (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.Header.Del(&quot;baggage&quot;)</code>). Gateway сам формирует доверенный Baggage на основе проверенного JWT токена пользователя или базы сессий.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-44">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #44</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Межсервисный Context-Propagation: сетевое взаимодействие Сервис А (клиент) -> Сервис Б (сервер)</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Межсервисный Context-Propagation: сетевое взаимодействие Сервис А (клиент) -&gt; Сервис Б (сервер)</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -6466,11 +6450,9 @@ func TestInterServicePropagation(t *testing.T) {
 <li style="margin-bottom: 4px;">Реализует интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pgx.QueryTracer</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pgx.BatchTracer</code>.</li>
 <li style="margin-bottom: 4px;">Регистрируется в конфигурации пула:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">cfg, _ := pgxpool.ParseConfig(connString)</p>
-<p style="margin-bottom: 6px;">cfg.ConnConfig.Tracer = pgxotel.NewTracer()</p>
-<p style="margin-bottom: 6px;">pool, _ := pgxpool.NewWithConfig(ctx, cfg)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">    cfg, _ := pgxpool.ParseConfig(connString)
+    cfg.ConnConfig.Tracer = pgxotel.NewTracer()
+    pool, _ := pgxpool.NewWithConfig(ctx, cfg)</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Перехватывает вызовы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Query</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Exec</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SendBatch</code>, замеряя время выполнения запроса на сокете Postgres и заполняя стандартные OTel атрибуты.</li>
 </ul></div>
@@ -6704,17 +6686,13 @@ func TestStdouttraceVisualAudit(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Идиоматическая сигнатура:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func InitTracer(ctx context.Context, serviceName, endpoint string) (func(context.Context) error, error)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  func InitTracer(ctx context.Context, serviceName, endpoint string) (func(context.Context) error, error)</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Возвращает функцию очистки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cleanup</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tp.Shutdown</code>), которую вызывающий код в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main()</code> вызывает через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer</code>:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">shutdown, err := InitTracer(ctx, "billing-service", "localhost:4317")</p>
-<p style="margin-bottom: 6px;">if err != nil { log.Fatal(err) }</p>
-<p style="margin-bottom: 6px;">defer shutdown(context.Background())</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  shutdown, err := InitTracer(ctx, &quot;billing-service&quot;, &quot;localhost:4317&quot;)
+  if err != nil { log.Fatal(err) }
+  defer shutdown(context.Background())</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Это изолирует низкоуровневую логику создания экспортера, ресурсов и процессора от основного кода приложения.</li>
 </ul></div>
@@ -6810,11 +6788,9 @@ func TestInitTracerLifecyclePattern(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Какой контекст передавать в shutdown() при перехвате os.Interrupt?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Передают новый независимый контекст с фиксированным таймаутом:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)</p>
-<p style="margin-bottom: 6px;">defer cancel()</p>
-<p style="margin-bottom: 6px;">shutdown(shutdownCtx)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+defer cancel()
+shutdown(shutdownCtx)</code></pre></div>
 <p style="margin-bottom: 6px;">Это гарантирует, что таймер сброса буферов не зависит от отмененного родительского контекста приложения.</p></div>
   </div>
 </div>
@@ -6935,11 +6911,11 @@ func TestSyntheticTrafficBaggage(t *testing.T) {
 <div class="exercise-card" id="ex-49">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #49</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Вложенные ручные спаны: calculate_tax -> db_query с наследованием контекста</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Вложенные ручные спаны: calculate_tax -&gt; db_query с наследованием контекста</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Ручные Спаны (Spans)</strong>: В функции напиши <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, span := tracer.Start(ctx, "calculate_tax")</code>. Сделай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer span.End()</code>. Вызови внутри другую функцию, передав ей этот <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code>, и там начни новый спан (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db_query</code>). Убедись, что второй спан автоматически стал "ребенком" первого.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Ручные Спаны (Spans)</strong>: В функции напиши <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, span := tracer.Start(ctx, &quot;calculate_tax&quot;)</code>. Сделай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer span.End()</code>. Вызови внутри другую функцию, передав ей этот <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code>, и там начни новый спан (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db_query</code>). Убедись, что второй спан автоматически стал &quot;ребенком&quot; первого.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7165,7 +7141,7 @@ func TestGoroutineContextWithoutCancel(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в Go 1.20 и старше передавали контекст в фоновую горутину без риска context canceled?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> До появления <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithoutCancel</code> в Go 1.21 разработчики создавали собственный кастомный тип контекста (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">struct detachedContext { context.Context }</code>), переопределяя метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Done() <-chan struct{} { return nil }</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Err() error { return nil }</code>, либо вручную копировали спан через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace.ContextWithSpan(context.Background(), span)</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> До появления <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithoutCancel</code> в Go 1.21 разработчики создавали собственный кастомный тип контекста (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">struct detachedContext { context.Context }</code>), переопределяя метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Done() &lt;-chan struct{} { return nil }</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Err() error { return nil }</code>, либо вручную копировали спан через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace.ContextWithSpan(context.Background(), span)</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-51">
@@ -7175,7 +7151,7 @@ func TestGoroutineContextWithoutCancel(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Создание ручных спанов (Spans)</strong>: Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ProcessOrder()</code>, которая создает именованный спан с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otel.Tracer("order-service").Start(ctx, "ProcessOrder")</code>. Внутри функции установите кастомные атрибуты спана (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">order.id = 42</code>) и запишите ключевые события процесса в виде логов-эвентов с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.AddEvent("validation_started")</code>. Не забудьте завершить спан через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer span.End()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Создание ручных спанов (Spans)</strong>: Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ProcessOrder()</code>, которая создает именованный спан с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otel.Tracer(&quot;order-service&quot;).Start(ctx, &quot;ProcessOrder&quot;)</code>. Внутри функции установите кастомные атрибуты спана (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">order.id = 42</code>) и запишите ключевые события процесса в виде логов-эвентов с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.AddEvent(&quot;validation_started&quot;)</code>. Не забудьте завершить спан через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer span.End()</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7183,20 +7159,18 @@ func TestGoroutineContextWithoutCancel(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Чистый шаблон оформления бизнес-спана:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func ProcessOrder(ctx context.Context, orderID int) error {</p>
-<p style="margin-bottom: 6px;">tr := otel.Tracer("order-service")</p>
-<p style="margin-bottom: 6px;">ctx, span := tr.Start(ctx, "ProcessOrder",</p>
-<p style="margin-bottom: 6px;">trace.WithAttributes(attribute.Int("order.id", orderID)),</p>
-<p style="margin-bottom: 6px;">)</p>
-<p style="margin-bottom: 6px;">defer span.End()</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">span.AddEvent("validation_started")</p>
-<p style="margin-bottom: 6px;">// логика валидации</p>
-<p style="margin-bottom: 6px;">span.AddEvent("validation_completed")</p>
-<p style="margin-bottom: 6px;">return nil</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  func ProcessOrder(ctx context.Context, orderID int) error {
+      tr := otel.Tracer(&quot;order-service&quot;)
+      ctx, span := tr.Start(ctx, &quot;ProcessOrder&quot;,
+          trace.WithAttributes(attribute.Int(&quot;order.id&quot;, orderID)),
+      )
+      defer span.End()
+      
+      span.AddEvent(&quot;validation_started&quot;)
+      // логика валидации
+      span.AddEvent(&quot;validation_completed&quot;)
+      return nil
+  }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Обеспечивает максимальную плотность диагностических данных при минимальных накладных расходах.</li>
 </ul></div>
@@ -7285,7 +7259,7 @@ func TestProcessOrderManualSpan(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Передавать в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">order.id</code> форматированную строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Order #42"</code>: чистый целочисленный атрибут <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">attribute.Int</code> занимает 8 байт и индексируется базами в десятки раз быстрее, чем строки.</p></div>
+    <div><p style="margin-bottom: 6px;">Передавать в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">order.id</code> форматированную строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Order #42&quot;</code>: чистый целочисленный атрибут <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">attribute.Int</code> занимает 8 байт и индексируется базами в десятки раз быстрее, чем строки.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -7312,7 +7286,7 @@ func TestProcessOrderManualSpan(t *testing.T) {
 <li style="margin-bottom: 4px;">Идеален для окружений, где gRPC трафик (HTTP/2) блокируется корпоративными прокси или Web Application Firewall (WAF).</li>
 <li style="margin-bottom: 4px;">В UI Jaeger (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">localhost:16686</code>):</li>
 <li style="margin-bottom: 4px;">Поиск по имени сервиса.</li>
-<li style="margin-bottom: 4px;">Прямой переход по URL: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http://localhost:16686/trace/<trace_id></code>.</li>
+<li style="margin-bottom: 4px;">Прямой переход по URL: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http://localhost:16686/trace/&lt;trace_id&gt;</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -7388,7 +7362,7 @@ func TestOTLPTraceHTTPJaegerExport(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Указывать схему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http://</code> в параметре <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WithEndpoint("http://localhost:4318")</code>: метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WithEndpoint</code> ожидает только хост и порт (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">localhost:4318</code>), а признак протокола задается через опцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WithInsecure()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Указывать схему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http://</code> в параметре <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WithEndpoint(&quot;http://localhost:4318&quot;)</code>: метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WithEndpoint</code> ожидает только хост и порт (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">localhost:4318</code>), а признак протокола задается через опцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WithInsecure()</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -7403,7 +7377,7 @@ func TestOTLPTraceHTTPJaegerExport(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Фиксация ошибок</strong>: В функции произошла ошибка. Вместо простого возврата, сделай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.RecordError(err)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetStatus(codes.Error, "failed to get user")</code>. Это подсветит спан в Jaeger ярко-красным цветом.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Фиксация ошибок</strong>: В функции произошла ошибка. Вместо простого возврата, сделай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.RecordError(err)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetStatus(codes.Error, &quot;failed to get user&quot;)</code>. Это подсветит спан в Jaeger ярко-красным цветом.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7412,14 +7386,12 @@ func TestOTLPTraceHTTPJaegerExport(t *testing.T) {
 <li style="margin-bottom: 4px;">В Go ошибки возвращаются как значения (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err != nil</code>).</li>
 <li style="margin-bottom: 4px;"><strong>Связка RecordError + SetStatus:</strong></li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">user, err := repo.GetUser(ctx, id)</p>
-<p style="margin-bottom: 6px;">if err != nil {</p>
-<p style="margin-bottom: 6px;">span.RecordError(err)</p>
-<p style="margin-bottom: 6px;">span.SetStatus(codes.Error, "failed to get user")</p>
-<p style="margin-bottom: 6px;">return nil, fmt.Errorf("getUser: %w", err)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  user, err := repo.GetUser(ctx, id)
+  if err != nil {
+      span.RecordError(err)
+      span.SetStatus(codes.Error, &quot;failed to get user&quot;)
+      return nil, fmt.Errorf(&quot;getUser: %w&quot;, err)
+  }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Эффект в мониторинге:</strong></li>
 <li style="margin-bottom: 4px;">Графическая красная подсветка в UI.</li>
@@ -7526,7 +7498,7 @@ func TestErrorRecordingStatus(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Атрибуты и События</strong>: Внутри спана вызови <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetAttributes(attribute.Int("user_id", 42))</code>. Затем добавь событие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.AddEvent("cache_miss")</code>. Посмотри в Jaeger, как это выглядит (События — это как логи, но привязанные конкретно к этому куску трейса).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Атрибуты и События</strong>: Внутри спана вызови <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetAttributes(attribute.Int(&quot;user_id&quot;, 42))</code>. Затем добавь событие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.AddEvent(&quot;cache_miss&quot;)</code>. Посмотри в Jaeger, как это выглядит (События — это как логи, но привязанные конкретно к этому куску трейса).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7617,7 +7589,7 @@ func TestAttributesAndEventsSymbiosis(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Когда событие (Event) спана предпочтительнее создания дочернего спана (Child Span)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если действие мгновенно (не имеет длительности, задержка < 1 мкс) — например, факт сброса кэша, срабатывание условия if или получение TCP пакета. Создание дочернего спана в таких случаях создаст лишний оверхед и захламит дерево водопада микро-прямоугольниками.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если действие мгновенно (не имеет длительности, задержка &lt; 1 мкс) — например, факт сброса кэша, срабатывание условия if или получение TCP пакета. Создание дочернего спана в таких случаях создаст лишний оверхед и захламит дерево водопада микро-прямоугольниками.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-55">
@@ -7636,17 +7608,15 @@ func TestAttributesAndEventsSymbiosis(t *testing.T) {
 <li style="margin-bottom: 4px;">Паника в Go обрывает стек выполнения и может уронить процесс.</li>
 <li style="margin-bottom: 4px;"><strong>Безопасная обертка спана:</strong></li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">defer func() {</p>
-<p style="margin-bottom: 6px;">if r := recover(); r != nil {</p>
-<p style="margin-bottom: 6px;">err := fmt.Errorf("panic: %v", r)</p>
-<p style="margin-bottom: 6px;">span.RecordError(err)</p>
-<p style="margin-bottom: 6px;">span.SetStatus(codes.Error, "panic recovered")</p>
-<p style="margin-bottom: 6px;">span.End()</p>
-<p style="margin-bottom: 6px;">panic(r) // Повторный выброс паники для вышестоящего middleware!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}()</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  defer func() {
+      if r := recover(); r != nil {
+          err := fmt.Errorf(&quot;panic: %v&quot;, r)
+          span.RecordError(err)
+          span.SetStatus(codes.Error, &quot;panic recovered&quot;)
+          span.End()
+          panic(r) // Повторный выброс паники для вышестоящего middleware!
+      }
+  }()</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Гарантирует, что даже при панике спан успеет зафиксировать факт сбоя и отправиться в Jaeger до того, как процесс завершится.</li>
 </ul></div>
@@ -7731,7 +7701,7 @@ func TestPanicRecoveryTrace(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Для сохранения стектрейса паники вызывают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">debug.Stack()</code> и передают его в атрибуты события ошибки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace.WithAttributes(attribute.String("exception.stacktrace", string(debug.Stack())))</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Для сохранения стектрейса паники вызывают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">debug.Stack()</code> и передают его в атрибуты события ошибки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace.WithAttributes(attribute.String(&quot;exception.stacktrace&quot;, string(debug.Stack())))</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -7889,7 +7859,7 @@ func TestOTelCollectorTopologies(t *testing.T) {
 <li style="margin-bottom: 4px;">gRPC для высокоскоростного межсервисного взаимодействия.</li>
 <li style="margin-bottom: 4px;">HTTP/REST (через grpc-gateway или chi) для публичного API мобильных клиентов и веба.</li>
 <li style="margin-bottom: 4px;"><strong>Комплексная настройка:</strong></li>
-<li style="margin-bottom: 4px;">HTTP роутер: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelhttp.NewHandler(mux, "public-api")</code>.</li>
+<li style="margin-bottom: 4px;">HTTP роутер: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelhttp.NewHandler(mux, &quot;public-api&quot;)</code>.</li>
 <li style="margin-bottom: 4px;">gRPC сервер: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor())</code>.</li>
 <li style="margin-bottom: 4px;">Оба протокола используют единый глобальный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TracerProvider</code>, поэтому спаны формируются по одинаковым стандартам семантических конвенций.</li>
 </ul></div>
@@ -7989,7 +7959,7 @@ func TestDualProtocolAutoInstrumentation(t *testing.T) {
 <div class="exercise-card" id="ex-58">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #58</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Единый конвейер телеметрии OTel Collector: архитектура receivers -> processors -> exporters</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Единый конвейер телеметрии OTel Collector: архитектура receivers -&gt; processors -&gt; exporters</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -8001,22 +7971,20 @@ func TestDualProtocolAutoInstrumentation(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Конфигурационный файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otel-collector-config.yaml</code> объединяет все три столпа наблюдаемости (Three Pillars of Observability):</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`yaml</p>
-<p style="margin-bottom: 6px;">service:</p>
-<p style="margin-bottom: 6px;">pipelines:</p>
-<p style="margin-bottom: 6px;">traces:</p>
-<p style="margin-bottom: 6px;">receivers: [otlp]</p>
-<p style="margin-bottom: 6px;">processors: [memory_limiter, batch]</p>
-<p style="margin-bottom: 6px;">exporters: [otlp/tempo]</p>
-<p style="margin-bottom: 6px;">metrics:</p>
-<p style="margin-bottom: 6px;">receivers: [otlp, prometheus]</p>
-<p style="margin-bottom: 6px;">processors: [memory_limiter, batch]</p>
-<p style="margin-bottom: 6px;">exporters: [prometheusremotewrite]</p>
-<p style="margin-bottom: 6px;">logs:</p>
-<p style="margin-bottom: 6px;">receivers: [otlp, filelog]</p>
-<p style="margin-bottom: 6px;">processors: [memory_limiter, batch]</p>
-<p style="margin-bottom: 6px;">exporters: [loki]</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-yaml"><code class="language-yaml">  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        processors: [memory_limiter, batch]
+        exporters: [otlp/tempo]
+      metrics:
+        receivers: [otlp, prometheus]
+        processors: [memory_limiter, batch]
+        exporters: [prometheusremotewrite]
+      logs:
+        receivers: [otlp, filelog]
+        processors: [memory_limiter, batch]
+        exporters: [loki]</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Единый агент заменяет три разнородных демона (Fluentbit, Promtail, Jaeger-Agent).</li>
 </ul></div>
@@ -8138,13 +8106,11 @@ func TestUnifiedTelemetryPipeline(t *testing.T) {
 <li style="margin-bottom: 4px;">Отправка каждого спана отдельным HTTP/gRPC запросом создает колоссальный оверхед: на каждый спан приходится полный стек TCP/TLS заголовков.</li>
 <li style="margin-bottom: 4px;"><strong>Процессор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">batch</code> в OTel Collector:</strong></li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`yaml</p>
-<p style="margin-bottom: 6px;">processors:</p>
-<p style="margin-bottom: 6px;">batch:</p>
-<p style="margin-bottom: 6px;">timeout: 1s</p>
-<p style="margin-bottom: 6px;">send_batch_size: 1024</p>
-<p style="margin-bottom: 6px;">send_batch_max_size: 2048</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-yaml"><code class="language-yaml">  processors:
+    batch:
+      timeout: 1s
+      send_batch_size: 1024
+      send_batch_max_size: 2048</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Механика работы:</strong></li>
 <li style="margin-bottom: 4px;">Накапливает спаны в кольцевом буфере.</li>
@@ -8260,13 +8226,11 @@ func TestBatchProcessorBuffering(t *testing.T) {
 <li style="margin-bottom: 4px;">При пиковой нагрузке (DDOS или шквал ошибок) OTel Collector может исчерпать оперативную память контейнера и быть убит ядром Linux (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OOMKilled exit code 137</code>).</li>
 <li style="margin-bottom: 4px;"><strong>Процессор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">memory_limiter</code>:</strong></li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`yaml</p>
-<p style="margin-bottom: 6px;">processors:</p>
-<p style="margin-bottom: 6px;">memory_limiter:</p>
-<p style="margin-bottom: 6px;">check_interval: 1s</p>
-<p style="margin-bottom: 6px;">limit_percentage: 75</p>
-<p style="margin-bottom: 6px;">spike_limit_percentage: 20</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-yaml"><code class="language-yaml">  processors:
+    memory_limiter:
+      check_interval: 1s
+      limit_percentage: 75
+      spike_limit_percentage: 20</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Принцип работы:</strong></li>
 </ul>
@@ -8397,12 +8361,12 @@ func TestMemoryLimiterOOMProtection(t *testing.T) {
 <li style="margin-bottom: 4px;"><strong>Алгоритм Inject:</strong></li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Извлечь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SpanContext</code> из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сформатировать строку: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">00-<16-byte-hex-trace-id>-<8-byte-hex-span-id>-01</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Записать в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">req.Header.Set("traceparent", ...)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сформатировать строку: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">00-&lt;16-byte-hex-trace-id&gt;-&lt;8-byte-hex-span-id&gt;-01</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Записать в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">req.Header.Set(&quot;traceparent&quot;, ...)</code>.</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Алгоритм Extract:</strong></li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Прочитать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">req.Header.Get("traceparent")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Прочитать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">req.Header.Get(&quot;traceparent&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Распарсить hex-значения.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace.NewSpanContext(...)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Поместить контекст в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.Context()</code> для последующих вызовов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tracer.Start</code>.</div></div>
@@ -8615,7 +8579,7 @@ func TestExternalAPIClientTracing(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В семантических конвенциях OTel спан исходящего сетевого вызова помечается атрибутом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">peer.service = "partner-bank.ru"</code>, что позволяет системам мониторинга строить карты интеграций со сторонними внешними вендорами.</p></div>
+    <div><p style="margin-bottom: 6px;">В семантических конвенциях OTel спан исходящего сетевого вызова помечается атрибутом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">peer.service = &quot;partner-bank.ru&quot;</code>, что позволяет системам мониторинга строить карты интеграций со сторонними внешними вендорами.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -8634,7 +8598,7 @@ func TestExternalAPIClientTracing(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Настройте <strong>filter processor</strong> для удаления "шумных" span'ов (например, health checks).</p></div>
+    <div><p style="margin-bottom: 6px;">Настройте <strong>filter processor</strong> для удаления &quot;шумных&quot; span&#x27;ов (например, health checks).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8644,18 +8608,14 @@ func TestExternalAPIClientTracing(t *testing.T) {
 <li style="margin-bottom: 4px;">В кластере из 1 000 микросервисов это генерирует до <strong>1 000 000 мусорных спанов в минуту</strong>, забивающих хранилище Tempo и экраны поиска.</li>
 <li style="margin-bottom: 4px;"><strong>Процессор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filter</code> в OpenTelemetry Collector:</strong></li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`yaml</p>
-<p style="margin-bottom: 6px;">processors:</p>
-<p style="margin-bottom: 6px;">filter:</p>
-<p style="margin-bottom: 6px;">error_mode: ignore</p>
-<p style="margin-bottom: 6px;">traces:</p>
-<p style="margin-bottom: 6px;">span:</p>
-<ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">'attributes["http.route"] == "/livez"'</li>
-<li style="margin-bottom: 4px;">'attributes["http.route"] == "/readyz"'</li>
-<li style="margin-bottom: 4px;">'name == "healthcheck"'</li>
-</ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-yaml"><code class="language-yaml">  processors:
+    filter:
+      error_mode: ignore
+      traces:
+        span:
+          - &#x27;attributes[&quot;http.route&quot;] == &quot;/livez&quot;&#x27;
+          - &#x27;attributes[&quot;http.route&quot;] == &quot;/readyz&quot;&#x27;
+          - &#x27;name == &quot;healthcheck&quot;&#x27;</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Мгновенно отсекает спаны зондов живучести на этапе приема до записи на диск.</li>
 </ul></div>
@@ -8666,7 +8626,7 @@ func TestExternalAPIClientTracing(t *testing.T) {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте модель процессора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filter</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Задайте правила отсечения роутов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/livez</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/readyz</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте поток бизнес-запросов и healthcheck'ов.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте поток бизнес-запросов и healthcheck&#x27;ов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Верифицируйте удаление шума с сохранением полезных транзакций.</div></div>
   </div>
   <div class="code-container">
@@ -8746,7 +8706,7 @@ func TestFilterProcessorHealthcheck(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Фильтровать спаны по полному совпадению URL с query-параметрами (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/livez?verbose=1</code>): используйте проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">attributes["http.route"]</code> или регулярные выражения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IsMatch(attributes["http.target"], "^/livez.*")</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Фильтровать спаны по полному совпадению URL с query-параметрами (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/livez?verbose=1</code>): используйте проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">attributes[&quot;http.route&quot;]</code> или регулярные выражения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IsMatch(attributes[&quot;http.target&quot;], &quot;^/livez.*&quot;)</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -8770,26 +8730,18 @@ func TestFilterProcessorHealthcheck(t *testing.T) {
 <li style="margin-bottom: 4px;">Разработчики часто забывают передать переменные окружения в коде Go приложения.</li>
 <li style="margin-bottom: 4px;"><strong>Процессор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">attributes</code> в OTel Collector:</strong></li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`yaml</p>
-<p style="margin-bottom: 6px;">processors:</p>
-<p style="margin-bottom: 6px;">attributes:</p>
-<p style="margin-bottom: 6px;">actions:</p>
-<ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">key: deployment.environment</li>
-</ul>
-<p style="margin-bottom: 6px;">value: production</p>
-<p style="margin-bottom: 6px;">action: insert</p>
-<ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">key: service.version</li>
-</ul>
-<p style="margin-bottom: 6px;">from_attribute: k8s.pod.labels.version</p>
-<p style="margin-bottom: 6px;">action: upsert</p>
-<ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">key: host.name</li>
-</ul>
-<p style="margin-bottom: 6px;">value: ${env:HOST_NAME}</p>
-<p style="margin-bottom: 6px;">action: insert</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-yaml"><code class="language-yaml">  processors:
+    attributes:
+      actions:
+        - key: deployment.environment
+          value: production
+          action: insert
+        - key: service.version
+          from_attribute: k8s.pod.labels.version
+          action: upsert
+        - key: host.name
+          value: ${env:HOST_NAME}
+          action: insert</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Преимущество:</strong> Гарантирует наличие обязательных метаданных компании во всех трейсах независимо от квалификации автора микросервиса!</li>
 </ul></div>
@@ -8880,7 +8832,7 @@ func TestAttributesProcessorEnrichment(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">insert</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">upsert</code> для динамических атрибутов: если сервис уже передал значение-заглушку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">service.version="dev"</code>, действие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">insert</code> не перезапишет его на реальный тег релиза.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">insert</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">upsert</code> для динамических атрибутов: если сервис уже передал значение-заглушку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">service.version=&quot;dev&quot;</code>, действие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">insert</code> не перезапишет его на реальный тег релиза.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -9003,11 +8955,9 @@ func TestMultiplexExportRouting(t *testing.T) {
 <li style="margin-bottom: 4px;">Библиотека <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">uptrace/opentelemetry-go-extra/otelsql</code>:</li>
 <li style="margin-bottom: 4px;">Оборачивает любое подключение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sql.DB</code>:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">db, err := otelsql.Open("postgres", dsn)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">    db, err := otelsql.Open(&quot;postgres&quot;, dsn)</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">При выполнении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.QueryRowContext(ctx, "SELECT balance FROM users WHERE id = $1", 42)</code>:</li>
+<li style="margin-bottom: 4px;">При выполнении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.QueryRowContext(ctx, &quot;SELECT balance FROM users WHERE id = $1&quot;, 42)</code>:</li>
 <li style="margin-bottom: 4px;">Создается дочерний спан с именем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT users</code>.</li>
 <li style="margin-bottom: 4px;">Внутри атрибутов спана сохраняется <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db.statement</code>:</li>
 </ul>
@@ -9089,7 +9039,7 @@ func TestUptraceSQLStatementInspect(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Передавать сырые значения вместо плейсхолдеров (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf("WHERE id = %d", id)</code>): это не только уязвимость SQL Injection, но и приводит к созданию миллионов уникальных спанов вместо единого шаблона запроса.</p></div>
+    <div><p style="margin-bottom: 6px;">Передавать сырые значения вместо плейсхолдеров (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf(&quot;WHERE id = %d&quot;, id)</code>): это не только уязвимость SQL Injection, но и приводит к созданию миллионов уникальных спанов вместо единого шаблона запроса.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -9115,11 +9065,9 @@ func TestUptraceSQLStatementInspect(t *testing.T) {
 <li style="margin-bottom: 4px;">Лог — это структурированное событие с полями <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TraceID</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SpanID</code>.</li>
 <li style="margin-bottom: 4px;">Экспортер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">loki</code> в OTel Collector:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`yaml</p>
-<p style="margin-bottom: 6px;">exporters:</p>
-<p style="margin-bottom: 6px;">loki:</p>
-<p style="margin-bottom: 6px;">endpoint: http://loki:3100/loki/api/v1/push</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-yaml"><code class="language-yaml">    exporters:
+      loki:
+        endpoint: http://loki:3100/loki/api/v1/push</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Передает логи с лейблами сервиса и метаданными трейса.</li>
 <li style="margin-bottom: 4px;">Позволяет перейти от анализа медленного спана прямо к строкам логов этой конкретной транзакции в Grafana!</li>
@@ -9224,26 +9172,22 @@ func TestLokiOTelCorrelationExport(t *testing.T) {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Бесшовный переход Trace -> Logs в Grafana (Derived Fields):</p>
+    <div><p style="margin-bottom: 6px;">Бесшовный переход Trace -&gt; Logs в Grafana (Derived Fields):</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Настройка источника данных (Data Source configuration) в Grafana:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`yaml</p>
-<p style="margin-bottom: 6px;">apiVersion: 1</p>
-<p style="margin-bottom: 6px;">datasources:</p>
-<ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">name: Tempo</li>
-</ul>
-<p style="margin-bottom: 6px;">type: tempo</p>
-<p style="margin-bottom: 6px;">jsonData:</p>
-<p style="margin-bottom: 6px;">tracesToLogsV2:</p>
-<p style="margin-bottom: 6px;">datasourceUid: 'loki-ds'</p>
-<p style="margin-bottom: 6px;">spanStartTimeShift: '-5m'</p>
-<p style="margin-bottom: 6px;">spanEndTimeShift: '5m'</p>
-<p style="margin-bottom: 6px;">filterByTraceId: true</p>
-<p style="margin-bottom: 6px;">customQuery: true</p>
-<p style="margin-bottom: 6px;">query: '{service_name="${__span.serviceName}"} |= "${__trace.id}"'</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-yaml"><code class="language-yaml">  apiVersion: 1
+  datasources:
+    - name: Tempo
+      type: tempo
+      jsonData:
+        tracesToLogsV2:
+          datasourceUid: &#x27;loki-ds&#x27;
+          spanStartTimeShift: &#x27;-5m&#x27;
+          spanEndTimeShift: &#x27;5m&#x27;
+          filterByTraceId: true
+          customQuery: true
+          query: &#x27;{service_name=&quot;${__span.serviceName}&quot;} |= &quot;${__trace.id}&quot;&#x27;</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Результат:</strong> При просмотре любого спана в Tempo появляется кнопка «Logs for this span», открывающая логи ровно этого временного окна!</li>
 </ul></div>
@@ -9319,7 +9263,7 @@ func TestGrafanaTempoToLokiLink(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Временной сдвиг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">spanStartTimeShift: '-5m'</code> необходим для компенсации возможного рассинхрона системных часов между нодами Kubernetes и буферизации логов перед отправкой.</p></div>
+    <div><p style="margin-bottom: 6px;">Временной сдвиг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">spanStartTimeShift: &#x27;-5m&#x27;</code> необходим для компенсации возможного рассинхрона системных часов между нодами Kubernetes и буферизации логов перед отправкой.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -9327,7 +9271,7 @@ func TestGrafanaTempoToLokiLink(t *testing.T) {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как работает обратная связь Logs -> Traces в Grafana (из Loki в Tempo)?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как работает обратная связь Logs -&gt; Traces в Grafana (из Loki в Tempo)?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> В настройках Loki Data Source настраивают секцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">derivedFields</code>: регулярное выражение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(?:trace_id|traceparent)=([0-9a-f]{32})</code> находит идентификатор в строке любого лога и превращает его в кликабельную ссылку, открывающую панель Tempo с детальным графом вызова.</p></div>
   </div>
 </div>
@@ -9346,19 +9290,15 @@ func TestGrafanaTempoToLokiLink(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">На стороне сервера:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">server := grpc.NewServer(</p>
-<p style="margin-bottom: 6px;">grpc.StatsHandler(otelgrpc.NewServerHandler()),</p>
-<p style="margin-bottom: 6px;">)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  server := grpc.NewServer(
+      grpc.StatsHandler(otelgrpc.NewServerHandler()),
+  )</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">На стороне клиента:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">conn, err := grpc.Dial(addr,</p>
-<p style="margin-bottom: 6px;">grpc.WithStatsHandler(otelgrpc.NewClientHandler()),</p>
-<p style="margin-bottom: 6px;">)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  conn, err := grpc.Dial(addr,
+      grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
+  )</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В современных версиях gRPC Go вместо интерцепторов используется более производительный механизм <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">StatsHandler</code>, который перехватывает все сетевые события на уровне транспортного сокета без промежуточных аллокаций памяти.</li>
 </ul></div>
@@ -9452,7 +9392,7 @@ func TestOTelGRPCStatsHandler(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Настройте <strong>service graph</strong> в Grafana: визуализация зависимостей между микросервисами на основе span'ов.</p></div>
+    <div><p style="margin-bottom: 6px;">Настройте <strong>service graph</strong> в Grafana: визуализация зависимостей между микросервисами на основе span&#x27;ов.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9578,7 +9518,7 @@ func TestGrafanaServiceGraph(t *testing.T) {
 <li style="margin-bottom: 4px;"><strong>Спецификация Exemplar:</strong></li>
 <li style="margin-bottom: 4px;">К конкретному наблюдению гистограммы прикрепляется ссылка на конкретный спан:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http_request_duration_seconds_bucket{le="2.5"} 1 # {trace_id="4bf92f..."} 2.45 1600000000</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http_request_duration_seconds_bucket{le=&quot;2.5&quot;} 1 # {trace_id=&quot;4bf92f...&quot;} 2.45 1600000000</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В Grafana точки с эксемплярами отображаются в виде синих ромбиков на графике.</li>
 <li style="margin-bottom: 4px;">Клик по ромбику мгновенно открывает боковую панель с детальным трейсом этого запроса!</li>
@@ -9653,7 +9593,7 @@ func TestOpenMetricsExemplarHistogram(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В официальном клиенте Prometheus Go SDK метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">prometheus.ExemplarObserver.ObserveWithExemplar(val, prometheus.Labels{"trace_id": sc.TraceID().String()})</code> обновляет ячейку Exemplar только при смене бакета, сохраняя постоянный O(1) расход памяти.</p></div>
+    <div><p style="margin-bottom: 6px;">В официальном клиенте Prometheus Go SDK метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">prometheus.ExemplarObserver.ObserveWithExemplar(val, prometheus.Labels{&quot;trace_id&quot;: sc.TraceID().String()})</code> обновляет ячейку Exemplar только при смене бакета, сохраняя постоянный O(1) расход памяти.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -9681,8 +9621,8 @@ func TestOpenMetricsExemplarHistogram(t *testing.T) {
 <li style="margin-bottom: 4px;">При падении внешней зависимости сервис обязан активировать все три сигнальных механизма:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Трейс:</strong> клиентский спан помечается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">codes.Error</code> с деталями ошибки HTTP 500.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Метрика:</strong> счетчик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http_client_errors_total{peer="service-b"}.Inc()</code> инкрементируется для алертинга.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Лог:</strong> структурированная запись <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slog.Error("downstream failed", "trace_id", tid, "status", 500)</code> отправляется в Loki.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Метрика:</strong> счетчик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http_client_errors_total{peer=&quot;service-b&quot;}.Inc()</code> инкрементируется для алертинга.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Лог:</strong> структурированная запись <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slog.Error(&quot;downstream failed&quot;, &quot;trace_id&quot;, tid, &quot;status&quot;, 500)</code> отправляется в Loki.</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Гарантирует, что инцидент зафиксирован во всех системах мониторинга одновременно.</li>
 </ul></div>
@@ -9783,7 +9723,7 @@ func TestBrokenDependencyTriad(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Baggage (Багаж)</strong>: Трейсы передают только TraceID. Но тебе нужно прокинуть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant_id</code> через 4 микросервиса (даже туда, где он явно не нужен в API). Положи его в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">baggage.NewContext()</code>. Убедись, что OTel автоматически пробросил этот "багаж" через HTTP/gRPC заголовки до самого последнего сервиса, где ты смог его прочитать.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Baggage (Багаж)</strong>: Трейсы передают только TraceID. Но тебе нужно прокинуть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant_id</code> через 4 микросервиса (даже туда, где он явно не нужен в API). Положи его в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">baggage.NewContext()</code>. Убедись, что OTel автоматически пробросил этот &quot;багаж&quot; через HTTP/gRPC заголовки до самого последнего сервиса, где ты смог его прочитать.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -10025,7 +9965,7 @@ func TestSemconvHTTPStandard(t *testing.T) {
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sdktrace.ParentBased(sdktrace.TraceIDRatioBased(0.10))</code>:</li>
 <li style="margin-bottom: 4px;">Если запрос корневой: сохраняется в 10% случаев на основе детерминированного хэша <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TraceID</code>.</li>
 <li style="margin-bottom: 4px;">Если запрос дочерний: жестко следует решению родительского спана.</li>
-<li style="margin-bottom: 4px;"><strong>Гарантия сохранения ошибок (Panic & Error Retention):</strong></li>
+<li style="margin-bottom: 4px;"><strong>Гарантия сохранения ошибок (Panic &amp; Error Retention):</strong></li>
 <li style="margin-bottom: 4px;">При возникновении ошибки или паники в коде вызывается метод принудительного включения флага сэмплирования спана (или задействуется Tail-Based сэмплирование в коллекторе).</li>
 <li style="margin-bottom: 4px;">Ни одна ошибка в продакшене не ускользает от внимания команды!</li>
 </ul></div>
@@ -10114,14 +10054,14 @@ func TestParentBasedPanicSampler(t *testing.T) {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему настройку сэмплирования 10% запросов нельзя делать через rand.Float64() < 0.1 на каждом микросервисе?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему настройку сэмплирования 10% запросов нельзя делать через rand.Float64() &lt; 0.1 на каждом микросервисе?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что независимый случайный выбор на каждом шаге приведет к фрагментации трейса: сервис А сохранит спан с вероятностью 10%, сервис Б сохранит с вероятностью 10% (уже 1% для пары), а к 5-му сервису вероятность сохранения всей цепочки упадет до 0.001%! Использовать нужно только детерминированный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TraceIDRatioBased</code> с оберткой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ParentBased</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-76">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #76</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Связка Metrics + Traces (Exemplars для продвинутых): сохранение Exemplar при задержке > 2с для перехода на пик</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Связка Metrics + Traces (Exemplars для продвинутых): сохранение Exemplar при задержке &gt; 2с для перехода на пик</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -10135,16 +10075,14 @@ func TestParentBasedPanicSampler(t *testing.T) {
 <li style="margin-bottom: 4px;"><strong>Паттерн медленных эксемпляров (Slow Exemplars):</strong></li>
 <li style="margin-bottom: 4px;">При выполнении замера гистограммы:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">duration := time.Since(start).Seconds()</p>
-<p style="margin-bottom: 6px;">if duration > 2.0 {</p>
-<p style="margin-bottom: 6px;">hist.ObserveWithExemplar(duration, prometheus.Labels{</p>
-<p style="margin-bottom: 6px;">"trace_id": span.SpanContext().TraceID().String(),</p>
-<p style="margin-bottom: 6px;">})</p>
-<p style="margin-bottom: 6px;">} else {</p>
-<p style="margin-bottom: 6px;">hist.Observe(duration)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">    duration := time.Since(start).Seconds()
+    if duration &gt; 2.0 {
+        hist.ObserveWithExemplar(duration, prometheus.Labels{
+            &quot;trace_id&quot;: span.SpanContext().TraceID().String(),
+        })
+    } else {
+        hist.Observe(duration)
+    }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Результат:</strong> На графике задержек в Grafana синие точки-эксемпляры появляются строго на пиках торможения, позволяя инженеру расследовать только реальные аномалии!</li>
 </ul></div>
@@ -10153,7 +10091,7 @@ func TestParentBasedPanicSampler(t *testing.T) {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте обработчик с условной записью Exemplar при задержке > 2.0 сек.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте обработчик с условной записью Exemplar при задержке &gt; 2.0 сек.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Смоделируйте быстрый запрос (0.05 сек) без Exemplar.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте медленный запрос (2.45 сек) с прикреплением <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TraceID</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверьте фильтрацию эксемпляров.</div></div>
@@ -10240,7 +10178,7 @@ func TestConditionalExemplarSlowQuery(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Какое ограничение на длину меток Exemplar накладывает спецификация OpenMetrics?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Суммарная длина всех меток и значений внутри одного Exemplar не должна превышать 128 байт. Этого с запасом хватает для пары <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace_id=<32 hex></code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span_id=<16 hex></code>, но запрещает передавать длинные текстовые сообщения логов.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Суммарная длина всех меток и значений внутри одного Exemplar не должна превышать 128 байт. Этого с запасом хватает для пары <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace_id=&lt;32 hex&gt;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span_id=&lt;16 hex&gt;</code>, но запрещает передавать длинные текстовые сообщения логов.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-77">
@@ -10254,7 +10192,7 @@ func TestConditionalExemplarSlowQuery(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Trace: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">POST /orders</code> → <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderService.CreateOrder</code> → <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ValidateInventory</code> (50ms) → <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReserveInventory</code> (200ms, DB lock contention!) → <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ProcessPayment</code> (300ms, external API) → <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SendNotification</code> (100ms, async)</li>
 <li style="margin-bottom: 4px;">Identify bottleneck: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReserveInventory</code> — optimize DB query, add index</li>
-<li style="margin-bottom: 4px;">Identify optimization: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SendNotification</code> — make async, don't block response</li>
+<li style="margin-bottom: 4px;">Identify optimization: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SendNotification</code> — make async, don&#x27;t block response</li>
 <li style="margin-bottom: 4px;">Measure improvement: before/after trace comparison</li>
 </ul></div>
   </div>
@@ -10265,7 +10203,7 @@ func TestConditionalExemplarSlowQuery(t *testing.T) {
 <li style="margin-bottom: 4px;">Анализ диаграммы водопада (Gantt Chart Analysis):</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Критический путь (Critical Path):</strong> непрерывная последовательность самых длинных блокирующих операций.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Поиск блокировок СУБД (Lock Contention):</strong> спан длится аномально долго при простом запросе -> нехватка индексов или конфликт блокировок строк <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT FOR UPDATE</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Поиск блокировок СУБД (Lock Contention):</strong> спан длится аномально долго при простом запросе -&gt; нехватка индексов или конфликт блокировок строк <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT FOR UPDATE</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Вынос неблокирующих операций:</strong> отправка email/push уведомлений не должна блокировать синхронный HTTP ответ покупателю!</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -10369,7 +10307,7 @@ func TestDistributedTraceAnalysis(t *testing.T) {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как с помощью трассировки выявить эффект "DB Lock Contention" (борьбу за блокировки строк)?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как с помощью трассировки выявить эффект &quot;DB Lock Contention&quot; (борьбу за блокировки строк)?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если простой запрос <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UPDATE products SET stock = stock - 1 WHERE id = 1</code> обычно выполняется за 0.5 мс, но под нагрузкой на графике трейса время спана вырастает до 500 мс при нулевой утилизации CPU СУБД — транзакция заблокирована другой горутиной, удерживающей эксклюзивную блокировку этой же строки.</p></div>
   </div>
 </div>
@@ -10512,25 +10450,25 @@ func TestGracefulShutdownTraceFlush(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Slow Query Alert]</strong>: Напиши middleware для БД, которое замеряет время выполнения SQL-запроса. Если запрос выполняется дольше 500ms, оно пишет Warning-лог, создает span с тегом "slow_query=true" и инкрементирует метрику <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db_slow_queries_total</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Slow Query Alert]</strong>: Напиши middleware для БД, которое замеряет время выполнения SQL-запроса. Если запрос выполняется дольше 500ms, оно пишет Warning-лог, создает span с тегом &quot;slow_query=true&quot; и инкрементирует метрику <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db_slow_queries_total</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Паттерн Slow Query Interceptor (Детектор медленных запросов):</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">В HighLoad системах медленный SQL-запрос (> 500 мс) — главная причина деградации сервиса и исчерпания пула соединений.</li>
+<li style="margin-bottom: 4px;">В HighLoad системах медленный SQL-запрос (&gt; 500 мс) — главная причина деградации сервиса и исчерпания пула соединений.</li>
 <li style="margin-bottom: 4px;"><strong>Тройная реакция middleware:</strong></li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Спан трассировки:</strong> помечается тегом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slow_query=true</code> и сохраняется с наивысшим приоритетом.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Метрика Prometheus:</strong> счетчик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db_slow_queries_total{query="SELECT orders"}.Inc()</code> поднимает алерт в Grafana.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Структурированный лог:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slog.Warn("slow sql query detected", "duration_ms", ms, "query", sql, "trace_id", tid)</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Метрика Prometheus:</strong> счетчик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db_slow_queries_total{query=&quot;SELECT orders&quot;}.Inc()</code> поднимает алерт в Grafana.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Структурированный лог:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slog.Warn(&quot;slow sql query detected&quot;, &quot;duration_ms&quot;, ms, &quot;query&quot;, sql, &quot;trace_id&quot;, tid)</code>.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте SQL middleware с замером длительности вызова.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуйте проверку порога задержки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">duration >= 500ms</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуйте проверку порога задержки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">duration &gt;= 500ms</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Добавьте тег <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slow_query=true</code> в спан при превышении порога.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Инкрементируйте метрику <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db_slow_queries_total</code> и запишите Warning-лог.</div></div>
   </div>
@@ -10618,7 +10556,7 @@ func TestSlowQueryDetectorMiddleware(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Забыть нормализовать имя запроса для метрики: если передавать сырой текст запроса в лейбл Prometheus, возникнет взрыв кардинальности. В метрику передают имя таблицы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">table="audit_logs"</code>), а полный текст пишут в спан и лог.</p></div>
+    <div><p style="margin-bottom: 6px;">Забыть нормализовать имя запроса для метрики: если передавать сырой текст запроса в лейбл Prometheus, возникнет взрыв кардинальности. В метрику передают имя таблицы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">table=&quot;audit_logs&quot;</code>), а полный текст пишут в спан и лог.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>

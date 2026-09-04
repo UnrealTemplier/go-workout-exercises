@@ -1150,7 +1150,7 @@
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Инициализируйте контекст приложения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx := context.Background()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создайте клиент Redis через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.NewClient</code> с указанием адреса сервера (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">localhost:6379</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Обязательно добавьте отложенное закрытие пула соединений через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer rdb.Close()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вызовите метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Set(ctx, "greeting", "Привет из Go!", 30*time.Second).Err()</code> и проверьте возвращенную ошибку.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вызовите метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Set(ctx, &quot;greeting&quot;, &quot;Привет из Go!&quot;, 30*time.Second).Err()</code> и проверьте возвращенную ошибку.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -1222,7 +1222,7 @@ docker exec -it redis-local redis-cli TTL greeting
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что произойдет, если в Redis закончится оперативная память, а мы продолжаем выполнять <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET</code> с TTL?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Поведение зависит от директивы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxmemory-policy</code>. По умолчанию при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">noeviction</code> Redis вернет клиенту ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OOM command not allowed when used memory > 'maxmemory'</code>. При политиках <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">volatile-lru</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">allkeys-lru</code> Redis вытеснит наименее востребованные ключи для освобождения места под новый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Поведение зависит от директивы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxmemory-policy</code>. По умолчанию при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">noeviction</code> Redis вернет клиенту ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OOM command not allowed when used memory &gt; &#x27;maxmemory&#x27;</code>. При политиках <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">volatile-lru</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">allkeys-lru</code> Redis вытеснит наименее востребованные ключи для освобождения места под новый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-2">
@@ -1238,7 +1238,7 @@ docker exec -it redis-local redis-cli TTL greeting
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.NewClient(...)</code> не открывает физическое TCP-соединение немедленно в момент вызова; он лишь создает управляющую структуру и ленивый пул соединений. Реальное рукопожатие TCP происходит только при первом запросе.</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">Для проверки доступности сервера при старте приложения (например, в рамках Kubernetes Readiness/Liveness Probe) необходимо отправить команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PING</code> через метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Ping(ctx)</code>. При успешном ответе Redis возвращает строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"PONG"</code>.</p></div>
+<p style="margin-bottom: 6px;">Для проверки доступности сервера при старте приложения (например, в рамках Kubernetes Readiness/Liveness Probe) необходимо отправить команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PING</code> через метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Ping(ctx)</code>. При успешном ответе Redis возвращает строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;PONG&quot;</code>.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -1389,11 +1389,11 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В протоколе RESP2 отсутствие данных кодировалось как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$-1\r\n</code>. В новом протоколе RESP3 для отсутствия значений введен отдельный тип данных <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Null</code> (символ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_\r\n</code>). Библиотека <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> парсит оба типа и преобразует их в глобальную переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil = errors.New("redis: nil")</code>. Сравнение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> позволяет корректно обрабатывать обернутые ошибки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("cache: %w", err)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">В протоколе RESP2 отсутствие данных кодировалось как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$-1\r\n</code>. В новом протоколе RESP3 для отсутствия значений введен отдельный тип данных <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Null</code> (символ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_\r\n</code>). Библиотека <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> парсит оба типа и преобразует их в глобальную переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil = errors.New(&quot;redis: nil&quot;)</code>. Сравнение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> позволяет корректно обрабатывать обернутые ошибки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;cache: %w&quot;, err)</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Сравнение ошибки строкой вида <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err.Error() == "redis: nil"</code>. Это ломает код при оборачивании ошибки в Middleware или слое Repository. Всегда используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, redis.Nil)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Сравнение ошибки строкой вида <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err.Error() == &quot;redis: nil&quot;</code>. Это ломает код при оборачивании ошибки в Middleware или слое Repository. Всегда используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, redis.Nil)</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1424,7 +1424,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Задайте структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&redis.Options</code> с явным указанием сетевых таймаутов.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Задайте структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;redis.Options</code> с явным указанием сетевых таймаутов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создайте клиент через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.NewClient</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Отправьте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Ping</code> с контекстом с дедлайном 2 секунды.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Распечатайте ответ.</div></div>
@@ -1499,7 +1499,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CacheGet(key string) (string, error)</code>, использующую <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Get(ctx, key).Result()</code>. Обработай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil</code> — это <strong>не ошибка</strong>, а отсутствие ключа. Верни <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">("", false)</code> или кастомную ошибку.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CacheGet(key string) (string, error)</code>, использующую <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Get(ctx, key).Result()</code>. Обработай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil</code> — это <strong>не ошибка</strong>, а отсутствие ключа. Верни <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(&quot;&quot;, false)</code> или кастомную ошибку.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1515,7 +1515,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявите интерфейс или функцию с явной передачей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.Context</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Get(ctx, key).Result()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> При <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, redis.Nil)</code> верните <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">("", false, nil)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> При <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, redis.Nil)</code> верните <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(&quot;&quot;, false, nil)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> При наличии значения верните <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(val, true, nil)</code>.</div></div>
   </div>
   <div class="code-container">
@@ -1606,7 +1606,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Каковы преимущества возврата кортежа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(string, bool, error)</code> по сравнению с кастомной ошибкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ErrNotFound</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Идиома <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(val, found, error)</code> соответствует стандартным конструкциям языка Go (например, чтение из мапы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val, ok := m[key]</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v, ok := <-ch</code>). Это позволяет писать чистые и читаемые условия <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if !found { ... }</code> без накладных расходов на создание объектов ошибок и вызовы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> в горячем цикле.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Идиома <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(val, found, error)</code> соответствует стандартным конструкциям языка Go (например, чтение из мапы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val, ok := m[key]</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v, ok := &lt;-ch</code>). Это позволяет писать чистые и читаемые условия <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if !found { ... }</code> без накладных расходов на создание объектов ошибок и вызовы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> в горячем цикле.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-6">
@@ -1630,7 +1630,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CacheDelete(ctx context.Context, key string) (bool, error)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c.rdb.Del(ctx, key).Result()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Верните <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">true</code>, если удалено >= 1 ключей, и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, если удалено 0.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Верните <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">true</code>, если удалено &gt;= 1 ключей, и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, если удалено 0.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -1931,7 +1931,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать в качестве значения просто статическую строку (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"1"</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"locked"</code>). Если воркер закончит работу позже истечения TTL и сделает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DEL lockKey</code>, он случайно удалит блокировку уже другого воркера! Значением всегда должен быть уникальный UUID воркера.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать в качестве значения просто статическую строку (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;1&quot;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;locked&quot;</code>). Если воркер закончит работу позже истечения TTL и сделает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DEL lockKey</code>, он случайно удалит блокировку уже другого воркера! Значением всегда должен быть уникальный UUID воркера.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1960,7 +1960,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Подключитесь к Redis.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Incr(ctx, "stats:views:page_1").Result()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Incr(ctx, &quot;stats:views:page_1&quot;).Result()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Прочитайте возвращенное новое целочисленное значение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int64</code>.</div></div>
   </div>
   <div class="code-container">
@@ -2017,7 +2017,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Попытка вызвать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">INCR</code> над ключом, содержащим нечисловую строку (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"hello"</code>). Redis вернет ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ERR value is not an integer or out of range</code>. Также помните о переполнении: при превышении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math.MaxInt64</code> Redis вернет ошибку переполнения.</p></div>
+    <div><p style="margin-bottom: 6px;">Попытка вызвать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">INCR</code> над ключом, содержащим нечисловую строку (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;hello&quot;</code>). Redis вернет ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ERR value is not an integer or out of range</code>. Также помните о переполнении: при превышении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math.MaxInt64</code> Redis вернет ошибку переполнения.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2120,7 +2120,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Подключись к Redis через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/redis/go-redis/v9</code>. Создай клиент: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb := redis.NewClient(&redis.Options{Addr: "localhost:6379"})</code>. Проверь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Ping(ctx).Result()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Подключись к Redis через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/redis/go-redis/v9</code>. Создай клиент: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb := redis.NewClient(&amp;redis.Options{Addr: &quot;localhost:6379&quot;})</code>. Проверь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Ping(ctx).Result()</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2135,7 +2135,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Подключите библиотеку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/redis/go-redis/v9</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создайте клиент с адресом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"localhost:6379"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создайте клиент с адресом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;localhost:6379&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Ping(ctx).Result()</code> с обработкой ошибки.</div></div>
   </div>
   <div class="code-container">
@@ -2185,7 +2185,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Забывать указывать порт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">:6379</code> при передаче хоста. Если передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Addr: "localhost"</code>, клиент не сможет разобрать адрес и вернет ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">missing port in address</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Забывать указывать порт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">:6379</code> при передаче хоста. Если передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Addr: &quot;localhost&quot;</code>, клиент не сможет разобрать адрес и вернет ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">missing port in address</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2419,7 +2419,7 @@ func main() {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как сделать снятие блокировки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Unlock</code> абсолютно безопасным?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать Lua-скрипт, который атомарно проверяет, совпадает ли значение в ключе с нашим уникальным <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UUID</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end</code>. Это гарантирует, что процесс может удалить только свой собственный замок.</p></div>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if redis.call(&quot;get&quot;, KEYS[1]) == ARGV[1] then return redis.call(&quot;del&quot;, KEYS[1]) else return 0 end</code>. Это гарантирует, что процесс может удалить только свой собственный замок.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-14">
@@ -2429,7 +2429,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Запись и чтение строк (SET/GET)</strong>: Напишите функцию кэширования текстовых данных. Запишите в Redis ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"session_token"</code> со значением <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"user_123_active"</code>. Установите время жизни ключа (TTL) равным 10 секундам. Прочитайте значение ключа и выведите его на экран. Подождите 11 секунд и попробуйте прочитать ключ снова.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Запись и чтение строк (SET/GET)</strong>: Напишите функцию кэширования текстовых данных. Запишите в Redis ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;session_token&quot;</code> со значением <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;user_123_active&quot;</code>. Установите время жизни ключа (TTL) равным 10 секундам. Прочитайте значение ключа и выведите его на экран. Подождите 11 секунд и попробуйте прочитать ключ снова.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2441,7 +2441,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запишите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"session_token"</code> со значением <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"user_123_active"</code> и TTL 2 секунды (для быстроты демонстрации в коде).</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запишите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;session_token&quot;</code> со значением <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;user_123_active&quot;</code> и TTL 2 секунды (для быстроты демонстрации в коде).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Прочитайте значение сразу после записи.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сделайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code> на время, превышающее TTL.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Прочитайте ключ снова и убедитесь в возврате <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil</code>.</div></div>
@@ -2628,21 +2628,19 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Полагаться на отрицательные значения счетчика в Redis как на допустимый баланс без дополнительных валидаций. Если вы списываете остатки товара со склада, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DECR</code> легко уведет счетчик в минус (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-5</code>), если не использовать Lua-скрипт с условием проверки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if stock >= amount</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Полагаться на отрицательные значения счетчика в Redis как на допустимый баланс без дополнительных валидаций. Если вы списываете остатки товара со склада, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DECR</code> легко уведет счетчик в минус (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-5</code>), если не использовать Lua-скрипт с условием проверки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if stock &gt;= amount</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как реализовать атомарное списание товара со склада без ухода в отрицательные значения средствами Redis?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через Lua-скрипт:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`lua</p>
-<p style="margin-bottom: 6px;">local current = tonumber(redis.call('get', KEYS[1]) or '0')</p>
-<p style="margin-bottom: 6px;">local amount = tonumber(ARGV[1])</p>
-<p style="margin-bottom: 6px;">if current >= amount then</p>
-<p style="margin-bottom: 6px;">return redis.call('decrby', KEYS[1], amount)</p>
-<p style="margin-bottom: 6px;">else</p>
-<p style="margin-bottom: 6px;">return -1 -- ошибка: недостаточно товара</p>
-<p style="margin-bottom: 6px;">end</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-lua"><code class="language-lua">local current = tonumber(redis.call(&#x27;get&#x27;, KEYS[1]) or &#x27;0&#x27;)
+local amount = tonumber(ARGV[1])
+if current &gt;= amount then
+    return redis.call(&#x27;decrby&#x27;, KEYS[1], amount)
+else
+    return -1 -- ошибка: недостаточно товара
+end</code></pre></div>
 <p style="margin-bottom: 6px;">Скрипт исполняется атомарно в одном тике Event Loop.</p></div>
   </div>
 </div>
@@ -2653,7 +2651,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Изучите разницу между <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Keys("*")</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Scan()</code>. Напишите скрипт, который удаляет ключи по паттерну, используя <strong>только</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Scan</code>, чтобы не заблокировать продакшен-Redis (команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">KEYS</code> блокирует поток!).</p></div>
+    <div><p style="margin-bottom: 6px;">Изучите разницу между <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Keys(&quot;*&quot;)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Scan()</code>. Напишите скрипт, который удаляет ключи по паттерну, используя <strong>только</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Scan</code>, чтобы не заблокировать продакшен-Redis (команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">KEYS</code> блокирует поток!).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2752,7 +2750,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в большинстве компаний команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">KEYS</code> отключают в конфигурационном файле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.conf</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Команду отключают директивой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rename-command KEYS ""</code> ради стабильности продакшена. Даже опытный разработчик может случайно выполнить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">KEYS *</code> в командной строке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis-cli</code>, что мгновенно вызовет отказ обслуживания (DoS) всего сервиса под высокой нагрузкой.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Команду отключают директивой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rename-command KEYS &quot;&quot;</code> ради стабильности продакшена. Даже опытный разработчик может случайно выполнить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">KEYS *</code> в командной строке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis-cli</code>, что мгновенно вызовет отказ обслуживания (DoS) всего сервиса под высокой нагрузкой.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-17">
@@ -2772,7 +2770,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявите структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserProfile</code> с тегами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"..."</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявите структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserProfile</code> с тегами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;...&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сериализуйте структуру через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Marshal</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сохраните байты в Redis.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Считайте строку из Redis и выполните <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal</code>.</div></div>
@@ -2857,7 +2855,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Использование метода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.Bytes()</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.Result()</code> экономит одну аллокацию памяти: клиент возвращает срез байт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[]byte</code>, который напрямую передается в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal([]byte, &dest)</code>, минуя конвертацию в промежуточную строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Использование метода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.Bytes()</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.Result()</code> экономит одну аллокацию памяти: клиент возвращает срез байт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[]byte</code>, который напрямую передается в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal([]byte, &amp;dest)</code>, минуя конвертацию в промежуточную строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -2956,7 +2954,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> пул реализован как очередь сокетов. Если горутина запрашивает соединение, а свободных нет и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TotalConns < PoolSize</code>, создается новое соединение. Если достигнут <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PoolSize</code>, горутина встает в очередь ожидания на канале с таймаутом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PoolTimeout</code>. Если за отведенное время ни одно соединение не освободилось, возвращается ошибка.</p></div>
+    <div><p style="margin-bottom: 6px;">Внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> пул реализован как очередь сокетов. Если горутина запрашивает соединение, а свободных нет и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TotalConns &lt; PoolSize</code>, создается новое соединение. Если достигнут <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PoolSize</code>, горутина встает в очередь ожидания на канале с таймаутом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PoolTimeout</code>. Если за отведенное время ни одно соединение не освободилось, возвращается ошибка.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -2975,7 +2973,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>distributed lock</strong> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetNX</code> + <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Expire</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET key value NX EX 10</code>. Если lock получен — выполни работу, затем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Del(key)</code>. Обработай "владение" lock'ом: значение = UUID процесса, проверяй перед <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Del</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>distributed lock</strong> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetNX</code> + <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Expire</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET key value NX EX 10</code>. Если lock получен — выполни работу, затем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Del(key)</code>. Обработай &quot;владение&quot; lock&#x27;ом: значение = UUID процесса, проверяй перед <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Del</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3078,7 +3076,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Lua-скрипты в Redis исполняются атомарно транзакционно. Пока выполняется скрипт, никакие другие команды не могут вклиниться между проверкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.call("get")</code> и вызовом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.call("del")</code>. Это гарантирует отсутствие состояния гонки (Check-Then-Act race condition).</p></div>
+    <div><p style="margin-bottom: 6px;">Lua-скрипты в Redis исполняются атомарно транзакционно. Пока выполняется скрипт, никакие другие команды не могут вклиниться между проверкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.call(&quot;get&quot;)</code> и вызовом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.call(&quot;del&quot;)</code>. Это гарантирует отсутствие состояния гонки (Check-Then-Act race condition).</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -3115,8 +3113,8 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Подключитесь к Redis.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сохраните поля пользователя через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.HSet(ctx, "user:1", "name", "Иван", "email", "ivan@yandex.ru")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Считайте все поля через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.HGetAll(ctx, "user:1").Result()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сохраните поля пользователя через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.HSet(ctx, &quot;user:1&quot;, &quot;name&quot;, &quot;Иван&quot;, &quot;email&quot;, &quot;ivan@yandex.ru&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Считайте все поля через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.HGetAll(ctx, &quot;user:1&quot;).Result()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Результат вернется в виде <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]string</code>.</div></div>
   </div>
   <div class="code-container">
@@ -3202,11 +3200,11 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Запиши значение по ключу: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Set(ctx, "user:1:name", "Alice", 0)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Запиши значение по ключу: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Set(ctx, &quot;user:1:name&quot;, &quot;Alice&quot;, 0)</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">В Redis соглашение об именовании ключей строится по иерархическому принципу с двоеточием в качестве разделителя: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><namespace>:<entity_id>:<field></code>. Это структурирует пространство ключей и облегчает аудит в CLI и GUI-утилитах (RedisInsight).</p>
+    <div><p style="margin-bottom: 6px;">В Redis соглашение об именовании ключей строится по иерархическому принципу с двоеточием в качестве разделителя: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;namespace&gt;:&lt;entity_id&gt;:&lt;field&gt;</code>. Это структурирует пространство ключей и облегчает аудит в CLI и GUI-утилитах (RedisInsight).</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Передача <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code> (или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0 * time.Second</code>) в качестве аргумента <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">expiration</code> означает, что у ключа <strong>нет срока жизни</strong> (No Expiration / Persistent Key). Ключ останется в памяти навсегда, пока не будет явно удален командой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DEL</code> или вытеснен алгоритмом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxmemory-policy</code>.</p></div>
   </div>
@@ -3215,8 +3213,8 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Подключитесь к локальному Redis.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Set(ctx, "user:1:name", "Alice", 0)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убедитесь с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.TTL(ctx, "user:1:name")</code>, что возвращается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-1</code> (ключ бессрочный).</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Set(ctx, &quot;user:1:name&quot;, &quot;Alice&quot;, 0)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убедитесь с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.TTL(ctx, &quot;user:1:name&quot;)</code>, что возвращается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-1</code> (ключ бессрочный).</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -3292,21 +3290,21 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Hashes</strong>: Сохраните профиль пользователя (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HSET user:1 name "John" age 30</code>). Прочитайте одно поле (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HGET</code>) и весь объект (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HGETALL</code> с маппингом в структуру через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ScanAsTuple</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MapStringString</code>).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Hashes</strong>: Сохраните профиль пользователя (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HSET user:1 name &quot;John&quot; age 30</code>). Прочитайте одно поле (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HGET</code>) и весь объект (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HGETALL</code> с маппингом в структуру через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ScanAsTuple</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MapStringString</code>).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HSET</code> позволяет атомарно записать несколько полей хэша.</p>
-<p style="margin-bottom: 6px;">Библиотека <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> обладает мощным механизмом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Scan</code>: если передать указатель на структуру с тегами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis:"field_name"</code>, метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.HGetAll(ctx, key).Scan(&targetStruct)</code> автоматически десериализует строковые поля хэша в типизированные поля структуры Go (строки, целые числа, булевы флаги).</p></div>
+<p style="margin-bottom: 6px;">Библиотека <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> обладает мощным механизмом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Scan</code>: если передать указатель на структуру с тегами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis:&quot;field_name&quot;</code>, метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.HGetAll(ctx, key).Scan(&amp;targetStruct)</code> автоматически десериализует строковые поля хэша в типизированные поля структуры Go (строки, целые числа, булевы флаги).</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Опишите структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User</code> с тегами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis:"name"</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis:"age"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Опишите структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User</code> с тегами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis:&quot;name&quot;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis:&quot;age&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запишите поля через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.HSet</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Прочитайте одно поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">name</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.HGet</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Считайте весь хэш и распарсите в структуру через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.Scan(&user)</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Считайте весь хэш и распарсите в структуру через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.Scan(&amp;user)</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -3373,11 +3371,11 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.Scan()</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> парсит поля через рефлексию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reflect</code>, ищет теги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis:"..."</code> и преобразует строковые представления в нативные типы Go с помощью функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strconv.ParseInt</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strconv.ParseBool</code> и т.д. Это работает «из коробки» без сторонних библиотек.</p></div>
+    <div><p style="margin-bottom: 6px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.Scan()</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> парсит поля через рефлексию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reflect</code>, ищет теги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis:&quot;...&quot;</code> и преобразует строковые представления в нативные типы Go с помощью функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strconv.ParseInt</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strconv.ParseBool</code> и т.д. Это работает «из коробки» без сторонних библиотек.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Забывать указывать теги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis:"..."</code>. Если тег не указан, маппер попытается сопоставить точное имя поля структуры Go с учетом регистра (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Name</code> != <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">name</code>).</p></div>
+    <div><p style="margin-bottom: 6px;">Забывать указывать теги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis:&quot;...&quot;</code>. Если тег не указан, маппер попытается сопоставить точное имя поля структуры Go с учетом регистра (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Name</code> != <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">name</code>).</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3531,7 +3529,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Базовый Set/Get и redis.Nil</strong>: Сохрани строковое значение по ключу: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Set(ctx, "mykey", "hello", 0)</code>. Прочитай его. Затем попробуй прочитать несуществующий ключ и обработай ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, redis.Nil)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Базовый Set/Get и redis.Nil</strong>: Сохрани строковое значение по ключу: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Set(ctx, &quot;mykey&quot;, &quot;hello&quot;, 0)</code>. Прочитай его. Затем попробуй прочитать несуществующий ключ и обработай ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, redis.Nil)</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3541,9 +3539,9 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запишите строковый ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"mykey" = "hello"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запишите строковый ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;mykey&quot; = &quot;hello&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Прочитайте существующий ключ и выведите его значение.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Попробуйте прочитать ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"missing_key_example"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Попробуйте прочитать ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;missing_key_example&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Обработайте ошибку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, redis.Nil)</code>.</div></div>
   </div>
   <div class="code-container">
@@ -3601,7 +3599,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil</code> объявлен в пакете <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis</code> как переменная <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Nil = errors.New("redis: nil")</code>. Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors</code> из стандартной библиотеки Go начиная с Go 1.13 сопоставляет указатели на ошибки при вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, redis.Nil)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil</code> объявлен в пакете <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis</code> как переменная <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Nil = errors.New(&quot;redis: nil&quot;)</code>. Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors</code> из стандартной библиотеки Go начиная с Go 1.13 сопоставляет указатели на ошибки при вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, redis.Nil)</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -3620,7 +3618,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Обработка отсутствия ключа</strong>: При попытке получить несуществующий ключ клиент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> возвращает специальную ошибку. Напишите проверку: если возвращаемая ошибка равна <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil</code>, выведите сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Ключ не найден в кэше"</code>, иначе обработайте сетевую ошибку.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Обработка отсутствия ключа</strong>: При попытке получить несуществующий ключ клиент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> возвращает специальную ошибку. Напишите проверку: если возвращаемая ошибка равна <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil</code>, выведите сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Ключ не найден в кэше&quot;</code>, иначе обработайте сетевую ошибку.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3628,9 +3626,9 @@ func main() {
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err != nil { return err }</code></p>
 <p style="margin-bottom: 6px;">При таком подходе при первом же промахе кэша сервис падает или прекращает обработку запроса! Нужно явно разделять логику:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err == nil</code> -> данные есть в кэше, отдаем клиенту (Cache Hit).</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, redis.Nil)</code> -> данных нет, идем в базу данных (Cache Miss).</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err != nil</code> -> сетевой разрыв, Redis недоступен. Логируем WARN, но не роняем сервис: деградируем и пробуем прочитать данные напрямую из БД!</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err == nil</code> -&gt; данные есть в кэше, отдаем клиенту (Cache Hit).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, redis.Nil)</code> -&gt; данных нет, идем в базу данных (Cache Miss).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err != nil</code> -&gt; сетевой разрыв, Redis недоступен. Логируем WARN, но не роняем сервис: деградируем и пробуем прочитать данные напрямую из БД!</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -3705,7 +3703,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err == redis.Nil</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, redis.Nil)</code>. Если ошибка была обернута через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("redis error: %w", err)</code>, прямое сравнение указателей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">==</code> вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>!</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err == redis.Nil</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, redis.Nil)</code>. Если ошибка была обернута через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;redis error: %w&quot;, err)</code>, прямое сравнение указателей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">==</code> вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>!</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3730,7 +3728,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запишите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"expiring_key"</code> с TTL 3 секунды.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запишите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;expiring_key&quot;</code> с TTL 3 секунды.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Прочитайте значение немедленно — убедитесь в наличии.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep(4 * time.Second)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Повторите чтение и зафиксируйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil</code>.</div></div>
@@ -3938,7 +3936,7 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Запрос 50 ключей по отдельности через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Get()</code> порождает 50 сетевых round-trip'ов (RTT). При задержке сети 1 мс это займет 50 мс.</p>
+    <div><p style="margin-bottom: 6px;">Запрос 50 ключей по отдельности через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Get()</code> порождает 50 сетевых round-trip&#x27;ов (RTT). При задержке сети 1 мс это займет 50 мс.</p>
 <p style="margin-bottom: 6px;">Команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MGET key1 key2 ... keyN</code> отправляет пачку ключей за ОДИН сетевой запрос, сокращая время до 1 мс.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Особенность возвращаемого значения в протоколе RESP:</p>
@@ -3948,8 +3946,8 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запишите ключи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"item:1"</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"item:3"</code>. Ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"item:2"</code> оставьте отсутствующим.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.MGet(ctx, "item:1", "item:2", "item:3").Result()</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запишите ключи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;item:1&quot;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;item:3&quot;</code>. Ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;item:2&quot;</code> оставьте отсутствующим.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.MGet(ctx, &quot;item:1&quot;, &quot;item:2&quot;, &quot;item:3&quot;).Result()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проитерируйтесь по срезу: если элемент равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>, это промах кэша; если строка — валидное значение.</div></div>
   </div>
   <div class="code-container">
@@ -4046,7 +4044,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MGET</code> в Redis Cluster без Hash Tags. Если запрошенные ключи распределены по разным шардам (слотам), Redis Cluster вернет ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CROSSSLOT Keys in request don't hash to the same slot</code>. Для объединения ключей в один слот в кластере используются фигурные скобки, например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{user:1}:profile</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{user:1}:settings</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MGET</code> в Redis Cluster без Hash Tags. Если запрошенные ключи распределены по разным шардам (слотам), Redis Cluster вернет ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CROSSSLOT Keys in request don&#x27;t hash to the same slot</code>. Для объединения ключей в один слот в кластере используются фигурные скобки, например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{user:1}:profile</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{user:1}:settings</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -4061,7 +4059,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Sets</strong>: Создайте систему "друзей" или "тегов". Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SADD</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SINTER</code> (для поиска общих друзей) и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SUNION</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Sets</strong>: Создайте систему &quot;друзей&quot; или &quot;тегов&quot;. Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SADD</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SINTER</code> (для поиска общих друзей) и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SUNION</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4158,7 +4156,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в социальной сети типа VK или Одноклассники рассчитывается блок "Возможные друзья (Mutual Friends)"?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в социальной сети типа VK или Одноклассники рассчитывается блок &quot;Возможные друзья (Mutual Friends)&quot;?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> С помощью операции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SINTER</code> над множествами друзей двух пользователей. Чтобы не пересылать мегабайты данных по сети на бэкенд, часто используют команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SINTERSTORE dest_key key1 key2</code>, которая сохраняет результат пересечения прямо на сервере Redis за $O(N \times M)$.</p></div>
   </div>
 </div>
@@ -4402,7 +4400,7 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Промышленный код изолирует взаимодействие с Redis за интерфейсом репозитория. Слой бизнес-логики не должен вручную формировать ключи вида <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf("user:%s", id)</code> или вызывать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Marshal</code>.</p>
+    <div><p style="margin-bottom: 6px;">Промышленный код изолирует взаимодействие с Redis за интерфейсом репозитория. Слой бизнес-логики не должен вручную формировать ключи вида <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf(&quot;user:%s&quot;, id)</code> или вызывать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Marshal</code>.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Функция получения сущности должна четко сигнализировать о промахе кэша: если ключ не найден (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil</code>), возвращается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(*User)(nil), nil</code>, что означает «в кэше пусто, ошибки инфраструктуры нет».</p></div>
   </div>
@@ -4520,7 +4518,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Формировать ключи динамической конкатенацией строк в горячих циклах (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"user:" + id</code>). Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf</code> при миллионах вызовов аллоцирует память. В высоконагруженных шлюзах эффективнее использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Builder</code> или предвыделенные буферы байт.</p></div>
+    <div><p style="margin-bottom: 6px;">Формировать ключи динамической конкатенацией строк в горячих циклах (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;user:&quot; + id</code>). Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf</code> при миллионах вызовов аллоцирует память. В высоконагруженных шлюзах эффективнее использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Builder</code> или предвыделенные буферы байт.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -4737,7 +4735,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Забывать, что любая команда перезаписи ключа без явного TTL (например, повторный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET key "new_value"</code> без параметра времени) сбрасывает ранее установленный TTL, превращая ключ в бессрочный! В Redis 7+ для сохранения старого TTL используется опция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">KEEPTTL</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET key val KEEPTTL</code>).</p></div>
+    <div><p style="margin-bottom: 6px;">Забывать, что любая команда перезаписи ключа без явного TTL (например, повторный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET key &quot;new_value&quot;</code> без параметра времени) сбрасывает ранее установленный TTL, превращая ключ в бессрочный! В Redis 7+ для сохранения старого TTL используется опция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">KEEPTTL</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET key val KEEPTTL</code>).</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -4758,7 +4756,7 @@ func main() {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Тегирование контента — классическая задача для Redis Sets.</p>
-<p style="margin-bottom: 6px;">Если статья 1 имеет теги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">["go", "backend", "highload"]</code>, а статья 2 — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">["backend", "postgresql", "docker"]</code>, пересечение тегов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SINTER article:1:tags article:2:tags</code> вернет общий тег <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">["backend"]</code>. Это позволяет строить рекомендательные системы похожих статей за доли миллисекунды.</p></div>
+<p style="margin-bottom: 6px;">Если статья 1 имеет теги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[&quot;go&quot;, &quot;backend&quot;, &quot;highload&quot;]</code>, а статья 2 — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[&quot;backend&quot;, &quot;postgresql&quot;, &quot;docker&quot;]</code>, пересечение тегов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SINTER article:1:tags article:2:tags</code> вернет общий тег <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[&quot;backend&quot;]</code>. Это позволяет строить рекомендательные системы похожих статей за доли миллисекунды.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -4834,8 +4832,8 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как реализовать обратный индекс тегов (получение всех статей по тегу "golang")?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Создать ключи множеств по тегам: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tag:golang:articles</code>, куда добавлять ID статей: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SADD tag:golang:articles 101 102</code>. Для поиска статей, имеющих одновременно теги "golang" и "redis", вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SINTER tag:golang:articles tag:redis:articles</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как реализовать обратный индекс тегов (получение всех статей по тегу &quot;golang&quot;)?»</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Создать ключи множеств по тегам: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tag:golang:articles</code>, куда добавлять ID статей: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SADD tag:golang:articles 101 102</code>. Для поиска статей, имеющих одновременно теги &quot;golang&quot; и &quot;redis&quot;, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SINTER tag:golang:articles tag:redis:articles</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-36">
@@ -4957,7 +4955,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Счетчики (Incr / Decr)</strong>: Реализуй счетчик просмотров статьи. Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Incr(ctx, "article:123:views")</code>. (В отличие от реляционной БД с транзакциями, в Redis <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Incr</code> атомарен и работает за наносекунды).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Счетчики (Incr / Decr)</strong>: Реализуй счетчик просмотров статьи. Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Incr(ctx, &quot;article:123:views&quot;)</code>. (В отличие от реляционной БД с транзакциями, в Redis <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Incr</code> атомарен и работает за наносекунды).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4972,7 +4970,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RecordArticleView(ctx, articleID)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Incr(ctx, fmt.Sprintf("article:%d:views", articleID))</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Incr(ctx, fmt.Sprintf(&quot;article:%d:views&quot;, articleID))</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запустите 50 конкурентных горутин для имитации трафика.</div></div>
   </div>
   <div class="code-container">
@@ -5274,7 +5272,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetIsMember(key, member string) (bool, error)</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIsMember</code>. Используй для проверки "в чёрном списке".</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetIsMember(key, member string) (bool, error)</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIsMember</code>. Используй для проверки &quot;в чёрном списке&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5371,7 +5369,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как проверить наличие элемента среди 50 миллионов записей за доли микросекунды с экономией памяти в 10 раз по сравнению с Set?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать <strong>Bloom Filter</strong> (фильтр Блума, модуль RedisBloom, команды <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">BF.ADD</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">BF.EXISTS</code>). Фильтр Блума использует битовый массив и хэш-функции. Он гарантирует отсутствие ложноотрицательных срабатываний (если говорит "нет" — элемента точно нет) с минимальным настраиваемым процентом ложноположительных срабатываний (false positive rate, например 1%).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать <strong>Bloom Filter</strong> (фильтр Блума, модуль RedisBloom, команды <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">BF.ADD</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">BF.EXISTS</code>). Фильтр Блума использует битовый массив и хэш-функции. Он гарантирует отсутствие ложноотрицательных срабатываний (если говорит &quot;нет&quot; — элемента точно нет) с минимальным настраиваемым процентом ложноположительных срабатываний (false positive rate, например 1%).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-41">
@@ -5381,7 +5379,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Incr(ctx, "page_views")</code> для атомарного инкремента счетчика просмотров. Запусти 100 горутин, инкрементирующих счетчик, и убедись, что в итоге будет ровно 100.</p></div>
+    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Incr(ctx, &quot;page_views&quot;)</code> для атомарного инкремента счетчика просмотров. Запусти 100 горутин, инкрементирующих счетчик, и убедись, что в итоге будет ровно 100.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5392,9 +5390,9 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сбросьте ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"page_views"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сбросьте ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;page_views&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.WaitGroup</code> на 100 итераций.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В каждой горутине вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Incr(ctx, "page_views")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В каждой горутине вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Incr(ctx, &quot;page_views&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Дождитесь завершения и распечатайте итоговое значение.</div></div>
   </div>
   <div class="code-container">
@@ -5570,9 +5568,9 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Redis Streams (появились в Redis 5.0) — это персистентный append-only лог событий, спроектированный как легковесная альтернатива Apache Kafka:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XADD mystream * field value ...</code>: публикация события с автогенерацией уникального ID (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><timestampMS>-<sequence></code>).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XADD mystream * field value ...</code>: публикация события с автогенерацией уникального ID (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;timestampMS&gt;-&lt;sequence&gt;</code>).</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XGROUP CREATE mystream mygroup $ MKSTREAM</code>: создание группы потребителей.</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XREADGROUP GROUP mygroup consumer_1 COUNT 1 BLOCK 2000 STREAMS mystream ></code>: чтение новых недоставленных сообщений.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XREADGROUP GROUP mygroup consumer_1 COUNT 1 BLOCK 2000 STREAMS mystream &gt;</code>: чтение новых недоставленных сообщений.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XACK mystream mygroup id</code>: подтверждение успешной обработки сообщения.</li>
 </ul></div>
   </div>
@@ -5682,7 +5680,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем отличие Redis Streams от Redis Pub/Sub?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Pub/Sub работает по модели "Fire-and-Forget": сообщения нигде не сохраняются, и если подписчик был отключен, сообщение теряется навсегда. Streams — персистентный лог: сообщения сохраняются на диске/в памяти, поддерживают чтение истории, группы потребителей, балансировку нагрузки и подтверждение обработки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XACK</code>).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Pub/Sub работает по модели &quot;Fire-and-Forget&quot;: сообщения нигде не сохраняются, и если подписчик был отключен, сообщение теряется навсегда. Streams — персистентный лог: сообщения сохраняются на диске/в памяти, поддерживают чтение истории, группы потребителей, балансировку нагрузки и подтверждение обработки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XACK</code>).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-44">
@@ -5799,7 +5797,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> В горутине подписчика создайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pubsub := rdb.Subscribe(ctx, "chat:room_1")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> В горутине подписчика создайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pubsub := rdb.Subscribe(ctx, &quot;chat:room_1&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запустите чтение сообщений через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ch := pubsub.Channel()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В основной горутине опубликуйте 3 сообщения через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Publish</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Закройте подписку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pubsub.Close()</code>.</div></div>
@@ -6006,7 +6004,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как получить срез "игрок и 5 его ближайших соперников сверху и снизу"?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как получить срез &quot;игрок и 5 его ближайших соперников сверху и снизу&quot;?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1. Получаем ранг игрока <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rank := ZREVRANK key member</code>. 2. Вызываем диапазонную выборку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ZREVRANGE key (rank - 5) (rank + 5) WITHSCORES</code>. Обе операции выполняются за $O(\log N)$.</p></div>
   </div>
 </div>
@@ -6347,7 +6345,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Паттерн Кэширования "Cache-Aside"</strong>: Напишите комплексную функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GetUserData(ctx context.Context, id int) (*User, error)</code>:</p>
+    <div><p style="margin-bottom: 6px;"><strong>Паттерн Кэширования &quot;Cache-Aside&quot;</strong>: Напишите комплексную функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GetUserData(ctx context.Context, id int) (*User, error)</code>:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Функция проверяет наличие данных о пользователе в Redis (ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user:id</code>).</li>
 <li style="margin-bottom: 4px;">Если данные есть в кэше, она десериализует их и мгновенно возвращает результат (cache hit).</li>
@@ -6593,13 +6591,13 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Транзакции (WATCH/MULTI/EXEC)</strong>: Реализуйте оптимистичную блокировку. "Следите" (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WATCH</code>) за ключом баланса, начинайте транзакцию и выполняйте списание. Если ключ изменился извне до <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EXEC</code>, транзакция прервется, и вы повторите её.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Транзакции (WATCH/MULTI/EXEC)</strong>: Реализуйте оптимистичную блокировку. &quot;Следите&quot; (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WATCH</code>) за ключом баланса, начинайте транзакцию и выполняйте списание. Если ключ изменился извне до <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EXEC</code>, транзакция прервется, и вы повторите её.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Оптимистичная блокировка в Redis реализуется связкой команд <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WATCH</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MULTI</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EXEC</code>.</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Клиент вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WATCH key</code> — Redis начинает отслеживать любые изменения этого ключа.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Клиент считывает текущий баланс и валидирует бизнес-правило (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">balance >= cost</code>).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Клиент считывает текущий баланс и валидирует бизнес-правило (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">balance &gt;= cost</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Клиент открывает транзакцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MULTI</code>, добавляет команды и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EXEC</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Если между шагом 1 и шагом 3 другой клиент успел изменить ключ, Redis прерывает транзакцию и возвращает ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.TxFailedErr</code>. Клиент повторяет попытку (retry loop).</div></div>
   </div>
@@ -6918,7 +6916,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Хэши (Hashes)</strong>: Сохрани профиль пользователя не как JSON, а как Redis Hash. Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.HSet(ctx, "user:1", "name", "Ivan", "age", 25)</code>. Прочитай только возраст через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HGet</code>, а затем все поля сразу через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HGetAll</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Хэши (Hashes)</strong>: Сохрани профиль пользователя не как JSON, а как Redis Hash. Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.HSet(ctx, &quot;user:1&quot;, &quot;name&quot;, &quot;Ivan&quot;, &quot;age&quot;, 25)</code>. Прочитай только возраст через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HGet</code>, а затем все поля сразу через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HGetAll</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6928,7 +6926,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запишите поля <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">name = "Ivan"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">age = 25</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запишите поля <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">name = &quot;Ivan&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">age = 25</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Прочитайте только <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">age</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.HGet</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Прочитайте все поля через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.HGetAll</code>.</div></div>
   </div>
@@ -7109,7 +7107,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">unique_ips</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Добавьте 10 раз <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"192.168.1.1"</code> и 5 раз <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"10.0.0.1"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Добавьте 10 раз <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;192.168.1.1&quot;</code> и 5 раз <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;10.0.0.1&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверьте кардинальность через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SCard</code>.</div></div>
   </div>
   <div class="code-container">
@@ -7265,7 +7263,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Если клиент отправляет запрос ключа на узел, который за него не отвечает, сервер возвращает редирект <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-MOVED <slot> <ip:port></code>. Клиент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> перехватывает этот ответ, обновляет локальную таблицу маршрутизации слотов и автоматически повторяет запрос на правильном узле.</p></div>
+    <div><p style="margin-bottom: 6px;">Если клиент отправляет запрос ключа на узел, который за него не отвечает, сервер возвращает редирект <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-MOVED &lt;slot&gt; &lt;ip:port&gt;</code>. Клиент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> перехватывает этот ответ, обновляет локальную таблицу маршрутизации слотов и автоматически повторяет запрос на правильном узле.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -7284,7 +7282,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">StreamAdd(key string, values map[string]string) (string, error)</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.XAdd(ctx, &redis.XAddArgs{Stream: key, Values: values})</code>. Реализуй <strong>event sourcing</strong>: каждое событие = запись в stream.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">StreamAdd(key string, values map[string]string) (string, error)</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.XAdd(ctx, &amp;redis.XAddArgs{Stream: key, Values: values})</code>. Реализуй <strong>event sourcing</strong>: каждое событие = запись в stream.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7373,7 +7371,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Символы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"-"</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"+"</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XRANGE</code> обозначают соответственно минимально и максимально возможный ID сообщения в стриме, обеспечивая полное чтение лога от начала до конца.</p></div>
+    <div><p style="margin-bottom: 6px;">Символы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;-&quot;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;+&quot;</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XRANGE</code> обозначают соответственно минимально и максимально возможный ID сообщения в стриме, обеспечивая полное чтение лога от начала до конца.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -7382,7 +7380,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Из чего состоит ID сообщения в Redis Streams?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> ID состоит из двух частей: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><millisecondsTime>-<sequenceNumber></code>. Например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1526919030474-0</code>. Время формируется по системным часам сервера в миллисекундах. Если в одну и ту же миллисекунду поступило несколько сообщений, последовательный номер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sequenceNumber</code> инкрементируется.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> ID состоит из двух частей: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;millisecondsTime&gt;-&lt;sequenceNumber&gt;</code>. Например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1526919030474-0</code>. Время формируется по системным часам сервера в миллисекундах. Если в одну и ту же миллисекунду поступило несколько сообщений, последовательный номер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sequenceNumber</code> инкрементируется.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-60">
@@ -7570,7 +7568,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Сервер Redis при получении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MULTI</code> переводит клиентское соединение в состояние <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CLIENT_MULTI</code>. Все последующие команды не выполняются немедленно, а складываются в массив команд транзакции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c->mstate.commands</code>. При получении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EXEC</code> сервер исполняет весь массив подряд в цикле событий, гарантируя строгую изоляцию (Serializability).</p></div>
+    <div><p style="margin-bottom: 6px;">Сервер Redis при получении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MULTI</code> переводит клиентское соединение в состояние <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CLIENT_MULTI</code>. Все последующие команды не выполняются немедленно, а складываются в массив команд транзакции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c-&gt;mstate.commands</code>. При получении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EXEC</code> сервер исполняет весь массив подряд в цикле событий, гарантируя строгую изоляцию (Serializability).</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -7893,7 +7891,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Для оптимизации Redis кэширует скомпилированный байткод Lua-скрипта в SHA1-кэше. При повторных вызовах клиент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> при использовании структуры <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.NewScript</code> сначала пытается выполнить быструю команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EVALSHA <sha1></code>, и только если скрипта нет в кэше сервера (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NOSCRIPT</code>), шлет полный текст через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EVAL</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Для оптимизации Redis кэширует скомпилированный байткод Lua-скрипта в SHA1-кэше. При повторных вызовах клиент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> при использовании структуры <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.NewScript</code> сначала пытается выполнить быструю команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EVALSHA &lt;sha1&gt;</code>, и только если скрипта нет в кэше сервера (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NOSCRIPT</code>), шлет полный текст через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EVAL</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -8472,7 +8470,7 @@ func main() {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Сообщения распределяются между воркерами без дублирования.</li>
 <li style="margin-bottom: 4px;">Каждое сообщение поступает строго одному консьюмеру группы.</li>
-<li style="margin-bottom: 4px;">Для чтения новых сообщений используется специальный ID <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">">"</code>.</li>
+<li style="margin-bottom: 4px;">Для чтения новых сообщений используется специальный ID <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&gt;&quot;</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -8566,7 +8564,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Сервер Redis отслеживает курсор чтения для всей группы. Аргумент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">">"</code> инструктирует Redis отдать сообщения с ID, превышающим максимальный ранее распределенный ID в группе, обеспечивая строгий шардинг нагрузки.</p></div>
+    <div><p style="margin-bottom: 6px;">Сервер Redis отслеживает курсор чтения для всей группы. Аргумент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&gt;&quot;</code> инструктирует Redis отдать сообщения с ID, превышающим максимальный ранее распределенный ID в группе, обеспечивая строгий шардинг нагрузки.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -8574,7 +8572,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XREADGROUP</code>, если вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">">"</code> передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"0"</code>?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XREADGROUP</code>, если вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&gt;&quot;</code> передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;0&quot;</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Redis вернет сообщения из списка PEL (Pending Entries List), которые уже были доставлены этому консьюмеру, но еще НЕ были им подтверждены командой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XACK</code>. Это механизм восстановления при рестарте упавшего воркера.</p></div>
   </div>
 </div>
@@ -9026,7 +9024,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Cache-Aside pattern</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GetUserFromCacheOrDB(ctx, id int) (*User, error)</code>. Сначала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CacheGet("user:" + id)</code>. Если miss — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT</code> из PostgreSQL, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CacheSet</code> результат, верни. Обработай <strong>cache stampede</strong>: если ключ протухает, 100 запросов одновременно ломятся в БД.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Cache-Aside pattern</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GetUserFromCacheOrDB(ctx, id int) (*User, error)</code>. Сначала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CacheGet(&quot;user:&quot; + id)</code>. Если miss — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT</code> из PostgreSQL, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CacheSet</code> результат, верни. Обработай <strong>cache stampede</strong>: если ключ протухает, 100 запросов одновременно ломятся в БД.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9237,7 +9235,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Хранить в одном ключе Set миллионы IP-адресов: ключ станет "Big Key", что затруднит репликацию и резервное копирование (RDB snapshots).</p></div>
+    <div><p style="margin-bottom: 6px;">Хранить в одном ключе Set миллионы IP-адресов: ключ станет &quot;Big Key&quot;, что затруднит репликацию и резервное копирование (RDB snapshots).</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -9384,7 +9382,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В отличие от наивного фиксированного окна (Fixed Window Counter), алгоритм Sliding Window на ZSET полностью устраняет проблему "краевого эффекта" (Spike on Window Border), когда клиент шлет 100 запросов в 00:59 и еще 100 запросов в 01:00, пробивая 200% лимит сервера.</p></div>
+    <div><p style="margin-bottom: 6px;">В отличие от наивного фиксированного окна (Fixed Window Counter), алгоритм Sliding Window на ZSET полностью устраняет проблему &quot;краевого эффекта&quot; (Spike on Window Border), когда клиент шлет 100 запросов в 00:59 и еще 100 запросов в 01:00, пробивая 200% лимит сервера.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -9393,7 +9391,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как алгоритм GCRA (Leaky Bucket as a meter) позволяет реализовать Rate Limiting без хранения истории запросов?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> GCRA хранит только одно значение — TAT (Theoretical Arrival Time, теоретическое время прибытия следующего запроса). При каждом запросе рассчитывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">newTAT = max(now, oldTAT) + emissionInterval</code>. Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">newTAT - now > burstOffset</code>, запрос отклоняется. Это требует ровно 8 байт на клиента вместо ZSET!</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> GCRA хранит только одно значение — TAT (Theoretical Arrival Time, теоретическое время прибытия следующего запроса). При каждом запросе рассчитывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">newTAT = max(now, oldTAT) + emissionInterval</code>. Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">newTAT - now &gt; burstOffset</code>, запрос отклоняется. Это требует ровно 8 байт на клиента вместо ZSET!</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-78">
@@ -9530,7 +9528,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>cache stampede protection</strong> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetNX</code>: при cache miss — один запрос ставит lock <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"lock:user:123"</code>, грузит из БД, кладёт в кеш, удаляет lock. Остальные ждут lock'а или берут stale-данные.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>cache stampede protection</strong> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetNX</code>: при cache miss — один запрос ставит lock <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;lock:user:123&quot;</code>, грузит из БД, кладёт в кеш, удаляет lock. Остальные ждут lock&#x27;а или берут stale-данные.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9661,7 +9659,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что такое probabilistic early expiration (алгоритм XFetch)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это вероятностный алгоритм упреждающего прогрева кэша. Чем ближе время жизни ключа к истечению, тем выше вероятность, что случайный фоновый запрос пересчитает значение и обновит кэш ДО того, как ключ реально протухнет. Формула: $-\beta \times \delta \times \ln(\text{rand}()) > \text{TTL}$, где $\delta$ — время вычисления значения. Это полностью исключает Cache Miss для горячих ключей.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это вероятностный алгоритм упреждающего прогрева кэша. Чем ближе время жизни ключа к истечению, тем выше вероятность, что случайный фоновый запрос пересчитает значение и обновит кэш ДО того, как ключ реально протухнет. Формула: $-\beta \times \delta \times \ln(\text{rand}()) &gt; \text{TTL}$, где $\delta$ — время вычисления значения. Это полностью исключает Cache Miss для горячих ключей.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-80">
@@ -9756,7 +9754,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как с помощью ZSET удалить игроков с нулевым или отрицательным рейтингом?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Командой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ZREMRANGEBYSCORE key "-inf" 0</code>. Она удаляет все элементы со счетом от минус бесконечности до нуля за время $O(\log N + M)$.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Командой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ZREMRANGEBYSCORE key &quot;-inf&quot; 0</code>. Она удаляет все элементы со счетом от минус бесконечности до нуля за время $O(\log N + M)$.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-81">
@@ -9879,7 +9877,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Вычислять пополнение токенов отдельным фоновым таймером в Go. Нагрузка вырастет на миллионы ключей. Всегда рассчитывайте пополнение "лениво" (on-demand) в момент входящего запроса по формуле разницы времени <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">now - lastRefill</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Вычислять пополнение токенов отдельным фоновым таймером в Go. Нагрузка вырастет на миллионы ключей. Всегда рассчитывайте пополнение &quot;лениво&quot; (on-demand) в момент входящего запроса по формуле разницы времени <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">now - lastRefill</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -9894,7 +9892,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Сессии пользователей</strong>: Храните <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">session_id</code> в HttpOnly Cookie, а саму сессию (user_id, roles, preferences) — в Redis Hash с TTL. Реализуйте механизм "продления" сессии при активности.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Сессии пользователей</strong>: Храните <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">session_id</code> в HttpOnly Cookie, а саму сессию (user_id, roles, preferences) — в Redis Hash с TTL. Реализуйте механизм &quot;продления&quot; сессии при активности.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -10006,8 +10004,8 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как реализовать "Выйти на всех устройствах" (Single Logout) при хранении сессий в Redis?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Создать дополнительный Set <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user:105:sessions</code>, в который добавлять каждый сгенерированный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">session_id</code>. При нажатии "Выйти со всех устройств" бэкенд считывает список через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SMEMBERS</code>, удаляет все ключи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">session:<id></code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UNLINK</code> и очищает сам сет.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как реализовать &quot;Выйти на всех устройствах&quot; (Single Logout) при хранении сессий в Redis?»</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Создать дополнительный Set <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user:105:sessions</code>, в который добавлять каждый сгенерированный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">session_id</code>. При нажатии &quot;Выйти со всех устройств&quot; бэкенд считывает список через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SMEMBERS</code>, удаляет все ключи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">session:&lt;id&gt;</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UNLINK</code> и очищает сам сет.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-83">
@@ -10686,7 +10684,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Rate Limiter</strong> через Redis: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SLIDE_WINDOW</code>. Ключ = <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rate_limit:ip:minute:YYYY-MM-DD-HH-MM</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">INCR</code> + <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EXPIRE 60</code>. Если счётчик > limit — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">429 Too Many Requests</code>. Используй pipeline для атомарности <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">INCR</code> + <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EXPIRE</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Rate Limiter</strong> через Redis: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SLIDE_WINDOW</code>. Ключ = <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rate_limit:ip:minute:YYYY-MM-DD-HH-MM</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">INCR</code> + <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EXPIRE 60</code>. Если счётчик &gt; limit — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">429 Too Many Requests</code>. Используй pipeline для атомарности <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">INCR</code> + <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EXPIRE</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -10800,7 +10798,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Rate Limiter (sliding window log)</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ZADD</code> timestamp'ов, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ZREMRANGEBYSCORE</code> старых (старше window), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ZCARD</code> для подсчёта. Более точный, но дороже по памяти.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Rate Limiter (sliding window log)</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ZADD</code> timestamp&#x27;ов, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ZREMRANGEBYSCORE</code> старых (старше window), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ZCARD</code> для подсчёта. Более точный, но дороже по памяти.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -11585,11 +11583,11 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Скрипт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1])</code> исключает состояние гонки (Race Condition) между операциями проверки и удаления, так как выполняется в одном такте Event Loop Redis.</p></div>
+    <div><p style="margin-bottom: 6px;">Скрипт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if redis.call(&quot;get&quot;, KEYS[1]) == ARGV[1] then return redis.call(&quot;del&quot;, KEYS[1])</code> исключает состояние гонки (Race Condition) между операциями проверки и удаления, так как выполняется в одном такте Event Loop Redis.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать предсказуемые токены (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lock_val = "1"</code>). Токен обязан быть криптографически стойким и уникальным для каждого отдельного инстанса и вызова.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать предсказуемые токены (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lock_val = &quot;1&quot;</code>). Токен обязан быть криптографически стойким и уникальным для каждого отдельного инстанса и вызова.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -11604,7 +11602,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Pub/Sub</strong> через Redis: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Subscribe(ctx, "channel1", "channel2")</code>. В горутине читай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub.Channel()</code>. Другой клиент публикует через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Publish(ctx, "channel1", "message")</code>. Покажи real-time messaging.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Pub/Sub</strong> через Redis: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Subscribe(ctx, &quot;channel1&quot;, &quot;channel2&quot;)</code>. В горутине читай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub.Channel()</code>. Другой клиент публикует через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Publish(ctx, &quot;channel1&quot;, &quot;message&quot;)</code>. Покажи real-time messaging.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -11806,7 +11804,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Pub/Sub]</strong>: Напиши две программы (или две горутины). Первая подписывается на канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Subscribe(ctx, "news")</code> и читает сообщения в бесконечном цикле. Вторая публикует сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Publish(ctx, "news", "Hello")</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Pub/Sub]</strong>: Напиши две программы (или две горутины). Первая подписывается на канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Subscribe(ctx, &quot;news&quot;)</code> и читает сообщения в бесконечном цикле. Вторая публикует сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Publish(ctx, &quot;news&quot;, &quot;Hello&quot;)</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -11816,9 +11814,9 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запустите первую горутину с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Subscribe(ctx, "news")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запустите первую горутину с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Subscribe(ctx, &quot;news&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Читайте сообщения в цикле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for msg := range pubsub.Channel()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запустите вторую горутину с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Publish(ctx, "news", "Hello")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запустите вторую горутину с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Publish(ctx, &quot;news&quot;, &quot;Hello&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Зафиксируйте прием сообщения.</div></div>
   </div>
   <div class="code-container">
@@ -11919,9 +11917,9 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">В распределенных веб-приложениях пользователь может быть подключен одновременно с нескольких вкладок или устройств к разным инстансам бэкенда:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Ключ в Redis: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ws:user:<user_id>:connections</code> (структура Set).</li>
-<li style="margin-bottom: 4px;">При подключении клиента: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SADD ws:user:<id>:connections "<server_ip>:<socket_uuid>"</code>.</li>
-<li style="margin-bottom: 4px;">При отключении: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SREM ws:user:<id>:connections "<server_ip>:<socket_uuid>"</code>.</li>
+<li style="margin-bottom: 4px;">Ключ в Redis: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ws:user:&lt;user_id&gt;:connections</code> (структура Set).</li>
+<li style="margin-bottom: 4px;">При подключении клиента: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SADD ws:user:&lt;id&gt;:connections &quot;&lt;server_ip&gt;:&lt;socket_uuid&gt;&quot;</code>.</li>
+<li style="margin-bottom: 4px;">При отключении: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SREM ws:user:&lt;id&gt;:connections &quot;&lt;server_ip&gt;:&lt;socket_uuid&gt;&quot;</code>.</li>
 <li style="margin-bottom: 4px;">Для отправки личного сообщения сервис считывает адреса сокетов и шлет команду через Redis Pub/Sub на нужные ноды.</li>
 </ul></div>
   </div>
@@ -12034,7 +12032,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как быстро узнать, находится ли пользователь онлайн (Online Status)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Командой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SCARD ws:user:<id>:connections</code>. Если размер множества $> 0$ — пользователь онлайн, если $0$ или ключ отсутствует — оффлайн.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Командой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SCARD ws:user:&lt;id&gt;:connections</code>. Если размер множества $&gt; 0$ — пользователь онлайн, если $0$ или ключ отсутствует — оффлайн.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-101">
@@ -12044,7 +12042,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Redlock</strong> (упрощённый): несколько Redis-нод (3). Для получения lock'а — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetNX</code> на большинство нод с одинаковым UUID и TTL. Для release — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Del</code> на тех же нодах, где получил. Обсуди ограничения Redlock.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Redlock</strong> (упрощённый): несколько Redis-нод (3). Для получения lock&#x27;а — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetNX</code> на большинство нод с одинаковым UUID и TTL. Для release — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Del</code> на тех же нодах, где получил. Обсуди ограничения Redlock.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -12299,7 +12297,7 @@ func TestCacheExpirationWithMiniredis(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Паттерн <strong>CQRS (Command Query Responsibility Segregation)</strong> разделяет операции записи и чтения:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Write-сторона (Команды):</strong> строго нормализованные реляционные таблицы в PostgreSQL (ACID, внешние ключи, транзакции).</li>
-<li style="margin-bottom: 4px;"><strong>Read-сторона (Запросы):</strong> полностью денормализованные JSON-документы или кэши в Redis для мгновенной отдачи клиентам за 1 сетевой вызов без JOIN'ов.</li>
+<li style="margin-bottom: 4px;"><strong>Read-сторона (Запросы):</strong> полностью денормализованные JSON-документы или кэши в Redis для мгновенной отдачи клиентам за 1 сетевой вызов без JOIN&#x27;ов.</li>
 <li style="margin-bottom: 4px;"><strong>Шина событий:</strong> Redis Pub/Sub или Streams транслирует событие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderCreated</code> для обновления проекции в ReadModel.</li>
 </ul></div>
   </div>
@@ -12422,7 +12420,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Разделение CQRS снимает нагрузку со сложных SQL JOIN'ов и агрегатов: чтение готового документа из Redis занимает доли миллисекунды даже при миллиардах заказов в системе.</p></div>
+    <div><p style="margin-bottom: 6px;">Разделение CQRS снимает нагрузку со сложных SQL JOIN&#x27;ов и агрегатов: чтение готового документа из Redis занимает доли миллисекунды даже при миллиардах заказов в системе.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -12431,7 +12429,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что делать, если пользователь сразу после создания заказа открывает страницу заказов, а проекция в Redis еще не успела обновиться?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Применяется паттерн <strong>Read-Your-Own-Writes</strong>: 1. Либо UI оптимистично отображает созданный объект из состояния фронтенда. 2. Либо запрос на чтение с флагом "только что создано" направляется напрямую в PostgreSQL Master.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Применяется паттерн <strong>Read-Your-Own-Writes</strong>: 1. Либо UI оптимистично отображает созданный объект из состояния фронтенда. 2. Либо запрос на чтение с флагом &quot;только что создано&quot; направляется напрямую в PostgreSQL Master.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-104">
@@ -12625,7 +12623,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NX</code> проверяется в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">setGenericCommand()</code>. Если ключ уже существует, Redis возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NULL</code> bulk string, который <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> транслирует в ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ok != "OK"</code>, гарантируя взаимное исключение.</p></div>
+    <div><p style="margin-bottom: 6px;">Флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NX</code> проверяется в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">setGenericCommand()</code>. Если ключ уже существует, Redis возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NULL</code> bulk string, который <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-redis</code> транслирует в ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Nil</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ok != &quot;OK&quot;</code>, гарантируя взаимное исключение.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -12742,7 +12740,7 @@ func main() {
     <div class="callout-title">📌 Условие задачи</div>
     <div><p style="margin-bottom: 6px;"><strong>Pub/Sub в Redis</strong>: Напишите два независимых приложения (или две горутины):</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Издатель (Publisher) раз в секунду отправляет системные метрики в канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"system_events"</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Publish</code>.</li>
+<li style="margin-bottom: 4px;">Издатель (Publisher) раз в секунду отправляет системные метрики в канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;system_events&quot;</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Publish</code>.</li>
 <li style="margin-bottom: 4px;">Подписчик (Subscriber) слушает этот канал через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Subscribe</code> и выводит получаемые метрики на экран в реальном времени.</li>
 </ul></div>
   </div>
@@ -12754,7 +12752,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запустите горутину подписчика на топик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"system_events"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запустите горутину подписчика на топик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;system_events&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запустите горутину издателя, отправляющую JSON с метриками.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Распечатайте полученную телеметрию.</div></div>
   </div>
@@ -12857,7 +12855,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>"Order Service"</strong> с транзакциями:</p>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>&quot;Order Service&quot;</strong> с транзакциями:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CreateOrder(userID int, items []OrderItem) (*Order, error)</code> — транзакция: INSERT order, INSERT items, UPDATE inventory (проверка наличия), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT FOR UPDATE</code> на inventory</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GetOrder(id)</code> — JOIN order + items, cache-aside</li>
@@ -13029,14 +13027,14 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Распределенная блокировка (Distributed Lock)</strong>: У тебя 3 инстанса приложения, и крон-задачу должен выполнить только один. Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.SetNX(ctx, "cron_lock", "locked", 10*time.Second)</code> (Set if Not eXists). Тот инстанс, которому Redis ответит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">true</code>, выполняет задачу. Остальные пропускают.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Распределенная блокировка (Distributed Lock)</strong>: У тебя 3 инстанса приложения, и крон-задачу должен выполнить только один. Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.SetNX(ctx, &quot;cron_lock&quot;, &quot;locked&quot;, 10*time.Second)</code> (Set if Not eXists). Тот инстанс, которому Redis ответит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">true</code>, выполняет задачу. Остальные пропускают.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Когда в Kubernetes развернуто 3 реплики приложения с встроенным планировщиком Cron (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">robfig/cron</code>), каждый инстанс попытается запустить задачу в полночь.</p>
 <p style="margin-bottom: 6px;">Паттерн лидерства:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Все 3 пода вызывают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetNX("cron_lock", pod_id, 10*time.Second)</code>.</li>
+<li style="margin-bottom: 4px;">Все 3 пода вызывают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetNX(&quot;cron_lock&quot;, pod_id, 10*time.Second)</code>.</li>
 <li style="margin-bottom: 4px;">Под, получивший <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">true</code>, становится исполнителем (Worker).</li>
 <li style="margin-bottom: 4px;">Остальные 2 пода получают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code> и мирно засыпают.</li>
 </ul></div>
@@ -13046,7 +13044,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запустите три горутины, эмулирующие 3 пода.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Каждая пробует вызвать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetNX("cron_lock", pod_id, 10s)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Каждая пробует вызвать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetNX(&quot;cron_lock&quot;, pod_id, 10s)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убедитесь, что работу выполнил только один под.</div></div>
   </div>
   <div class="code-container">
@@ -13329,16 +13327,16 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Rate Limiter (Ограничитель запросов)</strong>: Напиши Middleware для HTTP-сервера (из предыдущего блока). При каждом запросе увеличивай счетчик по ключу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rate:limit:IP</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Incr</code>. Если это первый запрос — ставь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Expire</code> в 1 минуту. Если значение счетчика > 60 — возвращай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.StatusTooManyRequests</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Rate Limiter (Ограничитель запросов)</strong>: Напиши Middleware для HTTP-сервера (из предыдущего блока). При каждом запросе увеличивай счетчик по ключу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rate:limit:IP</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Incr</code>. Если это первый запрос — ставь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Expire</code> в 1 минуту. Если значение счетчика &gt; 60 — возвращай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.StatusTooManyRequests</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Классический паттерн HTTP Middleware защиты от DDoS и флуда:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Ключ: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rate:limit:<ip></code>.</li>
+<li style="margin-bottom: 4px;">Ключ: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rate:limit:&lt;ip&gt;</code>.</li>
 <li style="margin-bottom: 4px;">Команда: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">INCR</code>.</li>
 <li style="margin-bottom: 4px;">Если счетчик равен 1 (первый запрос в окне): устанавливается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EXPIRE key 60</code>.</li>
-<li style="margin-bottom: 4px;">Если счетчик $> 60$: прерываем цепочку хэндлеров и возвращаем HTTP 429.</li>
+<li style="margin-bottom: 4px;">Если счетчик $&gt; 60$: прерываем цепочку хэндлеров и возвращаем HTTP 429.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -13698,7 +13696,7 @@ func TestFullIntegrationSuite(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Инвалидация кэша</strong>: Напишите функцию обновления баланса пользователя в PostgreSQL. Чтобы избежать ситуации "грязного чтения" (когда в базе данных баланс уже обновился, а в кэше Redis висит старое значение), добавьте в функцию обязательное удаление соответствующего ключа из Redis (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Del</code>) в рамках одной логической операции обновления данных.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Инвалидация кэша</strong>: Напишите функцию обновления баланса пользователя в PostgreSQL. Чтобы избежать ситуации &quot;грязного чтения&quot; (когда в базе данных баланс уже обновился, а в кэше Redis висит старое значение), добавьте в функцию обязательное удаление соответствующего ключа из Redis (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.Del</code>) в рамках одной логической операции обновления данных.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>

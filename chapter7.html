@@ -1188,7 +1188,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&numbers[i]</code> вычисляется процессором по формуле $	ext{BaseAddress} + i 	imes 8$. Шаг между элементами ровно 8 байт (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sizeof(int)</code> на 64-битной архитектуре).</p></div>
+    <div><p style="margin-bottom: 6px;">Адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;numbers[i]</code> вычисляется процессором по формуле $	ext{BaseAddress} + i 	imes 8$. Шаг между элементами ровно 8 байт (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sizeof(int)</code> на 64-битной архитектуре).</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1274,7 +1274,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Каковы Zero Values для массива булевых флагов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[3]bool</code> и массива строк <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[2]string</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[3]bool</code> это <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[false, false, false]</code>, для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[2]string</code> это <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">["", ""]</code> (пустые строки с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>-указателем и нулевой длиной).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[3]bool</code> это <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[false, false, false]</code>, для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[2]string</code> это <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[&quot;&quot;, &quot;&quot;]</code> (пустые строки с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>-указателем и нулевой длиной).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-4">
@@ -1496,7 +1496,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Объяви массив строк [3]string{"Go", "Rust", "C++"}. Обрати внимание на вывод типа.</p></div>
+    <div><p style="margin-bottom: 6px;">Объяви массив строк [3]string{&quot;Go&quot;, &quot;Rust&quot;, &quot;C++&quot;}. Обрати внимание на вывод типа.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1511,7 +1511,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[3]string{"Go", "Rust", "C++"}</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[3]string{&quot;Go&quot;, &quot;Rust&quot;, &quot;C++&quot;}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Выводим тип <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%T</code> и размер в байтах через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">unsafe.Sizeof</code>.</div></div>
   </div>
   <div class="code-container">
@@ -1553,12 +1553,12 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Попытка изменить отдельный символ в строке массива <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">languages[0][0] = 'g'</code>: строки в Go иммутабельны.</li>
+<li style="margin-bottom: 4px;">Попытка изменить отдельный символ в строке массива <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">languages[0][0] = &#x27;g&#x27;</code>: строки в Go иммутабельны.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Выделяется ли память в куче при объявлении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[3]string{"a", "b", "c"}</code> внутри функции?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Выделяется ли память в куче при объявлении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[3]string{&quot;a&quot;, &quot;b&quot;, &quot;c&quot;}</code> внутри функции?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Нет! Заголовки строк и сам массив располагаются на стеке функции, а строковые данные находятся в сегменте read-only памяти бинарника.</p></div>
   </div>
 </div>
@@ -1643,7 +1643,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в Go нет передачи параметров по ссылке (Pass by Reference), как в C++ (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">void f(int& x)</code>)?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в Go нет передачи параметров по ссылке (Pass by Reference), как в C++ (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">void f(int&amp; x)</code>)?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> В Go всё передается строго по значению (Pass by Value). Передача указателя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*T</code> также передает значение самого адреса указателя. Это упрощает модель памяти и семантику компилятора.</p></div>
   </div>
 </div>
@@ -1791,7 +1791,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Неправильное условие выхода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">i <= j</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">i < j</code>.</li>
+<li style="margin-bottom: 4px;">Неправильное условие выхода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">i &lt;= j</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">i &lt; j</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -2168,7 +2168,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как транспонировать матрицу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[3][3]int</code> на месте (In-Place)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Вложенным циклом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i < 3; i++ { for j := i + 1; j < 3; j++ { m[i][j], m[j][i] = m[j][i], m[i][j] } }</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Вложенным циклом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i &lt; 3; i++ { for j := i + 1; j &lt; 3; j++ { m[i][j], m[j][i] = m[j][i], m[i][j] } }</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-16">
@@ -2416,7 +2416,7 @@ func main() {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Числовые массивы $ightarrow$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code></li>
 <li style="margin-bottom: 4px;">Булевы массивы $ightarrow$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code></li>
-<li style="margin-bottom: 4px;">Строковые массивы $ightarrow$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code></li>
+<li style="margin-bottom: 4px;">Строковые массивы $ightarrow$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code></li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -2583,7 +2583,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявляем переменные <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x, y, z := 10, 20, 30</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем массив указателей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptrs := [3]*int{&x, &y, &z}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем массив указателей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptrs := [3]*int{&amp;x, &amp;y, &amp;z}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Меняем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*ptrs[0] = 999</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверяем, что значение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> изменилось.</div></div>
   </div>
@@ -2699,12 +2699,12 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><=</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">i <= len(arr)</code> вызовет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic: index out of range</code>.</li>
+<li style="margin-bottom: 4px;">Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;=</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">i &lt;= len(arr)</code> вызовет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic: index out of range</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Чем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i < len(arr); i++</code> эффективнее <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for _, v := range arr</code> для массива <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[1000]BigStruct</code>?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Чем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i &lt; len(arr); i++</code> эффективнее <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for _, v := range arr</code> для массива <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[1000]BigStruct</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Прямая индексация <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arr[i]</code> не копирует структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">BigStruct</code> в промежуточную переменную.</p></div>
   </div>
 </div>
@@ -2872,7 +2872,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arr := [3]string{"A", "B", "C"}</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arr := [3]string{&quot;A&quot;, &quot;B&quot;, &quot;C&quot;}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Передаем в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ModifyStringArray</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверяем оригинал.</div></div>
   </div>
@@ -2936,7 +2936,7 @@ func main() {
     <div><p style="margin-bottom: 6px;"><strong>Алгоритм Bubble Sort для массивов строк:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Внешний цикл $N-1$ проходов;</li>
-<li style="margin-bottom: 4px;">Внутренний цикл сравнивает длины <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(arr[j]) > len(arr[j+1])</code>;</li>
+<li style="margin-bottom: 4px;">Внутренний цикл сравнивает длины <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(arr[j]) &gt; len(arr[j+1])</code>;</li>
 <li style="margin-bottom: 4px;">Атомарный обмен элементов на месте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arr[j], arr[j+1] = arr[j+1], arr[j]</code>.</li>
 </ul></div>
   </div>
@@ -2944,7 +2944,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Инициализируем массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[5]string{"Go", "Kubernetes", "C", "Python", "Rust"}</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Инициализируем массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[5]string{&quot;Go&quot;, &quot;Kubernetes&quot;, &quot;C&quot;, &quot;Python&quot;, &quot;Rust&quot;}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуем пузырьковую сортировку.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Выводим отсортированный массив.</div></div>
   </div>
@@ -3066,7 +3066,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Копируется ли массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">floats</code> при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for idx, val := range floats</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> ДА! Для статического массива <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">range</code> копирует массив целиком. Чтобы избежать копирования, итерируют по указателю <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">range &floats</code> или срезу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">range floats[:]</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> ДА! Для статического массива <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">range</code> копирует массив целиком. Чтобы избежать копирования, итерируют по указателю <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">range &amp;floats</code> или срезу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">range floats[:]</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-28">
@@ -3246,7 +3246,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">palette := make(map[[3]int]string)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сохраняем RGB-цвета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[3]int{255, 0, 0}: "Красный"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сохраняем RGB-цвета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[3]int{255, 0, 0}: &quot;Красный&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Извлекаем цвета по ключу-массиву.</div></div>
   </div>
   <div class="code-container">
@@ -3387,7 +3387,7 @@ func main() {
     <div><p style="margin-bottom: 6px;"><strong>Механика защиты границ (Bounds Checking) в Go:</strong></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Константный индекс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arr[5]</code>:</strong> Компилятор статически знает, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(arr) == 3</code>. Так как $5 \ge 3$, компилятор выдает ошибку на этапе сборки: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">invalid array index 5 (out of bounds for 3-element array)</code>;</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Динамический индекс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arr[index]</code>:</strong> Значение переменной <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">index</code> может зависеть от ввода пользователя или рантайм-логики. Компилятор вставляет инструкцию проверки границ:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if uint(index) >= uint(len(arr)) { runtime.panicIndex() }</code>;</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if uint(index) &gt;= uint(len(arr)) { runtime.panicIndex() }</code>;</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В рантайме программа падает с контролируемой паникой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic: runtime error: index out of range [5] with length 3</code>, предотвращая уязвимость переполнения буфера (Buffer Overflow).</div></div>
   </div>
   <div style="margin: 18px 0 10px;">

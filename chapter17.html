@@ -744,7 +744,7 @@
       <a href="#ex-13" class="sub-exercise-link" title="Упр 13: Пробитие обертки errors.Is сквозь цепочку вызовов">13. Пробитие обертки errors.Is сквозь цепочку вызовов</a>
       <a href="#ex-14" class="sub-exercise-link" title="Упр 14: Безопасное извлечение ошибки через errors.As">14. Безопасное извлечение ошибки через errors.As</a>
       <a href="#ex-15" class="sub-exercise-link" title="Упр 15: Проверка глубоко обернутой ошибки sentinel-типа">15. Проверка глубоко обернутой ошибки sentinel-типа</a>
-      <a href="#ex-16" class="sub-exercise-link" title="Упр 16: Архитектурная цепочка вызовов: readFile -> parseJSON -> validate">16. Архитектурная цепочка вызовов: readFile -> parseJSON -> validate</a>
+      <a href="#ex-16" class="sub-exercise-link" title="Упр 16: Архитектурная цепочка вызовов: readFile -&gt; parseJSON -&gt; validate">16. Архитектурная цепочка вызовов: readFile -&gt; parseJSON -&gt; validate</a>
       <a href="#ex-17" class="sub-exercise-link" title="Упр 17: Паттерн повторных попыток (Retry) с экспоненциальной задержкой">17. Паттерн повторных попыток (Retry) с экспоненциальной задержкой</a>
       <a href="#ex-18" class="sub-exercise-link" title="Упр 18: Sentinel-ошибки в нескольких функциях пакета">18. Sentinel-ошибки в нескольких функциях пакета</a>
       <a href="#ex-19" class="sub-exercise-link" title="Упр 19: Распаковка errors.Is против оператора прямого равенства ==">19. Распаковка errors.Is против оператора прямого равенства ==</a>
@@ -780,7 +780,7 @@
       <a href="#ex-49" class="sub-exercise-link" title="Упр 49: Централизованный хэндлер-роутер с единой точкой логирования">49. Централизованный хэндлер-роутер с единой точкой логирования</a>
       <a href="#ex-50" class="sub-exercise-link" title="Упр 50: Сравнение стратегий обработки: Fail-Fast против Best-Effort">50. Сравнение стратегий обработки: Fail-Fast против Best-Effort</a>
       <a href="#ex-51" class="sub-exercise-link" title="Упр 51: Опасность игнорирования ошибок через blank identifier _">51. Опасность игнорирования ошибок через blank identifier _</a>
-      <a href="#ex-52" class="sub-exercise-link" title="Упр 52: Многоуровневая цепочка преобразований: строка -> вычисление -> файл">52. Многоуровневая цепочка преобразований: строка -> вычисление -> файл</a>
+      <a href="#ex-52" class="sub-exercise-link" title="Упр 52: Многоуровневая цепочка преобразований: строка -&gt; вычисление -&gt; файл">52. Многоуровневая цепочка преобразований: строка -&gt; вычисление -&gt; файл</a>
       <a href="#ex-53" class="sub-exercise-link" title="Упр 53: Парсинг и детальная валидация JSON: ParseConfig">53. Парсинг и детальная валидация JSON: ParseConfig</a>
       <a href="#ex-54" class="sub-exercise-link" title="Упр 54: Ошибки с позиционным контекстом строки и операции">54. Ошибки с позиционным контекстом строки и операции</a>
       <a href="#ex-55" class="sub-exercise-link" title="Упр 55: Сравнение инструментов: errors.Is против errors.As">55. Сравнение инструментов: errors.Is против errors.As</a>
@@ -1083,7 +1083,7 @@
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("failed to process user %d: %w", id, err)</code> для оборачивания (wrap) ошибки с сохранением контекста и цепочки вызовов.</p></div>
+    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;failed to process user %d: %w&quot;, id, err)</code> для оборачивания (wrap) ошибки с сохранением контекста и цепочки вызовов.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1093,8 +1093,8 @@
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим базовую ошибку базы данных <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrDatabaseUnavailable = errors.New("database connection refused")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишем функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">processUser(id int) error</code>, которая вызывает запрос и оборачивает ошибку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("failed to process user %d: %w", id, err)</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим базовую ошибку базы данных <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrDatabaseUnavailable = errors.New(&quot;database connection refused&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишем функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">processUser(id int) error</code>, которая вызывает запрос и оборачивает ошибку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;failed to process user %d: %w&quot;, id, err)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> вызовем функцию и проверим, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, ErrDatabaseUnavailable)</code> возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">true</code>.</div></div>
   </div>
   <div class="code-container">
@@ -1164,7 +1164,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напишите функцию деления, которая возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(float64, error)</code>. При делении на ноль возвращайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.New("division by zero")</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Напишите функцию деления, которая возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(float64, error)</code>. При делении на ноль возвращайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.New(&quot;division by zero&quot;)</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1175,7 +1175,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Divide(a, b float64) (float64, error)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if b == 0</code> и вернем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0, errors.New("division by zero")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if b == 0</code> и вернем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0, errors.New(&quot;division by zero&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> При <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">b != 0</code> вернем результат деления <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a / b, nil</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> протестируем успешный вызов и деление на ноль.</div></div>
   </div>
@@ -1304,7 +1304,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">При возврате <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&AppError</code> в интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">error</code> создается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">iface { tab: *itab(AppError), data: *AppError }</code>. Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Error()</code> вызывается через таблицу методов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">itab</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">При возврате <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;AppError</code> в интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">error</code> создается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">iface { tab: *itab(AppError), data: *AppError }</code>. Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Error()</code> вызывается через таблицу методов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">itab</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1323,7 +1323,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Базовые ошибки</strong>: Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.New("bad input")</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("user %s not found", name)</code> для создания простых ошибок.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Базовые ошибки</strong>: Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.New(&quot;bad input&quot;)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;user %s not found&quot;, name)</code> для создания простых ошибок.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1386,7 +1386,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.New</code> возвращает указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&errorString{s}</code>. Два вызова <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.New("err") == errors.New("err")</code> вернут <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, так как сравниваются адреса в куче.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.New</code> возвращает указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;errorString{s}</code>. Два вызова <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.New(&quot;err&quot;) == errors.New(&quot;err&quot;)</code> вернут <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, так как сравниваются адреса в куче.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1395,7 +1395,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в Go сообщения об ошибках пишут со строчной буквы?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что ошибки в Go часто оборачиваются в цепочки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("failed to %s: %w", op, err)</code>. Если бы каждая ошибка начиналась с заглавной буквы, цепочка выглядела бы неаккуратно: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Failed to open: File not found: Permission denied</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что ошибки в Go часто оборачиваются в цепочки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;failed to %s: %w&quot;, op, err)</code>. Если бы каждая ошибка начиналась с заглавной буквы, цепочка выглядела бы неаккуратно: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Failed to open: File not found: Permission denied</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-5">
@@ -1405,7 +1405,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создайте Sentinel-ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New("not found")</code>. Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, ErrNotFound)</code> для проверки, даже если ошибка была обернута несколько раз.</p></div>
+    <div><p style="margin-bottom: 6px;">Создайте Sentinel-ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New(&quot;not found&quot;)</code>. Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, ErrNotFound)</code> для проверки, даже если ошибка была обернута несколько раз.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1415,8 +1415,8 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New("not found")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим цепочку из трех функций: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">repoFind -> serviceGet -> handlerGet</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New(&quot;not found&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим цепочку из трех функций: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">repoFind -&gt; serviceGet -&gt; handlerGet</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Каждая промежуточная функция оборачивает ошибку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%w</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> убедимся, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, ErrNotFound)</code> находит маркер на самом верху.</div></div>
   </div>
@@ -1565,7 +1565,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Sentinel Errors (Маркерные ошибки)</strong>: Объяви на уровне пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New("not found")</code>. Верни её из функции. В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> сравни результат строго: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err == ErrNotFound</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Sentinel Errors (Маркерные ошибки)</strong>: Объяви на уровне пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New(&quot;not found&quot;)</code>. Верни её из функции. В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> сравни результат строго: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err == ErrNotFound</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1575,7 +1575,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим пакетную переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrUserNotFound = errors.New("user not found")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим пакетную переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrUserNotFound = errors.New(&quot;user not found&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">findDirect(id int) error</code>, возвращающую <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ErrUserNotFound</code> напрямую.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Продемонстрируем успешное сравнение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">==</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Покажем, что для обернутой ошибки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">==</code> ломается, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> работает надежно.</div></div>
@@ -1633,7 +1633,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в Go 1.13+ не рекомендуется использовать if err == ErrNotFound?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что любая внутренняя функция в цепочке вызовов может обернуть ошибку контекстом через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("%w")</code>, после чего прямое сравнение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">==</code> перестанет работать, что приведет к трудноуловимым багам.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что любая внутренняя функция в цепочке вызовов может обернуть ошибку контекстом через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;%w&quot;)</code>, после чего прямое сравнение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">==</code> перестанет работать, что приведет к трудноуловимым багам.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-8">
@@ -1643,7 +1643,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("reading %s: %v", filename, err)</code> для добавления контекста. Покажи, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%v</code> просто вставляет текст ошибки.</p></div>
+    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;reading %s: %v&quot;, filename, err)</code> для добавления контекста. Покажи, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%v</code> просто вставляет текст ошибки.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1653,8 +1653,8 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrDiskFailure = errors.New("hardware read error")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Обернем её с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%v</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("reading %s: %v", filename, err)</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrDiskFailure = errors.New(&quot;hardware read error&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Обернем её с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%v</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;reading %s: %v&quot;, filename, err)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> покажем, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>.</div></div>
   </div>
   <div class="code-container">
@@ -1805,7 +1805,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Второй аргумент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> обязан быть указателем на переменную типа ошибки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&netErr</code>), иначе возникнет паника в рантайме.</p></div>
+    <div><p style="margin-bottom: 6px;">Второй аргумент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> обязан быть указателем на переменную типа ошибки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;netErr</code>), иначе возникнет паника в рантайме.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1820,7 +1820,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf</code> с глаголом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%w</code> (Go 1.13+): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("processing failed: %w", err)</code>. Покажи, что ошибка <strong>обёрнута</strong> (wrapped) и сохраняет оригинал.</p></div>
+    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf</code> с глаголом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%w</code> (Go 1.13+): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;processing failed: %w&quot;, err)</code>. Покажи, что ошибка <strong>обёрнута</strong> (wrapped) и сохраняет оригинал.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1830,8 +1830,8 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим базовую ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">baseErr := errors.New("connection reset")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Обернем её: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wrappedErr := fmt.Errorf("processing failed: %w", baseErr)</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим базовую ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">baseErr := errors.New(&quot;connection reset&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Обернем её: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wrappedErr := fmt.Errorf(&quot;processing failed: %w&quot;, baseErr)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Извлечем базовую ошибку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Unwrap(wrappedErr)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> убедимся, что распакованная ошибка идентична <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">baseErr</code>.</div></div>
   </div>
@@ -1977,11 +1977,11 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Обертывание (Wrapping)</strong>: При получении ошибки в функции (например, от базы данных), не возвращай её как есть. Оберни её: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">return fmt.Errorf("failed to get user: %w", err)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Обертывание (Wrapping)</strong>: При получении ошибки в функции (например, от базы данных), не возвращай её как есть. Оберни её: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">return fmt.Errorf(&quot;failed to get user: %w&quot;, err)</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Оборачивание ошибок на границах архитектурных слоев (Repository -> Service -> Handler) строит полную трассировку выполнения, объясняя *какая именно операция* завершилась сбоем.</p></div>
+    <div><p style="margin-bottom: 6px;">Оборачивание ошибок на границах архитектурных слоев (Repository -&gt; Service -&gt; Handler) строит полную трассировку выполнения, объясняя *какая именно операция* завершилась сбоем.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -2052,7 +2052,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Каверзный кейс]</strong>: Оберни ошибку: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("db query failed: %w", err)</code>. Проверь исходную ошибку с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> (она "пробьется" через обертку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%w</code>).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Каверзный кейс]</strong>: Оберни ошибку: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;db query failed: %w&quot;, err)</code>. Проверь исходную ошибку с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> (она &quot;пробьется&quot; через обертку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%w</code>).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2062,7 +2062,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNoRows = errors.New("sql: no rows in result set")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNoRows = errors.New(&quot;sql: no rows in result set&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">findOrder(id string) error</code> с тремя уровнями обертывания.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> убедимся, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, ErrNoRows)</code> вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">true</code>.</div></div>
   </div>
@@ -2131,7 +2131,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, &validationErr)</code> для безопасного извлечения вашей кастомной ошибки из глубины обернутых ошибок.</p></div>
+    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, &amp;validationErr)</code> для безопасного извлечения вашей кастомной ошибки из глубины обернутых ошибок.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2205,12 +2205,12 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Всегда проверяйте булев результат <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if errors.As(err, &target)</code>. Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">valErr</code> без проверки при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code> приведет к nil pointer dereference.</p></div>
+    <div><p style="margin-bottom: 6px;">Всегда проверяйте булев результат <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if errors.As(err, &amp;target)</code>. Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">valErr</code> без проверки при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code> приведет к nil pointer dereference.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему type assertion err.(*MyError) опасен в современном Go?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если функция внутри обернет ошибку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("%w")</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err</code> перестанет быть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*MyError</code> (станет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*fmt.wrapError</code>), и type assertion завершится неудачей или паникой.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если функция внутри обернет ошибку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;%w&quot;)</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err</code> перестанет быть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*MyError</code> (станет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*fmt.wrapError</code>), и type assertion завершится неудачей или паникой.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-15">
@@ -2230,8 +2230,8 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrUnauthorized = errors.New("unauthorized access")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим цепочку из 3 слоев: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AuthService -> Router -> Middleware</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrUnauthorized = errors.New(&quot;unauthorized access&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим цепочку из 3 слоев: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AuthService -&gt; Router -&gt; Middleware</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> проверим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, ErrUnauthorized)</code>.</div></div>
   </div>
   <div class="code-container">
@@ -2291,7 +2291,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Не сравнивайте текст ошибки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Contains(err.Error(), "unauthorized")</code>, это хрупко и приводит к багам при смене локали или текста.</p></div>
+    <div><p style="margin-bottom: 6px;">Не сравнивайте текст ошибки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Contains(err.Error(), &quot;unauthorized&quot;)</code>, это хрупко и приводит к багам при смене локали или текста.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2302,11 +2302,11 @@ func main() {
 <div class="exercise-card" id="ex-16">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #16</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Архитектурная цепочка вызовов: readFile -> parseJSON -> validate</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Архитектурная цепочка вызовов: readFile -&gt; parseJSON -&gt; validate</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создайте цепочку функций: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">readFile -> parseJSON -> validate</code>. Каждая возвращает ошибку. Пробросьте ошибку вверх, добавив контекст с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("...: %w", err)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Создайте цепочку функций: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">readFile -&gt; parseJSON -&gt; validate</code>. Каждая возвращает ошибку. Пробросьте ошибку вверх, добавив контекст с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;...: %w&quot;, err)</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2396,7 +2396,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как правильно форматировать контекст при оборачивании ошибки?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Шаблон: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><имя_функции_или_действия>: <параметры>: %w</code>. Например: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("fetchUser(id=%d): sending request: %w", id, err)</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Шаблон: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;имя_функции_или_действия&gt;: &lt;параметры&gt;: %w</code>. Например: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;fetchUser(id=%d): sending request: %w&quot;, id, err)</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-17">
@@ -2406,7 +2406,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуйте паттерн повторных попыток (Retry): если функция вернула определенную ошибку (например, "timeout"), вызовите ее снова до 3 раз с экспоненциальной задержкой.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуйте паттерн повторных попыток (Retry): если функция вернула определенную ошибку (например, &quot;timeout&quot;), вызовите ее снова до 3 раз с экспоненциальной задержкой.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2416,7 +2416,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrTimeout = errors.New("timeout")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrTimeout = errors.New(&quot;timeout&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Retry(attempts int, initialDelay time.Duration, fn func() error) error</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В цикле вызываем функцию, при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ErrTimeout</code> удваиваем задержку.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> протестируем успешное восстановление на 3-й попытке.</div></div>
@@ -2504,7 +2504,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создай <strong>sentinel error</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New("not found")</code>. Используй её в нескольких функциях. Проверь через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> в разных уровнях обёртки.</p></div>
+    <div><p style="margin-bottom: 6px;">Создай <strong>sentinel error</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New(&quot;not found&quot;)</code>. Используй её в нескольких функциях. Проверь через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> в разных уровнях обёртки.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2514,7 +2514,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New("item not found")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New(&quot;item not found&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GetProduct(id int)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GetCategory(id int)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> обработаем результат обеих функций единым блоком <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code>.</div></div>
   </div>
@@ -2585,7 +2585,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как защитить sentinel error от случайной перезаписи из другого пакета?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать кастомный тип константы: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type Error string; func (e Error) Error() string { return string(e) }; const ErrNotFound = Error("not found")</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать кастомный тип константы: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type Error string; func (e Error) Error() string { return string(e) }; const ErrNotFound = Error(&quot;not found&quot;)</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-19">
@@ -2605,8 +2605,8 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим маркер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New("not found")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Обернем его: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wrapped := fmt.Errorf("wrap 1: %w", fmt.Errorf("wrap 2: %w", ErrNotFound))</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим маркер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New(&quot;not found&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Обернем его: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wrapped := fmt.Errorf(&quot;wrap 1: %w&quot;, fmt.Errorf(&quot;wrap 2: %w&quot;, ErrNotFound))</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сравним результаты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wrapped == ErrNotFound</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(wrapped, ErrNotFound)</code>.</div></div>
   </div>
   <div class="code-container">
@@ -2648,7 +2648,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> разворачивает стек <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wrap 1 -> wrap 2 -> ErrNotFound</code> и находит совпадение по указателю памяти.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code> разворачивает стек <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wrap 1 -&gt; wrap 2 -&gt; ErrNotFound</code> и находит совпадение по указателю памяти.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -2667,7 +2667,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Оборачивание ошибок (Wrapping)</strong>: Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadFileConfig()</code>, которая вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open</code>. Если возникает ошибка, оберните её с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("не удалось прочитать конфиг: %w", err)</code> (используя спецификатор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%w</code>).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Оборачивание ошибок (Wrapping)</strong>: Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadFileConfig()</code>, которая вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open</code>. Если возникает ошибка, оберните её с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;не удалось прочитать конфиг: %w&quot;, err)</code> (используя спецификатор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%w</code>).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2679,7 +2679,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadFileConfig(path string) ([]byte, error)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open(path)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Обернем ошибку: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("не удалось прочитать конфиг: %w", err)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Обернем ошибку: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;не удалось прочитать конфиг: %w&quot;, err)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> извлечем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*os.PathError</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code>.</div></div>
   </div>
   <div class="code-container">
@@ -2734,7 +2734,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open</code> возвращает структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&os.PathError{Op: "open", Path: path, Err: syscall.ENOENT}</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Open</code> возвращает структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;os.PathError{Op: &quot;open&quot;, Path: path, Err: syscall.ENOENT}</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -2866,7 +2866,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Извлечение типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code></strong>: Оберни свою структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AppError</code> (из упр. 202) через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%w</code>. В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, &myAppErr)</code>, чтобы достать её из обертки и прочитать конкретный HTTP <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Code</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Извлечение типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code></strong>: Оберни свою структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AppError</code> (из упр. 202) через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%w</code>. В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, &amp;myAppErr)</code>, чтобы достать её из обертки и прочитать конкретный HTTP <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Code</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2878,7 +2878,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type AppError struct { HTTPCode int; Message string }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(e *AppError) Error() string</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создадим цепочку вызовов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DomainService -> HTTPHandler</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создадим цепочку вызовов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DomainService -&gt; HTTPHandler</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> извлечем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HTTPCode</code>.</div></div>
   </div>
   <div class="code-container">
@@ -2940,7 +2940,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Передавайте в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> указатель на указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&appErr</code>, где <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var appErr *AppError</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Передавайте в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> указатель на указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;appErr</code>, где <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var appErr *AppError</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3136,7 +3136,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Проверка ошибок через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code></strong>: Объявите глобальную ошибку-маркер (sentinel error) <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrPermissionDenied = errors.New("доступ запрещен")</code>. Напишите функцию, которая глубоко в цепочке вызовов возвращает эту ошибку (обернутую другими ошибками). В функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> проверьте наличие этой конкретной ошибки в цепочке с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Проверка ошибок через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code></strong>: Объявите глобальную ошибку-маркер (sentinel error) <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrPermissionDenied = errors.New(&quot;доступ запрещен&quot;)</code>. Напишите функцию, которая глубоко в цепочке вызовов возвращает эту ошибку (обернутую другими ошибками). В функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> проверьте наличие этой конкретной ошибки в цепочке с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3146,7 +3146,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrPermissionDenied = errors.New("доступ запрещен")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrPermissionDenied = errors.New(&quot;доступ запрещен&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим три уровня вложенности вызовов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> проверим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, ErrPermissionDenied)</code>.</div></div>
   </div>
@@ -3310,7 +3310,7 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Паттерн Guard Clauses (защитные условия) устраняет "лесенку" вложенных блоков <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if-else</code>, делая код плоским, линейным и простым для чтения.</p></div>
+    <div><p style="margin-bottom: 6px;">Паттерн Guard Clauses (защитные условия) устраняет &quot;лесенку&quot; вложенных блоков <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if-else</code>, делая код плоским, линейным и простым для чтения.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -3505,7 +3505,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">riskyOperation()</code>, вызывающую <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic("непредвиденный сбой драйвера")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">riskyOperation()</code>, вызывающую <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic(&quot;непредвиденный сбой драйвера&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим middleware <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">safeHandler()</code>, содержащий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer func() { if r := recover(); r != nil { ... } }()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">safeHandler()</code> и убедимся, что процесс не упал.</div></div>
   </div>
@@ -3677,7 +3677,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">QuotaExceededError struct { Limit, Used int }</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Обернем её: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("storage service: %w", &QuotaExceededError{Limit: 100, Used: 120})</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Обернем её: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;storage service: %w&quot;, &amp;QuotaExceededError{Limit: 100, Used: 120})</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> извлечем структуру через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> и подсчитаем перерасход.</div></div>
   </div>
   <div class="code-container">
@@ -3816,12 +3816,12 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Не забывайте проверять результат <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if errors.As(err, &valErr)</code> перед чтением полей.</p></div>
+    <div><p style="margin-bottom: 6px;">Не забывайте проверять результат <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if errors.As(err, &amp;valErr)</code> перед чтением полей.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как мапить ValidationError в стандартизированный ответ RFC 7807 (Problem Details)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Извлечь через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> срез <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ValidationErrors</code> и сериализовать в структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"type": "about:blank", "title": "Validation Error", "invalid_params": [...]}</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Извлечь через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> срез <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ValidationErrors</code> и сериализовать в структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;type&quot;: &quot;about:blank&quot;, &quot;title&quot;: &quot;Validation Error&quot;, &quot;invalid_params&quot;: [...]}</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-33">
@@ -3913,7 +3913,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Паника vs Ошибка</strong>: Напиши пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">config</code>. Сделай функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LoadConfig() error</code> (которая читает файл и возвращает ошибку, если файла нет) и функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MustLoadConfig()</code>, которая вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LoadConfig</code> и если есть ошибка — делает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic()</code>. Это классический паттерн "Must".</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Паника vs Ошибка</strong>: Напиши пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">config</code>. Сделай функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LoadConfig() error</code> (которая читает файл и возвращает ошибку, если файла нет) и функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MustLoadConfig()</code>, которая вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LoadConfig</code> и если есть ошибка — делает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic()</code>. Это классический паттерн &quot;Must&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3996,7 +3996,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Сравните подход "возвращать ошибки" (как в Go) и "бросать исключения" (как в Java/Python). Попробуйте написать функцию без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err != nil</code> и осознайте, почему в Go это считается плохой практикой.</p></div>
+    <div><p style="margin-bottom: 6px;">Сравните подход &quot;возвращать ошибки&quot; (как в Go) и &quot;бросать исключения&quot; (как в Java/Python). Попробуйте написать функцию без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if err != nil</code> и осознайте, почему в Go это считается плохой практикой.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4229,7 +4229,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши функцию, выполняющую несколько независимых операций. Собери все ошибки в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[]error</code>. Верни aggregated error через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("multiple errors: %w", errors.Join(errs...))</code> (Go 1.20+) или просто склей строк.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши функцию, выполняющую несколько независимых операций. Собери все ошибки в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[]error</code>. Верни aggregated error через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;multiple errors: %w&quot;, errors.Join(errs...))</code> (Go 1.20+) или просто склей строк.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4416,8 +4416,8 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ParseConfigFile(filePath string, data []byte) (map[string]string, error)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filePath == ""</code>, вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic("filePath cannot be empty")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data</code> повреждена, вернем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil, errors.New("corrupted config format")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filePath == &quot;&quot;</code>, вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic(&quot;filePath cannot be empty&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data</code> повреждена, вернем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil, errors.New(&quot;corrupted config format&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> продемонстрируем оба случая.</div></div>
   </div>
   <div class="code-container">
@@ -4575,12 +4575,12 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Всегда проверяйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">i < attempts</code> перед <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code>, чтобы не спать впустую после последней неудачной попытки.</p></div>
+    <div><p style="margin-bottom: 6px;">Всегда проверяйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">i &lt; attempts</code> перед <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code>, чтобы не спать впустую после последней неудачной попытки.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как поддержать отмену Retry через context.Context?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Заменить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep(delay)</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select { case <-ctx.Done(): return ctx.Err(); case <-time.After(delay): }</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Заменить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep(delay)</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select { case &lt;-ctx.Done(): return ctx.Err(); case &lt;-time.After(delay): }</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-42">
@@ -4674,7 +4674,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Отложенный Recover</strong>: Напиши функцию, которая может запаниковать (например, деление на 0). В начале функции добавь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer func() { if r := recover(); r != nil { fmt.Println("Спасены от:", r) } }()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Отложенный Recover</strong>: Напиши функцию, которая может запаниковать (например, деление на 0). В начале функции добавь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer func() { if r := recover(); r != nil { fmt.Println(&quot;Спасены от:&quot;, r) } }()</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4762,7 +4762,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RunWithTimeout(timeout time.Duration, op func() error) error</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запустим операцию в горутине, передавая результат в канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">done := make(chan error, 1)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> выберем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case err := <-done</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case <-ctx.Done(): return ctx.Err()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> выберем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case err := &lt;-done</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case &lt;-ctx.Done(): return ctx.Err()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> проверим быстрый и зависающий вызовы.</div></div>
   </div>
   <div class="code-container">
@@ -4823,12 +4823,12 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Всегда создавайте канал завершения с буфером размера 1, иначе горутина зависнет на отправке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">done <- op()</code>, вызвав утечку памяти (Goroutine Leak).</p></div>
+    <div><p style="margin-bottom: 6px;">Всегда создавайте канал завершения с буфером размера 1, иначе горутина зависнет на отправке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">done &lt;- op()</code>, вызвав утечку памяти (Goroutine Leak).</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему канал done в паттерне Timeout обязан быть буферизованным?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если канал небуферизован, а операция завершилась после того, как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> вышел по <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code>, горутина навечно заблокируется на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">done <- err</code>, так как читателя больше нет. Буфер емкостью 1 позволяет горутине завершиться и быть собранной сборщиком мусора.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если канал небуферизован, а операция завершилась после того, как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> вышел по <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code>, горутина навечно заблокируется на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">done &lt;- err</code>, так как читателя больше нет. Буфер емкостью 1 позволяет горутине завершиться и быть собранной сборщиком мусора.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-45">
@@ -4849,7 +4849,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func ExecutePlugin(name string) (err error)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer</code> перехватим панику и сформируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err = fmt.Errorf("plugin panic: %v", r)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer</code> перехватим панику и сформируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err = fmt.Errorf(&quot;plugin panic: %v&quot;, r)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> вызовем функцию и распечатаем возвращенный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err</code>.</div></div>
   </div>
   <div class="code-container">
@@ -4926,7 +4926,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New("resource not found")</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrPermission = errors.New("permission denied")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrNotFound = errors.New(&quot;resource not found&quot;)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrPermission = errors.New(&quot;permission denied&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуем функцию доступа к файлу.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> обработаем обе ошибки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is</code>.</div></div>
   </div>
@@ -5187,7 +5187,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Централизованный хэндлер</strong>: Напиши функцию-роутер, которая вызывает 3 другие функции (которые могут вернуть ошибки). Если любая из них возвращает ошибку, роутер логирует её и возвращает "HTTP 500", не дублируя код обработки логов каждый раз.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Централизованный хэндлер</strong>: Напиши функцию-роутер, которая вызывает 3 другие функции (которые могут вернуть ошибки). Если любая из них возвращает ошибку, роутер логирует её и возвращает &quot;HTTP 500&quot;, не дублируя код обработки логов каждый раз.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5406,7 +5406,7 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Игнорирование возвращаемой ошибки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_</code> скрывает сбои оборудования, сети или формата данных. Программа продолжает работу в поврежденном состоянии, порождая "тихие" баги (Silent Failures) и коррупцию данных.</p></div>
+    <div><p style="margin-bottom: 6px;">Игнорирование возвращаемой ошибки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_</code> скрывает сбои оборудования, сети или формата данных. Программа продолжает работу в поврежденном состоянии, порождая &quot;тихие&quot; баги (Silent Failures) и коррупцию данных.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -5482,13 +5482,13 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «К каким последствиям приводит _ = row.Scan(...) при чтении из SQL базы?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если тип колонки изменился или колонка равна NULL, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Scan</code> завершится сбоем, а переменные останутся со значениями по умолчанию (0, ""). Приложение продолжит работать с искаженными данными, что может привести к финансовым потерям.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если тип колонки изменился или колонка равна NULL, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Scan</code> завершится сбоем, а переменные останутся со значениями по умолчанию (0, &quot;&quot;). Приложение продолжит работать с искаженными данными, что может привести к финансовым потерям.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-52">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #52</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Многоуровневая цепочка преобразований: строка -> вычисление -> файл</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Многоуровневая цепочка преобразований: строка -&gt; вычисление -&gt; файл</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -5582,7 +5582,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как проектировать цепочки ошибок в микросервисах?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Каждый слой оборачивает ошибку с префиксом операции: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[Handler] -> [Service] -> [Repository] -> [Driver]</code>. В логах верхнего уровня получается прозрачная трассировка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">handleOrder: processPayment: chargeCard: bank timeout</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Каждый слой оборачивает ошибку с префиксом операции: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[Handler] -&gt; [Service] -&gt; [Repository] -&gt; [Driver]</code>. В логах верхнего уровня получается прозрачная трассировка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">handleOrder: processPayment: chargeCard: bank timeout</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-53">
@@ -5592,7 +5592,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ParseConfig(data []byte) (*Config, error)</code>, валидирующую JSON. Возвращай детальную ошибку с указанием, какое поле невалидно (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("field %q: %w", "port", ErrInvalidValue)</code>).</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ParseConfig(data []byte) (*Config, error)</code>, валидирующую JSON. Возвращай детальную ошибку с указанием, какое поле невалидно (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;field %q: %w&quot;, &quot;port&quot;, ErrInvalidValue)</code>).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5603,7 +5603,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Config</code> с полями <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Host string</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Port int</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrInvalidValue = errors.New("недопустимое значение")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ErrInvalidValue = errors.New(&quot;недопустимое значение&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Реализуем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ParseConfig(data []byte) (*Config, error)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> протестируем невалидный порт.</div></div>
   </div>
@@ -5681,7 +5681,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как отличить дефолтное значение 0 от явно переданного 0 в JSON?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать указатель на поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Port *int json:"port"</code>. Если поле не передано в JSON, указатель равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>, если передано <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code>, указатель равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&0</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать указатель на поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Port *int json:&quot;port&quot;</code>. Если поле не передано в JSON, указатель равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>, если передано <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code>, указатель равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;0</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-54">
@@ -5691,7 +5691,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Ошибки с контекстом</strong>: Напиши функцию парсинга числа из строки. Если возникает ошибка, она должна возвращать ошибку, в которой сказано: "ошибка в функции ParseData на строке N: [оригинальная ошибка]".</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Ошибки с контекстом</strong>: Напиши функцию парсинга числа из строки. Если возникает ошибка, она должна возвращать ошибку, в которой сказано: &quot;ошибка в функции ParseData на строке N: [оригинальная ошибка]&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>

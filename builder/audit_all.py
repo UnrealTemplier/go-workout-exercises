@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import subprocess
 import tempfile
 
@@ -553,6 +554,16 @@ for fname, ch_num, count in html_files:
     # Check no chevron icon
     if 'chevron-icon' in content:
         issues.append(f"В файле {fname} обнаружен запрещенный chevron-icon!")
+
+    # Check no unexpected/unescaped script tags in HTML
+    scripts = re.findall(r'<script.*?>.*?</script>', content, re.DOTALL | re.IGNORECASE)
+    unexpected = [s for s in scripts if 'prism' not in s and 'sidebar' not in s and 'localStorage' not in s and 'toggle' not in s and 'MathJax' not in s]
+    if unexpected:
+        issues.append(f"В файле {fname} обнаружены паразитные/неэкранированные теги <script> ({len(unexpected)} шт.)!")
+
+    # Check HTML closure
+    if not content.endswith('</html>\n') and not content.endswith('</html>'):
+        issues.append(f"Файл {fname} некорректно завершен (нет </html>)!")
 
 if issues:
     print(f"\n❌ Обнаружено {len(issues)} проблем:")

@@ -749,7 +749,7 @@
       <span class="status-badge done">52/52</span>
     </a>
     <div class="sub-exercises-list" id="active-sub-exercises">
-      <a href="#ex-1" class="sub-exercise-link" title="Упр 1: Ручная отмена контекста через context.WithCancel и сигнал <-ctx.Done()">1. Ручная отмена контекста через context.WithCancel и сигнал <-ctx.Done()</a>
+      <a href="#ex-1" class="sub-exercise-link" title="Упр 1: Ручная отмена контекста через context.WithCancel и сигнал &lt;-ctx.Done()">1. Ручная отмена контекста через context.WithCancel и сигнал &lt;-ctx.Done()</a>
       <a href="#ex-2" class="sub-exercise-link" title="Упр 2: Управление дедлайнами операций: context.WithTimeout и context.DeadlineExceeded">2. Управление дедлайнами операций: context.WithTimeout и context.DeadlineExceeded</a>
       <a href="#ex-3" class="sub-exercise-link" title="Упр 3: Передача Request-Scoped метаданных через context.WithValue">3. Передача Request-Scoped метаданных через context.WithValue</a>
       <a href="#ex-4" class="sub-exercise-link" title="Упр 4: Прерывание сетевой операции по таймауту context.WithTimeout">4. Прерывание сетевой операции по таймауту context.WithTimeout</a>
@@ -762,11 +762,11 @@
       <a href="#ex-11" class="sub-exercise-link" title="Упр 11: Сквозное логирование Trace/Request ID через цепочку вызовов с context.WithValue">11. Сквозное логирование Trace/Request ID через цепочку вызовов с context.WithValue</a>
       <a href="#ex-12" class="sub-exercise-link" title="Упр 12: Базовое использование context.WithCancel для отмены горутины">12. Базовое использование context.WithCancel для отмены горутины</a>
       <a href="#ex-13" class="sub-exercise-link" title="Упр 13: Массовая широковещательная остановка группы горутин по единому контексту">13. Массовая широковещательная остановка группы горутин по единому контексту</a>
-      <a href="#ex-14" class="sub-exercise-link" title="Упр 14: Многоуровневое дерево контекстов: каскадная отмена иерархии 1 -> 3 -> 6">14. Многоуровневое дерево контекстов: каскадная отмена иерархии 1 -> 3 -> 6</a>
+      <a href="#ex-14" class="sub-exercise-link" title="Упр 14: Многоуровневое дерево контекстов: каскадная отмена иерархии 1 -&gt; 3 -&gt; 6">14. Многоуровневое дерево контекстов: каскадная отмена иерархии 1 -&gt; 3 -&gt; 6</a>
       <a href="#ex-15" class="sub-exercise-link" title="Упр 15: Обязательный defer cancel() для предотвращения утечек системных таймеров">15. Обязательный defer cancel() для предотвращения утечек системных таймеров</a>
       <a href="#ex-16" class="sub-exercise-link" title="Упр 16: Обработка истечения таймаута в асинхронных операциях (WithTimeout)">16. Обработка истечения таймаута в асинхронных операциях (WithTimeout)</a>
       <a href="#ex-17" class="sub-exercise-link" title="Упр 17: Функция Or(ctx1, ctx2): слияние каналов отмены двух контекстов">17. Функция Or(ctx1, ctx2): слияние каналов отмены двух контекстов</a>
-      <a href="#ex-18" class="sub-exercise-link" title="Упр 18: Каскадная отмена цепочки контекстов ctx1 -> ctx2">18. Каскадная отмена цепочки контекстов ctx1 -> ctx2</a>
+      <a href="#ex-18" class="sub-exercise-link" title="Упр 18: Каскадная отмена цепочки контекстов ctx1 -&gt; ctx2">18. Каскадная отмена цепочки контекстов ctx1 -&gt; ctx2</a>
       <a href="#ex-19" class="sub-exercise-link" title="Упр 19: Абсолютный дедлайн против относительного таймаута: context.WithDeadline">19. Абсолютный дедлайн против относительного таймаута: context.WithDeadline</a>
       <a href="#ex-20" class="sub-exercise-link" title="Упр 20: Детекция и устранение утечки контекста (Context Leak) через runtime.NumGoroutine()">20. Детекция и устранение утечки контекста (Context Leak) через runtime.NumGoroutine()</a>
       <a href="#ex-21" class="sub-exercise-link" title="Упр 21: Прерывание ресурсоемкой операции строго в заданный момент (WithDeadline)">21. Прерывание ресурсоемкой операции строго в заданный момент (WithDeadline)</a>
@@ -787,7 +787,7 @@
       <a href="#ex-36" class="sub-exercise-link" title="Упр 36: Паттерн Parallel Fetch with Context: параллельные запросы с ранней отменой">36. Паттерн Parallel Fetch with Context: параллельные запросы с ранней отменой</a>
       <a href="#ex-37" class="sub-exercise-link" title="Упр 37: Многоуровневый проброс RequestID через контекст для логирования">37. Многоуровневый проброс RequestID через контекст для логирования</a>
       <a href="#ex-38" class="sub-exercise-link" title="Упр 38: Дифференциация причин отмены: context.DeadlineExceeded vs context.Canceled">38. Дифференциация причин отмены: context.DeadlineExceeded vs context.Canceled</a>
-      <a href="#ex-39" class="sub-exercise-link" title="Упр 39: Каскадная отмена дерева потомков: Parent -> Child -> SubChild">39. Каскадная отмена дерева потомков: Parent -> Child -> SubChild</a>
+      <a href="#ex-39" class="sub-exercise-link" title="Упр 39: Каскадная отмена дерева потомков: Parent -&gt; Child -&gt; SubChild">39. Каскадная отмена дерева потомков: Parent -&gt; Child -&gt; SubChild</a>
       <a href="#ex-40" class="sub-exercise-link" title="Упр 40: Устранение антипаттерна строковых ключей: собственный тип ctxKey">40. Устранение антипаттерна строковых ключей: собственный тип ctxKey</a>
       <a href="#ex-41" class="sub-exercise-link" title="Упр 41: Использование context.AfterFunc (Go 1.21+): автоматический Callback при отмене">41. Использование context.AfterFunc (Go 1.21+): автоматический Callback при отмене</a>
       <a href="#ex-42" class="sub-exercise-link" title="Упр 42: Анализ кода ошибки: проверка ctx.Err() после отмены">42. Анализ кода ошибки: проверка ctx.Err() после отмены</a>
@@ -796,7 +796,7 @@
       <a href="#ex-45" class="sub-exercise-link" title="Упр 45: Изоляция Request-Scoped данных в context.WithValue (Каверзный кейс)">45. Изоляция Request-Scoped данных в context.WithValue (Каверзный кейс)</a>
       <a href="#ex-46" class="sub-exercise-link" title="Упр 46: Принудительный опрос ctx.Err() в вычислительных CPU-bound циклах">46. Принудительный опрос ctx.Err() в вычислительных CPU-bound циклах</a>
       <a href="#ex-47" class="sub-exercise-link" title="Упр 47: Устранение дефекта игнорирования отмены горутиной (Zombie Goroutine)">47. Устранение дефекта игнорирования отмены горутиной (Zombie Goroutine)</a>
-      <a href="#ex-48" class="sub-exercise-link" title="Упр 48: Трехуровневая цепочка: ctx -> ctx2 (Timeout) -> ctx3 с каскадной отменой корня">48. Трехуровневая цепочка: ctx -> ctx2 (Timeout) -> ctx3 с каскадной отменой корня</a>
+      <a href="#ex-48" class="sub-exercise-link" title="Упр 48: Трехуровневая цепочка: ctx -&gt; ctx2 (Timeout) -&gt; ctx3 с каскадной отменой корня">48. Трехуровневая цепочка: ctx -&gt; ctx2 (Timeout) -&gt; ctx3 с каскадной отменой корня</a>
       <a href="#ex-49" class="sub-exercise-link" title="Упр 49: Исследование утечки памяти таймеров при забытом defer cancel() в цикле">49. Исследование утечки памяти таймеров при забытом defer cancel() в цикле</a>
       <a href="#ex-50" class="sub-exercise-link" title="Упр 50: Реализация периодического Worker(ctx context.Context, id int)">50. Реализация периодического Worker(ctx context.Context, id int)</a>
       <a href="#ex-51" class="sub-exercise-link" title="Упр 51: Легковесная регистрация Callback через context.AfterFunc (Go 1.21+)">51. Легковесная регистрация Callback через context.AfterFunc (Go 1.21+)</a>
@@ -1075,15 +1075,15 @@
 <div class="exercise-card" id="ex-1">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #1</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Ручная отмена контекста через context.WithCancel и сигнал <-ctx.Done()</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Ручная отмена контекста через context.WithCancel и сигнал &lt;-ctx.Done()</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Ручная отмена (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithCancel</code>)</strong>: Создайте контекст с возможностью отмены. Запустите фоновую горутину, которая в цикле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for</code> выполняет фоновую работу (например, раз в секунду). Горутина должна проверять канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>. В основной горутине подождите 3 секунды и вызовите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code>. Убедитесь, что фоновая горутина корректно завершила работу.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Ручная отмена (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithCancel</code>)</strong>: Создайте контекст с возможностью отмены. Запустите фоновую горутину, которая в цикле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for</code> выполняет фоновую работу (например, раз в секунду). Горутина должна проверять канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>. В основной горутине подождите 3 секунды и вызовите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code>. Убедитесь, что фоновая горутина корректно завершила работу.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context</code> — стандартный механизм управления жизненным циклом горутин, передачи дедлайнов и метаданных запроса в Go. Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithCancel(parent)</code> возвращает производный контекст <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> и функцию отмены <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code>. Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code> закрывает внутренний канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>, широковещательно оповещая все подписанные горутины о необходимости прекратить работу.</p></div>
+    <div><p style="margin-bottom: 6px;">Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context</code> — стандартный механизм управления жизненным циклом горутин, передачи дедлайнов и метаданных запроса в Go. Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithCancel(parent)</code> возвращает производный контекст <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> и функцию отмены <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code>. Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code> закрывает внутренний канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>, широковещательно оповещая все подписанные горутины о необходимости прекратить работу.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -1091,7 +1091,7 @@
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим родительский контекст <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, cancel := context.WithCancel(context.Background())</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Обязательно вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer cancel()</code> для гарантии освобождения ресурсов.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запустим горутину с циклом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for select</code>, слушающую <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code> и тикер.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запустим горутину с циклом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for select</code>, слушающую <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code> и тикер.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code> и дождемся завершения горутины через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.WaitGroup</code>.</div></div>
   </div>
   <div class="code-container">
@@ -1255,7 +1255,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Всегда проверяйте ошибки контекста через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, context.DeadlineExceeded)</code>, а не строковым сравнением <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err.Error() == "..."</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Всегда проверяйте ошибки контекста через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, context.DeadlineExceeded)</code>, а не строковым сравнением <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err.Error() == &quot;...&quot;</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1270,7 +1270,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Передача метаданных (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithValue</code>)</strong>: Создайте цепочку вызовов функций (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Middleware -> Handler -> Controller</code>). Положите в контекст на самом верхнем уровне уникальный ID запроса (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RequestID</code>). Извлеките и выведите его на самом глубоком уровне в контроллере. Объясните, почему не стоит использовать контекст для передачи опциональных параметров бизнес-логики.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Передача метаданных (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithValue</code>)</strong>: Создайте цепочку вызовов функций (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Middleware -&gt; Handler -&gt; Controller</code>). Положите в контекст на самом верхнем уровне уникальный ID запроса (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RequestID</code>). Извлеките и выведите его на самом глубоком уровне в контроллере. Объясните, почему не стоит использовать контекст для передачи опциональных параметров бизнес-логики.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1351,7 +1351,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему нельзя использовать стандартные строки string в качестве ключей для context.WithValue?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что разные независимые пакеты и библиотеки могут случайно использовать одинаковую строку (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"user_id"</code>), перезаписывая чужие данные. Использование кастомного типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type keyType struct{}</code> гарантирует уникальность ключа в рантайме.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что разные независимые пакеты и библиотеки могут случайно использовать одинаковую строку (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;user_id&quot;</code>), перезаписывая чужие данные. Использование кастомного типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type keyType struct{}</code> гарантирует уникальность ключа в рантайме.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-4">
@@ -1361,11 +1361,11 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithTimeout()</code>. Запусти HTTP-запрос (или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code>) в горутине. Если не успевает за 2 секунды — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code> срабатывает, программа выводит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"timeout"</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithTimeout()</code>. Запусти HTTP-запрос (или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code>) в горутине. Если не успевает за 2 секунды — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code> срабатывает, программа выводит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;timeout&quot;</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Шаблон асинхронного ожидания: запуск задачи в горутине с одновременным прослушиванием <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code> в главном потоке.</p></div>
+    <div><p style="margin-bottom: 6px;">Шаблон асинхронного ожидания: запуск задачи в горутине с одновременным прослушиванием <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code> в главном потоке.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -1373,8 +1373,8 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, cancel := context.WithTimeout(context.Background(), 30*time.Millisecond)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запустим фоновую задачу, длящуюся 100 мс, возвращающую результат в канал.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> дождемся либо результата, либо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выведем сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"timeout"</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> дождемся либо результата, либо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выведем сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;timeout&quot;</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -1419,7 +1419,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code> разблокирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> без аллокаций памяти.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code> разблокирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> без аллокаций памяти.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1531,20 +1531,18 @@ func main() {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Бесконечные генераторы обязаны принимать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx context.Context</code>. Отправка в канал внутри генератора всегда оборачивается в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">select {</p>
-<p style="margin-bottom: 6px;">case out <- val:</p>
-<p style="margin-bottom: 6px;">case <-ctx.Done():</p>
-<p style="margin-bottom: 6px;">return</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p></div>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">select {
+case out &lt;- val:
+case &lt;-ctx.Done():
+    return
+}</code></pre></div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RandomGenerator(ctx context.Context) <-chan int</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Внутри горутины в цикле выполняем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> между <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">out <- randVal</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case <-ctx.Done()</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RandomGenerator(ctx context.Context) &lt;-chan int</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Внутри горутины в цикле выполняем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> между <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">out &lt;- randVal</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case &lt;-ctx.Done()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> прочитаем 3 числа и вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Убедимся в завершении горутины.</div></div>
   </div>
@@ -1629,12 +1627,12 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Если писать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">out <- val</code> без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code>, горутина-генератор навсегда зависнет при прекращении чтения из канала.</p></div>
+    <div><p style="margin-bottom: 6px;">Если писать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">out &lt;- val</code> без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code>, горутина-генератор навсегда зависнет при прекращении чтения из канала.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что такое паттерн Or-Done в связке с контекстом?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это обертка над каналом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">in <-chan T</code>, которая считывает элементы через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> между <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val := <-in</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case <-ctx.Done(): return</code>, предотвращая зависание потребителя при отмене контекста.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это обертка над каналом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">in &lt;-chan T</code>, которая считывает элементы через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> между <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val := &lt;-in</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case &lt;-ctx.Done(): return</code>, предотвращая зависание потребителя при отмене контекста.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-7">
@@ -1725,7 +1723,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Покажи <strong>"context propagation"</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> создаёт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> с таймаутом. Передаёт в функцию A, которая создаёт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx2, cancel := context.WithCancel(ctx)</code>. Отменяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx2</code>. Покажи, что отмена дочернего <strong>не отменяет</strong> родительский, но отмена родительского <strong>отменяет</strong> всех детей.</p></div>
+    <div><p style="margin-bottom: 6px;">Покажи <strong>&quot;context propagation&quot;</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> создаёт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> с таймаутом. Передаёт в функцию A, которая создаёт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx2, cancel := context.WithCancel(ctx)</code>. Отменяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx2</code>. Покажи, что отмена дочернего <strong>не отменяет</strong> родительский, но отмена родительского <strong>отменяет</strong> всех детей.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1813,7 +1811,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Базовый контекст</strong>: Создай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx := context.Background()</code>. Напиши воркер, который принимает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> первым аргументом (это стандарт) и крутится в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for { select { case <-ctx.Done(): return default: ... } }</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Базовый контекст</strong>: Создай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx := context.Background()</code>. Напиши воркер, который принимает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> первым аргументом (это стандарт) и крутится в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for { select { case &lt;-ctx.Done(): return default: ... } }</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1899,7 +1897,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.Background()</code>. Создай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithCancel(ctx)</code>. Запусти горутину, которая в бесконечном цикле проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>. Отмени горутину из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> через 2 секунды.</p></div>
+    <div><p style="margin-bottom: 6px;">Создай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.Background()</code>. Создай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithCancel(ctx)</code>. Запусти горутину, которая в бесконечном цикле проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>. Отмени горутину из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> через 2 секунды.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2143,7 +2141,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code> закрывает внутренний канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code> закрывает внутренний канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -2254,11 +2252,11 @@ func main() {
 <div class="exercise-card" id="ex-14">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #14</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Многоуровневое дерево контекстов: каскадная отмена иерархии 1 -> 3 -> 6</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Многоуровневое дерево контекстов: каскадная отмена иерархии 1 -&gt; 3 -&gt; 6</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>"context tree"</strong>: создай родительский <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code>, от него 3 дочерних <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WithCancel</code>, от каждого — ещё по 2. Отмени родительский. Покажи, что <strong>все</strong> дочерние контексты отменились (через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Done()</code> в каждом).</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>&quot;context tree&quot;</strong>: создай родительский <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code>, от него 3 дочерних <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WithCancel</code>, от каждого — ещё по 2. Отмени родительский. Покажи, что <strong>все</strong> дочерние контексты отменились (через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Done()</code> в каждом).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2445,11 +2443,11 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создайте контекст с таймаутом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithTimeout</code>. Запустите "долгую" операцию (с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code>) и корректно обработайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Создайте контекст с таймаутом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithTimeout</code>. Запустите &quot;долгую&quot; операцию (с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code>) и корректно обработайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Асинхронная задача запускается в отдельной горутине, а вызывающий код ожидает либо завершения через канал данных, либо сигнала отмены <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Асинхронная задача запускается в отдельной горутине, а вызывающий код ожидает либо завершения через канал данных, либо сигнала отмены <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -2503,7 +2501,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Таймер рантайма активирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code> ровно через 25 мс.</p></div>
+    <div><p style="margin-bottom: 6px;">Таймер рантайма активирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code> ровно через 25 мс.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -2534,7 +2532,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Реализуем функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Or(ctx1, ctx2 context.Context) context.Context</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Внутри создадим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, cancel := context.WithCancel(context.Background())</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запустим горутину с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx1.Done()</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx2.Done()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запустим горутину с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx1.Done()</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx2.Done()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверим срабатывание при отмене любого из них.</div></div>
   </div>
   <div class="code-container">
@@ -2601,7 +2599,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">В горутине <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Or</code> обязательно добавляйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case <-outCtx.Done():</code> для предотвращения утечки горутины при ручном вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">combinedCancel()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">В горутине <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Or</code> обязательно добавляйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case &lt;-outCtx.Done():</code> для предотвращения утечки горутины при ручном вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">combinedCancel()</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2612,7 +2610,7 @@ func main() {
 <div class="exercise-card" id="ex-18">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #18</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Каскадная отмена цепочки контекстов ctx1 -> ctx2</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Каскадная отмена цепочки контекстов ctx1 -&gt; ctx2</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -2793,7 +2791,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Покажи <strong>"context leak"</strong>: создаёшь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithCancel</code> в цикле, но не вызываешь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code>. Горутина из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WithCancel</code> остаётся висеть. Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.NumGoroutine()</code> для демонстрации. Исправь через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer cancel()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Покажи <strong>&quot;context leak&quot;</strong>: создаёшь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithCancel</code> в цикле, но не вызываешь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code>. Горутина из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WithCancel</code> остаётся висеть. Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.NumGoroutine()</code> для демонстрации. Исправь через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer cancel()</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2963,7 +2961,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ComputeReport(ctx context.Context) error</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Внутри функции используем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> между завершением вычислений и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Внутри функции используем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> между завершением вычислений и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> ограничим время таймаутом 20 мс.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверим код ошибки.</div></div>
   </div>
@@ -3019,7 +3017,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в Go принято оборачивать ошибки контекста через fmt.Errorf("my_func: %w", ctx.Err())?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в Go принято оборачивать ошибки контекста через fmt.Errorf(&quot;my_func: %w&quot;, ctx.Err())?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это сохраняет цепочку ошибок (Error Wrapping), позволяя вышестоящим слоям программы проверять первопричину сбоя через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, context.Canceled)</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.Is(err, context.DeadlineExceeded)</code>.</p></div>
   </div>
 </div>
@@ -3119,7 +3117,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>"graceful shutdown with context"</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> создаёт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">signal.NotifyContext</code>. При <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Ctrl+C</code> — контекст отменяется. Все worker'ы читают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code>, завершают текущую работу, делают cleanup и выходят.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>&quot;graceful shutdown with context&quot;</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main</code> создаёт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">signal.NotifyContext</code>. При <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Ctrl+C</code> — контекст отменяется. Все worker&#x27;ы читают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code>, завершают текущую работу, делают cleanup и выходят.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3402,14 +3400,14 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Использование пользовательского неэкспортируемого типа (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type ctxKey string</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type ctxKey struct{}</code>) в качестве ключа для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithValue</code> — фундаментальный стандарт безопасности в Go. Это гарантирует, что даже если другой пакет использует такое же строковое значение (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"userID"</code>), тип ключа в интерфейсе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">any</code> будет различаться, исключая перезапись данных.</p></div>
+    <div><p style="margin-bottom: 6px;">Использование пользовательского неэкспортируемого типа (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type ctxKey string</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type ctxKey struct{}</code>) в качестве ключа для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithValue</code> — фундаментальный стандарт безопасности в Go. Это гарантирует, что даже если другой пакет использует такое же строковое значение (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;userID&quot;</code>), тип ключа в интерфейсе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">any</code> будет различаться, исключая перезапись данных.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type sessionKey string</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим приватную константу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">const userSessionKey sessionKey = "user_session"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим приватную константу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">const userSessionKey sessionKey = &quot;user_session&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Реализуем типизированные геттер и сеттер: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WithUserSession</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserSessionFromContext</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверим безопасное извлечение.</div></div>
   </div>
@@ -3733,7 +3731,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithTimeout(ctx, 1*time.Second)</code>. Запусти горутину с долгой работой (sleep 5s). Горутина должна завершиться по таймауту контекста, выведя "Context cancelled".</p></div>
+    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithTimeout(ctx, 1*time.Second)</code>. Запусти горутину с долгой работой (sleep 5s). Горутина должна завершиться по таймауту контекста, выведя &quot;Context cancelled&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3745,8 +3743,8 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запустим горутину с симуляцией 200 мс работы.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Горутина считывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выведем сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Context cancelled"</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Горутина считывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выведем сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Context cancelled&quot;</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -3799,7 +3797,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code> пробуждает горутину из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code> пробуждает горутину из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -3808,7 +3806,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что возвращает метод ctx.Done() у контекста context.Background()?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Он возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>. Чтение из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>-канала блокируется навсегда, поэтому в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> ветка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case <-ctx.Done():</code> для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.Background()</code> никогда не выполнится.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Он возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>. Чтение из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>-канала блокируется навсегда, поэтому в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> ветка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case &lt;-ctx.Done():</code> для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.Background()</code> никогда не выполнится.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-32">
@@ -3907,7 +3905,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>"worker pool with context"</strong>: N горутин читают задачи из канала. Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> отменён — все воркеры выходят. Задачи — это функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func()</code>. Покажи, что воркеры завершаются, даже если в канале остались задачи.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>&quot;worker pool with context&quot;</strong>: N горутин читают задачи из канала. Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> отменён — все воркеры выходят. Задачи — это функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func()</code>. Покажи, что воркеры завершаются, даже если в канале остались задачи.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3918,7 +3916,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим канал задач <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tasks := make(chan func(), 10)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запустим 3 воркера, выполняющих <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> между <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case <-ctx.Done():</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case task, ok := <-tasks:</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запустим 3 воркера, выполняющих <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> между <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case &lt;-ctx.Done():</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case task, ok := &lt;-tasks:</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Наполним очередь 10 задачами.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Отменим контекст после выполнения 2 задач и убедимся в мгновенной остановке воркеров.</div></div>
   </div>
@@ -4008,7 +4006,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> на каждой итерации проверяет ветку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>, прерывая обработку очереди.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> на каждой итерации проверяет ветку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>, прерывая обработку очереди.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -4129,7 +4127,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Передача данных (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WithValue</code>)</strong>: Добавь в контекст UserID: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx = context.WithValue(ctx, "userID", 42)</code>. Достань его в воркере: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id := ctx.Value("userID")</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Передача данных (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WithValue</code>)</strong>: Добавь в контекст UserID: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx = context.WithValue(ctx, &quot;userID&quot;, 42)</code>. Достань его в воркере: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id := ctx.Value(&quot;userID&quot;)</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4139,7 +4137,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx = context.WithValue(context.Background(), "userID", 42)</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx = context.WithValue(context.Background(), &quot;userID&quot;, 42)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Передадим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> в функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">auditWorker</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Извлечем значение с проверкой типа.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверим результат.</div></div>
@@ -4193,11 +4191,11 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">В реальном коде вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"userID"</code> используйте неэкспортируемый тип <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type key struct{}</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">В реальном коде вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;userID&quot;</code> используйте неэкспортируемый тип <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type key struct{}</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что вернет ctx.Value("key"), если ключ не найден ни в одном узле дерева?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что вернет ctx.Value(&quot;key&quot;), если ключ не найден ни в одном узле дерева?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Value</code> дойдет до корня (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">emptyCtx</code>) и вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>.</p></div>
   </div>
 </div>
@@ -4208,7 +4206,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>"parallel fetch with context"</strong>: запускаешь 5 HTTP-запросов (или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code> как симуляцию) в горутинах. Если один упал с ошибкой или таймаут — отменяй остальные через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code>. Собери первую ошибку или все результаты.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>&quot;parallel fetch with context&quot;</strong>: запускаешь 5 HTTP-запросов (или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code> как симуляцию) в горутинах. Если один упал с ошибкой или таймаут — отменяй остальные через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code>. Собери первую ошибку или все результаты.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4309,7 +4307,7 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Практикум структурированного логирования: контекст передается через слои Handler -> Service -> Repository с извлечением RequestID в каждом логе.</p></div>
+    <div><p style="margin-bottom: 6px;">Практикум структурированного логирования: контекст передается через слои Handler -&gt; Service -&gt; Repository с извлечением RequestID в каждом логе.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -4393,7 +4391,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>"context deadline exceeded"</strong> обработку: функция делает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> между <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code> и результатом. Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code> — проверяй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Err() == context.DeadlineExceeded</code> vs <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.Canceled</code> и логируй разные сообщения.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>&quot;context deadline exceeded&quot;</strong> обработку: функция делает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> между <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code> и результатом. Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code> — проверяй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Err() == context.DeadlineExceeded</code> vs <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.Canceled</code> и логируй разные сообщения.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4489,11 +4487,11 @@ func main() {
 <div class="exercise-card" id="ex-39">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #39</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Каскадная отмена дерева потомков: Parent -> Child -> SubChild</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Каскадная отмена дерева потомков: Parent -&gt; Child -&gt; SubChild</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создайте иерархию контекстов (Parent -> Child). Отмените Parent и убедитесь, что все Child-контексты также автоматически отменились.</p></div>
+    <div><p style="margin-bottom: 6px;">Создайте иерархию контекстов (Parent -&gt; Child). Отмените Parent и убедитесь, что все Child-контексты также автоматически отменились.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4503,7 +4501,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим 3 уровня иерархии <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">parent -> child -> subChild</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим 3 уровня иерархии <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">parent -&gt; child -&gt; subChild</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запустим горутину на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subChild</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Отменим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">parent</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Убедимся, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subChild</code> мгновенно отменился.</div></div>
@@ -4580,14 +4578,14 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Строковый литерал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"userID"</code> в качестве ключа приводит к коллизиям между независимыми библиотеками. Создание уникального типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type ctxKey string</code> превращает ключ в уникальный дескриптор в рантайме Go, так как тип сравнивается по <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(typeID, value)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Строковый литерал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;userID&quot;</code> в качестве ключа приводит к коллизиям между независимыми библиотеками. Создание уникального типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type ctxKey string</code> превращает ключ в уникальный дескриптор в рантайме Go, так как тип сравнивается по <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(typeID, value)</code>.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type ctxKey string</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим приватную константу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">const userIDKey ctxKey = "user_id"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим приватную константу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">const userIDKey ctxKey = &quot;user_id&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Реализуем функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">InjectUserID</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ExtractUserID</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверим безопасную работу.</div></div>
   </div>
@@ -4723,7 +4721,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем главное преимущество context.AfterFunc над запуском горутины go func() { <-ctx.Done(); cleanup() }?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем главное преимущество context.AfterFunc над запуском горутины go func() { &lt;-ctx.Done(); cleanup() }?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.AfterFunc</code> не аллоцирует и не держит заблокированную горутину в состоянии ожидания (Sleep/Blocked), что критически снижает накладные расходы при миллионах параллельных соединений.</p></div>
   </div>
 </div>
@@ -4787,11 +4785,11 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Не проверяйте ошибки контекста до чтения из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code> в конкурентном коде.</p></div>
+    <div><p style="margin-bottom: 6px;">Не проверяйте ошибки контекста до чтения из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code> в конкурентном коде.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Может ли ctx.Err() вернуть nil после закрытия канала <-ctx.Done()?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Может ли ctx.Err() вернуть nil после закрытия канала &lt;-ctx.Done()?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Нет, рантайм гарантирует, что поле ошибки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c.err</code> заполняется строго ДО закрытия канала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">close(c.done)</code> под мьютексом.</p></div>
   </div>
 </div>
@@ -4802,7 +4800,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Переопределите поведение при отмене контекста: запустите горутину, которая делает "cleanup" (например, удаляет временные файлы) при срабатывании <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Переопределите поведение при отмене контекста: запустите горутину, которая делает &quot;cleanup&quot; (например, удаляет временные файлы) при срабатывании <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4813,7 +4811,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим временный файл.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запустим горутину, слушающую <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запустим горутину, слушающую <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> При сигнале отмены удалим временный файл.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Убедимся в чистоте диска.</div></div>
   </div>
@@ -4975,7 +4973,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Каверзный кейс]</strong>: Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithValue(ctx, "userID", 42)</code>. В глубоко вложенной функции извлеки значение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Value("userID")</code>. Объясни, почему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithValue</code> следует использовать только для передачи запрос-специфичных данных (request-scoped), а не как глобальные переменные.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Каверзный кейс]</strong>: Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithValue(ctx, &quot;userID&quot;, 42)</code>. В глубоко вложенной функции извлеки значение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Value(&quot;userID&quot;)</code>. Объясни, почему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithValue</code> следует использовать только для передачи запрос-специфичных данных (request-scoped), а не как глобальные переменные.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5137,14 +5135,14 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Горутина-зомби (Zombie Goroutine) — частый баг: функция принимает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code>, но в теле цикла использует обычный блокирующий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep()</code> без проверки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>. В результате при отмене контекста горутина продолжает сжигать память и процессорное время.</p></div>
+    <div><p style="margin-bottom: 6px;">Горутина-зомби (Zombie Goroutine) — частый баг: функция принимает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code>, но в теле цикла использует обычный блокирующий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep()</code> без проверки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>. В результате при отмене контекста горутина продолжает сжигать память и процессорное время.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишем ошибочный вариант (игнорирующий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code>).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишем исправленный вариант с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select { case <-ctx.Done(): return ... }</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишем исправленный вариант с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select { case &lt;-ctx.Done(): return ... }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Продемонстрируем мгновенный выход исправленной горутины.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверим результат.</div></div>
   </div>
@@ -5223,7 +5221,7 @@ func main() {
 <div class="exercise-card" id="ex-48">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #48</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Трехуровневая цепочка: ctx -> ctx2 (Timeout) -> ctx3 с каскадной отменой корня</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Трехуровневая цепочка: ctx -&gt; ctx2 (Timeout) -&gt; ctx3 с каскадной отменой корня</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -5291,7 +5289,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rootCancel</code> каскадно проходит по цепочке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx -> ctx2 -> ctx3</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rootCancel</code> каскадно проходит по цепочке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx -&gt; ctx2 -&gt; ctx3</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -5397,7 +5395,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Worker(ctx context.Context, id int)</code>, которая каждую секунду выводит "working". Она должна корректно завершаться при отмене контекста.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Worker(ctx context.Context, id int)</code>, которая каждую секунду выводит &quot;working&quot;. Она должна корректно завершаться при отмене контекста.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5409,7 +5407,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Worker(ctx context.Context, id int, wg *sync.WaitGroup)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создадим тикер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.NewTicker(...)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> обработаем тики и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> обработаем тики и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверим остановку.</div></div>
   </div>
   <div class="code-container">
@@ -5585,7 +5583,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим HTTP-сервер с обработчиком <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/api/long-process</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Внутри обработчика считываем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx := r.Context()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В цикле с шагами по 20 мс проверяем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В цикле с шагами по 20 мс проверяем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запустим тестовый HTTP-клиент, который отправляет запрос и обрывает TCP-соединение через 30 мс.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Зафиксируем на стороне сервера досрочную отмену запроса.</div></div>
   </div>

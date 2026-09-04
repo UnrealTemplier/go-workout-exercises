@@ -686,7 +686,7 @@
       <a href="#ex-15" class="sub-exercise-link" title="Упр 15: Хронология выполнения: функция init() vs main()">15. Хронология выполнения: функция init() vs main()</a>
       <a href="#ex-16" class="sub-exercise-link" title="Упр 16: Многофайловый пакет main: main.go и utils.go">16. Многофайловый пакет main: main.go и utils.go</a>
       <a href="#ex-17" class="sub-exercise-link" title="Упр 17: Ошибка повторного объявления точки входа (main redeclared in this block)">17. Ошибка повторного объявления точки входа (main redeclared in this block)</a>
-      <a href="#ex-18" class="sub-exercise-link" title="Упр 18: Стриппинг отладочной информации и уменьшение размера бинарника (-ldflags="-s -w")">18. Стриппинг отладочной информации и уменьшение размера бинарника (-ldflags="-s -w")</a>
+      <a href="#ex-18" class="sub-exercise-link" title="Упр 18: Стриппинг отладочной информации и уменьшение размера бинарника (-ldflags=&quot;-s -w&quot;)">18. Стриппинг отладочной информации и уменьшение размера бинарника (-ldflags=&quot;-s -w&quot;)</a>
       <a href="#ex-19" class="sub-exercise-link" title="Упр 19: Парсинг аргументов CLI через стандартный пакет flag">19. Парсинг аргументов CLI через стандартный пакет flag</a>
       <a href="#ex-20" class="sub-exercise-link" title="Упр 20: Реализация подкоманд (Subcommands) через flag.NewFlagSet">20. Реализация подкоманд (Subcommands) через flag.NewFlagSet</a>
       <a href="#ex-21" class="sub-exercise-link" title="Упр 21: Внедрение версии и времени сборки через -ldflags (-X)">21. Внедрение версии и времени сборки через -ldflags (-X)</a>
@@ -1105,7 +1105,7 @@ go env GOVERSION
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создайте файл main.go, напишите простейшую программу "Hello, World!" и запустите её командой go run.</p></div>
+    <div><p style="margin-bottom: 6px;">Создайте файл main.go, напишите простейшую программу &quot;Hello, World!&quot; и запустите её командой go run.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1262,7 +1262,7 @@ go build .
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Имя выходного файла берется из директивы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">module <name></code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go.mod</code> (последний сегмент пути).</p></div>
+    <div><p style="margin-bottom: 6px;">Имя выходного файла берется из директивы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">module &lt;name&gt;</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go.mod</code> (последний сегмент пути).</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1331,7 +1331,7 @@ GOOS=darwin GOARCH=arm64 go build -o bin/server-darwin-arm64 .</code></pre>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Наличие CGO (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">import "C"</code>). Если включен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CGO_ENABLED=1</code>, стандартная кросс-компиляция сломается, так как CGO требует реальный C-кросс-компилятор под целевую ОС. Всегда собирайте с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CGO_ENABLED=0</code>.</li>
+<li style="margin-bottom: 4px;">Наличие CGO (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">import &quot;C&quot;</code>). Если включен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CGO_ENABLED=1</code>, стандартная кросс-компиляция сломается, так как CGO требует реальный C-кросс-компилятор под целевую ОС. Всегда собирайте с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CGO_ENABLED=0</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -1604,7 +1604,7 @@ go build -o bin/myapp .
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как проверить в CI, что весь код в репозитории отформатирован, не изменяя файлы на диске?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gofmt -l .</code> выведет список неотформатированных файлов. Если вывод не пустой (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">test -z "$(gofmt -l .)"</code>), шаг CI падает с ошибкой.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gofmt -l .</code> выведет список неотформатированных файлов. Если вывод не пустой (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">test -z &quot;$(gofmt -l .)&quot;</code>), шаг CI падает с ошибкой.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-11">
@@ -1646,7 +1646,7 @@ file app-linux
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Утилита <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file</code> считывает первые 4 байта (Magic Bytes) файла: для ELF это <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x7F 'E' 'L' 'F'</code>, для Mach-O — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0xCF 0xFA 0xED 0xFE</code>, для Windows — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x4D 0x5A</code> ('MZ').</p></div>
+    <div><p style="margin-bottom: 6px;">Утилита <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">file</code> считывает первые 4 байта (Magic Bytes) файла: для ELF это <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x7F &#x27;E&#x27; &#x27;L&#x27; &#x27;F&#x27;</code>, для Mach-O — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0xCF 0xFA 0xED 0xFE</code>, для Windows — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x4D 0x5A</code> (&#x27;MZ&#x27;).</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1888,7 +1888,7 @@ ls -lh dist/</code></pre>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу, в которой будет функция init(), выводящая "Init started", и функция main(), выводящая "Main started". Проверь порядок вызова.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу, в которой будет функция init(), выводящая &quot;Init started&quot;, и функция main(), выводящая &quot;Main started&quot;. Проверь порядок вызова.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1902,8 +1902,8 @@ ls -lh dist/</code></pre>
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main.go</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Объявляем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func init() { fmt.Println("Init started") }</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Объявляем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func main() { fmt.Println("Main started") }</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Объявляем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func init() { fmt.Println(&quot;Init started&quot;) }</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Объявляем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func main() { fmt.Println(&quot;Main started&quot;) }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запускаем и проверяем вывод.</div></div>
   </div>
   <div class="code-container">
@@ -2094,11 +2094,11 @@ func main() {
 <div class="exercise-card" id="ex-18">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #18</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Стриппинг отладочной информации и уменьшение размера бинарника (-ldflags="-s -w")</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Стриппинг отладочной информации и уменьшение размера бинарника (-ldflags=&quot;-s -w&quot;)</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Сборка с флагами: Скомпилируй программу с флагом -ldflags="-s -w", чтобы удалить отладочную информацию. Сравни размер полученного бинарника с обычным.</p></div>
+    <div><p style="margin-bottom: 6px;">Сборка с флагами: Скомпилируй программу с флагом -ldflags=&quot;-s -w&quot;, чтобы удалить отладочную информацию. Сравни размер полученного бинарника с обычным.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2119,7 +2119,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Собираем обычный бинарник: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -o app-standard .</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Собираем оптимизированный бинарник: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -ldflags="-s -w" -o app-stripped .</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Собираем оптимизированный бинарник: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -ldflags=&quot;-s -w&quot; -o app-stripped .</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сравниваем размеры файлов через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ls -lh</code>.</div></div>
   </div>
   <div class="code-container">
@@ -2174,9 +2174,9 @@ ls -lh app-standard app-stripped
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">flag</code> — базовый инструмент создания CLI-утилит в стандартной библиотеке Go:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">flag.StringVar(&name, "name", "Гость", "Описание")</code></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">flag.IntVar(&age, "age", 18, "Описание")</code></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">flag.BoolVar(&verbose, "verbose", false, "Описание")</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">flag.StringVar(&amp;name, &quot;name&quot;, &quot;Гость&quot;, &quot;Описание&quot;)</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">flag.IntVar(&amp;age, &quot;age&quot;, 18, &quot;Описание&quot;)</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">flag.BoolVar(&amp;verbose, &quot;verbose&quot;, false, &quot;Описание&quot;)</code></li>
 <li style="margin-bottom: 4px;">Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">flag.Parse()</code> производит фактический разбор параметров.</li>
 </ul></div>
   </div>
@@ -2269,8 +2269,8 @@ go run . -name=&quot;Алексей&quot; -age=30 -verbose
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Каждый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">FlagSet</code> представляет собой независимый набор флагов со своими правилами парсинга:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">addCmd = flag.NewFlagSet("add", flag.ExitOnError)</code></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subCmd = flag.NewFlagSet("sub", flag.ExitOnError)</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">addCmd = flag.NewFlagSet(&quot;add&quot;, flag.ExitOnError)</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subCmd = flag.NewFlagSet(&quot;sub&quot;, flag.ExitOnError)</code></li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -2379,7 +2379,7 @@ go run . sub --x=100 --y=42
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> В коде объявляем переменные <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var Version = "dev"</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var BuildTime = "unknown"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> В коде объявляем переменные <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var Version = &quot;dev&quot;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var BuildTime = &quot;unknown&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Компилируем бинарник, передавая значения через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-ldflags</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запускаем скомпилированный файл.</div></div>
   </div>
@@ -2425,13 +2425,13 @@ go build -ldflags &quot;-X main.Version=v1.2.3 -X &#x27;main.BuildTime=$NOW&#x27
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Если переменная содержит пробелы (например, вывод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">date</code>), значение в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-X</code> обязательно нужно оборачивать в кавычки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-X 'main.BuildTime=...'</code>), иначе шелл разобьет строку на несколько аргументов.</li>
+<li style="margin-bottom: 4px;">Если переменная содержит пробелы (например, вывод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">date</code>), значение в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-X</code> обязательно нужно оборачивать в кавычки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-X &#x27;main.BuildTime=...&#x27;</code>), иначе шелл разобьет строку на несколько аргументов.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Можно ли через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-X</code> переопределить неэкспортированную переменную из другого пакета (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">config.version</code>)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! Формат флага: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-X 'module_path/package_name.variableName=value'</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! Формат флага: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-X &#x27;module_path/package_name.variableName=value&#x27;</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-22">
@@ -2535,7 +2535,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Когда для счетчика лучше использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync/atomic</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Mutex</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Для простых числовых счетчиков <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">atomic.AddInt64(&counter, 1)</code> работает в 2–4 раза быстрее мьютекса, так как не требует аллокации структуры блокировки и переключения контекста горутины.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Для простых числовых счетчиков <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">atomic.AddInt64(&amp;counter, 1)</code> работает в 2–4 раза быстрее мьютекса, так как не требует аллокации структуры блокировки и переключения контекста горутины.</p></div>
   </div>
 </div>
 
@@ -2575,7 +2575,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем канал сигналов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sigChan := make(chan os.Signal, 1)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Регистрируем перехват через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Блокируемся на чтении из канала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-sigChan</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Блокируемся на чтении из канала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-sigChan</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выполняем очистку ресурсов с таймаутом через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithTimeout</code>.</div></div>
   </div>
   <div class="code-container">
@@ -2754,7 +2754,7 @@ echo &quot;=========================================&quot;</code></pre>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Зачем в CI использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">git diff --exit-code</code> после генерации кода?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если в проекте используется кодогенерация (Protobuf, Mockgen, Stringer), команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go generate ./... && git diff --exit-code</code> гарантирует, что разработчик не забыл обновить сгенерированные файлы перед коммитом.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если в проекте используется кодогенерация (Protobuf, Mockgen, Stringer), команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go generate ./... &amp;&amp; git diff --exit-code</code> гарантирует, что разработчик не забыл обновить сгенерированные файлы перед коммитом.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-25">

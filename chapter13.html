@@ -717,7 +717,7 @@
       <a href="#ex-2" class="sub-exercise-link" title="Упр 2: Инкапсуляция неэкспортируемых полей и публичные методы доступа (Getters/Setters)">2. Инкапсуляция неэкспортируемых полей и публичные методы доступа (Getters/Setters)</a>
       <a href="#ex-3" class="sub-exercise-link" title="Упр 3: Анонимные структуры (Anonymous Structs) для локальных DTO и конфигураций">3. Анонимные структуры (Anonymous Structs) для локальных DTO и конфигураций</a>
       <a href="#ex-4" class="sub-exercise-link" title="Упр 4: Метод с указателем-получателем (Pointer Receiver): func (p *Person) Birthday()">4. Метод с указателем-получателем (Pointer Receiver): func (p *Person) Birthday()</a>
-      <a href="#ex-5" class="sub-exercise-link" title="Упр 5: Указатели на структуры: создание u := &User{} и автоматическое разыменование полей">5. Указатели на структуры: создание u := &User{} и автоматическое разыменование полей</a>
+      <a href="#ex-5" class="sub-exercise-link" title="Упр 5: Указатели на структуры: создание u := &amp;User{} и автоматическое разыменование полей">5. Указатели на структуры: создание u := &amp;User{} и автоматическое разыменование полей</a>
       <a href="#ex-6" class="sub-exercise-link" title="Упр 6: Сравнение передачи структуры: AgePerson(p Person) по значению vs AgePersonPtr(p *Person) по указателю">6. Сравнение передачи структуры: AgePerson(p Person) по значению vs AgePersonPtr(p *Person) по указателю</a>
       <a href="#ex-7" class="sub-exercise-link" title="Упр 7: Метод со значением-получателем (Value Receiver): func (u User) Birthday() и потеря мутаций">7. Метод со значением-получателем (Value Receiver): func (u User) Birthday() и потеря мутаций</a>
       <a href="#ex-8" class="sub-exercise-link" title="Упр 8: Три способа инициализации структуры Person: позиционная, именованная и new(Person)">8. Три способа инициализации структуры Person: позиционная, именованная и new(Person)</a>
@@ -733,7 +733,7 @@
       <a href="#ex-18" class="sub-exercise-link" title="Упр 18: Композиция: структура Employee со встроенной структурой Address без имени поля">18. Композиция: структура Employee со встроенной структурой Address без имени поля</a>
       <a href="#ex-19" class="sub-exercise-link" title="Упр 19: Фабричная функция-конструктор NewBook(...) с возвратом указателя *Book">19. Фабричная функция-конструктор NewBook(...) с возвратом указателя *Book</a>
       <a href="#ex-20" class="sub-exercise-link" title="Упр 20: Сравнение структур через ==: правила Comparable и запрет срезов/мап в полях">20. Сравнение структур через ==: правила Comparable и запрет срезов/мап в полях</a>
-      <a href="#ex-21" class="sub-exercise-link" title="Упр 21: Инициализация структуры по именам полей User{ID: 1, Name: 'Alice'}">21. Инициализация структуры по именам полей User{ID: 1, Name: 'Alice'}</a>
+      <a href="#ex-21" class="sub-exercise-link" title="Упр 21: Инициализация структуры по именам полей User{ID: 1, Name: &#x27;Alice&#x27;}">21. Инициализация структуры по именам полей User{ID: 1, Name: &#x27;Alice&#x27;}</a>
       <a href="#ex-22" class="sub-exercise-link" title="Упр 22: Вложенные структуры (Nested Structs) и вложенная литеральная инициализация">22. Вложенные структуры (Nested Structs) и вложенная литеральная инициализация</a>
       <a href="#ex-23" class="sub-exercise-link" title="Упр 23: Продвинутые поля (Promoted Fields): доступ emp.City вместо emp.Address.City">23. Продвинутые поля (Promoted Fields): доступ emp.City вместо emp.Address.City</a>
       <a href="#ex-24" class="sub-exercise-link" title="Упр 24: Вложенные структуры и явное обращение к вложенным полям emp.Address.City">24. Вложенные структуры и явное обращение к вложенным полям emp.Address.City</a>
@@ -747,15 +747,15 @@
       <a href="#ex-32" class="sub-exercise-link" title="Упр 32: Продвижение методов: структура Car с анонимным полем Engine и прямой вызов car.Start()">32. Продвижение методов: структура Car с анонимным полем Engine и прямой вызов car.Start()</a>
       <a href="#ex-33" class="sub-exercise-link" title="Упр 33: Прямой вызов методов встроенного объекта Engine через объект Car">33. Прямой вызов методов встроенного объекта Engine через объект Car</a>
       <a href="#ex-34" class="sub-exercise-link" title="Упр 34: Каверзный кейс: срез указателей []*Point и пакетная мутация координат в цикле">34. Каверзный кейс: срез указателей []*Point и пакетная мутация координат в цикле</a>
-      <a href="#ex-35" class="sub-exercise-link" title="Упр 35: Выравнивание полей в памяти (Memory Padding & Alignment) и оптимизация размера структур">35. Выравнивание полей в памяти (Memory Padding & Alignment) и оптимизация размера структур</a>
+      <a href="#ex-35" class="sub-exercise-link" title="Упр 35: Выравнивание полей в памяти (Memory Padding &amp; Alignment) и оптимизация размера структур">35. Выравнивание полей в памяти (Memory Padding &amp; Alignment) и оптимизация размера структур</a>
       <a href="#ex-36" class="sub-exercise-link" title="Упр 36: Теги структур и сериализация в JSON (json.Marshal): игнорирование приватных полей">36. Теги структур и сериализация в JSON (json.Marshal): игнорирование приватных полей</a>
       <a href="#ex-37" class="sub-exercise-link" title="Упр 37: Потокобезопасный счетчик со встроенным sync.Mutex и всплытием методов Lock/Unlock">37. Потокобезопасный счетчик со встроенным sync.Mutex и всплытием методов Lock/Unlock</a>
       <a href="#ex-38" class="sub-exercise-link" title="Упр 38: Двусторонняя сериализация/десериализация структуры User (json.Marshal и json.Unmarshal)">38. Двусторонняя сериализация/десериализация структуры User (json.Marshal и json.Unmarshal)</a>
       <a href="#ex-39" class="sub-exercise-link" title="Упр 39: Методы PrintInfo() (Value Receiver) и UpdateYear() (Pointer Receiver): почему мутация требует указатель">39. Методы PrintInfo() (Value Receiver) и UpdateYear() (Pointer Receiver): почему мутация требует указатель</a>
       <a href="#ex-40" class="sub-exercise-link" title="Упр 40: Анонимное встраивание User в Employee и прямой доступ к emp.Name">40. Анонимное встраивание User в Employee и прямой доступ к emp.Name</a>
-      <a href="#ex-41" class="sub-exercise-link" title="Упр 41: Десериализация json.Unmarshal: обязательная передача структуры по указателю &user">41. Десериализация json.Unmarshal: обязательная передача структуры по указателю &user</a>
+      <a href="#ex-41" class="sub-exercise-link" title="Упр 41: Десериализация json.Unmarshal: обязательная передача структуры по указателю &amp;user">41. Десериализация json.Unmarshal: обязательная передача структуры по указателю &amp;user</a>
       <a href="#ex-42" class="sub-exercise-link" title="Упр 42: Встраивание интерфейса io.Reader в структуру: реализация через делегирование">42. Встраивание интерфейса io.Reader в структуру: реализация через делегирование</a>
-      <a href="#ex-43" class="sub-exercise-link" title="Упр 43: Теги полей json:'title,omitempty' и сериализация структур в JSON">43. Теги полей json:'title,omitempty' и сериализация структур в JSON</a>
+      <a href="#ex-43" class="sub-exercise-link" title="Упр 43: Теги полей json:&#x27;title,omitempty&#x27; и сериализация структур в JSON">43. Теги полей json:&#x27;title,omitempty&#x27; и сериализация структур в JSON</a>
       <a href="#ex-44" class="sub-exercise-link" title="Упр 44: Паттерн Functional Options для гибкого конфигурирования серверов NewServer(opts ...Option)">44. Паттерн Functional Options для гибкого конфигурирования серверов NewServer(opts ...Option)</a>
       <a href="#ex-45" class="sub-exercise-link" title="Упр 45: Получатели методов: IncrementValue() (значение) vs IncrementPointer() (указатель) для Counter">45. Получатели методов: IncrementValue() (значение) vs IncrementPointer() (указатель) для Counter</a>
       <a href="#ex-46" class="sub-exercise-link" title="Упр 46: Сравнение структур Point{X, Y} через == и запрет сравнения при добавлении среза Meta []string">46. Сравнение структур Point{X, Y} через == и запрет сравнения при добавлении среза Meta []string</a>
@@ -773,7 +773,7 @@
       <a href="#ex-58" class="sub-exercise-link" title="Упр 58: Геометрическая структура Vector2D и иммутабельные методы Add, Subtract, Scale">58. Геометрическая структура Vector2D и иммутабельные методы Add, Subtract, Scale</a>
       <a href="#ex-59" class="sub-exercise-link" title="Упр 59: Пустая структура struct{}: размер 0 байт, массив [1000]struct{} и применение в Set/Chan">59. Пустая структура struct{}: размер 0 байт, массив [1000]struct{} и применение в Set/Chan</a>
       <a href="#ex-60" class="sub-exercise-link" title="Упр 60: Иммутабельная структура (Immutable Struct) и порождающие методы WithName(name) Person">60. Иммутабельная структура (Immutable Struct) и порождающие методы WithName(name) Person</a>
-      <a href="#ex-61" class="sub-exercise-link" title="Упр 61: Каверзный кейс: ошибка присвоения m['john'].Age = 30 в мапе структур и решение через map[string]*User">61. Каверзный кейс: ошибка присвоения m['john'].Age = 30 в мапе структур и решение через map[string]*User</a>
+      <a href="#ex-61" class="sub-exercise-link" title="Упр 61: Каверзный кейс: ошибка присвоения m[&#x27;john&#x27;].Age = 30 в мапе структур и решение через map[string]*User">61. Каверзный кейс: ошибка присвоения m[&#x27;john&#x27;].Age = 30 в мапе структур и решение через map[string]*User</a>
       <a href="#ex-62" class="sub-exercise-link" title="Упр 62: Реализация структуры Stack на срезе: методы Push, Pop (LIFO), Peek и IsEmpty">62. Реализация структуры Stack на срезе: методы Push, Pop (LIFO), Peek и IsEmpty</a>
       <a href="#ex-63" class="sub-exercise-link" title="Упр 63: Форматированный вывод структур: глаголы %+v (имена полей) и %#v (синтаксис Go)">63. Форматированный вывод структур: глаголы %+v (имена полей) и %#v (синтаксис Go)</a>
       <a href="#ex-64" class="sub-exercise-link" title="Упр 64: Односвязный список на структуре Node{Value int, Next *Node} и алгоритм обхода">64. Односвязный список на структуре Node{Value int, Next *Node} и алгоритм обхода</a>
@@ -781,7 +781,7 @@
       <a href="#ex-66" class="sub-exercise-link" title="Упр 66: Фабричный конструктор NewDatabaseConnection(host, port) (*Connection, error) с валидацией">66. Фабричный конструктор NewDatabaseConnection(host, port) (*Connection, error) с валидацией</a>
       <a href="#ex-67" class="sub-exercise-link" title="Упр 67: Реализация методов односвязного списка: Append(val), Print() и Find(val)">67. Реализация методов односвязного списка: Append(val), Print() и Find(val)</a>
       <a href="#ex-68" class="sub-exercise-link" title="Упр 68: Выравнивание полей в памяти (Padding): StructA (24 байта) против StructB (16 байт) через unsafe.Sizeof">68. Выравнивание полей в памяти (Padding): StructA (24 байта) против StructB (16 байт) через unsafe.Sizeof</a>
-      <a href="#ex-69" class="sub-exercise-link" title="Упр 69: Теги структуры type User struct { Name string `json:'name'` } и валидация схемы">69. Теги структуры type User struct { Name string `json:'name'` } и валидация схемы</a>
+      <a href="#ex-69" class="sub-exercise-link" title="Упр 69: Теги структуры type User struct { Name string `json:&#x27;name&#x27;` } и валидация схемы">69. Теги структуры type User struct { Name string `json:&#x27;name&#x27;` } и валидация схемы</a>
       <a href="#ex-70" class="sub-exercise-link" title="Упр 70: Двоичное дерево поиска (BST) на структуре TreeNode и симметричный обход (In-Order Traversal)">70. Двоичное дерево поиска (BST) на структуре TreeNode и симметричный обход (In-Order Traversal)</a>
       <a href="#ex-71" class="sub-exercise-link" title="Упр 71: Переопределение методов (Method Overriding) в Child и вызов оригинального метода Parent">71. Переопределение методов (Method Overriding) в Child и вызов оригинального метода Parent</a>
     </div>
@@ -1105,8 +1105,8 @@
     <div><p style="margin-bottom: 6px;"><strong>Структуры (Structs) в Go:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Структура — это составной пользовательский тип данных, объединяющий именованные поля;</li>
-<li style="margin-bottom: 4px;"><strong>Именованная инициализация (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User{Name: "Иван", Age: 30}</code>):</strong> промышленный стандарт Go. Порядок полей не важен, неинициализированные поля получают Zero Values, устойчива к добавлению новых полей;</li>
-<li style="margin-bottom: 4px;"><strong>Позиционная инициализация (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User{"Иван", 30}</code>):</strong> требует строгого порядка и указания ВСЕХ полей (хрупкая, ломается при изменении структуры).</li>
+<li style="margin-bottom: 4px;"><strong>Именованная инициализация (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User{Name: &quot;Иван&quot;, Age: 30}</code>):</strong> промышленный стандарт Go. Порядок полей не важен, неинициализированные поля получают Zero Values, устойчива к добавлению новых полей;</li>
+<li style="margin-bottom: 4px;"><strong>Позиционная инициализация (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User{&quot;Иван&quot;, 30}</code>):</strong> требует строгого порядка и указания ВСЕХ полей (хрупкая, ломается при изменении структуры).</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -1116,8 +1116,8 @@
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявляем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type User struct { Name string; Age int }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u1</code> с именованными полями.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u2</code> позиционным литералом.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выводим экземпляры через `fmt.Printf("%+v</div>
-<p style="margin-bottom: 6px;">")`.</p></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выводим экземпляры через `fmt.Printf(&quot;%+v</div>
+<p style="margin-bottom: 6px;">&quot;)`.</p></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -1283,7 +1283,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Анонимная структура: Создай структуру прямо в main без объявления типа (cfg := struct{ Host string }{ Host: "localhost" }). Отлично подходит для временных данных или тестов.</p></div>
+    <div><p style="margin-bottom: 6px;">Анонимная структура: Создай структуру прямо в main без объявления типа (cfg := struct{ Host string }{ Host: &quot;localhost&quot; }). Отлично подходит для временных данных или тестов.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1367,7 +1367,7 @@ func main() {
 <li style="margin-bottom: 4px;"><strong>Когда использовать:</strong></li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Метод должен модифицировать поля структуры (мутатор);</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Структура тяжелая ($> 64$ байт), и нужно избежать копирования;</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Структура тяжелая ($&gt; 64$ байт), и нужно избежать копирования;</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Структура содержит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Mutex</code> (мьютексы нельзя копировать!).</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -1419,7 +1419,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dev.Birthday()</code> компилятор Go подставляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(&dev).Birthday()</code>, передавая 8-байтный адрес в регистр CPU.</p></div>
+    <div><p style="margin-bottom: 6px;">При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dev.Birthday()</code> компилятор Go подставляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(&amp;dev).Birthday()</code>, передавая 8-байтный адрес в регистр CPU.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1430,23 +1430,23 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что произойдет, если вызвать метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dev.Birthday()</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dev</code>, которая не является указателем?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Компилятор Go автоматически возьмет адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&dev</code>, если переменная адресуема (Addressable).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Компилятор Go автоматически возьмет адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;dev</code>, если переменная адресуема (Addressable).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-5">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #5</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Указатели на структуры: создание u := &User{} и автоматическое разыменование полей</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Указатели на структуры: создание u := &amp;User{} и автоматическое разыменование полей</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Указатели на структуры: Создай указатель u := &User{}. Измени его поле: u.Name = "Ivan". (В Go не нужно писать (*u).Name или u->Name, компилятор сам разыменовывает указатель на структуру).</p></div>
+    <div><p style="margin-bottom: 6px;">Указатели на структуры: Создай указатель u := &amp;User{}. Измени его поле: u.Name = &quot;Ivan&quot;. (В Go не нужно писать (*u).Name или u-&gt;Name, компилятор сам разыменовывает указатель на структуру).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Синтаксический сахар разыменования структур в Go:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">В C++ для указателей используется стрелочка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u->Name</code>;</li>
+<li style="margin-bottom: 4px;">В C++ для указателей используется стрелочка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u-&gt;Name</code>;</li>
 <li style="margin-bottom: 4px;">В Go компилятор определяет, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u</code> — это указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*User</code>, и автоматически транслирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u.Name</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(*u).Name</code>.</li>
 </ul></div>
   </div>
@@ -1454,8 +1454,8 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u := &User{Name: "Старт", Age: 18}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Меняем поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u.Name = "Ivan"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u := &amp;User{Name: &quot;Старт&quot;, Age: 18}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Меняем поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u.Name = &quot;Ivan&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Печатаем результат.</div></div>
   </div>
   <div class="code-container">
@@ -1516,7 +1516,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши функцию AgePerson(p Person) (value) и AgePersonPtr(p *Person) (pointer). Вызови обе с одним и тем же Person. Покажи разницу. Объясни "copy vs reference" на уровне структур.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши функцию AgePerson(p Person) (value) и AgePersonPtr(p *Person) (pointer). Вызови обе с одним и тем же Person. Покажи разницу. Объясни &quot;copy vs reference&quot; на уровне структур.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1739,7 +1739,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Какой способ создания структур является самым распространенным в Go?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Литеральное взятие адреса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p := &Person{Name: "..."}</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Литеральное взятие адреса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p := &amp;Person{Name: &quot;...&quot;}</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-9">
@@ -1749,7 +1749,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создай структуру Address (City, Street). Встрой (embed) её в Person: type Person struct { Address; Name string }. Покажи, что поля City и Street "продвигаются" (promoted): p.City работает напрямую.</p></div>
+    <div><p style="margin-bottom: 6px;">Создай структуру Address (City, Street). Встрой (embed) её в Person: type Person struct { Address; Name string }. Покажи, что поля City и Street &quot;продвигаются&quot; (promoted): p.City работает напрямую.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1816,7 +1816,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Попытка инициализировать встроенные поля на верхнем уровне литерала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Person{City: "..."}</code> — ошибка компиляции, в литерале нужно указывать имя типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Address: Address{...}</code>.</li>
+<li style="margin-bottom: 4px;">Попытка инициализировать встроенные поля на верхнем уровне литерала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Person{City: &quot;...&quot;}</code> — ошибка компиляции, в литерале нужно указывать имя типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Address: Address{...}</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -2250,7 +2250,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй паттерн Method chaining (fluent interface): person.SetName("John").SetAge(30).String(). Каждый метод возвращает *Person.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй паттерн Method chaining (fluent interface): person.SetName(&quot;John&quot;).SetAge(30).String(). Каждый метод возвращает *Person.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2571,7 +2571,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NewBook(title, author string, year int) *Book</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Возвращаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&Book{...}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Возвращаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;Book{...}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверяем в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main()</code>.</div></div>
   </div>
   <div class="code-container">
@@ -2715,11 +2715,11 @@ func main() {
 <div class="exercise-card" id="ex-21">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #21</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Инициализация структуры по именам полей User{ID: 1, Name: 'Alice'}</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Инициализация структуры по именам полей User{ID: 1, Name: &#x27;Alice&#x27;}</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Инициализируй структуру по именам полей User{ID: 1, Name: "Alice"}.</p></div>
+    <div><p style="margin-bottom: 6px;">Инициализируй структуру по именам полей User{ID: 1, Name: &quot;Alice&quot;}.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3019,14 +3019,14 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используй теги структур: json:"name,omitempty". Сериализуй структуру в JSON через encoding/json. Покажи, как omitempty пропускает zero value.</p></div>
+    <div><p style="margin-bottom: 6px;">Используй теги структур: json:&quot;name,omitempty&quot;. Сериализуй структуру в JSON через encoding/json. Покажи, как omitempty пропускает zero value.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Теги структур (Struct Tags) и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">omitempty</code>:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Теги — это строковые метаданные, прикрепленные к полям структуры в обратных кавычках: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"key,omitempty"</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>;</li>
-<li style="margin-bottom: 4px;">Опция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">omitempty</code> указывает кодировщику <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoding/json</code> <strong>пропускать поле в JSON</strong>, если оно имеет Zero Value (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>);</li>
+<li style="margin-bottom: 4px;">Теги — это строковые метаданные, прикрепленные к полям структуры в обратных кавычках: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;key,omitempty&quot;</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>;</li>
+<li style="margin-bottom: 4px;">Опция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">omitempty</code> указывает кодировщику <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoding/json</code> <strong>пропускать поле в JSON</strong>, если оно имеет Zero Value (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>);</li>
 <li style="margin-bottom: 4px;">Исключение: для примитивов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code> значение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code> тоже считается нулевым и опускается (чтобы отправить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code>, используют указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*int</code>).</li>
 </ul></div>
   </div>
@@ -3034,7 +3034,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserProfile</code> с тегами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"..."</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserProfile</code> с тегами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;...&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем экземпляр с заполненными и нулевыми полями.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сериализуем через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.MarshalIndent</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Анализируем сгенерированный JSON.</div></div>
@@ -3087,18 +3087,18 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoding/json</code> парсит теги через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reflect.StructTag.Get("json")</code> при инициализации энкодера.</p></div>
+    <div><p style="margin-bottom: 6px;">Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encoding/json</code> парсит теги через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reflect.StructTag.Get(&quot;json&quot;)</code> при инициализации энкодера.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Написание тега с пробелами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json: "name"</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> — синтаксическая ошибка формата тегов! Пробелы внутри тегов запрещены.</li>
+<li style="margin-bottom: 4px;">Написание тега с пробелами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json: &quot;name&quot;</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> — синтаксическая ошибка формата тегов! Пробелы внутри тегов запрещены.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как с помощью тегов принудительно исключить приватное или секретное поле из JSON?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать тег <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"-"</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать тег <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;-&quot;</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-26">
@@ -3108,14 +3108,14 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создай структуру с тегами для нескольких кодировок: json:"user_name" db:"username". Прочитай теги через reflect.TypeOf().Field().Tag и выведи.</p></div>
+    <div><p style="margin-bottom: 6px;">Создай структуру с тегами для нескольких кодировок: json:&quot;user_name&quot; db:&quot;username&quot;. Прочитай теги через reflect.TypeOf().Field().Tag и выведи.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Спецификация мульти-тегов в Go:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Теги могут содержать несколько пар <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ключ:"значение"</code>, разделенных пробелом: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"user_id" db:"id" validate:"required"</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>;</li>
-<li style="margin-bottom: 4px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tag.Get("db")</code> возвращает значение для конкретного ключа.</li>
+<li style="margin-bottom: 4px;">Теги могут содержать несколько пар <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ключ:&quot;значение&quot;</code>, разделенных пробелом: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;user_id&quot; db:&quot;id&quot; validate:&quot;required&quot;</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>;</li>
+<li style="margin-bottom: 4px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tag.Get(&quot;db&quot;)</code> возвращает значение для конкретного ключа.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -3175,13 +3175,13 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Использование метода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tag.Lookup("key")</code>, когда требуется отличить отсутствие тега от пустого значения.</li>
+<li style="margin-bottom: 4px;">Использование метода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tag.Lookup(&quot;key&quot;)</code>, когда требуется отличить отсутствие тега от пустого значения.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как работают популярные валидаторы структур вроде <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-playground/validator</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Они парсят теги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">validate:"..."</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> через рефлексию при старте приложения, кэшируют правила валидации и проверяют значения полей структур в рантайме.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Они парсят теги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">validate:&quot;...&quot;</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> через рефлексию при старте приложения, кэшируют правила валидации и проверяют значения полей структур в рантайме.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-27">
@@ -3361,7 +3361,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NewPerson(name string, age int) *Person</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Возвращаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&Person{name: name, age: age}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Возвращаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;Person{name: name, age: age}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверяем работу.</div></div>
   </div>
   <div class="code-container">
@@ -3421,7 +3421,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Встраивание структур (Embedding): Создайте структуру Person с полями Name и Age. Создайте структуру Driver, встроив в неё Person анонимно (без указания имени поля), и добавив поле LicenseCategory. Продемонстрируйте прямой доступ к полю Name через экземпляр Driver (эффект "всплытия" полей / field promotion).</p></div>
+    <div><p style="margin-bottom: 6px;">Встраивание структур (Embedding): Создайте структуру Person с полями Name и Age. Создайте структуру Driver, встроив в неё Person анонимно (без указания имени поля), и добавив поле LicenseCategory. Продемонстрируйте прямой доступ к полю Name через экземпляр Driver (эффект &quot;всплытия&quot; полей / field promotion).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3579,7 +3579,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как определить, является ли поле структуры экспортируемым (Public) через рефлексию?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">f.IsExported()</code> (начиная с Go 1.17) или проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">f.PkgPath == ""</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">f.IsExported()</code> (начиная с Go 1.17) или проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">f.PkgPath == &quot;&quot;</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-32">
@@ -3734,7 +3734,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как работает неявное взятие адреса при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">car.Accelerate()</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Компилятор подставляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(&car.Engine).Accelerate()</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Компилятор подставляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(&amp;car.Engine).Accelerate()</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-34">
@@ -3835,7 +3835,7 @@ func main() {
 <div class="exercise-card" id="ex-35">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #35</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Выравнивание полей в памяти (Memory Padding & Alignment) и оптимизация размера структур</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Выравнивание полей в памяти (Memory Padding &amp; Alignment) и оптимизация размера структур</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -3847,7 +3847,7 @@ func main() {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Процессор быстрее читает данные, выровненные по границе их собственного размера (8-байтные типы выравниваются по адресу кратному 8, 4-байтные — кратному 4);</li>
 <li style="margin-bottom: 4px;">Компилятор вставляет пустые байты (<strong>Padding</strong>), чтобы выровнять поля;</li>
-<li style="margin-bottom: 4px;"><strong>Правило оптимизации:</strong> Сортировка полей от большего к меньшему размеру (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">8B -> 4B -> 2B -> 1B</code>) минимизирует паддинг и экономит до 50% оперативной памяти!</li>
+<li style="margin-bottom: 4px;"><strong>Правило оптимизации:</strong> Сортировка полей от большего к меньшему размеру (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">8B -&gt; 4B -&gt; 2B -&gt; 1B</code>) минимизирует паддинг и экономит до 50% оперативной памяти!</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -3926,7 +3926,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Теги структур и JSON (Marshal): Добавь к полям User теги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"name"</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"age,omitempty"</code>. Используй json.Marshal из пакета encoding/json, чтобы получить JSON. Обрати внимание, что приватные поля (с маленькой буквы) в JSON не попадут.</p></div>
+    <div><p style="margin-bottom: 6px;">Теги структур и JSON (Marshal): Добавь к полям User теги <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;name&quot;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;age,omitempty&quot;</code>. Используй json.Marshal из пакета encoding/json, чтобы получить JSON. Обрати внимание, что приватные поля (с маленькой буквы) в JSON не попадут.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3987,12 +3987,12 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Рефлексия проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">f.PkgPath == ""</code> перед маршалингом поля.</p></div>
+    <div><p style="margin-bottom: 6px;">Рефлексия проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">f.PkgPath == &quot;&quot;</code> перед маршалингом поля.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Удивление, почему поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"token"</code> не попадает в JSON (потому что имя поля <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">token</code> написано со строчной буквы).</li>
+<li style="margin-bottom: 4px;">Удивление, почему поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;token&quot;</code> не попадает в JSON (потому что имя поля <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">token</code> написано со строчной буквы).</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -4008,7 +4008,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создай структуру с встроенным sync.Mutex. Покажи, что методы Lock()/Unlock() "продвигаются" и доступны напрямую. Используй для потокобезопасного инкремента счётчика.</p></div>
+    <div><p style="margin-bottom: 6px;">Создай структуру с встроенным sync.Mutex. Покажи, что методы Lock()/Unlock() &quot;продвигаются&quot; и доступны напрямую. Используй для потокобезопасного инкремента счётчика.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4102,7 +4102,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Теги структур и JSON: Создайте структуру User с тегами для JSON (например, json:"user_id"). Напишите код, который сериализует структуру в JSON-строку с помощью json.Marshal, и код, который десериализует JSON-строку обратно в структуру.</p></div>
+    <div><p style="margin-bottom: 6px;">Теги структур и JSON: Создайте структуру User с тегами для JSON (например, json:&quot;user_id&quot;). Напишите код, который сериализует структуру в JSON-строку с помощью json.Marshal, и код, который десериализует JSON-строку обратно в структуру.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4114,7 +4114,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type UserDTO struct { UserID int, Email string }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сериализуем объект в строку JSON.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Десериализуем строку обратно в новый экземпляр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&parsedUser</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Десериализуем строку обратно в новый экземпляр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;parsedUser</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -4172,7 +4172,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal</code> требует передачи указателя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&restored</code>?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal</code> требует передачи указателя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;restored</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что функции в Go не могут изменить значение переменной вызывающего кода без указателя на нее.</p></div>
   </div>
 </div>
@@ -4333,7 +4333,7 @@ func main() {
 <div class="exercise-card" id="ex-41">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #41</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Десериализация json.Unmarshal: обязательная передача структуры по указателю &user</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Десериализация json.Unmarshal: обязательная передача структуры по указателю &amp;user</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -4348,7 +4348,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем строку с сырыми JSON-данными.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Парсим через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal([]byte(raw), &user)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Парсим через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal([]byte(raw), &amp;user)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Обрабатываем ошибку парсинга.</div></div>
   </div>
   <div class="code-container">
@@ -4397,7 +4397,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Передача <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal(data, user)</code> без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&</code> (возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.InvalidUnmarshalError</code>).</li>
+<li style="margin-bottom: 4px;">Передача <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal(data, user)</code> без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;</code> (возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.InvalidUnmarshalError</code>).</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -4506,11 +4506,11 @@ func main() {
 <div class="exercise-card" id="ex-43">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #43</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Теги полей json:'title,omitempty' и сериализация структур в JSON</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Теги полей json:&#x27;title,omitempty&#x27; и сериализация структур в JSON</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Добавьте к структуре теги полей (например, json:"title,omitempty") и сериализуйте структуру в JSON с помощью json.Marshal.</p></div>
+    <div><p style="margin-bottom: 6px;">Добавьте к структуре теги полей (например, json:&quot;title,omitempty&quot;) и сериализуйте структуру в JSON с помощью json.Marshal.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4573,8 +4573,8 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как сделать так, чтобы число <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ID int</code> сериализовалось в JSON как строка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"123"</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать тег <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"id,string"</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как сделать так, чтобы число <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ID int</code> сериализовалось в JSON как строка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;123&quot;</code>?»</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать тег <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;id,string&quot;</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-44">
@@ -5670,12 +5670,12 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Забыть знак <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&</code> при вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ResetTitlePtr</code>.</li>
+<li style="margin-bottom: 4px;">Забыть знак <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;</code> при вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ResetTitlePtr</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в Go нет синтаксиса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">void Foo(const Struct &s)</code> как в C++?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в Go нет синтаксиса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">void Foo(const Struct &amp;s)</code> как в C++?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что структуры до 64 байт дешево передавать по значению (иммутабельно), а для больших структур передают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*Struct</code> с конвенцией не мутировать поля.</p></div>
   </div>
 </div>
@@ -5686,7 +5686,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Паттерн Constructor: В Go нет конструкторов. Напиши функцию NewUser(name string, age int) (*User, error), которая проверяет, что возраст > 0, и возвращает указатель на структуру или ошибку.</p></div>
+    <div><p style="margin-bottom: 6px;">Паттерн Constructor: В Go нет конструкторов. Напиши функцию NewUser(name string, age int) (*User, error), которая проверяет, что возраст &gt; 0, и возвращает указатель на структуру или ошибку.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5947,7 +5947,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создай "immutable" структуру: поля неэкспортируемые, изменение только через методы, возвращающие новую копию (не меняя оригинал). Напиши WithName(name string) Person (как в Go context).</p></div>
+    <div><p style="margin-bottom: 6px;">Создай &quot;immutable&quot; структуру: поля неэкспортируемые, изменение только через методы, возвращающие новую копию (не меняя оригинал). Напиши WithName(name string) Person (как в Go context).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6029,20 +6029,20 @@ func main() {
 <div class="exercise-card" id="ex-61">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #61</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Каверзный кейс: ошибка присвоения m['john'].Age = 30 в мапе структур и решение через map[string]*User</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Каверзный кейс: ошибка присвоения m[&#x27;john&#x27;].Age = 30 в мапе структур и решение через map[string]*User</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Каверзный случай: Мапа структур: Создай map[string]User. Добавь юзера. Попробуй изменить его возраст напрямую: m["john"].Age = 30. Получишь ошибку cannot assign to struct field in map. Замени мапу на map[string]*User и повтори.</p></div>
+    <div><p style="margin-bottom: 6px;">Каверзный случай: Мапа структур: Создай map[string]User. Добавь юзера. Попробуй изменить его возраст напрямую: m[&quot;john&quot;].Age = 30. Получишь ошибку cannot assign to struct field in map. Замени мапу на map[string]*User и повтори.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;"><strong>Почему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m["key"].Field = ...</code> запрещено компилятором:</strong></p>
+    <div><p style="margin-bottom: 6px;"><strong>Почему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[&quot;key&quot;].Field = ...</code> запрещено компилятором:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Значения в хэш-таблице <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]User</code> <strong>не являются адресуемыми (Not Addressable)</strong>;</li>
 <li style="margin-bottom: 4px;">При росте мапы бакеты перемещаются в памяти (эвакуация), и прямой указатель на поле структуры в бакете стал бы невалидным;</li>
 <li style="margin-bottom: 4px;"><strong>Решение 1:</strong> Использовать мапу указателей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]*User</code>;</li>
-<li style="margin-bottom: 4px;"><strong>Решение 2:</strong> Извлечь копию структуры во временную переменную, изменить и записать обратно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u := m["key"]; u.Age = 30; m["key"] = u</code>.</li>
+<li style="margin-bottom: 4px;"><strong>Решение 2:</strong> Извлечь копию структуры во временную переменную, изменить и записать обратно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u := m[&quot;key&quot;]; u.Age = 30; m[&quot;key&quot;] = u</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -6051,7 +6051,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Демонстрируем причину ошибки в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]User</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]*User</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Мутируем поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m["john"].Age = 30</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Мутируем поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[&quot;john&quot;].Age = 30</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -6098,18 +6098,18 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mPtr["john"]</code> возвращает указатель, разыменование которого позволяет напрямую писать в память кучи.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mPtr[&quot;john&quot;]</code> возвращает указатель, разыменование которого позволяет напрямую писать в память кучи.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Попытка взять адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&m["key"]</code> (ошибка компиляции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cannot take the address of m["key"]</code>).</li>
+<li style="margin-bottom: 4px;">Попытка взять адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;m[&quot;key&quot;]</code> (ошибка компиляции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cannot take the address of m[&quot;key&quot;]</code>).</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему элементы среза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s[0].Age = 30</code> можно изменять на месте, а элементы мапы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m["k"].Age = 30</code> нельзя?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что элементы среза непрерывно расположены в памяти и адресуемы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&s[0]</code>), а элементы мапы могут менять свое физическое расположение в бакетах при рехэшировании.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему элементы среза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s[0].Age = 30</code> можно изменять на месте, а элементы мапы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[&quot;k&quot;].Age = 30</code> нельзя?»</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что элементы среза непрерывно расположены в памяти и адресуемы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;s[0]</code>), а элементы мапы могут менять свое физическое расположение в бакетах при рехэшировании.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-62">
@@ -6220,7 +6220,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Выведи структуру с помощью fmt.Printf("%+v\n", user) (с именами полей) и %#v (синтаксис Go).</p></div>
+    <div><p style="margin-bottom: 6px;">Выведи структуру с помощью fmt.Printf(&quot;%+v\n&quot;, user) (с именами полей) и %#v (синтаксис Go).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6299,7 +6299,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Node</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем цепочку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">10 -> 20 -> 30</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем цепочку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">10 -&gt; 20 -&gt; 30</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Обходим список.</div></div>
   </div>
   <div class="code-container">
@@ -6440,7 +6440,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что делает компилятор при вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">c.Scale(2)</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Он автоматически берет адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(&c).Scale(2)</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Он автоматически берет адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(&amp;c).Scale(2)</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-66">
@@ -6461,7 +6461,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Connection{Host string, Port int}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Пишем конструктор с валидацией <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1 <= port <= 65535</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Пишем конструктор с валидацией <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1 &lt;= port &lt;= 65535</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Тестируем.</div></div>
   </div>
   <div class="code-container">
@@ -6732,11 +6732,11 @@ func main() {
 <div class="exercise-card" id="ex-69">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #69</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Теги структуры type User struct { Name string `json:'name'` } и валидация схемы</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Теги структуры type User struct { Name string `json:&#x27;name&#x27;` } и валидация схемы</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создай структуру с тегами (struct tags) type User struct { Name string <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"name"</code> }.</p></div>
+    <div><p style="margin-bottom: 6px;">Создай структуру с тегами (struct tags) type User struct { Name string <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;name&quot;</code> }.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6792,7 +6792,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как объединить несколько тегов в одном поле?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через пробел: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"name" yaml:"name" db:"name"</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через пробел: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;name&quot; yaml:&quot;name&quot; db:&quot;name&quot;</code> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-70">
@@ -6808,8 +6808,8 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Двоичное дерево поиска (Binary Search Tree - BST):</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">У каждого узла <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Left.Value < Value < Right.Value</code>;</li>
-<li style="margin-bottom: 4px;"><strong>Симметричный обход (In-Order Traversal):</strong> рекурсивно обходит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Left -> Root -> Right</code>;</li>
+<li style="margin-bottom: 4px;">У каждого узла <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Left.Value &lt; Value &lt; Right.Value</code>;</li>
+<li style="margin-bottom: 4px;"><strong>Симметричный обход (In-Order Traversal):</strong> рекурсивно обходит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Left -&gt; Root -&gt; Right</code>;</li>
 <li style="margin-bottom: 4px;">Гарантирует вывод элементов дерева <strong>в строго отсортированном порядке</strong> за $O(N)$ времени!</li>
 </ul></div>
   </div>

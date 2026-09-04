@@ -876,7 +876,7 @@
       <a href="#ex-73" class="sub-exercise-link" title="Упр 73: Мультиплеерный игровой сервер: валидация ходов Anti-Cheat и режим зрителей (Spectators Readonly)">73. Мультиплеерный игровой сервер: валидация ходов Anti-Cheat и режим зрителей (Spectators Readonly)</a>
       <a href="#ex-74" class="sub-exercise-link" title="Упр 74: Высокочастотный игровой движок (60 FPS Game Loop): симуляция физики и рассылка снапшотов">74. Высокочастотный игровой движок (60 FPS Game Loop): симуляция физики и рассылка снапшотов</a>
       <a href="#ex-75" class="sub-exercise-link" title="Упр 75: Финальный босс: Real-time платформа стриминга («Twitch-lite») на GraphQL, WebSockets и Redis">75. Финальный босс: Real-time платформа стриминга («Twitch-lite») на GraphQL, WebSockets и Redis</a>
-      <a href="#ex-76" class="sub-exercise-link" title="Упр 76: Скрещивание тем: GraphQL Subscriptions time: String! с генерацией тиков в <-chan string">76. Скрещивание тем: GraphQL Subscriptions time: String! с генерацией тиков в <-chan string</a>
+      <a href="#ex-76" class="sub-exercise-link" title="Упр 76: Скрещивание тем: GraphQL Subscriptions time: String! с генерацией тиков в &lt;-chan string">76. Скрещивание тем: GraphQL Subscriptions time: String! с генерацией тиков в &lt;-chan string</a>
       <a href="#ex-77" class="sub-exercise-link" title="Упр 77: Авторизация на фазе Handshake: проверка токена до Upgrader.Upgrade и отсечение 401 Unauthorized">77. Авторизация на фазе Handshake: проверка токена до Upgrader.Upgrade и отсечение 401 Unauthorized</a>
       <a href="#ex-78" class="sub-exercise-link" title="Упр 78: Промышленный Heartbeat (Ping 30s / Timeout 60s): поддержание соединения и освобождение ресурсов">78. Промышленный Heartbeat (Ping 30s / Timeout 60s): поддержание соединения и освобождение ресурсов</a>
     </div>
@@ -1222,7 +1222,7 @@ func TestWebSocketUpgrade(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как устроен алгоритм вычисления Sec-WebSocket-Accept при рукопожатии?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Сервер берет заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sec-WebSocket-Key</code>, конкатенирует его с жестко фиксированной магической строкой GUID (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"258EAFA5-E914-47DA-95CA-C5AB0DC85B11"</code>), вычисляет SHA-1 хэш от полученной строки и кодирует результат в Base64. Клиент проверяет заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sec-WebSocket-Accept</code>, чтобы убедиться, что сервер действительно поддерживает протокол WebSocket, а не просто проксирует трафик.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Сервер берет заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sec-WebSocket-Key</code>, конкатенирует его с жестко фиксированной магической строкой GUID (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;258EAFA5-E914-47DA-95CA-C5AB0DC85B11&quot;</code>), вычисляет SHA-1 хэш от полученной строки и кодирует результат в Base64. Клиент проверяет заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sec-WebSocket-Accept</code>, чтобы убедиться, что сервер действительно поддерживает протокол WebSocket, а не просто проксирует трафик.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-2">
@@ -1494,7 +1494,7 @@ func TestWebSocketClient(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>WebSocket Клиент на Go</strong>: Напиши отдельную Go-программу (клиент). Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">websocket.DefaultDialer.Dial("ws://localhost:8080/ws", nil)</code>. В цикле отправляй серверу текущее время раз в секунду и читай ответ.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>WebSocket Клиент на Go</strong>: Напиши отдельную Go-программу (клиент). Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">websocket.DefaultDialer.Dial(&quot;ws://localhost:8080/ws&quot;, nil)</code>. В цикле отправляй серверу текущее время раз в секунду и читай ответ.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1799,7 +1799,7 @@ func TestHubPattern(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Блокирующая отправка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.send <- message</code> без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select default</code>: если один клиент зависнет и не читает свой буфер, весь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Hub</code> заблокируется на этой строке, и остальные 10 000 клиентов перестанут получать сообщения!</p></div>
+    <div><p style="margin-bottom: 6px;">Блокирующая отправка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.send &lt;- message</code> без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select default</code>: если один клиент зависнет и не читает свой буфер, весь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Hub</code> заблокируется на этой строке, и остальные 10 000 клиентов перестанут получать сообщения!</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1920,7 +1920,7 @@ func TestWebSocketReadLimit(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gorilla/websocket</code> счетчик байтов инкрементируется по мере чтения чанков сокета. Как только <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.remaining < 0</code>, парсер фрейма мгновенно переходит в терминальное состояние ошибки, не аллоцируя память под оставшуюся часть сообщения.</p></div>
+    <div><p style="margin-bottom: 6px;">Внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gorilla/websocket</code> счетчик байтов инкрементируется по мере чтения чанков сокета. Как только <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.remaining &lt; 0</code>, парсер фрейма мгновенно переходит в терминальное состояние ошибки, не аллоцируя память под оставшуюся часть сообщения.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1946,7 +1946,7 @@ func TestWebSocketReadLimit(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Тонкая настройка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">websocket.Upgrader</code>:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Ключевые параметры структуры:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Subprotocols []string</code>: согласование субпротоколов (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">["graphql-ws", "chat.v1"]</code>). Сервер выбирает подходящий и возвращает в заголовке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sec-WebSocket-Protocol</code>.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Subprotocols []string</code>: согласование субпротоколов (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[&quot;graphql-ws&quot;, &quot;chat.v1&quot;]</code>). Сервер выбирает подходящий и возвращает в заголовке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sec-WebSocket-Protocol</code>.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EnableCompression bool</code>: включение сжатия permessage-deflate (RFC 7692). Экономит трафик, но увеличивает расход CPU на сжатие.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Error func(w http.ResponseWriter, r *http.Request, status int, reason error)</code>: кастомный обработчик ошибок рукопожатия (логирование в формате JSON, метрики Prometheus).</li>
 </ul></div>
@@ -2080,7 +2080,7 @@ func TestAdvancedUpgrader(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В официальной документации библиотеки черным по белому указано:</li>
 </ul>
-<p style="margin-bottom: 6px;">> *«Connections support one concurrent reader and one concurrent writer. Applications must ensure that no more than one goroutine calls the write methods concurrently.»*</p>
+<p style="margin-bottom: 6px;">&gt; *«Connections support one concurrent reader and one concurrent writer. Applications must ensure that no more than one goroutine calls the write methods concurrently.»*</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Что происходит при параллельном вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.WriteMessage</code> из 10 горутин:</li>
 </ul>
@@ -2370,25 +2370,23 @@ func TestSafeConcurrentWrite(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В SDL (Schema Definition Language):</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">type User {</p>
-<p style="margin-bottom: 6px;">id: ID!</p>
-<p style="margin-bottom: 6px;">name: String!</p>
-<p style="margin-bottom: 6px;">email: String!</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type Subscription {</p>
-<p style="margin-bottom: 6px;">userCreated: User!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">type User {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+type Subscription {
+  userCreated: User!
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Архитектурная роль:</li>
 <li style="margin-bottom: 4px;">Клиент открывает одно WebSocket-соединение.</li>
 <li style="margin-bottom: 4px;">По протоколу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graphql-transport-ws</code> отправляет JSON:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"type": "subscribe", "id": "sub_1", "payload": {"query": "subscription { userCreated { id name } }"}}</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;type&quot;: &quot;subscribe&quot;, &quot;id&quot;: &quot;sub_1&quot;, &quot;payload&quot;: {&quot;query&quot;: &quot;subscription { userCreated { id name } }&quot;}}</code>.</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Сервер связывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub_1</code> с внутренним Go-каналом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-chan *User</code>.</li>
+<li style="margin-bottom: 4px;">Сервер связывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub_1</code> с внутренним Go-каналом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-chan *User</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -2491,11 +2489,11 @@ func TestGraphQLSubscriptionSchema(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> подписка транслируется в Go-интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserCreated(ctx) (<-chan *model.User, error)</code>. Библиотека автоматически считывает элементы из возвращенного канала и упаковывает их в WebSocket фреймы для браузера.</p></div>
+    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> подписка транслируется в Go-интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserCreated(ctx) (&lt;-chan *model.User, error)</code>. Библиотека автоматически считывает элементы из возвращенного канала и упаковывает их в WebSocket фреймы для браузера.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Забывать слушать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code> в порожденной горутине: при закрытии браузера клиентом контекст отменяется, и без проверки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code> горутина утечет навсегда.</p></div>
+    <div><p style="margin-bottom: 6px;">Забывать слушать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code> в порожденной горутине: при закрытии браузера клиентом контекст отменяется, и без проверки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code> горутина утечет навсегда.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2514,7 +2512,7 @@ func TestGraphQLSubscriptionSchema(t *testing.T) {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Архитектура многокомнатного WebSocket-сервера (Rooms & Channels):</p>
+    <div><p style="margin-bottom: 6px;">Архитектура многокомнатного WebSocket-сервера (Rooms &amp; Channels):</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Структура состояния <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Hub</code>:</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rooms map[string]map[*Client]bool</code>: двухуровневая мапа «Имя комнаты $\to$ Множество клиентов».</li>
@@ -2660,7 +2658,7 @@ func TestRoomsHubIsolation(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как распределить миллион комнат чата между 50 серверами?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Используют <strong>Consistent Hashing (консистентное хэширование)</strong> по имени комнаты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hash(roomName) % nodes</code>. Все участники одной комнаты маршрутизируются на один сервер. Для межнодовой рассылки подключают Redis Pub/Sub, где имя топика совпадает с именем комнаты (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Subscribe("room:102")</code>).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Используют <strong>Consistent Hashing (консистентное хэширование)</strong> по имени комнаты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hash(roomName) % nodes</code>. Все участники одной комнаты маршрутизируются на один сервер. Для межнодовой рассылки подключают Redis Pub/Sub, где имя топика совпадает с именем комнаты (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">redis.Subscribe(&quot;room:102&quot;)</code>).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-12">
@@ -2678,20 +2676,18 @@ func TestRoomsHubIsolation(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">server.go</code>:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">srv := handler.New(generated.NewExecutableSchema(cfg))</p>
-<p style="margin-bottom: 6px;">srv.AddTransport(transport.POST{})</p>
-<p style="margin-bottom: 6px;">srv.AddTransport(transport.Websocket{</p>
-<p style="margin-bottom: 6px;">KeepAlivePingInterval: 10 * time.Second,</p>
-<p style="margin-bottom: 6px;">Upgrader: websocket.Upgrader{</p>
-<p style="margin-bottom: 6px;">CheckOrigin: func(r *http.Request) bool { return true },</p>
-<p style="margin-bottom: 6px;">},</p>
-<p style="margin-bottom: 6px;">InitFunc: func(ctx context.Context, initPayload transport.InitPayload) (context.Context, error) {</p>
-<p style="margin-bottom: 6px;">// Валидация токена из connection_init</p>
-<p style="margin-bottom: 6px;">return ctx, nil</p>
-<p style="margin-bottom: 6px;">},</p>
-<p style="margin-bottom: 6px;">})</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">srv := handler.New(generated.NewExecutableSchema(cfg))
+srv.AddTransport(transport.POST{})
+srv.AddTransport(transport.Websocket{
+    KeepAlivePingInterval: 10 * time.Second,
+    Upgrader: websocket.Upgrader{
+        CheckOrigin: func(r *http.Request) bool { return true },
+    },
+    InitFunc: func(ctx context.Context, initPayload transport.InitPayload) (context.Context, error) {
+        // Валидация токена из connection_init
+        return ctx, nil
+    },
+})</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">KeepAlivePingInterval</code>: периодическая отправка сообщений <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ping</code> по протоколу WebSocket для удержания соединения через Cloudflare и Nginx.</li>
 </ul></div>
@@ -2783,7 +2779,7 @@ func TestGqlgenWSTransportConfig(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Зачем в transport.Websocket нужен InitFunc?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Поскольку при открытии WebSocket в браузере нельзя передать кастомные заголовки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Authorization: Bearer ...</code>, авторизационные данные передаются внутри первого JSON-сообщения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">connection_init: { payload: { token: "..." } }</code>. Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">InitFunc</code> принимает этот payload, валидирует JWT и возвращает обогащенный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.Context</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">userID</code> для всех будущих подписок этого соединения.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Поскольку при открытии WebSocket в браузере нельзя передать кастомные заголовки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Authorization: Bearer ...</code>, авторизационные данные передаются внутри первого JSON-сообщения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">connection_init: { payload: { token: &quot;...&quot; } }</code>. Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">InitFunc</code> принимает этот payload, валидирует JWT и возвращает обогащенный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.Context</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">userID</code> для всех будущих подписок этого соединения.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-13">
@@ -2948,9 +2944,9 @@ func TestPubSubEventBus(t *testing.T) {
 <li style="margin-bottom: 4px;">В масштабных системах с тысячами WebSocket соединений каждому запросу на подписку присваивается уникальный UUID.</li>
 <li style="margin-bottom: 4px;">Преимущества:</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Клиент может отправить команду отмены: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UNSUBSCRIBE <uuid></code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Клиент может отправить команду отмены: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UNSUBSCRIBE &lt;uuid&gt;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сервер логирует открытие и закрытие каждой подписки с привязкой к ее UUID:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"level": "info", "sub_id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d", "status": "closed"}</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;level&quot;: &quot;info&quot;, &quot;sub_id&quot;: &quot;9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d&quot;, &quot;status&quot;: &quot;closed&quot;}</code>.</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Отсутствие коллизий идентификаторов между миллионами клиентов.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -3109,17 +3105,15 @@ func TestSubscriptionLifecycleWithUUID(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В SDL:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">enum Role {</p>
-<p style="margin-bottom: 6px;">ADMIN</p>
-<p style="margin-bottom: 6px;">USER</p>
-<p style="margin-bottom: 6px;">GUEST</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type Subscription {</p>
-<p style="margin-bottom: 6px;">userCreated(role: Role): User!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">enum Role {
+  ADMIN
+  USER
+  GUEST
+}
+
+type Subscription {
+  userCreated(role: Role): User!
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Резолвер принимает аргумент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">role *Role</code>:</li>
 <li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">role == nil</code>: клиент получает всех создаваемых пользователей.</li>
@@ -3255,7 +3249,7 @@ func TestSubscriptionFiltering(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Каверзный кейс — Backpressure]</strong>: Если клиент читает медленно, а сервер пишет быстро, буфер соединения переполнится. Реализуй буферизированный канал для исходящих сообщений (размер 10). Если канал полон, разрывай соединение (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">closeChan <- conn</code>), чтобы не блокировать Hub.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Каверзный кейс — Backpressure]</strong>: Если клиент читает медленно, а сервер пишет быстро, буфер соединения переполнится. Реализуй буферизированный канал для исходящих сообщений (размер 10). Если канал полон, разрывай соединение (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">closeChan &lt;- conn</code>), чтобы не блокировать Hub.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3263,17 +3257,15 @@ func TestSubscriptionFiltering(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Если у клиента медленный интернет (3G в лифте), а сервер шлет 100 сообщений в секунду:</li>
 <li style="margin-bottom: 4px;">Память буфера канала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">send chan []byte</code> стремительно растет.</li>
-<li style="margin-bottom: 4px;">Если канал переполнится, блокирующий вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.send <- msg</code> заморозит горутину Hub'а.</li>
+<li style="margin-bottom: 4px;">Если канал переполнится, блокирующий вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.send &lt;- msg</code> заморозит горутину Hub&#x27;а.</li>
 <li style="margin-bottom: 4px;"><strong>Решение:</strong> неблокирующая отправка через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select default</code>:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">select {</p>
-<p style="margin-bottom: 6px;">case client.send <- msg:</p>
-<p style="margin-bottom: 6px;">default:</p>
-<p style="margin-bottom: 6px;">// Буфер переполнен! Отключаем зависшего клиента</p>
-<p style="margin-bottom: 6px;">hub.dropClient(client)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">    select {
+    case client.send &lt;- msg:
+    default:
+        // Буфер переполнен! Отключаем зависшего клиента
+        hub.dropClient(client)
+    }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Это предотвращает каскадный отказ всей системы.</li>
 </ul></div>
@@ -3407,9 +3399,9 @@ func TestSlowConsumerBackpressure(t *testing.T) {
 <li style="margin-bottom: 4px;">Если токен невалиден $\to$ возвращается статус <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HTTP 401 Unauthorized</code>.</li>
 <li style="margin-bottom: 4px;">Минус: токен может попасть в access-логи прокси-серверов.</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Способ 2: Заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sec-WebSocket-Protocol: bearer, <token></code>:</strong></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Способ 2: Заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sec-WebSocket-Protocol: bearer, &lt;token&gt;</code>:</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Позволяет передать токен в заголовке даже из стандартного JS <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new WebSocket(url, ['bearer', token])</code>.</li>
+<li style="margin-bottom: 4px;">Позволяет передать токен в заголовке даже из стандартного JS <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new WebSocket(url, [&#x27;bearer&#x27;, token])</code>.</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Способ 3: В сообщении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">connection_init</code> (протокол graphql-ws):</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
@@ -3526,7 +3518,7 @@ func TestAuthenticatedWSHandshake(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что делать, если JWT токен протух (Expired) во время долгоживущей WebSocket сессии (например через 1 час после открытия)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Полноценный WebSocket сервер реализует <strong>Re-authentication over WebSocket</strong>: клиент по таймеру отправляет сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"type": "refresh_token", "token": "..."}</code> прямо через открытый сокет. Если клиент не обновил токен в течение grace-периода, сервер отправляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CloseMessage</code> с кодом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">4401 Token Expired</code> и принудительно разрывает соединение.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Полноценный WebSocket сервер реализует <strong>Re-authentication over WebSocket</strong>: клиент по таймеру отправляет сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;type&quot;: &quot;refresh_token&quot;, &quot;token&quot;: &quot;...&quot;}</code> прямо через открытый сокет. Если клиент не обновил токен в течение grace-периода, сервер отправляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CloseMessage</code> с кодом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">4401 Token Expired</code> и принудительно разрывает соединение.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-18">
@@ -3560,7 +3552,7 @@ func TestAuthenticatedWSHandshake(t *testing.T) {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Зарегистрируйте кастомный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetCloseHandler</code> на стороне соединения.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Извлеките код закрытия (Code) и текстовое описание (Text).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте отправку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CloseMessage(1000, "Штатный выход")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте отправку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CloseMessage(1000, &quot;Штатный выход&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверьте вызов обработчика и фиксацию статуса закрытия.</div></div>
   </div>
   <div class="code-container">
@@ -3855,7 +3847,7 @@ func TestClientPumpsPattern(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуйте <strong>heartbeat</strong> (ping-pong) для WebSocket-соединений, чтобы обнаруживать "мертвые" клиенты.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуйте <strong>heartbeat</strong> (ping-pong) для WebSocket-соединений, чтобы обнаруживать &quot;мертвые&quot; клиенты.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3976,7 +3968,7 @@ func TestHeartbeatPingPong(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Устанавливать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pingPeriod >= pongWait</code>: если пинг отправляется реже, чем дедлайн ожидания понга, соединение будет ошибочно разорвано сервером по таймауту.</p></div>
+    <div><p style="margin-bottom: 6px;">Устанавливать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pingPeriod &gt;= pongWait</code>: если пинг отправляется реже, чем дедлайн ожидания понга, соединение будет ошибочно разорвано сервером по таймауту.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -4005,7 +3997,7 @@ func TestHeartbeatPingPong(t *testing.T) {
 <li style="margin-bottom: 4px;">Мутация выполняется на Инстансе №3. Локальный Go-канал Инстанса №3 не видит клиентов на других подах!</li>
 <li style="margin-bottom: 4px;"><strong>Решение через Redis Pub/Sub:</strong></li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Инстанс №3 выполняет мутацию и делает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PUBLISH user_events '{"id": "1", "name": "Анна"}'</code> в Redis.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Инстанс №3 выполняет мутацию и делает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PUBLISH user_events &#x27;{&quot;id&quot;: &quot;1&quot;, &quot;name&quot;: &quot;Анна&quot;}&#x27;</code> в Redis.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Все инстансы (№1, №2, №3) при старте держат долгоживущую подписку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SUBSCRIBE user_events</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Получив сообщение из Redis, каждый инстанс рассылает его только своим локально подключенным WebSocket клиентам.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Линейная масштабируемость на сотни подов.</div></div>
@@ -4140,7 +4132,7 @@ func TestRedisPubSubClustering(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему NATS или Redis Pub/Sub эффективнее, чем RabbitMQ или Kafka для доставки WebSocket сообщений?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> RabbitMQ и Kafka создают тяжелые очереди с записью на диск, подтверждениями ACK и координацией оффсетов. Для real-time сообщений (чат, котировки) важна микросекундная латентность в памяти и минимальный оверхед. Легковесный брокер памяти (Redis Pub/Sub / NATS Core) обрабатывает более 1 000 000 сообщений в секунду с задержкой < 100 мкс.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> RabbitMQ и Kafka создают тяжелые очереди с записью на диск, подтверждениями ACK и координацией оффсетов. Для real-time сообщений (чат, котировки) важна микросекундная латентность в памяти и минимальный оверхед. Легковесный брокер памяти (Redis Pub/Sub / NATS Core) обрабатывает более 1 000 000 сообщений в секунду с задержкой &lt; 100 мкс.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-22">
@@ -4256,16 +4248,16 @@ func TestCORSWebSocketUpgrade(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CheckOrigin</code> возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Upgrader.Upgrade</code> автоматически отправляет клиенту статус <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HTTP 403 Forbidden</code> с телом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"websocket: request origin not allowed by Upgrader.CheckOrigin"</code> и прерывает рукопожатие.</p></div>
+    <div><p style="margin-bottom: 6px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CheckOrigin</code> возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Upgrader.Upgrade</code> автоматически отправляет клиенту статус <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HTTP 403 Forbidden</code> с телом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;websocket: request origin not allowed by Upgrader.CheckOrigin&quot;</code> и прерывает рукопожатие.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Считать, что директива CORS в middleware <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">w.Header().Set("Access-Control-Allow-Origin", "*")</code> защищает WebSocket: браузер игнорирует CORS заголовки при WebSocket-рукопожатии, валидация происходит исключительно через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CheckOrigin</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Считать, что директива CORS в middleware <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">w.Header().Set(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;)</code> защищает WebSocket: браузер игнорирует CORS заголовки при WebSocket-рукопожатии, валидация происходит исключительно через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CheckOrigin</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что такое атака CSWSH (Cross-Site WebSocket Hijacking)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это аналог CSRF, но для WebSockets. Пользователь заходит на вредоносный сайт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">attacker.com</code>. Скрипт в браузере выполняет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new WebSocket('wss://bank.com/ws')</code>. Браузер автоматически прикрепляет сессионные куки пользователя. Если сервер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bank.com</code> не проверяет заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Origin</code>, злоумышленник получает полноценный двусторонний доступ к банковскому сокету жертвы.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это аналог CSRF, но для WebSockets. Пользователь заходит на вредоносный сайт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">attacker.com</code>. Скрипт в браузере выполняет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new WebSocket(&#x27;wss://bank.com/ws&#x27;)</code>. Браузер автоматически прикрепляет сессионные куки пользователя. Если сервер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bank.com</code> не проверяет заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Origin</code>, злоумышленник получает полноценный двусторонний доступ к банковскому сокету жертвы.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-23">
@@ -4275,7 +4267,7 @@ func TestCORSWebSocketUpgrade(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>WebSocket-клиент</strong> в Go: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dialer := websocket.Dialer{}</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn, _, _ := dialer.Dial("ws://localhost:8080/ws", nil)</code>. Отправь сообщение, прочитай ответ. Покажи full-duplex: читай и пиши в разных горутинах.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>WebSocket-клиент</strong> в Go: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dialer := websocket.Dialer{}</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn, _, _ := dialer.Dial(&quot;ws://localhost:8080/ws&quot;, nil)</code>. Отправь сообщение, прочитай ответ. Покажи full-duplex: читай и пиши в разных горутинах.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4593,9 +4585,9 @@ func TestMutexChatServer(t *testing.T) {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">connection_init</code>: клиент инициирует сессию с авторизационными данными.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">connection_ack</code>: сервер подтверждает готовность.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subscribe</code>: клиент передает GraphQL запрос подписки:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"id": "1", "type": "subscribe", "payload": {"query": "subscription { userCreated { id name } }"}}</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;id&quot;: &quot;1&quot;, &quot;type&quot;: &quot;subscribe&quot;, &quot;payload&quot;: {&quot;query&quot;: &quot;subscription { userCreated { id name } }&quot;}}</code>.</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">next</code>: сервер отправляет порции данных при каждом событии:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"id": "1", "type": "next", "payload": {"data": {"userCreated": {"id": "u1", "name": "Денис"}}}}</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;id&quot;: &quot;1&quot;, &quot;type&quot;: &quot;next&quot;, &quot;payload&quot;: {&quot;data&quot;: {&quot;userCreated&quot;: {&quot;id&quot;: &quot;u1&quot;, &quot;name&quot;: &quot;Денис&quot;}}}}</code>.</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">complete</code>: завершение потока событий.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -4825,12 +4817,12 @@ func TestResilientEchoServer(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Писать в лог <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">log.Printf("ERROR: %v", err)</code> при каждом разрыве сокета: при закрытии вкладок миллионами пользователей диски сервера моментально забьются мусорными ошибками.</p></div>
+    <div><p style="margin-bottom: 6px;">Писать в лог <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">log.Printf(&quot;ERROR: %v&quot;, err)</code> при каждом разрыве сокета: при закрытии вкладок миллионами пользователей диски сервера моментально забьются мусорными ошибками.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как отличить падение клиента от обычного закрытия вкладки на уровне метрик Prometheus?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Экспортировать счетчик с кодами закрытия: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">websocket_connections_closed_total{code="1000"}</code> инкрементируется при штатном закрытии, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">code="1001"</code> — при обновлении страницы, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">code="1006"</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">code="unexpected"</code> — при падении процесса или обрыве сети. Всплеск <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1006</code> сигнализирует об аварии в сети или сбое клиентского приложения.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Экспортировать счетчик с кодами закрытия: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">websocket_connections_closed_total{code=&quot;1000&quot;}</code> инкрементируется при штатном закрытии, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">code=&quot;1001&quot;</code> — при обновлении страницы, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">code=&quot;1006&quot;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">code=&quot;unexpected&quot;</code> — при падении процесса или обрыве сети. Всплеск <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1006</code> сигнализирует об аварии в сети или сбое клиентского приложения.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-27">
@@ -5113,7 +5105,7 @@ func TestHeartbeatTimeoutDetection(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>WebSocket с rooms/channels</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]map[*websocket.Conn]bool</code>. Клиент отправляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"action": "join", "room": "general"}</code>. Сообщения в room доставляются только подписчикам. Покажи изоляцию.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>WebSocket с rooms/channels</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]map[*websocket.Conn]bool</code>. Клиент отправляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;action&quot;: &quot;join&quot;, &quot;room&quot;: &quot;general&quot;}</code>. Сообщения в room доставляются только подписчикам. Покажи изоляцию.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5121,18 +5113,16 @@ func TestHeartbeatTimeoutDetection(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Структура входящей команды:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`json</p>
-<p style="margin-bottom: 6px;">{</p>
-<p style="margin-bottom: 6px;">"action": "join" | "leave" | "send",</p>
-<p style="margin-bottom: 6px;">"room": "general",</p>
-<p style="margin-bottom: 6px;">"payload": "Привет комнате!"</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-json"><code class="language-json">{
+  &quot;action&quot;: &quot;join&quot; | &quot;leave&quot; | &quot;send&quot;,
+  &quot;room&quot;: &quot;general&quot;,
+  &quot;payload&quot;: &quot;Привет комнате!&quot;
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Сервер десериализует команду и маршрутизирует:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"join"</code>: добавляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rooms[cmd.Room]</code>.</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"send"</code>: рассылает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cmd.Payload</code> клиентам из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rooms[cmd.Room]</code>.</li>
-<li style="margin-bottom: 4px;">Изоляция гарантирует, что участники комнаты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"vip"</code> не увидят сообщений из комнаты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"general"</code>.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;join&quot;</code>: добавляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rooms[cmd.Room]</code>.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;send&quot;</code>: рассылает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cmd.Payload</code> клиентам из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rooms[cmd.Room]</code>.</li>
+<li style="margin-bottom: 4px;">Изоляция гарантирует, что участники комнаты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;vip&quot;</code> не увидят сообщений из комнаты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;general&quot;</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -5141,8 +5131,8 @@ func TestHeartbeatTimeoutDetection(t *testing.T) {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте структуру команды <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ChatAction</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуйте диспетчер комнат <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RoomDispatcher</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте подключение клиента к комнате <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"finance"</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Докажите отсутствие утечки сообщений в комнату <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"marketing"</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте подключение клиента к комнате <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;finance&quot;</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Докажите отсутствие утечки сообщений в комнату <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;marketing&quot;</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -5269,7 +5259,7 @@ func TestJSONRoomsDispatcher(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как ограничить количество комнат, в которых может одновременно состоять один пользователь?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Хранить обратный индекс: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">userRooms map[*Client]map[string]bool</code>. При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">join</code> проверяется <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if len(userRooms[client]) >= MaxRoomsPerUser (например 50)</code>. Если лимит превышен, клиенту отправляется ошибка, что защищает память сервера от злоумышленников, пытающихся зайти в миллион комнат одновременно.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Хранить обратный индекс: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">userRooms map[*Client]map[string]bool</code>. При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">join</code> проверяется <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if len(userRooms[client]) &gt;= MaxRoomsPerUser (например 50)</code>. Если лимит превышен, клиенту отправляется ошибка, что защищает память сервера от злоумышленников, пытающихся зайти в миллион комнат одновременно.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-30">
@@ -5287,12 +5277,12 @@ func TestJSONRoomsDispatcher(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Шаги протокола со стороны клиента:</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Dial("ws://localhost:8080/query")</code> с субпротоколом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graphql-transport-ws</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Отправка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"type": "connection_init"}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Ожидание <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"type": "connection_ack"}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Dial(&quot;ws://localhost:8080/query&quot;)</code> с субпротоколом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graphql-transport-ws</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Отправка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;type&quot;: &quot;connection_init&quot;}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Ожидание <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;type&quot;: &quot;connection_ack&quot;}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Отправка операции подписки:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"id": "sub_1", "type": "subscribe", "payload": {"query": "subscription { orderStatusUpdated(id: \"10\") { status } }"}}</code>.</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Непрерывный цикл чтения событий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"type": "next", ...}</code>.</div></div>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;id&quot;: &quot;sub_1&quot;, &quot;type&quot;: &quot;subscribe&quot;, &quot;payload&quot;: {&quot;query&quot;: &quot;subscription { orderStatusUpdated(id: \&quot;10\&quot;) { status } }&quot;}}</code>.</p>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Непрерывный цикл чтения событий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;type&quot;: &quot;next&quot;, ...}</code>.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -5399,7 +5389,7 @@ func TestGraphQLWSClientStream(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как поддержать возобновление подписки при краткосрочном обрыве связи (Subscription Resumption)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> По спецификации Apollo / Relay клиент передает в переменных подписки аргумент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lastEventId: "...курсор..."</code>. При переподключении сервер запрашивает в брокере сообщений (Kafka / Redis Streams) пропущенные события с момента <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lastEventId</code> и досылает их клиенту до перехода в live-режим.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> По спецификации Apollo / Relay клиент передает в переменных подписки аргумент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lastEventId: &quot;...курсор...&quot;</code>. При переподключении сервер запрашивает в брокере сообщений (Kafka / Redis Streams) пропущенные события с момента <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lastEventId</code> и досылает их клиенту до перехода в live-режим.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-31">
@@ -5588,14 +5578,14 @@ func TestHubRouter(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Индивидуальный буфер клиента:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Если писать в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.WriteMessage</code> прямо из цикла рассылки Hub'а, самый медленный сокет затормозит весь цикл для всех остальных.</li>
+<li style="margin-bottom: 4px;">Если писать в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.WriteMessage</code> прямо из цикла рассылки Hub&#x27;а, самый медленный сокет затормозит весь цикл для всех остальных.</li>
 <li style="margin-bottom: 4px;">Поэтому каждый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Client</code> имеет персональную очередь:</li>
 </ul>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">send chan []byte</code> (буфер 256 сообщений).</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Диспетчер Hub просто кладет слайс байт в канал:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.send <- message</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.send &lt;- message</code>.</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Отправку в сокет делает собственная горутина клиента <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">writePump</code>.</li>
 </ul></div>
@@ -5960,13 +5950,13 @@ func TestSyncMapRegistry(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуйте <strong>Room/Channel паттерн</strong>: клиенты могут "заходить" в комнаты (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/chat/room-1</code>) и получать сообщения только своей комнаты.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуйте <strong>Room/Channel паттерн</strong>: клиенты могут &quot;заходить&quot; в комнаты (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/chat/room-1</code>) и получать сообщения только своей комнаты.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Привязка комнаты к URL пути запроса:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Вместо отправки JSON сообщений <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"join"</code> комната может задаваться прямо в URL WebSocket подключения:</li>
+<li style="margin-bottom: 4px;">Вместо отправки JSON сообщений <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;join&quot;</code> комната может задаваться прямо в URL WebSocket подключения:</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ws://example.com/chat/room-1</code></li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ws://example.com/chat/room-2</code></li>
 <li style="margin-bottom: 4px;">Преимущества:</li>
@@ -6094,16 +6084,16 @@ func TestURLRoomRouting(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В Go 1.22+ стандартный роутер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.ServeMux</code> поддерживает сопоставление путей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mux.HandleFunc("GET /chat/{roomID}", handler)</code>, делая извлечение переменных пути стандартным вызовом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.PathValue("roomID")</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">В Go 1.22+ стандартный роутер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.ServeMux</code> поддерживает сопоставление путей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mux.HandleFunc(&quot;GET /chat/{roomID}&quot;, handler)</code>, делая извлечение переменных пути стандартным вызовом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.PathValue(&quot;roomID&quot;)</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Не санитизировать имя комнаты: клиент может передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">roomID = "../admin"</code>, что при использовании в путях файловой системы приведет к уязвимости Directory Traversal.</p></div>
+    <div><p style="margin-bottom: 6px;">Не санитизировать имя комнаты: клиент может передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">roomID = &quot;../admin&quot;</code>, что при использовании в путях файловой системы приведет к уязвимости Directory Traversal.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как реализовать sticky routing (привязку) комнат чата в Nginx?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать директиву <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hash $room_id consistent</code> в блоке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">upstream</code>. Имя комнаты извлекается из регулярного выражения URL (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rewrite ^/chat/(?<room_id>[^/]+)$</code>), и все запросы к одной комнате попадают строго на один и тот же бэкенд, исключая межнодовые сетевые вызовы.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать директиву <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hash $room_id consistent</code> в блоке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">upstream</code>. Имя комнаты извлекается из регулярного выражения URL (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rewrite ^/chat/(?&lt;room_id&gt;[^/]+)$</code>), и все запросы к одной комнате попадают строго на один и тот же бэкенд, исключая межнодовые сетевые вызовы.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-36">
@@ -6122,7 +6112,7 @@ func TestURLRoomRouting(t *testing.T) {
 <li style="margin-bottom: 4px;">Браузерный JavaScript <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new WebSocket(url)</code> не позволяет задавать произвольные HTTP-заголовки (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Authorization: Bearer ...</code>).</li>
 <li style="margin-bottom: 4px;">Однако второй аргумент конструктора передает субпротоколы:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new WebSocket('wss://api.com/ws', ['access-token', userJWT])</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new WebSocket(&#x27;wss://api.com/ws&#x27;, [&#x27;access-token&#x27;, userJWT])</code>.</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Сервер при рукопожатии:</li>
 </ul>
@@ -6256,15 +6246,13 @@ func TestSecWebSocketProtocolAuth(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Клиентский цикл управления соединением:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">for {</p>
-<p style="margin-bottom: 6px;">conn, err := connectWithRetry(ctx)</p>
-<p style="margin-bottom: 6px;">if err != nil { return }</p>
-<p style="margin-bottom: 6px;">// Работаем с сокетом до разрыва</p>
-<p style="margin-bottom: 6px;">handleConnection(conn)</p>
-<p style="margin-bottom: 6px;">// Разрыв зафиксирован -> переход на следующую итерацию с экспоненциальной задержкой</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">for {
+    conn, err := connectWithRetry(ctx)
+    if err != nil { return }
+    // Работаем с сокетом до разрыва
+    handleConnection(conn)
+    // Разрыв зафиксирован -&gt; переход на следующую итерацию с экспоненциальной задержкой
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Гарантирует бесперебойную работу фонового демона при временных сетевых глитчах и перезагрузках серверов.</li>
 </ul></div>
@@ -6710,7 +6698,7 @@ func TestMonitoredEchoMetrics(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Рассылается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CloseMessage</code> с кодом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1001 Going Away</code>:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">websocket.FormatCloseMessage(websocket.CloseGoingAway, "Сервер планово перезагружается")</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">websocket.FormatCloseMessage(websocket.CloseGoingAway, &quot;Сервер планово перезагружается&quot;)</code>.</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Ожидание завершения активных горутин через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.WaitGroup</code>:</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Дается таймаут (например 10 секунд) на то, чтобы клиенты успели корректно закрыть свои сокеты.</li>
@@ -7249,7 +7237,7 @@ func TestWritePumpArchitecture(t *testing.T) {
 <li style="margin-bottom: 4px;"><strong>Инженерный компромисс (Trade-Off):</strong></li>
 <li style="margin-bottom: 4px;">Сжатие экономит до 70–80% сетевого трафика на больших JSON ответах.</li>
 <li style="margin-bottom: 4px;">Однако Deflate требует заметных аллокаций памяти и тактов CPU на каждый сжатый фрейм.</li>
-<li style="margin-bottom: 4px;">В HighLoad системах компрессию включают только для сообщений размером $> 512$ байт.</li>
+<li style="margin-bottom: 4px;">В HighLoad системах компрессию включают только для сообщений размером $&gt; 512$ байт.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -7484,7 +7472,7 @@ func TestBinaryProtocolDispatcher(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать строковые имена действий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"join"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"leave"</code> в бинарном протоколе: передача строк уничтожает все преимущества бинарного кодирования.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать строковые имена действий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;join&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;leave&quot;</code> в бинарном протоколе: передача строк уничтожает все преимущества бинарного кодирования.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -7753,7 +7741,7 @@ func TestGracefulCloseHandshake(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Сквозной сценарий реакции на мутации в GraphQL:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Клиент А оформляет подписку: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subscription { userCreated { id name } }</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Клиент Б вызывает мутацию: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mutation { createUser(name: "Михаил") { id } }</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Клиент Б вызывает мутацию: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mutation { createUser(name: &quot;Михаил&quot;) { id } }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Резолвер мутации:</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Сохраняет пользователя.</li>
@@ -8005,7 +7993,7 @@ func TestCloseErrorAnalyzer(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Использование стандартной функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, &closeErr)</code> из пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors</code> Go 1.13+ позволяет надежно извлекать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*websocket.CloseError</code>, даже если ошибка была обернута через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("контекст: %w", err)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Использование стандартной функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As(err, &amp;closeErr)</code> из пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors</code> Go 1.13+ позволяет надежно извлекать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*websocket.CloseError</code>, даже если ошибка была обернута через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;контекст: %w&quot;, err)</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -8035,7 +8023,7 @@ func TestCloseErrorAnalyzer(t *testing.T) {
 <li style="margin-bottom: 4px;">Если сервер пришлет это же сообщение обратно автору, на экране возникнет неприятное мерцание или дублирование.</li>
 <li style="margin-bottom: 4px;">Сервер рассылает сообщение с условием:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if client != sender { client.send <- msg }</code>.</p></div>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if client != sender { client.send &lt;- msg }</code>.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -8149,7 +8137,7 @@ func TestBroadcastExcludeSender(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Когда автору все-таки отправляют подтверждение его же сообщения?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Сервер отправляет автору не полное широковещательное сообщение, а легковесный служебный пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ACK: { client_msg_id: "...", server_msg_id: 1042, timestamp: 1725388800 }</code>. Это позволяет Optimistic UI на клиенте заменить серую иконку «часиков» на зеленую галочку «доставлено на сервер».</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Сервер отправляет автору не полное широковещательное сообщение, а легковесный служебный пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ACK: { client_msg_id: &quot;...&quot;, server_msg_id: 1042, timestamp: 1725388800 }</code>. Это позволяет Optimistic UI на клиенте заменить серую иконку «часиков» на зеленую галочку «доставлено на сервер».</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-50">
@@ -8169,10 +8157,10 @@ func TestBroadcastExcludeSender(t *testing.T) {
 <li style="margin-bottom: 4px;"><strong>Паттерн Event-Driven:</strong></li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Мутация пишет доменное событие в абстрактный интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EventPublisher</code>:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">publisher.Publish(ctx, "users.created", event)</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">publisher.Publish(ctx, &quot;users.created&quot;, event)</code>.</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Мутация ничего не знает о WebSocket, клиентах, протоколах и форматах фронтенда.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Резолвер подписки подписывается на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EventSubscriber</code>:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subStream := subscriber.Subscribe(ctx, "users.created")</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subStream := subscriber.Subscribe(ctx, &quot;users.created&quot;)</code>.</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Полная изоляция бизнес-логики от транспортного уровня.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -8324,7 +8312,7 @@ func TestDecoupledSubscriptions(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Когда клиент подключается, его жизненный цикл привязывается к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.Context()</code> входящего HTTP запроса.</li>
 <li style="margin-bottom: 4px;">Если контекст отменяется (родительский HTTP-сервер останавливается или сработал таймаут):</li>
-<li style="margin-bottom: 4px;">Фоновая горутина ловит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>.</li>
+<li style="margin-bottom: 4px;">Фоновая горутина ловит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>.</li>
 <li style="margin-bottom: 4px;">Закрывает сокет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.Close()</code>.</li>
 <li style="margin-bottom: 4px;">Все блокирующие операции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadMessage</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WriteMessage</code> немедленно завершаются с ошибкой, предотвращая утечки горутин.</li>
 </ul></div>
@@ -8573,7 +8561,7 @@ func TestDeadSocketDetection(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>subscription filtering</strong>: клиент подписывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subscription { userCreated(status: ACTIVE) { ... } }</code>. Только пользователи со статусом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ACTIVE</code> доставляются. Фильтр применяй на уровне event bus или resolver'а.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>subscription filtering</strong>: клиент подписывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subscription { userCreated(status: ACTIVE) { ... } }</code>. Только пользователи со статусом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ACTIVE</code> доставляются. Фильтр применяй на уровне event bus или resolver&#x27;а.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8691,7 +8679,7 @@ func TestSubscriptionStatusFilter(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Блокировать входящий канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">inEvents</code>, если буфер выходного канала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">out</code> переполнен: для высоконагруженных очередей в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">out <- u</code> добавляют <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select default</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Блокировать входящий канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">inEvents</code>, если буфер выходного канала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">out</code> переполнен: для высоконагруженных очередей в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">out &lt;- u</code> добавляют <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select default</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -8706,7 +8694,7 @@ func TestSubscriptionStatusFilter(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создайте <strong>broadcast system</strong>: функция, которая отправляет сообщение всем подключенным клиентам с обработкой ошибок (если один клиент "мертвый", это не должно блокировать остальных).</p></div>
+    <div><p style="margin-bottom: 6px;">Создайте <strong>broadcast system</strong>: функция, которая отправляет сообщение всем подключенным клиентам с обработкой ошибок (если один клиент &quot;мертвый&quot;, это не должно блокировать остальных).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8716,7 +8704,7 @@ func TestSubscriptionStatusFilter(t *testing.T) {
 <li style="margin-bottom: 4px;">Если 5-й клиент завис, остальные 995 клиентов ждут таймаута сокета (до нескольких секунд!).</li>
 <li style="margin-bottom: 4px;"><strong>Отказоустойчивая система рассылки:</strong></li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Неблокирующая отправка в клиентские очереди: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select { case c.send <- msg: default: ... }</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Неблокирующая отправка в клиентские очереди: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select { case c.send &lt;- msg: default: ... }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если клиент не может принять сообщение, он помечается как кандидат на удаление.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Ошибочный клиент изолируется и закрывается, не затрагивая соседей.</div></div>
   </div>
@@ -8837,7 +8825,7 @@ func TestFaultTolerantBroadcast(t *testing.T) {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как рассылать broadcast на 500 000 клиентов за время < 10 миллисекунд?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как рассылать broadcast на 500 000 клиентов за время &lt; 10 миллисекунд?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Применять древовидную рассылку (Fan-Out Tree): главный диспетчер рассылает сообщение не 500 000 клиентам напрямую, а 50 локальным воркерам по каналам Go. Каждый воркер владеет пачкой из 10 000 соединений и параллельно на своих ядрах CPU производит системные вызовы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">writev()</code>.</p></div>
   </div>
 </div>
@@ -8856,7 +8844,7 @@ func TestFaultTolerantBroadcast(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В типовой архитектуре:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Браузер -> Nginx Ingress -> Go Backend</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Браузер -&gt; Nginx Ingress -&gt; Go Backend</code>.</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Nginx по умолчанию закрывает соединение через 60 секунд отсутствия трафика.</li>
 <li style="margin-bottom: 4px;">Решение: сервер отправляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PingMessage</code> каждые 10 секунд.</li>
@@ -8995,12 +8983,10 @@ func TestNginxKeepAliveKeepalive(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Какие параметры в nginx.conf обязательны для работы WebSockets?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong></p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`nginx</p>
-<p style="margin-bottom: 6px;">proxy_http_version 1.1;</p>
-<p style="margin-bottom: 6px;">proxy_set_header Upgrade $http_upgrade;</p>
-<p style="margin-bottom: 6px;">proxy_set_header Connection "upgrade";</p>
-<p style="margin-bottom: 6px;">proxy_read_timeout 3600s; # Увеличение таймаута чтения</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-nginx"><code class="language-nginx">proxy_http_version 1.1;
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection &quot;upgrade&quot;;
+proxy_read_timeout 3600s; # Увеличение таймаута чтения</code></pre></div>
 <p style="margin-bottom: 6px;">Без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">proxy_http_version 1.1</code> Nginx по умолчанию использует HTTP/1.0, который вообще не поддерживает заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Upgrade</code> и не способен выполнить WebSocket рукопожатие.</p></div>
   </div>
 </div>
@@ -9137,7 +9123,7 @@ func TestAsyncClientQueue(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Очередь изолирует сетевой цикл издателя Hub'а от системных вызовов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">write()</code>, распределяя сетевой ввод-вывод по ядрам процессора.</p></div>
+    <div><p style="margin-bottom: 6px;">Очередь изолирует сетевой цикл издателя Hub&#x27;а от системных вызовов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">write()</code>, распределяя сетевой ввод-вывод по ядрам процессора.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -9300,10 +9286,10 @@ func TestSubscriptionAuth4401(t *testing.T) {
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Время события записывается в циклический буфер.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> События старше 1 секунды отбрасываются.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если в буфере $> N$ событий:</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если в буфере $&gt; N$ событий:</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Сообщение игнорируется.</li>
-<li style="margin-bottom: 4px;">Клиенту отправляется предупреждение: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"error": "RATE_LIMIT_EXCEEDED"}</code>.</li>
+<li style="margin-bottom: 4px;">Клиенту отправляется предупреждение: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;error&quot;: &quot;RATE_LIMIT_EXCEEDED&quot;}</code>.</li>
 <li style="margin-bottom: 4px;">При повторных нарушениях сокет разрывается.</li>
 </ul></div>
   </div>
@@ -9439,7 +9425,7 @@ func TestSlidingWindowRateLimiter(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Добавьте комнаты: клиент может отправить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"action": "join", "room": "golang"}</code>, после этого получает сообщения только из этой комнаты.</p></div>
+    <div><p style="margin-bottom: 6px;">Добавьте комнаты: клиент может отправить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;action&quot;: &quot;join&quot;, &quot;room&quot;: &quot;golang&quot;}</code>, после этого получает сообщения только из этой комнаты.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9447,8 +9433,8 @@ func TestSlidingWindowRateLimiter(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Клиент в одном WebSocket соединении может переключаться между темами:</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"action": "join", "room": "golang"}</code> $\to$ регистрация в комнате Go.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"action": "join", "room": "devops"}</code> $\to$ регистрация в комнате DevOps.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;action&quot;: &quot;join&quot;, &quot;room&quot;: &quot;golang&quot;}</code> $\to$ регистрация в комнате Go.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;action&quot;: &quot;join&quot;, &quot;room&quot;: &quot;devops&quot;}</code> $\to$ регистрация в комнате DevOps.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сообщения, отправленные в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang</code>, получают только подписчики Go-комнаты.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -9457,7 +9443,7 @@ func TestSlidingWindowRateLimiter(t *testing.T) {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте структуру диспетчера тем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TopicManager</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуйте команды <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">join</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">send</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте подписку на комнату <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"golang"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте подписку на комнату <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;golang&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Убедитесь в фильтрации сообщений чужих комнат.</div></div>
   </div>
   <div class="code-container">
@@ -9595,7 +9581,7 @@ func TestTopicManager(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Встроенные JSON-хелперы в Gorilla WebSocket:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Вместо ручной связки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal(conn.ReadMessage())</code>:</li>
-<li style="margin-bottom: 4px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.ReadJSON(&dest)</code>:</li>
+<li style="margin-bottom: 4px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.ReadJSON(&amp;dest)</code>:</li>
 <li style="margin-bottom: 4px;">Считывает следующее текстовое сообщение из сокета.</li>
 <li style="margin-bottom: 4px;">Напрямую декодирует JSON в целевую структуру через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.NewDecoder</code>.</li>
 <li style="margin-bottom: 4px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.WriteJSON(v)</code>:</li>
@@ -9734,7 +9720,7 @@ func TestReadWriteJSONHelpers(t *testing.T) {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запрос клиента: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GET /ws?token=eyJhbGciOiJIUzI1Ni...</code></div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> HTTP Middleware:</div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Извлекает токен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.URL.Query().Get("token")</code>.</li>
+<li style="margin-bottom: 4px;">Извлекает токен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.URL.Query().Get(&quot;token&quot;)</code>.</li>
 <li style="margin-bottom: 4px;">Проверяет валидность криптографической подписи.</li>
 <li style="margin-bottom: 4px;">Извлекает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Claims</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">userID</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">roles</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">exp</code>.</li>
 <li style="margin-bottom: 4px;">Обогащает контекст запроса: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx := context.WithValue(r.Context(), userKey, claims)</code>.</li>
@@ -9876,8 +9862,8 @@ func TestHandshakeJWTAuth(t *testing.T) {
 <li style="margin-bottom: 4px;">Хранит только тех клиентов, чьи сокеты физически подключены к данному поду.</li>
 <li style="margin-bottom: 4px;">Общий брокер Redis Pub/Sub:</li>
 <li style="margin-bottom: 4px;">Связывает все поды в единую шину.</li>
-<li style="margin-bottom: 4px;">Любой под делает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Publish(ctx, "events:chat", payload)</code>.</li>
-<li style="margin-bottom: 4px;">Каждый под слушает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Subscribe(ctx, "events:chat")</code> и пересылает сообщение своим локальным сокетам.</li>
+<li style="margin-bottom: 4px;">Любой под делает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Publish(ctx, &quot;events:chat&quot;, payload)</code>.</li>
+<li style="margin-bottom: 4px;">Каждый под слушает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Subscribe(ctx, &quot;events:chat&quot;)</code> и пересылает сообщение своим локальным сокетам.</li>
 <li style="margin-bottom: 4px;">Обеспечивает масштабирование чатов и подписок на миллионы пользователей.</li>
 </ul></div>
   </div>
@@ -10155,7 +10141,7 @@ func TestMessageAcknowledgement(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем разница между At-Least-Once и Exactly-Once доставкой в WebSockets?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Протокол ACK + Retry реализует семантику <strong>At-Least-Once</strong> (сообщение будет доставлено как минимум один раз, возможны дубликаты). Для достижения <strong>Exactly-Once</strong> на клиенте реализуют дедупликацию: клиент сохраняет ID последнего обработанного сообщения и отбрасывает повторные пакеты с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id <= lastProcessedID</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Протокол ACK + Retry реализует семантику <strong>At-Least-Once</strong> (сообщение будет доставлено как минимум один раз, возможны дубликаты). Для достижения <strong>Exactly-Once</strong> на клиенте реализуют дедупликацию: клиент сохраняет ID последнего обработанного сообщения и отбрасывает повторные пакеты с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id &lt;= lastProcessedID</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-64">
@@ -10175,12 +10161,12 @@ func TestMessageAcknowledgement(t *testing.T) {
 <li style="margin-bottom: 4px;">При установке соединения:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пользователь добавляется в реестр Online: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">presence.SetOnline(userID)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Всем его друзьям рассылается событие: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"type": "USER_ONLINE", "user_id": "10"}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Всем его друзьям рассылается событие: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;type&quot;: &quot;USER_ONLINE&quot;, &quot;user_id&quot;: &quot;10&quot;}</code>.</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">При отключении соединения:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пользователь удаляется: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">presence.SetOffline(userID)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Друзьям отправляется: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"type": "USER_OFFLINE", "user_id": "10"}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Друзьям отправляется: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;type&quot;: &quot;USER_OFFLINE&quot;, &quot;user_id&quot;: &quot;10&quot;}</code>.</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В распределенной системе статус Online кэшируется в Redis с коротким TTL (Heartbeat раз в 30 секунд).</li>
 </ul></div>
@@ -10321,7 +10307,7 @@ func TestPresenceSystem(t *testing.T) {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как реализовать статус "User is typing..." (Пользователь печатает) в Presence System?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как реализовать статус &quot;User is typing...&quot; (Пользователь печатает) в Presence System?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> По событию нажатия клавиши клиент отправляет легковесный сигнал. Сервер транслирует событие с TTL 3 секунды. Если в течение 3 секунд новый сигнал не поступил, клиентский UI автоматически скрывает индикатор печати без отправки явного события отмены по сети.</p></div>
   </div>
 </div>
@@ -10342,8 +10328,8 @@ func TestPresenceSystem(t *testing.T) {
 <li style="margin-bottom: 4px;">Взаимодействие:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Нода A принимает WebSocket сообщение от пользователя 1.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Нода A публикует JSON в Redis: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Publish(ctx, "chat.room.10", msg)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Нода B подписана на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"chat.room.10"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Нода A публикует JSON в Redis: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rdb.Publish(ctx, &quot;chat.room.10&quot;, msg)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Нода B подписана на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;chat.room.10&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Нода B получает сообщение из Redis и пересылает в WebSocket сокет пользователя 2.</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Полная прозрачность топологии для клиентов.</li>
@@ -10474,8 +10460,8 @@ func TestClusterRedisBridge(t *testing.T) {
 <li style="margin-bottom: 4px;">Механизм синхронизации:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Клиент хранит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">last_received_msg_id = 100</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> При переподключении отправляет: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"action": "sync", "last_id": 100}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сервер достает из кольцевого буфера памяти все сообщения с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id > 100</code> (например 101, 102, 103) и досылает их клиенту.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> При переподключении отправляет: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;action&quot;: &quot;sync&quot;, &quot;last_id&quot;: 100}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сервер достает из кольцевого буфера памяти все сообщения с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id &gt; 100</code> (например 101, 102, 103) и досылает их клиенту.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> После этого клиент переводится в live-режим.</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Гарантирует непрерывность истории сообщений без потери контекста.</li>
@@ -10768,22 +10754,20 @@ func TestLifecycleCleanAndReconnect(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В SDL:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">type ChatMessage {</p>
-<p style="margin-bottom: 6px;">id: ID!</p>
-<p style="margin-bottom: 6px;">room: String!</p>
-<p style="margin-bottom: 6px;">sender: String!</p>
-<p style="margin-bottom: 6px;">content: String!</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type Mutation {</p>
-<p style="margin-bottom: 6px;">createMessage(room: String!, content: String!): ChatMessage!</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type Subscription {</p>
-<p style="margin-bottom: 6px;">messageAdded(room: String!): ChatMessage!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">type ChatMessage {
+  id: ID!
+  room: String!
+  sender: String!
+  content: String!
+}
+
+type Mutation {
+  createMessage(room: String!, content: String!): ChatMessage!
+}
+
+type Subscription {
+  messageAdded(room: String!): ChatMessage!
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">createMessage</code>:</li>
 </ul>
@@ -10921,7 +10905,7 @@ func TestGraphQLChatSubscriptionIntegration(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> подписка транслируется в интерфейс, возвращающий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-chan *ChatMessage</code>. Движок gqlgen сам обрабатывает сериализацию в JSON и отправку по WebSocket протоколу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graphql-ws</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> подписка транслируется в интерфейс, возвращающий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-chan *ChatMessage</code>. Движок gqlgen сам обрабатывает сериализацию в JSON и отправку по WebSocket протоколу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graphql-ws</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -10930,7 +10914,7 @@ func TestGraphQLChatSubscriptionIntegration(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как протестировать GraphQL Subscriptions без запуска реального браузера?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Написать интеграционный тест на Go с использованием <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">websocket.Dialer</code>: клиент открывает соединение, отправляет строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"id": "1", "type": "subscribe", "payload": {"query": "subscription { ... }"}}</code>, после чего вызывает мутацию через HTTP POST и проверяет получение фрейма <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"type": "next"}</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Написать интеграционный тест на Go с использованием <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">websocket.Dialer</code>: клиент открывает соединение, отправляет строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;id&quot;: &quot;1&quot;, &quot;type&quot;: &quot;subscribe&quot;, &quot;payload&quot;: {&quot;query&quot;: &quot;subscription { ... }&quot;}}</code>, после чего вызывает мутацию через HTTP POST и проверяет получение фрейма <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;type&quot;: &quot;next&quot;}</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-69">
@@ -11047,7 +11031,7 @@ func TestSubprotocolVersioning(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что произойдет, если клиент запросил субпротокол, которого нет в списке сервера?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> По спецификации RFC 6455 сервер просто оставляет заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sec-WebSocket-Protocol</code> в ответе пустым (соединение открывается по умолчанию без субпротокола). Однако если клиент в браузере строго требовал субпротокол (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new WebSocket(url, 'custom-proto')</code>), браузер немедленно разорвет соединение с ошибкой протокола.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> По спецификации RFC 6455 сервер просто оставляет заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sec-WebSocket-Protocol</code> в ответе пустым (соединение открывается по умолчанию без субпротокола). Однако если клиент в браузере строго требовал субпротокол (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new WebSocket(url, &#x27;custom-proto&#x27;)</code>), браузер немедленно разорвет соединение с ошибкой протокола.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-70">
@@ -11073,9 +11057,9 @@ func TestSubprotocolVersioning(t *testing.T) {
 <li style="margin-bottom: 4px;">Фоновый воркер с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.NewTicker(1 * time.Second)</code> собирает показатели.</li>
 <li style="margin-bottom: 4px;">Формирует кадр телеметрии:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"service": "billing", "cpu_percent": 42.5, "memory_mb": 512, "rps": 1240}</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;service&quot;: &quot;billing&quot;, &quot;cpu_percent&quot;: 42.5, &quot;memory_mb&quot;: 512, &quot;rps&quot;: 1240}</code>.</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Рассылает в комнату сервиса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">room: "metrics.billing"</code>.</li>
+<li style="margin-bottom: 4px;">Рассылает в комнату сервиса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">room: &quot;metrics.billing&quot;</code>.</li>
 <li style="margin-bottom: 4px;">Клиенты браузера слушают только нужные графики микросервисов, не перегружая сетевой канал.</li>
 </ul></div>
   </div>
@@ -11486,7 +11470,7 @@ func TestCRDTDocumentCollaboration(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Архитектура Authoritative Game Server:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Никогда не доверяй клиенту (Never Trust the Client):</strong></li>
-<li style="margin-bottom: 4px;">Клиент отправляет только намерение действия: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"action": "move", "cell": 4}</code>.</li>
+<li style="margin-bottom: 4px;">Клиент отправляет только намерение действия: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;action&quot;: &quot;move&quot;, &quot;cell&quot;: 4}</code>.</li>
 <li style="margin-bottom: 4px;">Сервер проверяет правила:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сейчас ход этого игрока?</div>
@@ -11653,7 +11637,7 @@ func TestMultiplayerGameAntiCheat(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Multiplayer game server</strong>: Создайте сервер для простой игры (например, "змейка"), где состояние игры обновляется 60 раз в секунду и рассылается всем игрокам через WebSocket. Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nhooyr.io/websocket</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/gorilla/websocket</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Multiplayer game server</strong>: Создайте сервер для простой игры (например, &quot;змейка&quot;), где состояние игры обновляется 60 раз в секунду и рассылается всем игрокам через WebSocket. Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nhooyr.io/websocket</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/gorilla/websocket</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -11795,7 +11779,7 @@ Done:
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
     <div><p style="margin-bottom: 6px;"><strong>Финальный босс (Real-time платформа для стриминга):</strong></p>
-<p style="margin-bottom: 6px;">Создайте систему типа "Twitch-lite":</p>
+<p style="margin-bottom: 6px;">Создайте систему типа &quot;Twitch-lite&quot;:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>GraphQL API</strong> (через gqlgen) для управления стримами, пользователями, чатами.</li>
 <li style="margin-bottom: 4px;"><strong>GraphQL Subscriptions</strong> для уведомлений о начале стрима (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">streamStarted</code>).</li>
@@ -11808,7 +11792,7 @@ Done:
 <li style="margin-bottom: 4px;"><strong>Observability</strong>: OpenTelemetry для трейсинга, Prometheus для метрик (количество подключений, сообщений в секунду, latency).</li>
 <li style="margin-bottom: 4px;"><strong>Graceful shutdown</strong>: при остановке сервера всем WebSocket-клиентам отправляется Close-фрейм, активные subscriptions корректно завершаются.</li>
 <li style="margin-bottom: 4px;"><strong>Горизонтальное масштабирование</strong>: можно запустить 10 инстансов сервера, и они будут работать как единое целое благодаря Redis Pub/Sub.</li>
-<li style="margin-bottom: 4px;"><strong>Нагрузочное тестирование</strong>: 10000 одновременных WebSocket-подключений, 1000 сообщений в секунду, P99 latency < 50ms.</li>
+<li style="margin-bottom: 4px;"><strong>Нагрузочное тестирование</strong>: 10000 одновременных WebSocket-подключений, 1000 сообщений в секунду, P99 latency &lt; 50ms.</li>
 </ul></div>
   </div>
   <div class="callout callout-theory">
@@ -11822,8 +11806,8 @@ Done:
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>DataLoaders:</strong> ликвидация N+1 при выборке стримеров и их фолловеров.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Redis Pub/Sub:</strong> межсерверная синхронизация чатов между 10 подами.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> <strong>Асинхронная очередь (NATS/Kafka):</strong> буферизация сообщений чата для сохранения в БД и модерации.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> <strong>Security & Governance:</strong> JWT проверка на рукопожатии, Rate Limiter (Token Bucket).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">7.</span> <strong>Observability & Graceful Shutdown:</strong> OpenTelemetry трассировка, метрики Prometheus, отсечение сокетов с кодом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1001 Going Away</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> <strong>Security &amp; Governance:</strong> JWT проверка на рукопожатии, Rate Limiter (Token Bucket).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">7.</span> <strong>Observability &amp; Graceful Shutdown:</strong> OpenTelemetry трассировка, метрики Prometheus, отсечение сокетов с кодом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1001 Going Away</code>.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -12025,11 +12009,11 @@ func TestTwitchLitePlatformArchitecture(t *testing.T) {
 <div class="exercise-card" id="ex-76">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #76</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Скрещивание тем: GraphQL Subscriptions time: String! с генерацией тиков в <-chan string</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Скрещивание тем: GraphQL Subscriptions time: String! с генерацией тиков в &lt;-chan string</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>GraphQL Subscriptions (Скрещиваем темы)</strong>: В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> (из прошлого блока) есть поддержка подписок (Subscriptions) поверх WebSockets. Добавь в схему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type Subscription { time: String! }</code>. Реализуй резолвер, который возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-chan string</code>. Внутри резолвера запусти горутину, которая пишет текущее время в этот канал каждую секунду. Подключись через Playground (он умеет работать с WS) и посмотри на бегущие данные в реальном времени.</p>
+    <div><p style="margin-bottom: 6px;"><strong>GraphQL Subscriptions (Скрещиваем темы)</strong>: В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> (из прошлого блока) есть поддержка подписок (Subscriptions) поверх WebSockets. Добавь в схему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type Subscription { time: String! }</code>. Реализуй резолвер, который возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-chan string</code>. Внутри резолвера запусти горутину, которая пишет текущее время в этот канал каждую секунду. Подключись через Playground (он умеет работать с WS) и посмотри на бегущие данные в реальном времени.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">---</p>
 <p style="margin-bottom: 6px;"><strong>Совет к этому этапу:</strong> При работе с WebSockets в Go всегда помни о <strong>жизненном цикле горутин</strong>. Каждое WS-соединение обычно порождает 2 горутины (для чтения и записи). Если клиент внезапно отключится (интернет пропал), ты должен гарантированно выйти из этих горутин, удалить клиента из Хаба и закрыть его каналы, иначе твой сервер быстро утечет по памяти!</p></div>
@@ -12040,33 +12024,29 @@ func TestTwitchLitePlatformArchitecture(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В SDL:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">type Subscription {</p>
-<p style="margin-bottom: 6px;">time: String!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">type Subscription {
+  time: String!
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Реализация резолвера:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func (r *subscriptionResolver) Time(ctx context.Context) (<-chan string, error) {</p>
-<p style="margin-bottom: 6px;">ch := make(chan string, 1)</p>
-<p style="margin-bottom: 6px;">go func() {</p>
-<p style="margin-bottom: 6px;">ticker := time.NewTicker(time.Second)</p>
-<p style="margin-bottom: 6px;">defer ticker.Stop()</p>
-<p style="margin-bottom: 6px;">defer close(ch)</p>
-<p style="margin-bottom: 6px;">for {</p>
-<p style="margin-bottom: 6px;">select {</p>
-<p style="margin-bottom: 6px;">case <-ctx.Done():</p>
-<p style="margin-bottom: 6px;">return</p>
-<p style="margin-bottom: 6px;">case t := <-ticker.C:</p>
-<p style="margin-bottom: 6px;">ch <- t.Format(time.RFC3339)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}()</p>
-<p style="margin-bottom: 6px;">return ch, nil</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">func (r *subscriptionResolver) Time(ctx context.Context) (&lt;-chan string, error) {
+    ch := make(chan string, 1)
+    go func() {
+        ticker := time.NewTicker(time.Second)
+        defer ticker.Stop()
+        defer close(ch)
+        for {
+            select {
+            case &lt;-ctx.Done():
+                return
+            case t := &lt;-ticker.C:
+                ch &lt;- t.Format(time.RFC3339)
+            }
+        }
+    }()
+    return ch, nil
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Гарантия отсутствия утечек горутин: отмена контекста <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code> мгновенно останавливает тикер и завершает горутину.</li>
 </ul></div>
@@ -12173,7 +12153,7 @@ func TestGraphQLTimeSubscription(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как на код-ревью обнаружить утечку горутин (Goroutine Leak) в WebSocket резолверах?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Проверить наличие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> с веткой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case <-ctx.Done(): return</code>. Если горутина делает блокирующую отправку в канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ch <- data</code> или блокирующее чтение без проверки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code>, при разрыве сокета горутина зависнет в памяти навсегда. Нагрузочный тест <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.NumGoroutine()</code> до и после 10 000 подключений сразу покажет утечку.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Проверить наличие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> с веткой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case &lt;-ctx.Done(): return</code>. Если горутина делает блокирующую отправку в канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ch &lt;- data</code> или блокирующее чтение без проверки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Done()</code>, при разрыве сокета горутина зависнет в памяти навсегда. Нагрузочный тест <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.NumGoroutine()</code> до и после 10 000 подключений сразу покажет утечку.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-77">
@@ -12196,7 +12176,7 @@ func TestGraphQLTimeSubscription(t *testing.T) {
 <li style="margin-bottom: 4px;">Проверка авторизации <strong>до вызова Upgrade</strong>:</li>
 <li style="margin-bottom: 4px;">Если токен невалиден:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.Error(w, "Unauthorized", http.StatusUnauthorized)</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.Error(w, &quot;Unauthorized&quot;, http.StatusUnauthorized)</code></p>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">return</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Запрос отклоняется мгновенно стандартным HTTP статусом 401 без малейшего расхода ресурсов на сокет.</li>
@@ -12476,7 +12456,7 @@ func TestIndustrialHeartbeat(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как поддерживать 1 000 000 открытых WebSocket соединений на одном сервере Linux (C1000k Problem)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1. <strong>Тюнинг ядра Linux:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysctl -w fs.file-max=2097152</code>, расширение локальных портов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ipv4.ip_local_port_range="1024 65535"</code>, увеличение очередей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.core.somaxconn=65535</code>. 2. <strong>Уменьшение буферов:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadBufferSize: 1024, WriteBufferSize: 1024</code>. 3. <strong>Использование Epoll без горутины на сокет:</strong> библиотеки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">epoll</code> / <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gev</code> / <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gnet</code> (Event-driven архитектура без выделения стека горутины на каждое соединение). 4. <strong>Heartbeat:</strong> своевременное удаление мертвых сокетов.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1. <strong>Тюнинг ядра Linux:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysctl -w fs.file-max=2097152</code>, расширение локальных портов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ipv4.ip_local_port_range=&quot;1024 65535&quot;</code>, увеличение очередей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.core.somaxconn=65535</code>. 2. <strong>Уменьшение буферов:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadBufferSize: 1024, WriteBufferSize: 1024</code>. 3. <strong>Использование Epoll без горутины на сокет:</strong> библиотеки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">epoll</code> / <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gev</code> / <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gnet</code> (Event-driven архитектура без выделения стека горутины на каждое соединение). 4. <strong>Heartbeat:</strong> своевременное удаление мертвых сокетов.</p></div>
   </div>
 </div>
 

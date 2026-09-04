@@ -871,7 +871,7 @@
       <a href="#ex-56" class="sub-exercise-link" title="Упр 56: Батчинг запросов в Pull Consumer: пакетная вычитка до 10 сообщений с таймаутом MaxWait 1s">56. Батчинг запросов в Pull Consumer: пакетная вычитка до 10 сообщений с таймаутом MaxWait 1s</a>
       <a href="#ex-57" class="sub-exercise-link" title="Упр 57: Сквозная настройка JetStream: декларация стрима, отправка сообщений и pull-чтение с подтверждением">57. Сквозная настройка JetStream: декларация стрима, отправка сообщений и pull-чтение с подтверждением</a>
       <a href="#ex-58" class="sub-exercise-link" title="Упр 58: Модель Fire-and-Forget в Core NATS: демонстрация безвозвратной потери сообщений в оффлайне">58. Модель Fire-and-Forget в Core NATS: демонстрация безвозвратной потери сообщений в оффлайне</a>
-      <a href="#ex-59" class="sub-exercise-link" title="Упр 59: Многоуровневые маски событий: сопоставление events.*.created и events.> на реальных примерах">59. Многоуровневые маски событий: сопоставление events.*.created и events.> на реальных примерах</a>
+      <a href="#ex-59" class="sub-exercise-link" title="Упр 59: Многоуровневые маски событий: сопоставление events.*.created и events.&gt; на реальных примерах">59. Многоуровневые маски событий: сопоставление events.*.created и events.&gt; на реальных примерах</a>
       <a href="#ex-60" class="sub-exercise-link" title="Упр 60: Долговечный консьюмер в JetStream: фиксация позиции чтения и продолжение с подтвержденного смещения">60. Долговечный консьюмер в JetStream: фиксация позиции чтения и продолжение с подтвержденного смещения</a>
       <a href="#ex-61" class="sub-exercise-link" title="Упр 61: RPC сервер времени: синхронный запрос nc.Request time.get и ответ msg.Respond с точным временем">61. RPC сервер времени: синхронный запрос nc.Request time.get и ответ msg.Respond с точным временем</a>
       <a href="#ex-62" class="sub-exercise-link" title="Упр 62: Управление политиками хранения: лимиты MaxMsgs, MaxBytes, MaxAge и автоматическая обрезка лога">62. Управление политиками хранения: лимиты MaxMsgs, MaxBytes, MaxAge и автоматическая обрезка лога</a>
@@ -1097,7 +1097,7 @@
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Установи NATS Server (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">docker run -p 4222:4222 nats</code>). Подключись через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/nats-io/nats.go</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc, _ := nats.Connect(nats.DefaultURL)</code>. Опубликуй сообщение: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Publish("hello.world", []byte("Hello NATS!"))</code>. Подпишись: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Subscribe("hello.world", func(m *nats.Msg) { fmt.Println(string(m.Data)) })</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Установи NATS Server (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">docker run -p 4222:4222 nats</code>). Подключись через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/nats-io/nats.go</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc, _ := nats.Connect(nats.DefaultURL)</code>. Опубликуй сообщение: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Publish(&quot;hello.world&quot;, []byte(&quot;Hello NATS!&quot;))</code>. Подпишись: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Subscribe(&quot;hello.world&quot;, func(m *nats.Msg) { fmt.Println(string(m.Data)) })</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1482,7 +1482,7 @@ func TestPubSubOrders(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Покажи разницу между <strong>Publish/Subscribe</strong> (one-to-many, все подписчики получают) и <strong>Queue Groups</strong> (one-to-one, round-robin внутри группы). Создай 3 подписчика на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"orders"</code> без queue group — все получат. Создай 3 подписчика с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.QueueSubscribe("orders", "workers", ...)</code> — только один получит.</p></div>
+    <div><p style="margin-bottom: 6px;">Покажи разницу между <strong>Publish/Subscribe</strong> (one-to-many, все подписчики получают) и <strong>Queue Groups</strong> (one-to-one, round-robin внутри группы). Создай 3 подписчика на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;orders&quot;</code> без queue group — все получат. Создай 3 подписчика с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.QueueSubscribe(&quot;orders&quot;, &quot;workers&quot;, ...)</code> — только один получит.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1492,7 +1492,7 @@ func TestPubSubOrders(t *testing.T) {
 <li style="margin-bottom: 4px;">Каждое сообщение рассылается абсолютно ВСЕМ зарегистрированным слушателям.</li>
 <li style="margin-bottom: 4px;">Идеально для обновления кешей, отправки метрик и аудита.</li>
 <li style="margin-bottom: 4px;"><strong>Queue Groups (Очереди балансировки / One-to-One):</strong></li>
-<li style="margin-bottom: 4px;">Несколько подписчиков объединяются под общим именем группы (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"workers"</code>).</li>
+<li style="margin-bottom: 4px;">Несколько подписчиков объединяются под общим именем группы (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;workers&quot;</code>).</li>
 <li style="margin-bottom: 4px;">При публикации NATS случайным образом (Round-Robin) выбирает <strong>ровно одного</strong> подписчика из этой группы для каждого сообщения.</li>
 <li style="margin-bottom: 4px;">Идеально для горизонтального масштабирования тяжелых воркеров.</li>
 </ul></div>
@@ -1502,7 +1502,7 @@ func TestPubSubOrders(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте 3 подписчика без группы очереди и убедитесь, что все 3 получили копию сообщения.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создайте 3 подписчика в составе одной группы очереди <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"workers"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создайте 3 подписчика в составе одной группы очереди <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;workers&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Отправьте 1 сообщение в группу очереди и убедитесь, что его получил ровно 1 воркер.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сравните счетчики полученных сообщений.</div></div>
   </div>
@@ -1592,7 +1592,7 @@ func TestFanoutVsQueue(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используйте <strong>wildcard-подписки</strong>: подпишитесь на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.*</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.></code> (одноуровневый и многоуровневый wildcard).</p></div>
+    <div><p style="margin-bottom: 6px;">Используйте <strong>wildcard-подписки</strong>: подпишитесь на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.*</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.&gt;</code> (одноуровневый и многоуровневый wildcard).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1603,10 +1603,10 @@ func TestFanoutVsQueue(t *testing.T) {
 <li style="margin-bottom: 4px;">Заменяет ровно один токен между точками.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.*</code> соответствует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.created</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.cancelled</code>.</li>
 <li style="margin-bottom: 4px;">НЕ соответствует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.eu.created</code> (здесь 2 уровня).</li>
-<li style="margin-bottom: 4px;"><strong>Символ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">></code> (многоуровневый wildcard):</strong></li>
+<li style="margin-bottom: 4px;"><strong>Символ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&gt;</code> (многоуровневый wildcard):</strong></li>
 <li style="margin-bottom: 4px;">Заменяет один или множество токенов до конца темы.</li>
 <li style="margin-bottom: 4px;">Может находиться ТОЛЬКО в самом конце выражения.</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.></code> соответствует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.created</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.eu.electronics.express</code>.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.&gt;</code> соответствует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.created</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.eu.electronics.express</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -1614,8 +1614,8 @@ func TestFanoutVsQueue(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте предикаты проверки соответствия тем шаблонам.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверьте сопоставление темы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.created</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.*</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.></code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверьте сопоставление глубокой темы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.eu.books</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.></code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверьте сопоставление темы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.created</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.*</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.&gt;</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверьте сопоставление глубокой темы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.eu.books</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.&gt;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Убедитесь, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.*</code> не пропускает глубокие темы.</div></div>
   </div>
   <div class="code-container">
@@ -1694,7 +1694,7 @@ func TestWildcardMatching(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Размещать символ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">></code> в середине темы (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.>.events</code>): NATS вернет ошибку синтаксиса подписки, так как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">></code> допустим исключительно в конце темы.</p></div>
+    <div><p style="margin-bottom: 6px;">Размещать символ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&gt;</code> в середине темы (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.&gt;.events</code>): NATS вернет ошибку синтаксиса подписки, так как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&gt;</code> допустим исключительно в конце темы.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1709,7 +1709,7 @@ func TestWildcardMatching(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Request/Reply pattern</strong>: клиент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Request("help", []byte("help me"), 2*time.Second)</code> — ждёт ответа с timeout. Сервер подписан на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"help"</code> и отвечает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Respond([]byte("I can help!"))</code>. Покажи синхронный RPC поверх асинхронного NATS.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Request/Reply pattern</strong>: клиент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Request(&quot;help&quot;, []byte(&quot;help me&quot;), 2*time.Second)</code> — ждёт ответа с timeout. Сервер подписан на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;help&quot;</code> и отвечает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Respond([]byte(&quot;I can help!&quot;))</code>. Покажи синхронный RPC поверх асинхронного NATS.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1718,9 +1718,9 @@ func TestWildcardMatching(t *testing.T) {
 <li style="margin-bottom: 4px;">NATS не требует HTTP или gRPC для синхронных вызовов между микросервисами.</li>
 <li style="margin-bottom: 4px;"><strong>Как это работает под капотом:</strong></li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Клиент генерирует уникальный эфемерный инбокс: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_INBOX.<random_token></code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Клиент генерирует уникальный эфемерный инбокс: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_INBOX.&lt;random_token&gt;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Клиент подписывается на этот инбокс.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Клиент отправляет сообщение в тему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"help"</code>, указывая свой инбокс в поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Reply</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Клиент отправляет сообщение в тему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;help&quot;</code>, указывая свой инбокс в поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Reply</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сервер принимает запрос, обрабатывает и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Respond(data)</code> (что эквивалентно отправке в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Reply</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Клиент получает ответ, отписывается от инбокса и возвращает управление.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Если сервер не ответил за <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">timeout</code>, клиент возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.ErrTimeout</code>.</div></div>
@@ -1807,7 +1807,7 @@ func TestRequestReplyRPC(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В современных версиях клиента NATS используется мультиплексированный inbox (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_INBOX.<client_id>.*</code>), что позволяет обслуживать тысячи одновременных RPC-запросов через одну общую подписку без спама подписками на брокере.</p></div>
+    <div><p style="margin-bottom: 6px;">В современных версиях клиента NATS используется мультиплексированный inbox (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_INBOX.&lt;client_id&gt;.*</code>), что позволяет обслуживать тысячи одновременных RPC-запросов через одну общую подписку без спама подписками на брокере.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1826,16 +1826,16 @@ func TestRequestReplyRPC(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Subject hierarchies и wildcards</strong>: публикуй на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"orders.us.electronics"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"orders.eu.books"</code>. Подпишись на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"orders.>"</code> (получит всё), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"orders.us.>"</code> (только US), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"orders.*.electronics"</code> (electronics в любом регионе). Покажи гибкость routing'а.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Subject hierarchies и wildcards</strong>: публикуй на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;orders.us.electronics&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;orders.eu.books&quot;</code>. Подпишись на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;orders.&gt;&quot;</code> (получит всё), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;orders.us.&gt;&quot;</code> (только US), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;orders.*.electronics&quot;</code> (electronics в любом регионе). Покажи гибкость routing&#x27;а.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Проектирование иерархии тем (Subject Hierarchy Design):</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Стандарт корпоративного именования тем: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><домен>.<регион>.<категория>.<действие></code>.</li>
+<li style="margin-bottom: 4px;">Стандарт корпоративного именования тем: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;домен&gt;.&lt;регион&gt;.&lt;категория&gt;.&lt;действие&gt;</code>.</li>
 <li style="margin-bottom: 4px;">Примеры гибкой фильтрации:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.></code> — глобальный аудит и сбор аналитики (получает абсолютно все заказы мира).</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.us.></code> — региональный процессинг заказов США.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.&gt;</code> — глобальный аудит и сбор аналитики (получает абсолютно все заказы мира).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.us.&gt;</code> — региональный процессинг заказов США.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.*.electronics</code> — специализированный сервис гарантийного обслуживания электроники любого континента.</li>
 <li style="margin-bottom: 4px;">Маршрутизация выполняется на брокере без необходимости написания кастомных роутеров.</li>
 </ul></div>
@@ -1845,7 +1845,7 @@ func TestRequestReplyRPC(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте структуру маршрутизатора с поддержкой шаблонов тем.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зарегистрируйте трех слушателей: глобального (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.></code>), регионального (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.us.></code>) и товарного (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.*.electronics</code>).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зарегистрируйте трех слушателей: глобального (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.&gt;</code>), регионального (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.us.&gt;</code>) и товарного (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.*.electronics</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Опубликуйте заказ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.us.electronics</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверьте, какие подписчики получили событие.</div></div>
   </div>
@@ -1957,7 +1957,7 @@ func TestSubjectHierarchyRouting(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создайте <strong>Queue Group</strong>: несколько воркеров подписываются на одну тему с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Queue: "workers"</code>, и каждое сообщение получает только один из них (load balancing).</p></div>
+    <div><p style="margin-bottom: 6px;">Создайте <strong>Queue Group</strong>: несколько воркеров подписываются на одну тему с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Queue: &quot;workers&quot;</code>, и каждое сообщение получает только один из них (load balancing).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1966,7 +1966,7 @@ func TestSubjectHierarchyRouting(t *testing.T) {
 <li style="margin-bottom: 4px;">В микросервисной архитектуре требуется распределять тяжелые фоновые задачи (например обработку видео, генерацию PDF или списание денег).</li>
 <li style="margin-bottom: 4px;">Синтаксис Go-клиента:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.QueueSubscribe("tasks.process", "workers", func(m *nats.Msg) { ... })</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.QueueSubscribe(&quot;tasks.process&quot;, &quot;workers&quot;, func(m *nats.Msg) { ... })</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Свойства:</li>
 <li style="margin-bottom: 4px;">NATS равномерно распределяет сообщения между всеми запущенными подами в Kubernetes.</li>
@@ -1979,7 +1979,7 @@ func TestSubjectHierarchyRouting(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте симулятор балансировщика группы очереди.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Подключите 3 воркера под именем группы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"workers"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Подключите 3 воркера под именем группы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;workers&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Отправьте пакет из 9 сообщений.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверьте, что каждое сообщение было доставлено ровно 1 воркеру.</div></div>
   </div>
@@ -2058,7 +2058,7 @@ func TestQueueGroupLoadBalancing(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать разные имена групп очередей на разных воркерах: если один под напишет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Queue: "worker"</code>, а второй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Queue: "workers"</code>, они будут считаться двумя независимыми группами и КАЖДОЕ сообщение будет отправлено в обе группы!</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать разные имена групп очередей на разных воркерах: если один под напишет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Queue: &quot;worker&quot;</code>, а второй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Queue: &quot;workers&quot;</code>, они будут считаться двумя независимыми группами и КАЖДОЕ сообщение будет отправлено в обе группы!</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2073,7 +2073,7 @@ func TestQueueGroupLoadBalancing(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>connection resilience</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.Connect(url, nats.MaxReconnects(10), nats.ReconnectWait(time.Second), nats.DisconnectErrHandler(func(nc *nats.Conn, err error) { log.Println("disconnected:", err) }), nats.ReconnectHandler(func(nc *nats.Conn) { log.Println("reconnected") }))</code>. Симулируй рестарт NATS — покажи автоматический reconnect.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>connection resilience</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.Connect(url, nats.MaxReconnects(10), nats.ReconnectWait(time.Second), nats.DisconnectErrHandler(func(nc *nats.Conn, err error) { log.Println(&quot;disconnected:&quot;, err) }), nats.ReconnectHandler(func(nc *nats.Conn) { log.Println(&quot;reconnected&quot;) }))</code>. Симулируй рестарт NATS — покажи автоматический reconnect.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2195,7 +2195,7 @@ func TestConnectionResilience(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Эталонная конфигурация NATS в Enterprise HighLoad:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.Name("billing-service-pod-3")</code>: имя инстанса для мониторинга в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/connz</code>.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.Name(&quot;billing-service-pod-3&quot;)</code>: имя инстанса для мониторинга в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/connz</code>.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.PingInterval(20 * time.Second)</code>: периодичность отправки PING-фреймов брокеру.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.MaxPingsOut(3)</code>: если сервер не ответил PONG 3 раза подряд $\to$ соединение признается мертвым, инициируется реконнект.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.ReconnectBufSize(32 * 1024 * 1024)</code>: увеличение буфера исходящих сообщений до 32 МБ на случай сетевых просадок.</li>
@@ -2414,7 +2414,7 @@ func TestGracefulShutdownSIGINT(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">При отписке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub.Unsubscribe()</code> клиент шлет серверу команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UNSUB <sid></code>, и сервер мгновенно перестает пересылать сообщения этому подписчику.</p></div>
+    <div><p style="margin-bottom: 6px;">При отписке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub.Unsubscribe()</code> клиент шлет серверу команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UNSUB &lt;sid&gt;</code>, и сервер мгновенно перестает пересылать сообщения этому подписчику.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -2657,7 +2657,7 @@ func TestRequestWithContext(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>message headers</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg := nats.NewMsg("events"); msg.Header.Set("X-Event-Type", "user.created"); msg.Header.Set("X-Correlation-ID", "abc-123"); nc.PublishMsg(msg)</code>. В subscriber'е читай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Header.Get("X-Event-Type")</code>. Покажи передачу метаданных без payload parsing.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>message headers</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg := nats.NewMsg(&quot;events&quot;); msg.Header.Set(&quot;X-Event-Type&quot;, &quot;user.created&quot;); msg.Header.Set(&quot;X-Correlation-ID&quot;, &quot;abc-123&quot;); nc.PublishMsg(msg)</code>. В subscriber&#x27;е читай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Header.Get(&quot;X-Event-Type&quot;)</code>. Покажи передачу метаданных без payload parsing.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2675,7 +2675,7 @@ func TestRequestWithContext(t *testing.T) {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.NewMsg("events")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.NewMsg(&quot;events&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Заполните заголовки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">X-Event-Type</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">X-Correlation-ID</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Опубликуйте сообщение и примите его подписчиком.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Продемонстрируйте чтение метаданных напрямую из заголовков.</div></div>
@@ -2753,7 +2753,7 @@ func TestNATSMessageHeaders(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как реализовать статус ответа HTTP 404/500 в Request/Reply NATS без тела сообщения?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В NATS есть специальный стандарт заголовка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Nats-Status</code> (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Header.Set("Nats-Status", "404")</code>). Клиент при получении такого ответа сразу распознает код ошибки без необходимости распаковки полезной нагрузки.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В NATS есть специальный стандарт заголовка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Nats-Status</code> (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Header.Set(&quot;Nats-Status&quot;, &quot;404&quot;)</code>). Клиент при получении такого ответа сразу распознает код ошибки без необходимости распаковки полезной нагрузки.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-15">
@@ -2771,11 +2771,11 @@ func TestNATSMessageHeaders(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В распределенной архитектуре вызов проходит через десятки микросервисов:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Web API -> NATS -> Order Service -> NATS -> Billing -> NATS -> Email Service</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Web API -&gt; NATS -&gt; Order Service -&gt; NATS -&gt; Billing -&gt; NATS -&gt; Email Service</code>.</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Чтобы собрать все логи и спаны в единый трейс (Jaeger / OpenTelemetry / Loki):</li>
 <li style="margin-bottom: 4px;">Продюсер упаковывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">X-Trace-ID</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">X-Span-ID</code> в заголовки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Header</code>.</li>
-<li style="margin-bottom: 4px;">Консьюмер извлекает их, привязывает к своему логгеру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slog.With("trace_id", tid)</code> и передает дальше.</li>
+<li style="margin-bottom: 4px;">Консьюмер извлекает их, привязывает к своему логгеру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slog.With(&quot;trace_id&quot;, tid)</code> и передает дальше.</li>
 <li style="margin-bottom: 4px;">Обеспечивает 100% прозрачность отладки в продакшене.</li>
 </ul></div>
   </div>
@@ -2875,14 +2875,14 @@ func TestTraceMetadataHeaders(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>typed messages через JSON</strong>: определи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type Event struct { Type string json:"type"; Payload any json:"payload"; Timestamp time.Time json:"timestamp" }</code>. Сериализуй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Marshal(event)</code>, публикуй. В subscriber'е <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Event</code> + type switch по <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Type</code>. Обработай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">unknown event type</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>typed messages через JSON</strong>: определи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type Event struct { Type string json:&quot;type&quot;; Payload any json:&quot;payload&quot;; Timestamp time.Time json:&quot;timestamp&quot; }</code>. Сериализуй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Marshal(event)</code>, публикуй. В subscriber&#x27;е <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Event</code> + type switch по <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Type</code>. Обработай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">unknown event type</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Паттерн Envelope (Конверт событий) в Go:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Единый унифицированный формат сообщений в шине:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Type</code>: дискриминатор типа события (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"user.signup"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"payment.received"</code>).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Type</code>: дискриминатор типа события (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;user.signup&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;payment.received&quot;</code>).</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Timestamp</code>: точное UTC-время генерации события.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Payload</code>: произвольные структурированные данные.</li>
 <li style="margin-bottom: 4px;">При получении консьюмер выполняет:</li>
@@ -2993,7 +2993,7 @@ func TestTypedJSONEvents(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Паниковать при неизвестном типе события (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic("unknown")</code>): при обновлении продюсеров старые версии воркеров упадут всей группой. Неизвестные события нужно логировать или направлять в DLQ.</p></div>
+    <div><p style="margin-bottom: 6px;">Паниковать при неизвестном типе события (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic(&quot;unknown&quot;)</code>): при обновлении продюсеров старые версии воркеров упадут всей группой. Неизвестные события нужно логировать или направлять в DLQ.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3135,7 +3135,7 @@ func TestScatterGatherPattern(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как реализовать Scatter-Gather с ранним завершением (Early Exit)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если критерием успеха является получение любого ответа с ценой ниже целевого порога (например, <1000 руб.), при получении подходящей котировки горутина вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code> контекста и возвращает результат клиенту, не дожидаясь остальных участников.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если критерием успеха является получение любого ответа с ценой ниже целевого порога (например, &lt;1000 руб.), при получении подходящей котировки горутина вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cancel()</code> контекста и возвращает результат клиенту, не дожидаясь остальных участников.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-18">
@@ -3145,7 +3145,7 @@ func TestScatterGatherPattern(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Включи JetStream: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">docker run -p 4222:4222 nats -js</code>. Создай Stream: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js, _ := nc.JetStream(); js.AddStream(&nats.StreamConfig{Name: "ORDERS", Subjects: []string{"orders.>"}, Retention: nats.WorkQueuePolicy, MaxMsgs: 100000, MaxAge: 24 * time.Hour})</code>. Покажи, что JetStream — persistence layer поверх NATS Core.</p></div>
+    <div><p style="margin-bottom: 6px;">Включи JetStream: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">docker run -p 4222:4222 nats -js</code>. Создай Stream: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js, _ := nc.JetStream(); js.AddStream(&amp;nats.StreamConfig{Name: &quot;ORDERS&quot;, Subjects: []string{&quot;orders.&gt;&quot;}, Retention: nats.WorkQueuePolicy, MaxMsgs: 100000, MaxAge: 24 * time.Hour})</code>. Покажи, что JetStream — persistence layer поверх NATS Core.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3154,7 +3154,7 @@ func TestScatterGatherPattern(t *testing.T) {
 <li style="margin-bottom: 4px;"><strong>JetStream</strong> — это встроенная в NATS подсистема распределенного персистентного хранения на базе алгоритма консенсуса Raft.</li>
 <li style="margin-bottom: 4px;">Включается флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-js</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats-server -js</code>).</li>
 <li style="margin-bottom: 4px;">Концепция <strong>Stream</strong>:</li>
-<li style="margin-bottom: 4px;">Перехватывает сообщения из тем NATS Core (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.></code>) и сохраняет их в упорядоченный лог на диске или в памяти.</li>
+<li style="margin-bottom: 4px;">Перехватывает сообщения из тем NATS Core (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.&gt;</code>) и сохраняет их в упорядоченный лог на диске или в памяти.</li>
 <li style="margin-bottom: 4px;">Политика хранения <strong>WorkQueuePolicy</strong>:</li>
 <li style="margin-bottom: 4px;">Сообщение удаляется из стрима сразу после того, как любой консьюмер подтвердил его обработку (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Ack</code>).</li>
 <li style="margin-bottom: 4px;">Позволяет строить масштабируемые распределенные очереди задач.</li>
@@ -3261,7 +3261,7 @@ go test -v jetstream_init_test.go
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Пытаться создать два стрима с пересекающимися темами (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.*</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.></code>): JetStream отклонит создание второго стрима, чтобы избежать неоднозначности владения сообщениями.</p></div>
+    <div><p style="margin-bottom: 6px;">Пытаться создать два стрима с пересекающимися темами (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.*</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.&gt;</code>): JetStream отклонит создание второго стрима, чтобы избежать неоднозначности владения сообщениями.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3400,7 +3400,7 @@ func TestJetStreamStreamCreate(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В отличие от Core NATS (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Publish</code>), метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.Publish(subject, data)</code> блокируется до тех пор, пока сервер NATS не сохранит сообщение в персистентный стрим и не отреплицирует его в Raft-кворум.</li>
 <li style="margin-bottom: 4px;">Возвращает структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*nats.PubAck</code>:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Stream</code>: имя стрима, принявшего сообщение (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"ORDERS"</code>).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Stream</code>: имя стрима, принявшего сообщение (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;ORDERS&quot;</code>).</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sequence</code>: глобальный порядковый 64-битный номер сообщения в стриме (Stream Sequence).</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Duplicate</code>: булев флаг, указывающий, было ли сообщение отброшено как дубликат по <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MsgId</code>.</li>
 <li style="margin-bottom: 4px;">Гарантирует абсолютную сохранность данных продюсера.</li>
@@ -3499,7 +3499,7 @@ func TestJetStreamPublishAck(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>Producer для JetStream</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.Publish("orders.us", []byte("order-123"))</code>. Покажи, что сообщение сохраняется даже если consumer offline. Проверь через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats stream info ORDERS</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>Producer для JetStream</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.Publish(&quot;orders.us&quot;, []byte(&quot;order-123&quot;))</code>. Покажи, что сообщение сохраняется даже если consumer offline. Проверь через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats stream info ORDERS</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3595,7 +3595,7 @@ go test -v offline_persistence_test.go
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Команда CLI <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats stream info</code> отправляет служебный запрос Request/Reply в системную тему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$JS.API.STREAM.INFO.<STREAM_NAME></code> и получает структурированный JSON от Raft-лидера стрима.</p></div>
+    <div><p style="margin-bottom: 6px;">Команда CLI <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats stream info</code> отправляет служебный запрос Request/Reply в системную тему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$JS.API.STREAM.INFO.&lt;STREAM_NAME&gt;</code> и получает структурированный JSON от Raft-лидера стрима.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -3622,7 +3622,7 @@ go test -v offline_persistence_test.go
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В традиционной Push-модели брокер сам «выталкивает» сообщения клиенту. Если наплыв слишком велик, консьюмер захлебывается (OOM).</li>
 <li style="margin-bottom: 4px;">В Pull-модели <strong>клиент сам контролирует поток</strong>:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub, _ := js.PullSubscribe("orders.>", "batch-worker")</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub, _ := js.PullSubscribe(&quot;orders.&gt;&quot;, &quot;batch-worker&quot;)</code></li>
 <li style="margin-bottom: 4px;">Когда воркер готов к работе, он вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msgs, _ := sub.Fetch(batchSize, timeout)</code>.</li>
 <li style="margin-bottom: 4px;">Забирает строго столько сообщений, сколько может обработать прямо сейчас.</li>
 <li style="margin-bottom: 4px;">Обеспечивает абсолютную защиту от перегрузки (Zero OOM guarantee).</li>
@@ -3732,14 +3732,14 @@ func TestPullBatchConsumption(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>Push Consumer</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub, _ := js.Subscribe("orders.>", func(m *nats.Msg) { ... }, nats.Durable("processor-1"), nats.ManualAck())</code>. Обработай сообщение, затем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Ack()</code>. Покажи, что без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Ack</code> сообщение redeliver'ится.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>Push Consumer</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub, _ := js.Subscribe(&quot;orders.&gt;&quot;, func(m *nats.Msg) { ... }, nats.Durable(&quot;processor-1&quot;), nats.ManualAck())</code>. Обработай сообщение, затем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Ack()</code>. Покажи, что без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Ack</code> сообщение redeliver&#x27;ится.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Механика Durable Push Consumer с подтверждениями:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Опции:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.Durable("processor-1")</code>: консьюмер сохраняется на сервере NATS под постоянным именем.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.Durable(&quot;processor-1&quot;)</code>: консьюмер сохраняется на сервере NATS под постоянным именем.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.ManualAck()</code>: автоматическое подтверждение отключено. Приложение ОБЯЗАНО явно вызвать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Ack()</code>.</li>
 <li style="margin-bottom: 4px;">Сценарий сбоя (Failure Handling):</li>
 <li style="margin-bottom: 4px;">Если воркер получил сообщение, но упал (panic, OOM, потеря питания) ДО вызова <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Ack()</code>:</li>
@@ -3869,7 +3869,7 @@ func TestDurablePushRedelivery(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Push-модель идеальна для:</li>
 <li style="margin-bottom: 4px;">Уведомлений в реальном времени (WebSockets шлюзы, отправка Telegram/SMS сообщений).</li>
-<li style="margin-bottom: 4px;">Фоновых событий низкого и среднего объема (<5 000 msg/s).</li>
+<li style="margin-bottom: 4px;">Фоновых событий низкого и среднего объема (&lt;5 000 msg/s).</li>
 <li style="margin-bottom: 4px;">Преимущества:</li>
 <li style="margin-bottom: 4px;">Максимально простой код: не требуется запускать цикл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for { sub.Fetch(...) }</code>.</li>
 <li style="margin-bottom: 4px;">Минимальная задержка (Zero Latency): сообщение пушится в сокет клиента мгновенно по мере поступления в стрим.</li>
@@ -3966,14 +3966,14 @@ func TestPushConsumerFlow(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>Pull Consumer</strong> (предпочтительно для high-throughput): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub, _ := js.PullSubscribe("orders.>", "processor-2", nats.PullMaxWaiting(100))</code>. В цикле: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msgs, _ := sub.Fetch(10, nats.MaxWait(500*time.Millisecond))</code>. Обработай batch, ack каждое. Покажи контроль над rate.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>Pull Consumer</strong> (предпочтительно для high-throughput): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub, _ := js.PullSubscribe(&quot;orders.&gt;&quot;, &quot;processor-2&quot;, nats.PullMaxWaiting(100))</code>. В цикле: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msgs, _ := sub.Fetch(10, nats.MaxWait(500*time.Millisecond))</code>. Обработай batch, ack каждое. Покажи контроль над rate.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Проектирование высоконагруженного воркера (High-Throughput Pull Worker):</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Параметры:</strong></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Durable: "processor-2"</code>: устойчивый консьюмер.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Durable: &quot;processor-2&quot;</code>: устойчивый консьюмер.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.PullMaxWaiting(100)</code>: максимальное число отложенных запросов на вычитку.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub.Fetch(10, nats.MaxWait(500*time.Millisecond))</code>: запрос пачки из 10 сообщений с таймаутом ожидания.</li>
 <li style="margin-bottom: 4px;"><strong>Производственный цикл:</strong></li>
@@ -4210,14 +4210,14 @@ func TestRetentionPolicies(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>exactly-once processing</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.Publish("orders", data, nats.MsgId("order-123"))</code> — дедупликация по <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MsgId</code> в течение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DuplicateWindow</code> (default 2 мин). Consumer: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.InProgress()</code> для "я работаю", <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Ack()</code> для успеха, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Nak()</code> для "переотправь сейчас", <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Term()</code> для "отбрось навсегда".</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>exactly-once processing</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.Publish(&quot;orders&quot;, data, nats.MsgId(&quot;order-123&quot;))</code> — дедупликация по <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MsgId</code> в течение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DuplicateWindow</code> (default 2 мин). Consumer: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.InProgress()</code> для &quot;я работаю&quot;, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Ack()</code> для успеха, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Nak()</code> для &quot;переотправь сейчас&quot;, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Term()</code> для &quot;отбрось навсегда&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Протокол Exactly-Once и сигналы Ack в JetStream:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Продюсер:</strong></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.MsgId("order-123")</code>: брокер NATS отслеживает уникальные ID сообщений в скользящем окне <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DuplicateWindow</code> (по умолчанию 2 минуты).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.MsgId(&quot;order-123&quot;)</code>: брокер NATS отслеживает уникальные ID сообщений в скользящем окне <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DuplicateWindow</code> (по умолчанию 2 минуты).</li>
 <li style="margin-bottom: 4px;">Повторная публикация сообщения с тем же ID не создает дубликат!</li>
 <li style="margin-bottom: 4px;"><strong>Консьюмер (4 сигнала подтверждения):</strong></li>
 </ul>
@@ -4565,7 +4565,7 @@ func TestNakRetryFlow(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>Dead Letter Queue (DLQ)</strong>: в Stream Config: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MaxDeliver: 3</code>. Consumer с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.MaxDeliver(3)</code>. При 3 неудачных попытках — сообщение идёт в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DeadLetterPolicy{Policy: nats.DiscardOld, MaxSamples: 100}</code>. Или ручной: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Nak()</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Header.Set("Nats-Last-Consumer", "...")</code>, после 3 <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Nak</code> — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Term()</code> + публикуй в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"orders.dlq"</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>Dead Letter Queue (DLQ)</strong>: в Stream Config: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MaxDeliver: 3</code>. Consumer с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.MaxDeliver(3)</code>. При 3 неудачных попытках — сообщение идёт в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DeadLetterPolicy{Policy: nats.DiscardOld, MaxSamples: 100}</code>. Или ручной: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Nak()</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Header.Set(&quot;Nats-Last-Consumer&quot;, &quot;...&quot;)</code>, после 3 <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Nak</code> — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Term()</code> + публикуй в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;orders.dlq&quot;</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4577,7 +4577,7 @@ func TestNakRetryFlow(t *testing.T) {
 <li style="margin-bottom: 4px;">JetStream отслеживает число доставок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NumDelivered</code>.</li>
 <li style="margin-bottom: 4px;">После 3 неудачных попыток:</li>
 <li style="margin-bottom: 4px;">Сообщение автоматически снимается с доставки.</li>
-<li style="margin-bottom: 4px;">В ручном режиме воркер проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">meta.NumDelivered >= 3</code>:</li>
+<li style="margin-bottom: 4px;">В ручном режиме воркер проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">meta.NumDelivered &gt;= 3</code>:</li>
 </ul>
 <p style="margin-bottom: 6px;">вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Term()</code> и пересылает сообщение в стрим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.dlq</code> с заголовком причины ошибки.</p></div>
   </div>
@@ -4704,7 +4704,7 @@ func TestJetStreamDLQRouter(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Для изоляции сбойных сообщений создается отдельный стрим:</li>
 <li style="margin-bottom: 4px;">Имя: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ORDERS_DLQ</code>.</li>
-<li style="margin-bottom: 4px;">Темы: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.dlq.></code>.</li>
+<li style="margin-bottom: 4px;">Темы: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders.dlq.&gt;</code>.</li>
 <li style="margin-bottom: 4px;">Retention: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LimitsPolicy</code> (хранить 30 дней для аудита).</li>
 <li style="margin-bottom: 4px;">Storage: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">FileStorage</code>.</li>
 <li style="margin-bottom: 4px;">Сообщение сохраняет оригинальные заголовки, тело, а также служебный заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Nats-Failure-Stack</code>.</li>
@@ -4810,14 +4810,14 @@ func TestDedicatedDLQStream(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Consumer Groups с scaling</strong>: 5 инстансов consumer'а, один <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Durable</code> name <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"order-processors"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">QueueSubscribe</code> на JetStream pull. JetStream распределяет сообщения round-robin. Добавь/убери инстансы — покажи rebalancing.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Consumer Groups с scaling</strong>: 5 инстансов consumer&#x27;а, один <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Durable</code> name <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;order-processors&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">QueueSubscribe</code> на JetStream pull. JetStream распределяет сообщения round-robin. Добавь/убери инстансы — покажи rebalancing.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Горизонтальное авто-масштабирование (HPA) в JetStream:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Все 5 реплик пода в Kubernetes подключаются с:</li>
-<li style="margin-bottom: 4px;">Одним и тем же именем Durable: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"order-processors"</code>.</li>
+<li style="margin-bottom: 4px;">Одним и тем же именем Durable: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;order-processors&quot;</code>.</li>
 <li style="margin-bottom: 4px;">JetStream автоматически объединяет их в единую группу потребителей.</li>
 <li style="margin-bottom: 4px;"><strong>Динамический ребалансинг:</strong></li>
 <li style="margin-bottom: 4px;">При добавлении 6-го инстанса: он просто делает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Fetch</code> и сразу получает задачи.</li>
@@ -5039,18 +5039,18 @@ func TestNATSMsgIDDedup(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>Stream mirroring / sourcing</strong>: Stream <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ORDERS_ARCHIVE</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Mirror: &nats.StreamSource{Name: "ORDERS"}</code>. Или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sources: []*nats.StreamSource{{Name: "PAYMENTS"}, {Name: "SHIPPING"}}</code>. Покажи агрегацию нескольких streams.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>Stream mirroring / sourcing</strong>: Stream <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ORDERS_ARCHIVE</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Mirror: &amp;nats.StreamSource{Name: &quot;ORDERS&quot;}</code>. Или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sources: []*nats.StreamSource{{Name: &quot;PAYMENTS&quot;}, {Name: &quot;SHIPPING&quot;}}</code>. Покажи агрегацию нескольких streams.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Топологии репликации и агрегации в JetStream:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Mirroring (Зеркалирование 1-в-1):</strong></li>
-<li style="margin-bottom: 4px;">Стрим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ORDERS_ARCHIVE</code> указывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Mirror: &nats.StreamSource{Name: "ORDERS"}</code>.</li>
+<li style="margin-bottom: 4px;">Стрим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ORDERS_ARCHIVE</code> указывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Mirror: &amp;nats.StreamSource{Name: &quot;ORDERS&quot;}</code>.</li>
 <li style="margin-bottom: 4px;">Точная копия исходного стрима (например, для долгосрочного холодного архива или репликации в другой регион).</li>
 <li style="margin-bottom: 4px;">Клиенты читают из зеркала, разгружая основной продакшен-стрим.</li>
 <li style="margin-bottom: 4px;"><strong>Sourcing (Агрегация N-в-1):</strong></li>
-<li style="margin-bottom: 4px;">Стрим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ECOMMERCE_AUDIT</code> указывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sources: []*nats.StreamSource{{Name: "PAYMENTS"}, {Name: "SHIPPING"}}</code>.</li>
+<li style="margin-bottom: 4px;">Стрим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ECOMMERCE_AUDIT</code> указывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Sources: []*nats.StreamSource{{Name: &quot;PAYMENTS&quot;}, {Name: &quot;SHIPPING&quot;}}</code>.</li>
 <li style="margin-bottom: 4px;">Автоматически объединяет события нескольких независимых бизнес-доменов в единый хронологический поток.</li>
 </ul></div>
   </div>
@@ -5149,13 +5149,13 @@ func TestStreamMirrorSourcing(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создайте <strong>Key-Value store</strong> через JetStream: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.CreateKeyValue(&nats.KeyValueConfig{Bucket: "config"})</code> — это как Redis, но с persistence и replication.</p></div>
+    <div><p style="margin-bottom: 6px;">Создайте <strong>Key-Value store</strong> через JetStream: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.CreateKeyValue(&amp;nats.KeyValueConfig{Bucket: &quot;config&quot;})</code> — это как Redis, но с persistence и replication.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Распределенное Key-Value хранилище поверх NATS JetStream:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Под капотом KV в NATS — это специализированный сжатый стрим (Compacted Stream с именем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">KV_<bucket></code>).</li>
+<li style="margin-bottom: 4px;">Под капотом KV в NATS — это специализированный сжатый стрим (Compacted Stream с именем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">KV_&lt;bucket&gt;</code>).</li>
 <li style="margin-bottom: 4px;">Возможности:</li>
 <li style="margin-bottom: 4px;">Простой интерфейс: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Put(key, val)</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Get(key)</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Delete(key)</code>.</li>
 <li style="margin-bottom: 4px;">Автоматическая репликация Raft (R=3).</li>
@@ -5251,7 +5251,7 @@ func TestJetStreamKVBasics(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать в ключах символы пробелов или точки: ключи KV транслируются в токены темы NATS (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$KV.<bucket>.<key></code>), поэтому точки внутри ключа недопустимы.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать в ключах символы пробелов или точки: ключи KV транслируются в токены темы NATS (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$KV.&lt;bucket&gt;.&lt;key&gt;</code>), поэтому точки внутри ключа недопустимы.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -5266,7 +5266,7 @@ func TestJetStreamKVBasics(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Message replay</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.Subscribe("orders.>", ..., nats.DeliverAll())</code> — все сообщения с начала. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.DeliverLast()</code> — только последнее. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.StartSequence(1000)</code> — с sequence 1000. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.StartTime(time.Now().Add(-24*time.Hour))</code> — за последние 24 часа. Покажи использование для recovery / new consumer.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Message replay</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.Subscribe(&quot;orders.&gt;&quot;, ..., nats.DeliverAll())</code> — все сообщения с начала. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.DeliverLast()</code> — только последнее. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.StartSequence(1000)</code> — с sequence 1000. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.StartTime(time.Now().Add(-24*time.Hour))</code> — за последние 24 часа. Покажи использование для recovery / new consumer.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5394,10 +5394,10 @@ func TestMessageReplayPolicies(t *testing.T) {
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создается бакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">registry</code> с параметром <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TTL: 10 * time.Second</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> При старте сервис регистрирует свой адрес:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Put("services.billing.pod-1", []byte("10.244.1.15:8080"))</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Put(&quot;services.billing.pod-1&quot;, []byte(&quot;10.244.1.15:8080&quot;))</code>.</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Каждые 5 секунд сервис обновляет свой ключ (Heartbeat Keep-Alive).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Если сервис аварийно погибает, по истечении TTL (10 сек) NATS автоматически удаляет ключ!</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> API Gateway использует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Watch("services.billing.*")</code> для мгновенного обновления таблицы маршрутизации без задержек.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> API Gateway использует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Watch(&quot;services.billing.*&quot;)</code> для мгновенного обновления таблицы маршрутизации без задержек.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -5527,8 +5527,8 @@ func TestServiceDiscoveryKV(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Минимальный продакшен-кластер состоит из 3 нод: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats-1:4222</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats-2:4222</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats-3:4222</code>.</li>
 <li style="margin-bottom: 4px;">Кластерный порт для межсерверной синхронизации (Cluster Mesh): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">6222</code>.</li>
-<li style="margin-bottom: 4px;"><strong>Механизм Gossip & Topology Discovery:</strong></li>
-<li style="margin-bottom: 4px;">Клиент подключается к любой одной ноде: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.Connect("nats://nats-1:4222")</code>.</li>
+<li style="margin-bottom: 4px;"><strong>Механизм Gossip &amp; Topology Discovery:</strong></li>
+<li style="margin-bottom: 4px;">Клиент подключается к любой одной ноде: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.Connect(&quot;nats://nats-1:4222&quot;)</code>.</li>
 <li style="margin-bottom: 4px;">В ответе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">INFO</code> брокер сообщает адреса всех остальных нод кластера (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">connect_urls</code>).</li>
 <li style="margin-bottom: 4px;">Клиент автоматически сохраняет этот список в памяти.</li>
 <li style="margin-bottom: 4px;">Если нода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats-1</code> внезапно умирает: клиент мгновенно переключает TCP-соединение на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats-2</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats-3</code> без перезапуска приложения!</li>
@@ -5630,7 +5630,7 @@ func TestNATSClusterFailover(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Указывать в строке подключения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.Connect</code> только один IP-адрес: если именно этот сервер будет выключен во время холодного старта сервиса, приложение не сможет подняться. Рекомендуется перечислять все адреса через запятую: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"nats://node1:4222,nats://node2:4222,nats://node3:4222"</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Указывать в строке подключения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nats.Connect</code> только один IP-адрес: если именно этот сервер будет выключен во время холодного старта сервиса, приложение не сможет подняться. Рекомендуется перечислять все адреса через запятую: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;nats://node1:4222,nats://node2:4222,nats://node3:4222&quot;</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -5651,14 +5651,14 @@ func TestNATSClusterFailover(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>Key-Value Store через JetStream</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv, _ := js.CreateKeyValue(&nats.KeyValueConfig{Bucket: "user-sessions", TTL: time.Hour})</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Put("user:123", []byte("active"))</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Get("user:123")</code>. Покажи CRUD, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Watch</code> для изменений, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">History</code> для аудита.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>Key-Value Store через JetStream</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv, _ := js.CreateKeyValue(&amp;nats.KeyValueConfig{Bucket: &quot;user-sessions&quot;, TTL: time.Hour})</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Put(&quot;user:123&quot;, []byte(&quot;active&quot;))</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Get(&quot;user:123&quot;)</code>. Покажи CRUD, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Watch</code> для изменений, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">History</code> для аудита.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Продвинутые возможности NATS Key-Value Store:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Конфигурация бакета:</strong></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Bucket: "user-sessions"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TTL: time.Hour</code>.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Bucket: &quot;user-sessions&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TTL: time.Hour</code>.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">History: 10</code> (хранить до 10 последних версий каждого ключа для аудита изменений).</li>
 <li style="margin-bottom: 4px;"><strong>Ключевые операции:</strong></li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Put(key, val)</code>: создание или обновление значения (инкремент ревизии).</li>
@@ -5905,7 +5905,7 @@ go test -v nats_monitoring_endpoints_test.go
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>Object Store через JetStream</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os, _ := js.CreateObjectStore(&nats.ObjectStoreConfig{Bucket: "files", TTL: time.Hour*24})</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Put("report.pdf", reader)</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Get("report.pdf")</code>. Покажи хранение больших файлов (>1MB) в NATS.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>Object Store через JetStream</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os, _ := js.CreateObjectStore(&amp;nats.ObjectStoreConfig{Bucket: &quot;files&quot;, TTL: time.Hour*24})</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Put(&quot;report.pdf&quot;, reader)</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Get(&quot;report.pdf&quot;)</code>. Покажи хранение больших файлов (&gt;1MB) в NATS.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5917,7 +5917,7 @@ go test -v nats_monitoring_endpoints_test.go
 <li style="margin-bottom: 4px;">При сохранении файла размером 50 МБ NATS автоматически:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Нарезает поток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Reader</code> на небольшие чанки (по умолчанию 128 КБ).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сохраняет чанки в системный стрим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OBJ_<bucket></code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сохраняет чанки в системный стрим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OBJ_&lt;bucket&gt;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Привязывает метаданные файла (SHA-256 хэш, размер, имя, MIME-тип).</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">При <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Get()</code> NATS собирает чанки обратно в непрерывный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.ReadCloser</code>.</li>
@@ -6223,7 +6223,7 @@ func TestFinalNATSBossNotificationPlatform(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Distributed locking через JetStream KV</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Create("lock:resource-1", []byte("owner-123"))</code> — атомарный, fail если ключ существует. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Update("lock:resource-1", []byte("owner-123"), revision)</code> — CAS (compare-and-swap). <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Delete("lock:resource-1")</code> — release. Покажи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithTimeout</code> для lock TTL.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Distributed locking через JetStream KV</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Create(&quot;lock:resource-1&quot;, []byte(&quot;owner-123&quot;))</code> — атомарный, fail если ключ существует. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Update(&quot;lock:resource-1&quot;, []byte(&quot;owner-123&quot;), revision)</code> — CAS (compare-and-swap). <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Delete(&quot;lock:resource-1&quot;)</code> — release. Покажи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.WithTimeout</code> для lock TTL.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6232,15 +6232,15 @@ func TestFinalNATSBossNotificationPlatform(t *testing.T) {
 <li style="margin-bottom: 4px;">Исключает состояние гонки (Race Condition) при выполнении критических секций между подами в Kubernetes.</li>
 <li style="margin-bottom: 4px;"><strong>Алгоритм захвата и освобождения:</strong></li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> *Захват (Acquire)*: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Create("lock:resource-1", []byte(podID))</code></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> *Захват (Acquire)*: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Create(&quot;lock:resource-1&quot;, []byte(podID))</code></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Атомарная операция. Если ключ уже существует $\to$ вызов возвращает ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ErrKeyExists</code>. Захват не удался!</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> *Продление (Keep-Alive)*: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Update("lock:resource-1", []byte(podID), revision)</code></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> *Продление (Keep-Alive)*: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Update(&quot;lock:resource-1&quot;, []byte(podID), revision)</code></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Проверяет ревизию (CAS). Предотвращает продление чужого лока.</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> *Освобождение (Release)*: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Delete("lock:resource-1")</code></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> *Освобождение (Release)*: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Delete(&quot;lock:resource-1&quot;)</code></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Удаляет ключ, освобождая мьютекс для других подов.</li>
 </ul>
@@ -6363,7 +6363,7 @@ func TestDistributedLockingKV(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>Event Sourcing с NATS JetStream</strong>: Stream <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EVENTS</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Subjects: []string{"events.>"}</code>. Каждое событие — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Event{AggregateID, Type, Version, Payload, Timestamp}</code>. Consumer проецирует в PostgreSQL/Elasticsearch. Покажи replay: новый consumer читает все события, строит state.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>Event Sourcing с NATS JetStream</strong>: Stream <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">EVENTS</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Subjects: []string{&quot;events.&gt;&quot;}</code>. Каждое событие — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Event{AggregateID, Type, Version, Payload, Timestamp}</code>. Consumer проецирует в PostgreSQL/Elasticsearch. Покажи replay: новый consumer читает все события, строит state.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6372,7 +6372,7 @@ func TestDistributedLockingKV(t *testing.T) {
 <li style="margin-bottom: 4px;">В традиционных системах в базе хранится только текущее состояние сущности (State).</li>
 <li style="margin-bottom: 4px;">В Event Sourcing хранится <strong>неизменяемая история всех фактов</strong>, произошедших с агрегатом:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderCreated (v1) -> ItemAdded (v2) -> DiscountApplied (v3) -> OrderPaid (v4)</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderCreated (v1) -&gt; ItemAdded (v2) -&gt; DiscountApplied (v3) -&gt; OrderPaid (v4)</code>.</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Преимущества:</strong></li>
 <li style="margin-bottom: 4px;">100% аудит любых действий пользователей.</li>
@@ -6485,7 +6485,7 @@ func TestEventSourcingReplay(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как ускорить загрузку агрегата при наличии 100 000 исторических событий (Snapshotting)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Используют паттерн Снимков (Snapshots): каждые 1000 событий агрегат сохраняет слепок своего текущего состояния в NATS KV <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">snapshots.<aggregate_id></code>. При старте сервис считывает снимок и дочитывает из стрима только события с номером ревизии выше версии снимка, сокращая время загрузки с минут до миллисекунд.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Используют паттерн Снимков (Snapshots): каждые 1000 событий агрегат сохраняет слепок своего текущего состояния в NATS KV <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">snapshots.&lt;aggregate_id&gt;</code>. При старте сервис считывает снимок и дочитывает из стрима только события с номером ревизии выше версии снимка, сокращая время загрузки с минут до миллисекунд.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-45">
@@ -6495,7 +6495,7 @@ func TestEventSourcingReplay(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Outbox pattern с NATS</strong>: PostgreSQL транзакция: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">INSERT INTO orders ...</code> + <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">INSERT INTO outbox (topic, payload, headers) ...</code>. Отдельный воркер: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM outbox ORDER BY id LIMIT 100</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.Publish</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DELETE FROM outbox WHERE id = ...</code>. Покажи exactly-once: транзакция БД + at-least-once NATS + идемпотентность consumer'а.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Outbox pattern с NATS</strong>: PostgreSQL транзакция: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">INSERT INTO orders ...</code> + <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">INSERT INTO outbox (topic, payload, headers) ...</code>. Отдельный воркер: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM outbox ORDER BY id LIMIT 100</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.Publish</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DELETE FROM outbox WHERE id = ...</code>. Покажи exactly-once: транзакция БД + at-least-once NATS + идемпотентность consumer&#x27;а.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6503,10 +6503,8 @@ func TestEventSourcingReplay(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Проблема:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">db.Exec("INSERT INTO orders ...")</p>
-<p style="margin-bottom: 6px;">js.Publish("order.created", ...) // Если здесь упала сеть или NATS -> БД сохранена, а событие потеряно!</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  db.Exec(&quot;INSERT INTO orders ...&quot;)
+  js.Publish(&quot;order.created&quot;, ...) // Если здесь упала сеть или NATS -&gt; БД сохранена, а событие потеряно!</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Канонический паттерн Transactional Outbox:</strong></li>
 </ul>
@@ -6772,7 +6770,7 @@ func TestSagaOrchestratorNATS(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем отличие Saga Orchestration от Saga Choreography в шине NATS?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В Choreography нет центрального сервиса: сервисы сами слушают события друг друга (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderCreated -> PaymentProcessed -> OrderShipped</code>). В Orchestration есть выделенный координатор, который явно отправляет команды и контролирует статус. Orchestration предпочтительнее для сложных процессов (от 4 шагов), так как логика транзакции сосредоточена в одном месте.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В Choreography нет центрального сервиса: сервисы сами слушают события друг друга (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderCreated -&gt; PaymentProcessed -&gt; OrderShipped</code>). В Orchestration есть выделенный координатор, который явно отправляет команды и контролирует статус. Orchestration предпочтительнее для сложных процессов (от 4 шагов), так как логика транзакции сосредоточена в одном месте.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-47">
@@ -6795,9 +6793,9 @@ func TestSagaOrchestratorNATS(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Query Side (Чтение — 3 независимые группы консьюмеров):</strong></li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Durable: "elastic-projection"</code>: строит индекс полнотекстового поиска.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Durable: "redis-cache-projection"</code>: обновляет кэш быстрого доступа по ID.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Durable: "clickhouse-analytics"</code>: батчами сбрасывает данные в аналитику.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Durable: &quot;elastic-projection&quot;</code>: строит индекс полнотекстового поиска.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Durable: &quot;redis-cache-projection&quot;</code>: обновляет кэш быстрого доступа по ID.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Durable: &quot;clickhouse-analytics&quot;</code>: батчами сбрасывает данные в аналитику.</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Свойства:</li>
 <li style="margin-bottom: 4px;">Стримы JetStream с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LimitsPolicy</code> позволяют каждому сервису двигаться с собственной скоростью (Own Pace).</li>
@@ -6908,16 +6906,16 @@ func TestCQRSEventBusNATS(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>Multi-tenancy через NATS</strong>: tenant isolation через subject prefix: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{tenant}.orders.></code> или через <strong>Accounts</strong> (NATS 2.0). Создай Account <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant-a</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant-b</code> с разными JWT. Покажи, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant-a</code> не видит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant-b</code> subjects.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>Multi-tenancy через NATS</strong>: tenant isolation через subject prefix: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{tenant}.orders.&gt;</code> или через <strong>Accounts</strong> (NATS 2.0). Создай Account <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant-a</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant-b</code> с разными JWT. Покажи, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant-a</code> не видит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant-b</code> subjects.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Изоляция арендаторов (Multi-Tenancy) в NATS 2.0+:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Подход 1 (Subject Namespacing):</strong></li>
-<li style="margin-bottom: 4px;">Разделение по префиксу: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant_a.orders.></code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant_b.orders.></code>.</li>
+<li style="margin-bottom: 4px;">Разделение по префиксу: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant_a.orders.&gt;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant_b.orders.&gt;</code>.</li>
 <li style="margin-bottom: 4px;">Легко внедрить, но требует доверия к клиентам.</li>
-<li style="margin-bottom: 4px;"><strong>Подход 2 (NATS Accounts & Decentralized JWT):</strong></li>
+<li style="margin-bottom: 4px;"><strong>Подход 2 (NATS Accounts &amp; Decentralized JWT):</strong></li>
 <li style="margin-bottom: 4px;">Архитектура на уровне ядра сервера:</li>
 <li style="margin-bottom: 4px;">Каждый тенант — это полностью изолированный виртуальный брокер (<strong>Account</strong>).</li>
 <li style="margin-bottom: 4px;">Клиент тенанта A подключается с JWT-токеном своего аккаунта.</li>
@@ -7013,7 +7011,7 @@ func TestMultitenancyAccounts(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Можно ли связать два разных NATS Accounts для безопасного обмена данными (Account Sharing)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! Механизм <strong>Account Services & Streams Export/Import</strong>. Аккаунт A может явно экспортировать приватную тему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">auth.validate</code>, а аккаунт B — импортировать ее. Брокер NATS сам выполнит безопасное проксирование без раскрытия остальных внутренних тем аккаунтов.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! Механизм <strong>Account Services &amp; Streams Export/Import</strong>. Аккаунт A может явно экспортировать приватную тему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">auth.validate</code>, а аккаунт B — импортировать ее. Брокер NATS сам выполнит безопасное проксирование без раскрытия остальных внутренних тем аккаунтов.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-49">
@@ -7030,7 +7028,7 @@ func TestMultitenancyAccounts(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Семантика First-Response в паттерне Request/Reply:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Если на тему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">service.ping</code> подписано 5 инстансов микросервиса:</li>
-<li style="margin-bottom: 4px;">При отправке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Request("service.ping", nil, timeout)</code>:</li>
+<li style="margin-bottom: 4px;">При отправке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Request(&quot;service.ping&quot;, nil, timeout)</code>:</li>
 <li style="margin-bottom: 4px;">Все подписчики получат запрос.</li>
 <li style="margin-bottom: 4px;">Клиент принимает ответ от <strong>первого же ответившего</strong> инстанса!</li>
 <li style="margin-bottom: 4px;">Остальные запоздавшие ответы брокер NATS автоматически отбрасывает.</li>
@@ -7225,14 +7223,14 @@ func TestCoreNATSPubSub(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Queue Groups]</strong>: Создай 3 консьюмера в одной Queue Group (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">queue: "workers"</code>). Отправь 10 сообщений. Убедись, что они распределились между воркерами, а не продублировались каждому.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Queue Groups]</strong>: Создай 3 консьюмера в одной Queue Group (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">queue: &quot;workers&quot;</code>). Отправь 10 сообщений. Убедись, что они распределились между воркерами, а не продублировались каждому.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Тестирование балансировки нагрузки в Queue Groups:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Сценарий: 10 задач в тему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">jobs.process</code>.</li>
-<li style="margin-bottom: 4px;">3 воркера подписываются через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.QueueSubscribe(subject, "workers", handler)</code>.</li>
+<li style="margin-bottom: 4px;">3 воркера подписываются через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.QueueSubscribe(subject, &quot;workers&quot;, handler)</code>.</li>
 <li style="margin-bottom: 4px;">Ожидаемое поведение:</li>
 <li style="margin-bottom: 4px;">Сумма задач, обработанных всеми воркерами, строго равна 10 ($W_1 + W_2 + W_3 = 10$).</li>
 <li style="margin-bottom: 4px;">Ни одно сообщение не дублируется.</li>
@@ -7335,7 +7333,7 @@ func TestQueueTenMessages(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Протокол синхронного RPC взаимодействия в микросервисах:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Сервис-клиент:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg, err := nc.Request("user.get_profile", []byte("usr-991"), 2*time.Second)</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg, err := nc.Request(&quot;user.get_profile&quot;, []byte(&quot;usr-991&quot;), 2*time.Second)</code></li>
 <li style="margin-bottom: 4px;">Сервис-сервер:</li>
 <li style="margin-bottom: 4px;">Подписан на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user.get_profile</code>.</li>
 <li style="margin-bottom: 4px;">Извлекает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.Reply</code> (там указан временный инбокс клиента).</li>
@@ -7641,7 +7639,7 @@ func TestBroadcastLogs(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как ограничить права конкретного микросервиса на чтение темы logs?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Настроить ACL в NATS: для учетной записи пользователя задать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">permissions: { subscribe: { deny: ["logs"] } }</code>. Попытка подписки будет заблокирована брокером с ошибкой авторизации.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Настроить ACL в NATS: для учетной записи пользователя задать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">permissions: { subscribe: { deny: [&quot;logs&quot;] } }</code>. Попытка подписки будет заблокирована брокером с ошибкой авторизации.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-55">
@@ -7659,7 +7657,7 @@ func TestBroadcastLogs(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Сигнал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Nak()</code>:</li>
 <li style="margin-bottom: 4px;">Сообщает серверу: «обработка не удалась, попробуй снова».</li>
-<li style="margin-bottom: 4px;">Сообщение немедленно возвращается в очередь и redeliver'ится.</li>
+<li style="margin-bottom: 4px;">Сообщение немедленно возвращается в очередь и redeliver&#x27;ится.</li>
 <li style="margin-bottom: 4px;">Сигнал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Term()</code>:</li>
 <li style="margin-bottom: 4px;">Сообщает серверу: «сообщение фатально повреждено (Poison Pill), дальнейшие попытки бессмысленны».</li>
 <li style="margin-bottom: 4px;">Сервер <strong>навсегда удаляет</strong> сообщение из стрима доставки и не делает ретраев!</li>
@@ -7884,16 +7882,16 @@ func TestPullBatchTimeout(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Полный цикл работы с JetStream в Go:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js, _ := nc.JetStream()</code>: получение контекста.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.AddStream(&nats.StreamConfig{Name: "ORDERS", Subjects: []string{"orders.*"}})</code>: создание персистентного хранилища.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.AddConsumer("ORDERS", &nats.ConsumerConfig{Durable: "worker-pull", AckPolicy: nats.AckExplicitPolicy})</code>: объявление консьюмера.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.Publish("orders.created", data)</code>: надежная запись.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.AddStream(&amp;nats.StreamConfig{Name: &quot;ORDERS&quot;, Subjects: []string{&quot;orders.*&quot;}})</code>: создание персистентного хранилища.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.AddConsumer(&quot;ORDERS&quot;, &amp;nats.ConsumerConfig{Durable: &quot;worker-pull&quot;, AckPolicy: nats.AckExplicitPolicy})</code>: объявление консьюмера.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.Publish(&quot;orders.created&quot;, data)</code>: надежная запись.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sub.Fetch(batchSize)</code> $\to$ обработка $\to$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Ack()</code>: подтверждение успешной фиксации.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте модель связки Стрим -> Консьюмер -> Подтверждение.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте модель связки Стрим -&gt; Консьюмер -&gt; Подтверждение.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Опубликуйте 3 сообщения в стрим.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вычитайте сообщения через Pull Consumer.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Подтвердите обработку каждого сообщения и убедитесь в очистке очереди.</div></div>
@@ -7992,7 +7990,7 @@ func TestEndToEndJetStream(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Core NATS (Fire and Forget)</strong>: Подключись к NATS. Запусти консьюмера <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Subscribe("updates", handler)</code>. В другой горутине сделай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Publish("updates", data)</code>. Останови консьюмера, сделай Publish, снова запусти консьюмера. Убедись, что сообщение потеряно навсегда (Core NATS не хранит данные).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Core NATS (Fire and Forget)</strong>: Подключись к NATS. Запусти консьюмера <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Subscribe(&quot;updates&quot;, handler)</code>. В другой горутине сделай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Publish(&quot;updates&quot;, data)</code>. Останови консьюмера, сделай Publish, снова запусти консьюмера. Убедись, что сообщение потеряно навсегда (Core NATS не хранит данные).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8120,11 +8118,11 @@ func TestCoreFireAndForget(t *testing.T) {
 <div class="exercise-card" id="ex-59">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #59</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Многоуровневые маски событий: сопоставление events.*.created и events.> на реальных примерах</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Многоуровневые маски событий: сопоставление events.*.created и events.&gt; на реальных примерах</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Subject Wildcards]</strong>: Подпишись на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.*.created</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.></code> (multi-level wildcard). Протестируй отправку по <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.user.created</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.user.created.security</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Subject Wildcards]</strong>: Подпишись на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.*.created</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.&gt;</code> (multi-level wildcard). Протестируй отправку по <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.user.created</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.user.created.security</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8134,7 +8132,7 @@ func TestCoreFireAndForget(t *testing.T) {
 <li style="margin-bottom: 4px;">Ожидает строго 3 токена.</li>
 <li style="margin-bottom: 4px;">Средний токен может быть любым: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.user.created</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.order.created</code>.</li>
 <li style="margin-bottom: 4px;">Тема <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.user.created.security</code> содержит 4 токена $\to$ <strong>НЕ подходит</strong>!</li>
-<li style="margin-bottom: 4px;"><strong><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.></code>:</strong></li>
+<li style="margin-bottom: 4px;"><strong><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.&gt;</code>:</strong></li>
 <li style="margin-bottom: 4px;">Захватывает абсолютно любое количество последующих уровней.</li>
 <li style="margin-bottom: 4px;">Подходит для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.user.created</code> (3 токена) и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.user.created.security</code> (4 токена).</li>
 <li style="margin-bottom: 4px;">Позволяет гибко разделять точечные сервисные слушатели и глобальные системы аудита.</li>
@@ -8144,7 +8142,7 @@ func TestCoreFireAndForget(t *testing.T) {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте функции проверки для масок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.*.created</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.></code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте функции проверки для масок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.*.created</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.&gt;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Протестируйте сопоставление с темой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.user.created</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Протестируйте сопоставление с темой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">events.user.created.security</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Верифицируйте корректность фильтрации.</div></div>
@@ -8213,16 +8211,16 @@ func TestWildcardEventsFilter(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Radix Tree в NATS оптимизирован так, что узлы с подстановочными знаками <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">></code> вычисляются без регулярных выражений, обеспечивая скорость проверки более 50 миллионов сопоставлений в секунду.</p></div>
+    <div><p style="margin-bottom: 6px;">Radix Tree в NATS оптимизирован так, что узлы с подстановочными знаками <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&gt;</code> вычисляются без регулярных выражений, обеспечивая скорость проверки более 50 миллионов сопоставлений в секунду.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Подписываться на тему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">></code> на высоконагруженном кластере: консьюмер начнет получать системные метрики, Heartbeat-пинг, служебные ответы и миллионы чужих сообщений, вызвав мгновенный Slow Consumer Dropped.</p></div>
+    <div><p style="margin-bottom: 6px;">Подписываться на тему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&gt;</code> на высоконагруженном кластере: консьюмер начнет получать системные метрики, Heartbeat-пинг, служебные ответы и миллионы чужих сообщений, вызвав мгновенный Slow Consumer Dropped.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в NATS организовать разграничение прав доступа по wildcard-темам?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В файле конфигурации или JWT аккаунта указывают права на подписку с шаблонами: например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subscribe: { allow: ["events.eu.>"], deny: ["events.eu.security.>"] }</code>. Правило <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">deny</code> имеет приоритет перед <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">allow</code>, позволяя надежно экранировать приватные темы.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В файле конфигурации или JWT аккаунта указывают права на подписку с шаблонами: например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subscribe: { allow: [&quot;events.eu.&gt;&quot;], deny: [&quot;events.eu.security.&gt;&quot;] }</code>. Правило <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">deny</code> имеет приоритет перед <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">allow</code>, позволяя надежно экранировать приватные темы.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-60">
@@ -8239,7 +8237,7 @@ func TestWildcardEventsFilter(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Принцип сохранения смещения в Durable Consumer:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Ephemeral Consumer (эфемерный) удаляется сразу при отключении TCP сокета.</li>
-<li style="margin-bottom: 4px;">Durable Consumer (долговечный) имеет постоянное имя (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"billing-processor"</code>):</li>
+<li style="margin-bottom: 4px;">Durable Consumer (долговечный) имеет постоянное имя (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;billing-processor&quot;</code>):</li>
 <li style="margin-bottom: 4px;">Сервер JetStream непрерывно отслеживает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AckFloor</code> (последний подтвержденный Sequence).</li>
 <li style="margin-bottom: 4px;">При отключении пода консьюмера позиция чтения остается зафиксированной на сервере.</li>
 <li style="margin-bottom: 4px;">При повторном старте консьюмер автоматически получает сообщение с порядковым номером <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AckFloor + 1</code>.</li>
@@ -8355,7 +8353,7 @@ func TestDurableConsumerResume(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>NATS Request-Reply</strong>: Уникальная фича NATS. Вызови <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Request("time.get", nil, 2*time.Second)</code>. На другой стороне напиши консьюмера, который подписывается на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.get</code> и отвечает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Respond([]byte(time.Now().String()))</code>. Это RPC поверх брокера сообщений!</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>NATS Request-Reply</strong>: Уникальная фича NATS. Вызови <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Request(&quot;time.get&quot;, nil, 2*time.Second)</code>. На другой стороне напиши консьюмера, который подписывается на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.get</code> и отвечает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Respond([]byte(time.Now().String()))</code>. Это RPC поверх брокера сообщений!</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8363,14 +8361,12 @@ func TestDurableConsumerResume(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Традиционный gRPC требует компиляции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.proto</code> файлов, кодогенерации и поддержки HTTP/2 соединений.</li>
 <li style="margin-bottom: 4px;">NATS Request/Reply:</li>
-<li style="margin-bottom: 4px;">Клиент: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Request("time.get", nil, 2*time.Second)</code></li>
+<li style="margin-bottom: 4px;">Клиент: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.Request(&quot;time.get&quot;, nil, 2*time.Second)</code></li>
 <li style="margin-bottom: 4px;">Сервер:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">nc.Subscribe("time.get", func(m *nats.Msg) {</p>
-<p style="margin-bottom: 6px;">m.Respond([]byte(time.Now().UTC().Format(time.RFC3339Nano)))</p>
-<p style="margin-bottom: 6px;">})</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">    nc.Subscribe(&quot;time.get&quot;, func(m *nats.Msg) {
+        m.Respond([]byte(time.Now().UTC().Format(time.RFC3339Nano)))
+    })</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Нулевая кодогенерация, максимальная простота и скорость.</li>
 </ul></div>
@@ -8453,7 +8449,7 @@ func TestTimeRPCServer(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Можно ли балансировать входящие RPC запросы между несколькими инстансами сервера?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! Серверы подписываются с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.QueueSubscribe("time.get", "time-service-workers", handler)</code>. Запросы клиентов будут автоматически распределяться по Round-Robin между всеми инстансами пула без необходимости отдельного L4/L7 балансировщика (Nginx или Envoy).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! Серверы подписываются с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc.QueueSubscribe(&quot;time.get&quot;, &quot;time-service-workers&quot;, handler)</code>. Запросы клиентов будут автоматически распределяться по Round-Robin между всеми инстансами пула без необходимости отдельного L4/L7 балансировщика (Nginx или Envoy).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-62">
@@ -8662,7 +8658,7 @@ func TestOrdersStreamPersistence(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Сколько тем (Subjects) может захватывать один стрим в JetStream?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Стрим может содержать массив тем (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Subjects: []string{"orders.>", "payments.>", "shipments.>"}</code>). Это позволяет объединять логически связанные события из нескольких тем в единый упорядоченный лог стрима.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Стрим может содержать массив тем (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Subjects: []string{&quot;orders.&gt;&quot;, &quot;payments.&gt;&quot;, &quot;shipments.&gt;&quot;}</code>). Это позволяет объединять логически связанные события из нескольких тем в единый упорядоченный лог стрима.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-64">
@@ -8763,7 +8759,7 @@ func TestBenchmarkRun(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «За счет чего NATS Core опережает Apache Kafka по времени задержки (Latency)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В Kafka задержка на запись составляет 2–10 мс из-за необходимости фиксации в Page Cache и репликации на брокеры. В NATS Core доставка происходит в оперативной памяти за доли миллисекунды (p99 < 100 микросекунд), что критично для High-Frequency Trading и Real-Time телеметрии.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В Kafka задержка на запись составляет 2–10 мс из-за необходимости фиксации в Page Cache и репликации на брокеры. В NATS Core доставка происходит в оперативной памяти за доли миллисекунды (p99 &lt; 100 микросекунд), что критично для High-Frequency Trading и Real-Time телеметрии.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-65">
@@ -8780,8 +8776,8 @@ func TestBenchmarkRun(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Динамическое управление конфигурацией микросервисов:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Вместо перезапуска подов при изменении параметров сервисы подключаются к NATS KV:</li>
-<li style="margin-bottom: 4px;">Сервис читает начальные параметры через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Get("rate_limit_rps")</code>.</li>
-<li style="margin-bottom: 4px;">Администратор или CI/CD пайплайн обновляет значение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Put("rate_limit_rps", []byte("5000"))</code>.</li>
+<li style="margin-bottom: 4px;">Сервис читает начальные параметры через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Get(&quot;rate_limit_rps&quot;)</code>.</li>
+<li style="margin-bottom: 4px;">Администратор или CI/CD пайплайн обновляет значение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Put(&quot;rate_limit_rps&quot;, []byte(&quot;5000&quot;))</code>.</li>
 <li style="margin-bottom: 4px;">Все запущенные поды моментально применяют новый лимит без перезагрузки.</li>
 </ul></div>
   </div>
@@ -8976,7 +8972,7 @@ func TestPushVsPullArchitectural(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Балансировка нагрузки в Core NATS (Queue Groups)</strong>: По умолчанию все подписчики на тему в NATS получают копию сообщения. Чтобы распределить нагрузку, объедините воркеры в группу. Напишите три консьюмера, подписанных на одну тему через метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.QueueSubscribeSync(subject, "workers_group")</code>. Убедитесь, что каждое отправленное сообщение обрабатывается строго одним из трех воркеров по принципу Round-Robin.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Балансировка нагрузки в Core NATS (Queue Groups)</strong>: По умолчанию все подписчики на тему в NATS получают копию сообщения. Чтобы распределить нагрузку, объедините воркеры в группу. Напишите три консьюмера, подписанных на одну тему через метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.QueueSubscribeSync(subject, &quot;workers_group&quot;)</code>. Убедитесь, что каждое отправленное сообщение обрабатывается строго одним из трех воркеров по принципу Round-Robin.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9211,7 +9207,7 @@ func TestEventDrivenPipeline(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>NATS KV Store</strong>: В NATS JetStream встроено Key-Value хранилище. Создай KV-бакет. Запиши туда статус настройки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.KeyValue("config").Put("key", "val")</code>. Настрой консьюмера (Watch) на моментальное получение уведомлений об изменении этого ключа (идеально для лайв-обновления конфигов).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>NATS KV Store</strong>: В NATS JetStream встроено Key-Value хранилище. Создай KV-бакет. Запиши туда статус настройки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.KeyValue(&quot;config&quot;).Put(&quot;key&quot;, &quot;val&quot;)</code>. Настрой консьюмера (Watch) на моментальное получение уведомлений об изменении этого ключа (идеально для лайв-обновления конфигов).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9219,18 +9215,16 @@ func TestEventDrivenPipeline(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В микросервисной архитектуре критично менять флаги и лимиты без перезапуска подов.</li>
 <li style="margin-bottom: 4px;"><strong>Синтаксис:</strong></li>
-<li style="margin-bottom: 4px;">Запись: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Put("payment.gateway", []byte("sber"))</code></li>
+<li style="margin-bottom: 4px;">Запись: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Put(&quot;payment.gateway&quot;, []byte(&quot;sber&quot;))</code></li>
 <li style="margin-bottom: 4px;">Наблюдение:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">watcher, _ := kv.Watch("payment.gateway")</p>
-<p style="margin-bottom: 6px;">defer watcher.Stop()</p>
-<p style="margin-bottom: 6px;">for entry := range watcher.Updates() {</p>
-<p style="margin-bottom: 6px;">if entry != nil {</p>
-<p style="margin-bottom: 6px;">applyConfig(entry.Value())</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">    watcher, _ := kv.Watch(&quot;payment.gateway&quot;)
+    defer watcher.Stop()
+    for entry := range watcher.Updates() {
+        if entry != nil {
+            applyConfig(entry.Value())
+        }
+    }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Обновление вступает в силу за несколько миллисекунд во всех репликах сервиса.</li>
 </ul></div>
@@ -9420,7 +9414,7 @@ func TestOrdersStreamDeclaration(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Можно ли изменить параметры стрима (например, увеличить MaxBytes) на лету без потери накопленных сообщений?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.UpdateStream(&nats.StreamConfig{...})</code> позволяет динамически обновлять лимиты, темы и политики стрима без даунтайма и без перезаписи уже сохраненных сообщений лога.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Да! Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.UpdateStream(&amp;nats.StreamConfig{...})</code> позволяет динамически обновлять лимиты, темы и политики стрима без даунтайма и без перезаписи уже сохраненных сообщений лога.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-71">
@@ -9442,25 +9436,23 @@ func TestOrdersStreamDeclaration(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Структура цикла:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">for {</p>
-<p style="margin-bottom: 6px;">msgs, err := sub.Fetch(5, nats.MaxWait(time.Second))</p>
-<p style="margin-bottom: 6px;">if err != nil {</p>
-<p style="margin-bottom: 6px;">if errors.Is(err, nats.ErrTimeout) {</p>
-<p style="margin-bottom: 6px;">continue // штатное ожидание новых заказов</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">log.Error(err)</p>
-<p style="margin-bottom: 6px;">continue</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">for _, msg := range msgs {</p>
-<p style="margin-bottom: 6px;">if err := process(msg); err == nil {</p>
-<p style="margin-bottom: 6px;">msg.Ack()</p>
-<p style="margin-bottom: 6px;">} else {</p>
-<p style="margin-bottom: 6px;">msg.Nak()</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  for {
+      msgs, err := sub.Fetch(5, nats.MaxWait(time.Second))
+      if err != nil {
+          if errors.Is(err, nats.ErrTimeout) {
+              continue // штатное ожидание новых заказов
+          }
+          log.Error(err)
+          continue
+      }
+      for _, msg := range msgs {
+          if err := process(msg); err == nil {
+              msg.Ack()
+          } else {
+              msg.Nak()
+          }
+      }
+  }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Гарантирует стабильную работу без утечек памяти и зависаний.</li>
 </ul></div>
@@ -9558,7 +9550,7 @@ func TestPullWorkerBatchCycle(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>NATS Key-Value Store</strong>: JetStream под капотом позволяет использовать себя в качестве распределенного хранилища "ключ-значение". Используя метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.KeyValue("config_bucket")</code>, напишите программу, которая записывает конфигурационные параметры, считывает их по ключу, а также запускает фоновый наблюдатель (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">watcher.Next()</code>), реагирующий на любые изменения параметров конфигурации в реальном времени.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>NATS Key-Value Store</strong>: JetStream под капотом позволяет использовать себя в качестве распределенного хранилища &quot;ключ-значение&quot;. Используя метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">js.KeyValue(&quot;config_bucket&quot;)</code>, напишите программу, которая записывает конфигурационные параметры, считывает их по ключу, а также запускает фоновый наблюдатель (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">watcher.Next()</code>), реагирующий на любые изменения параметров конфигурации в реальном времени.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9664,7 +9656,7 @@ func TestConfigBucketWatcher(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как организовать наблюдение только за конкретным префиксом ключей (например, только database.*)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Watch(pattern)</code> принимает стандартные подстановочные знаки NATS: вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Watch("database.*")</code> создаст вотчер, который будет получать события только при изменении ключей, начинающихся с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">database.</code>, игнорируя остальные параметры бакета.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Watch(pattern)</code> принимает стандартные подстановочные знаки NATS: вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kv.Watch(&quot;database.*&quot;)</code> создаст вотчер, который будет получать события только при изменении ключей, начинающихся с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">database.</code>, игнорируя остальные параметры бакета.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-73">
@@ -9697,12 +9689,12 @@ func TestConfigBucketWatcher(t *testing.T) {
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> *Уровень 1 (Core NATS / Live Dashboard)*:</div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Подписчики слушают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">telemetry.></code> напрямую через Core NATS.</li>
-<li style="margin-bottom: 4px;">Задержка <1 мс, нулевая нагрузка на диск, мгновенный показ на карте в браузере.</li>
+<li style="margin-bottom: 4px;">Подписчики слушают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">telemetry.&gt;</code> напрямую через Core NATS.</li>
+<li style="margin-bottom: 4px;">Задержка &lt;1 мс, нулевая нагрузка на диск, мгновенный показ на карте в браузере.</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> *Уровень 2 (JetStream / Long-Term Analytics)*:</div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Стрим JetStream перехватывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">telemetry.></code> и батчами пишет в ClickHouse.</li>
+<li style="margin-bottom: 4px;">Стрим JetStream перехватывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">telemetry.&gt;</code> и батчами пишет в ClickHouse.</li>
 <li style="margin-bottom: 4px;">Возможность Replay и исторического машинного обучения.</li>
 </ul></div>
   </div>
@@ -9795,7 +9787,7 @@ func TestIoTTelemetryHybrid(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Создавать 1 000 000 стримов под каждое устройство: в NATS создается ОДИН стрим с маской <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">telemetry.></code>, который обслуживает все устройства разом через иерархическую фильтрацию.</p></div>
+    <div><p style="margin-bottom: 6px;">Создавать 1 000 000 стримов под каждое устройство: в NATS создается ОДИН стрим с маской <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">telemetry.&gt;</code>, который обслуживает все устройства разом через иерархическую фильтрацию.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -9912,14 +9904,14 @@ func TestGRPCAlternativeRPC(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Когда использовать NATS</strong>: Ultra-low latency (<1ms), простой pub/sub, request/reply, service discovery. Не подходит для persistence (без JetStream) и сложных роутингов.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Когда использовать NATS</strong>: Ultra-low latency (&lt;1ms), простой pub/sub, request/reply, service discovery. Не подходит для persistence (без JetStream) и сложных роутингов.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Сравнительный архитектурный анализ NATS в ландшафте очередей:</p>
 <p style="margin-bottom: 6px;">| Критерий | NATS (Core + JetStream) | Apache Kafka | RabbitMQ |</p>
 <p style="margin-bottom: 6px;">| :--- | :--- | :--- | :--- |</p>
-<p style="margin-bottom: 6px;">| <strong>Сетевая задержка</strong> | <strong>Субмиллисекундная (<1 мс)</strong> | Средняя (2–10 мс) | Низкая (1–3 мс) |</p>
+<p style="margin-bottom: 6px;">| <strong>Сетевая задержка</strong> | <strong>Субмиллисекундная (&lt;1 мс)</strong> | Средняя (2–10 мс) | Низкая (1–3 мс) |</p>
 <p style="margin-bottom: 6px;">| <strong>Сложность развертывания</strong> | <strong>1 статический бинарник Go</strong> | Высокая (Кластер, JVM/KRaft) | Средняя (Erlang рантайм) |</p>
 <p style="margin-bottom: 6px;">| <strong>Встроенный K/V и S3</strong> | <strong>Да (KV Store, Object Store)</strong> | Нет (только лог) | Нет |</p>
 <p style="margin-bottom: 6px;">| <strong>Сложная маршрутизация</strong> | Только темы и подстановочные знаки | Только топики и партиции | <strong>Очень богатая (Exchange Bindings)</strong> |</p>
@@ -9933,7 +9925,7 @@ func TestGRPCAlternativeRPC(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте матрицу критериев выбора систем обмена сообщениями.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверьте рекомендацию NATS для микросервисного RPC с задержкой <1 мс.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверьте рекомендацию NATS для микросервисного RPC с задержкой &lt;1 мс.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверьте рекомендацию RabbitMQ для сложной маршрутизации заголовков.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сформируйте итоговый архитектурный вердикт.</div></div>
   </div>
@@ -10029,7 +10021,7 @@ func TestNATSArchitectureMatrix(t *testing.T) {
 <li style="margin-bottom: 4px;">Конфигурация стрима:</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Duplicates: 2 * time.Minute</code></li>
 <li style="margin-bottom: 4px;">Заголовок сообщения:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Header.Set("Nats-Msg-Id", "tx-order-unique-881")</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg.Header.Set(&quot;Nats-Msg-Id&quot;, &quot;tx-order-unique-881&quot;)</code></li>
 <li style="margin-bottom: 4px;">Логика работы сервера NATS:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Первое сообщение сохраняется в персистентный лог. Продюсер получает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PubAck{Duplicate: false}</code>.</div>
@@ -10167,7 +10159,7 @@ func TestNATSMsgIDStreamFilter(t *testing.T) {
 <li style="margin-bottom: 4px;">Спецификация <strong>CloudEvents (CNCF)</strong>:</li>
 <li style="margin-bottom: 4px;">Стандартизированный JSON/бинарный формат конверта:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">source</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">specversion: "1.0"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">source</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">specversion: &quot;1.0&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data</code>.</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Мостовой сервис (Bridge Worker):</li>
 </ul>

@@ -854,7 +854,7 @@
       <a href="#ex-55" class="sub-exercise-link" title="Упр 55: Управление кастомными ошибками: обогащение gqlerror.Error полями code, field и timestamp">55. Управление кастомными ошибками: обогащение gqlerror.Error полями code, field и timestamp</a>
       <a href="#ex-56" class="sub-exercise-link" title="Упр 56: Спецификация HTTP ответов GraphQL: статус HTTP 200 OK при наличии массива ошибок и data">56. Спецификация HTTP ответов GraphQL: статус HTTP 200 OK при наличии массива ошибок и data</a>
       <a href="#ex-57" class="sub-exercise-link" title="Упр 57: Связанные типы в схеме: добавление User.posts: [Post!]! и резолвер выборки постов по obj.ID">57. Связанные типы в схеме: добавление User.posts: [Post!]! и резолвер выборки постов по obj.ID</a>
-      <a href="#ex-58" class="sub-exercise-link" title="Упр 58: GraphQL Subscriptions в реальном времени: каналы Go <-chan *User и протокол WebSockets">58. GraphQL Subscriptions в реальном времени: каналы Go <-chan *User и протокол WebSockets</a>
+      <a href="#ex-58" class="sub-exercise-link" title="Упр 58: GraphQL Subscriptions в реальном времени: каналы Go &lt;-chan *User и протокол WebSockets">58. GraphQL Subscriptions в реальном времени: каналы Go &lt;-chan *User и протокол WebSockets</a>
       <a href="#ex-59" class="sub-exercise-link" title="Упр 59: Мутация с вложенным объектом UpdateUserInput: валидация строк, email и частичное обновление">59. Мутация с вложенным объектом UpdateUserInput: валидация строк, email и частичное обновление</a>
       <a href="#ex-60" class="sub-exercise-link" title="Упр 60: Apollo Federation v2: архитектура Federated Subgraphs и объединение по ключу @key(fields)">60. Apollo Federation v2: архитектура Federated Subgraphs и объединение по ключу @key(fields)</a>
       <a href="#ex-61" class="sub-exercise-link" title="Упр 61: Автоматически сохраняемые запросы (Automatic Persisted Queries, APQ): хэширование SHA256 и защита от DoS">61. Автоматически сохраняемые запросы (Automatic Persisted Queries, APQ): хэширование SHA256 и защита от DoS</a>
@@ -1324,7 +1324,7 @@ func TestUsersResolver(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В сигнатуре <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user(id: ID!): User</code>:</li>
 <li style="margin-bottom: 4px;">Аргумент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id: ID!</code> является обязательным (Non-Null): клиент <strong>обязан</strong> передать валидный идентификатор.</li>
-<li style="margin-bottom: 4px;">Возвращаемый тип <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User</code> является <strong>Nullable</strong> (без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">!</code>): если пользователь с таким <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id</code> не найден в базе данных, сервер легитимно возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">null</code> в поле данных (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"data": {"user": null}</code>) без генерации критической ошибки GraphQL.</li>
+<li style="margin-bottom: 4px;">Возвращаемый тип <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User</code> является <strong>Nullable</strong> (без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">!</code>): если пользователь с таким <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id</code> не найден в базе данных, сервер легитимно возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">null</code> в поле данных (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;data&quot;: {&quot;user&quot;: null}</code>) без генерации критической ошибки GraphQL.</li>
 <li style="margin-bottom: 4px;">В Go nullable тип модели мапится в указатель: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*model.User</code>.</li>
 </ul></div>
   </div>
@@ -1406,11 +1406,11 @@ func TestUserByID(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В спецификации GraphQL, если поле nullable возвращает ошибку (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err != nil</code>), значение поля заменяется на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">null</code>, а ошибка добавляется в массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"errors": [...]</code>. Если же возвращается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil, nil</code>, ошибка в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"errors"</code> не пишется.</p></div>
+    <div><p style="margin-bottom: 6px;">В спецификации GraphQL, если поле nullable возвращает ошибку (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err != nil</code>), значение поля заменяется на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">null</code>, а ошибка добавляется в массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;errors&quot;: [...]</code>. Если же возвращается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil, nil</code>, ошибка в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;errors&quot;</code> не пишется.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Возвращать ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("user not found")</code> для nullable поля: клиентский фронтенд Apollo/Relay будет считать это сетевой или системной ошибкой и может показать пользователю экран сбоя вместо аккуратного «Пользователь не найден».</p></div>
+    <div><p style="margin-bottom: 6px;">Возвращать ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;user not found&quot;)</code> для nullable поля: клиентский фронтенд Apollo/Relay будет считать это сетевой или системной ошибкой и может показать пользователю экран сбоя вместо аккуратного «Пользователь не найден».</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1440,14 +1440,12 @@ func TestUserByID(t *testing.T) {
 <li style="margin-bottom: 4px;">Скаляр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Time!</code> мапится в стандартный пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Time</code>.</li>
 <li style="margin-bottom: 4px;">Сгенерированная Go-структура в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">models_gen.go</code> содержит json-теги и строгую типизацию:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">type User struct {</p>
-<p style="margin-bottom: 6px;">ID        string    <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"id"</code></p>
-<p style="margin-bottom: 6px;">Name      string    <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"name"</code></p>
-<p style="margin-bottom: 6px;">Email     string    <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"email"</code></p>
-<p style="margin-bottom: 6px;">CreatedAt time.Time <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"createdAt"</code></p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p></div>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">type User struct {
+    ID        string    `json:&quot;id&quot;`
+    Name      string    `json:&quot;name&quot;`
+    Email     string    `json:&quot;email&quot;`
+    CreatedAt time.Time `json:&quot;createdAt&quot;`
+}</code></pre></div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -1527,11 +1525,9 @@ func TestGeneratedModelSerialization(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в gqlgen использовать собственную доменную модель User вместо сгенерированной в models_gen.go?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> В файле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen.yml</code> в секции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">models</code> настраивается биндинг:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`yaml</p>
-<p style="margin-bottom: 6px;">models:</p>
-<p style="margin-bottom: 6px;">User:</p>
-<p style="margin-bottom: 6px;">model: github.com/my/project/internal/domain.User</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-yaml"><code class="language-yaml">models:
+  User:
+    model: github.com/my/project/internal/domain.User</code></pre></div>
 <p style="margin-bottom: 6px;">Тогда генератор использует существующую модель и не будет дублировать структуру в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">models_gen.go</code>.</p></div>
   </div>
 </div>
@@ -1772,11 +1768,11 @@ func TestSafeUserResolver(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Если резолвер возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">error</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> оборачивает ее в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlerror.Error</code> с привязкой к пути поля в документе запроса (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">path: ["user"]</code>) и номерам строки/колонки в GraphQL документе.</p></div>
+    <div><p style="margin-bottom: 6px;">Если резолвер возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">error</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> оборачивает ее в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlerror.Error</code> с привязкой к пути поля в документе запроса (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">path: [&quot;user&quot;]</code>) и номерам строки/колонки в GraphQL документе.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Игнорировать проверку пустого ID: при вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user(id: "")</code> можно случайно выполнить неэффективный Full Scan базы данных или получить коллизию в кэше.</p></div>
+    <div><p style="margin-bottom: 6px;">Игнорировать проверку пустого ID: при вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user(id: &quot;&quot;)</code> можно случайно выполнить неэффективный Full Scan базы данных или получить коллизию в кэше.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1905,12 +1901,10 @@ func TestUsersListResolver(t *testing.T) {
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GET /</code>: отдает HTML страницу <strong>GraphQL Playground</strong> (или Apollo Sandbox) для разработчиков.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">POST /query</code>: единственный рабочий эндпоинт, принимающий JSON:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`json</p>
-<p style="margin-bottom: 6px;">{</p>
-<p style="margin-bottom: 6px;">"query": "query GetUsers { users { id name email } }",</p>
-<p style="margin-bottom: 6px;">"variables": {}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-json"><code class="language-json">     {
+       &quot;query&quot;: &quot;query GetUsers { users { id name email } }&quot;,
+       &quot;variables&quot;: {}
+     }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Плейграунд автоматически запрашивает интроспекцию схемы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">__schema</code>) и предоставляет автодополнение полей, документацию и подсветку ошибок прямо в окне браузера.</li>
 </ul></div>
@@ -2017,7 +2011,7 @@ func TestPlaygroundAndQueryEndpoint(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в продакшене отключают GraphQL Introspection?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Интроспекция раскрывает полную схему данных, все типы, приватные поля и мутации, облегчая атакующим поиск скрытых эндпоинтов (Security through Obscurity). Для ее отключения в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> используют middleware <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">extension.Introspection</code> с проверкой окружения (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">env != "production"</code>).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Интроспекция раскрывает полную схему данных, все типы, приватные поля и мутации, облегчая атакующим поиск скрытых эндпоинтов (Security through Obscurity). Для ее отключения в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> используют middleware <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">extension.Introspection</code> с проверкой окружения (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">env != &quot;production&quot;</code>).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-9">
@@ -2283,15 +2277,13 @@ func TestNullabilityInGo(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Когда требуется не просто вернуть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>, а явно сообщить клиенту причину с кодом ошибки:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">return nil, &gqlerror.Error{</p>
-<p style="margin-bottom: 6px;">Message: "пользователь с указанным ID не найден",</p>
-<p style="margin-bottom: 6px;">Extensions: map[string]any{</p>
-<p style="margin-bottom: 6px;">"code": "USER_NOT_FOUND",</p>
-<p style="margin-bottom: 6px;">"user_id": id,</p>
-<p style="margin-bottom: 6px;">},</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">return nil, &amp;gqlerror.Error{
+    Message: &quot;пользователь с указанным ID не найден&quot;,
+    Extensions: map[string]any{
+        &quot;code&quot;: &quot;USER_NOT_FOUND&quot;,
+        &quot;user_id&quot;: id,
+    },
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Клиентский фреймворк разбирает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors[0].extensions.code</code> для интернационализации сообщений.</li>
 </ul></div>
@@ -2383,12 +2375,12 @@ func TestGqlErrorOnNotFound(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Возвращать системные ошибки SQL драйвера напрямую (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pq: relation "users" does not exist</code>): это раскрывает детали реализации злоумышленникам. Ошибки базы данных нужно маскировать.</p></div>
+    <div><p style="margin-bottom: 6px;">Возвращать системные ошибки SQL драйвера напрямую (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pq: relation &quot;users&quot; does not exist</code>): это раскрывает детали реализации злоумышленникам. Ошибки базы данных нужно маскировать.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как скрыть системные ошибки от пользователей в production через gqlgen?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Переопределить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">server.SetErrorPresenter(func(ctx context.Context, e error) *gqlerror.Error { ... })</code>. Внутри проверяют тип ошибки: если это внутренняя ошибка, ее логируют в Sentry/Jaeger, а клиенту отдают общее сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Internal Server Error"</code> с уникальным <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace_id</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Переопределить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">server.SetErrorPresenter(func(ctx context.Context, e error) *gqlerror.Error { ... })</code>. Внутри проверяют тип ошибки: если это внутренняя ошибка, ее логируют в Sentry/Jaeger, а клиенту отдают общее сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Internal Server Error&quot;</code> с уникальным <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace_id</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-12">
@@ -2409,7 +2401,7 @@ func TestGqlErrorOnNotFound(t *testing.T) {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Boolean</code>: логическое значение (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">true</code> / <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>). В Go мапится в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bool</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ID</code>: уникальный строковый сериализатор идентификатора. В Go мапится в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string</code>.</div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Для больших 64-битных чисел (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int64</code>) в GraphQL создают кастомный скаляр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Int64</code>, так как встроенный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Int</code> переполнится при значениях $> 2\,147\,483\,647$.</li>
+<li style="margin-bottom: 4px;">Для больших 64-битных чисел (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int64</code>) в GraphQL создают кастомный скаляр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Int64</code>, так как встроенный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Int</code> переполнится при значениях $&gt; 2\,147\,483\,647$.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -2496,7 +2488,7 @@ func TestScalarsMapping(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему поле ID в GraphQL имеет тип String в Go, а не int?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> По спецификации GraphQL скаляр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ID</code> предназначен для уникального глобального идентификатора сущности. Часто это UUID (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"c9bf9e57-..."</code>) или base64-кодированная составная строка (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"User:123"</code> в Relay), поэтому он всегда сериализуется как строка.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> По спецификации GraphQL скаляр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ID</code> предназначен для уникального глобального идентификатора сущности. Часто это UUID (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;c9bf9e57-...&quot;</code>) или base64-кодированная составная строка (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;User:123&quot;</code> в Relay), поэтому он всегда сериализуется как строка.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-13">
@@ -2637,25 +2629,21 @@ func TestCustomTimeScalar(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">SDL:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">enum Role {</p>
-<p style="margin-bottom: 6px;">ADMIN</p>
-<p style="margin-bottom: 6px;">USER</p>
-<p style="margin-bottom: 6px;">GUEST</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">enum Role {
+  ADMIN
+  USER
+  GUEST
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Сгенерированный код в Go:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">type Role string</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">const (</p>
-<p style="margin-bottom: 6px;">RoleAdmin Role = "ADMIN"</p>
-<p style="margin-bottom: 6px;">RoleUser  Role = "USER"</p>
-<p style="margin-bottom: 6px;">RoleGuest Role = "GUEST"</p>
-<p style="margin-bottom: 6px;">)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">type Role string
+
+const (
+    RoleAdmin Role = &quot;ADMIN&quot;
+    RoleUser  Role = &quot;USER&quot;
+    RoleGuest Role = &quot;GUEST&quot;
+)</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">gqlgen автоматически генерирует методы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IsValid()</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MarshalGQL()</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UnmarshalGQL()</code> для каждого enum, гарантируя, что недопустимые строковые значения отсекаются парсером.</li>
 </ul></div>
@@ -2752,7 +2740,7 @@ func TestEnumRoleValidation(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как безопасно удалить значение из GraphQL Enum без поломки мобильных приложений?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Пометить значение директивой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">@deprecated(reason: "Используйте новое значение ...")</code>. Клиенты получат предупреждение в интроспекции, а сервер должен временно продолжать поддерживать старое значение до полного обновления всех версий мобильных клиентов в App Store и Google Play.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Пометить значение директивой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">@deprecated(reason: &quot;Используйте новое значение ...&quot;)</code>. Клиенты получат предупреждение в интроспекции, а сервер должен временно продолжать поддерживать старое значение до полного обновления всех версий мобильных клиентов в App Store и Google Play.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-15">
@@ -2770,12 +2758,10 @@ func TestEnumRoleValidation(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Входной тип:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">input UpdateUserInput {</p>
-<p style="margin-bottom: 6px;">name: String</p>
-<p style="margin-bottom: 6px;">email: String</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">input UpdateUserInput {
+  name: String
+  email: String
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В Go поля генерируются как указатели: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Name *string</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Email *string</code>.</li>
 <li style="margin-bottom: 4px;">Логика резолвера:</li>
@@ -2907,15 +2893,13 @@ func TestPartialUpdateUser(t *testing.T) {
 <li style="margin-bottom: 4px;">При добавлении 10 новых полей сигнатура мутации превращается в нечитаемую простыню.</li>
 <li style="margin-bottom: 4px;"><strong>Хороший подход (Input Object):</strong></li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">input CreateUserInput {</p>
-<p style="margin-bottom: 6px;">name: String!</p>
-<p style="margin-bottom: 6px;">email: String!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">type Mutation {</p>
-<p style="margin-bottom: 6px;">createUser(input: CreateUserInput!): User!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">input CreateUserInput {
+  name: String!
+  email: String!
+}
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Добавление полей в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">input</code> обратно совместимо и не меняет сигнатуру метода мутации в Go.</li>
 </ul></div>
@@ -3027,7 +3011,7 @@ func TestCreateUserInput(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В отличие от REST, где сервер всегда отдает фиксированный JSON со 100 полями (Overfetching), клиент GraphQL запрашивает только нужные поля:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">query { user(id: "1") { name } }</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">query { user(id: &quot;1&quot;) { name } }</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Метод резолвера <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User</code> возвращает полную Go-структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*model.User</code>.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">generated.go</code> проверяет AST запроса и сериализует в итоговый JSON <strong>только запрошенные клиентом поля</strong>, отбрасывая остальные.</li>
@@ -3123,10 +3107,8 @@ func TestFieldProjection(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как динамически формировать SELECT в SQL на основе полей GraphQL запроса?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/99designs/gqlgen/graphql</code> анализируют список полей:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">fields := graphql.CollectAllFields(ctx)</p>
-<p style="margin-bottom: 6px;">// fields = ["id", "name"] -> SELECT id, name FROM users</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">fields := graphql.CollectAllFields(ctx)
+// fields = [&quot;id&quot;, &quot;name&quot;] -&gt; SELECT id, name FROM users</code></pre></div>
 <p style="margin-bottom: 6px;">Это предотвращает избыточную нагрузку на дисковую подсистему и сеть базы данных.</p></div>
   </div>
 </div>
@@ -3258,7 +3240,7 @@ func TestCreateUserValidation(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать примитивную проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Contains(email, "@")</code>: адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"@"</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"a@b"</code> пройдет такую проверку, но вызовет ошибку почтового сервиса при отправке писем.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать примитивную проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Contains(email, &quot;@&quot;)</code>: адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;@&quot;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;a@b&quot;</code> пройдет такую проверку, но вызовет ошибку почтового сервиса при отправке писем.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3286,7 +3268,7 @@ func TestCreateUserValidation(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Перед сохранением пользователя в хранилище проверяется индекс уникальности по полю <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">email</code>.</li>
 <li style="margin-bottom: 4px;">При обнаружении дубликата сервер возвращает GraphQL ошибку:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">code: "EMAIL_ALREADY_EXISTS"</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">code: &quot;EMAIL_ALREADY_EXISTS&quot;</code></li>
 <li style="margin-bottom: 4px;">Понятное пользователю сообщение на русском языке.</li>
 <li style="margin-bottom: 4px;">Это позволяет фронтенду подсветить поле email красным цветом и предложить восстановить пароль.</li>
 </ul></div>
@@ -3416,31 +3398,29 @@ func TestEmailUniqueness(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Интерфейсы (Interfaces) в GraphQL SDL:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">interface Node {</p>
-<p style="margin-bottom: 6px;">id: ID!</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type User implements Node {</p>
-<p style="margin-bottom: 6px;">id: ID!</p>
-<p style="margin-bottom: 6px;">name: String!</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type Order implements Node {</p>
-<p style="margin-bottom: 6px;">id: ID!</p>
-<p style="margin-bottom: 6px;">totalAmount: Float!</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type Query {</p>
-<p style="margin-bottom: 6px;">node(id: ID!): Node</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">interface Node {
+  id: ID!
+}
+
+type User implements Node {
+  id: ID!
+  name: String!
+}
+
+type Order implements Node {
+  id: ID!
+  totalAmount: Float!
+}
+
+type Query {
+  node(id: ID!): Node
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В Go интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Node</code> генерируется как интерфейс Go:</li>
 </ul>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type Node interface { IsNode(); GetID() string }</code></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Мета-поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">__typename</code> возвращает точное имя типа (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"User"</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Order"</code>), позволяя клиенту использовать фрагменты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">... on User</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">... on Order</code>.</li>
+<li style="margin-bottom: 4px;">Мета-поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">__typename</code> возвращает точное имя типа (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;User&quot;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Order&quot;</code>), позволяя клиенту использовать фрагменты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">... on User</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">... on Order</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -3682,7 +3662,7 @@ func TestSoftDelete(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как реализовать полное соблюдение GDPR при использовании Soft Delete?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> По регламенту GDPR персональные данные должны быть удалены по запросу. В архитектуре применяют гибридный подход: при Soft Delete поля <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">name</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">email</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">phone</code> затираются псевдонимами (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Deleted User"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"deleted_hash@gdpr.internal"</code>), а запись с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">deleted_at</code> сохраняется для связности финансовых отчетов.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> По регламенту GDPR персональные данные должны быть удалены по запросу. В архитектуре применяют гибридный подход: при Soft Delete поля <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">name</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">email</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">phone</code> затираются псевдонимами (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Deleted User&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;deleted_hash@gdpr.internal&quot;</code>), а запись с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">deleted_at</code> сохраняется для связности финансовых отчетов.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-22">
@@ -3700,32 +3680,28 @@ func TestSoftDelete(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Объединение разнородных типов:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">union SearchResult = User | Product</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type Query {</p>
-<p style="margin-bottom: 6px;">search(query: String!): [SearchResult!]!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">union SearchResult = User | Product
+
+type Query {
+  search(query: String!): [SearchResult!]!
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Запрос клиента с условными фрагментами:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">query GlobalSearch {</p>
-<p style="margin-bottom: 6px;">search(query: "MacBook") {</p>
-<p style="margin-bottom: 6px;">__typename</p>
-<p style="margin-bottom: 6px;">... on User {</p>
-<p style="margin-bottom: 6px;">id</p>
-<p style="margin-bottom: 6px;">name</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">... on Product {</p>
-<p style="margin-bottom: 6px;">id</p>
-<p style="margin-bottom: 6px;">title</p>
-<p style="margin-bottom: 6px;">price</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">query GlobalSearch {
+  search(query: &quot;MacBook&quot;) {
+    __typename
+    ... on User {
+      id
+      name
+    }
+    ... on Product {
+      id
+      title
+      price
+    }
+  }
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В Go <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SearchResult</code> генерируется как пустой маркерный интерфейс:</li>
 </ul>
@@ -3833,23 +3809,21 @@ func TestUnionSearchResult(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Input type</strong> с валидацией: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">input CreateUserInput { name: String! @constraint(minLength: 2, maxLength: 100) email: String! @constraint(format: "email") }</code>. Используй directives или валидацию в resolver'е.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Input type</strong> с валидацией: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">input CreateUserInput { name: String! @constraint(minLength: 2, maxLength: 100) email: String! @constraint(format: &quot;email&quot;) }</code>. Используй directives или валидацию в resolver&#x27;е.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Директивы валидации в SDL (Schema Directives):</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">directive @constraint(</p>
-<p style="margin-bottom: 6px;">minLength: Int</p>
-<p style="margin-bottom: 6px;">maxLength: Int</p>
-<p style="margin-bottom: 6px;">format: String</p>
-<p style="margin-bottom: 6px;">) on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">input CreateUserInput {</p>
-<p style="margin-bottom: 6px;">name: String! @constraint(minLength: 2, maxLength: 100)</p>
-<p style="margin-bottom: 6px;">email: String! @constraint(format: "email")</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">directive @constraint(
+  minLength: Int
+  maxLength: Int
+  format: String
+) on INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
+
+input CreateUserInput {
+  name: String! @constraint(minLength: 2, maxLength: 100)
+  email: String! @constraint(format: &quot;email&quot;)
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Преимущества директив:</li>
 <li style="margin-bottom: 4px;">Самодокументируемый контракт: фронтенд видит ограничения в документации GraphQL.</li>
@@ -3862,7 +3836,7 @@ func TestUnionSearchResult(t *testing.T) {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте структуру правил валидации constraint.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуйте функцию-валидатор для полей структуры.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверьте отсечение слишком коротких имен (< 2 символов).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверьте отсечение слишком коротких имен (&lt; 2 символов).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Протестируйте успешную валидацию.</div></div>
   </div>
   <div class="code-container">
@@ -3948,15 +3922,13 @@ func TestConstraintValidation(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в gqlgen работают кастомные директивы аутентификации (@hasRole)?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Объявляется директива <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">directive @hasRole(role: Role!) on FIELD_DEFINITION</code>. В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">server.go</code> регистрируется хук:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">cfg.Directives.HasRole = func(ctx context.Context, obj any, next graphql.Resolver, role Role) (any, error) {</p>
-<p style="margin-bottom: 6px;">user := auth.GetUserFromContext(ctx)</p>
-<p style="margin-bottom: 6px;">if user == nil || user.Role != role {</p>
-<p style="margin-bottom: 6px;">return nil, gqlerror.Errorf("Forbidden")</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">return next(ctx)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">cfg.Directives.HasRole = func(ctx context.Context, obj any, next graphql.Resolver, role Role) (any, error) {
+    user := auth.GetUserFromContext(ctx)
+    if user == nil || user.Role != role {
+        return nil, gqlerror.Errorf(&quot;Forbidden&quot;)
+    }
+    return next(ctx)
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Если роль не совпадает, выполнение резолвера прерывается до обращения к БД.</p></div>
   </div>
 </div>
@@ -4077,17 +4049,15 @@ func TestEmailRegexValidation(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Жизненный цикл мутации в GraphQL:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Описание контракта в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schema.graphqls</code>:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">input NewUserInput {</p>
-<p style="margin-bottom: 6px;">name: String!</p>
-<p style="margin-bottom: 6px;">email: String!</p>
-<p style="margin-bottom: 6px;">password: String!</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type Mutation {</p>
-<p style="margin-bottom: 6px;">createUser(input: NewUserInput!): User!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">input NewUserInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  createUser(input: NewUserInput!): User!
+}</code></pre></div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen generate</code> добавляет интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MutationResolver</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">generated.go</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Разработчик реализует метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CreateUser</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schema.resolvers.go</code>:</div>
 <ul style="margin: 8px 0 8px 20px;">
@@ -4218,18 +4188,16 @@ func TestNewUserMutation(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Запрос клиента:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">query {</p>
-<p style="margin-bottom: 6px;">users {       # 1 запрос: SELECT * FROM users (вернул 100 пользователей)</p>
-<p style="margin-bottom: 6px;">id</p>
-<p style="margin-bottom: 6px;">name</p>
-<p style="margin-bottom: 6px;">orders {    # Вложенный резолвер User.orders вызывается 100 РАЗ!</p>
-<p style="margin-bottom: 6px;">id        # SELECT * FROM orders WHERE user_id = 'usr_1'</p>
-<p style="margin-bottom: 6px;">total     # SELECT * FROM orders WHERE user_id = 'usr_2'</p>
-<p style="margin-bottom: 6px;">}           # ... еще 98 отдельных SQL-запросов к БД!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">query {
+  users {       # 1 запрос: SELECT * FROM users (вернул 100 пользователей)
+    id
+    name
+    orders {    # Вложенный резолвер User.orders вызывается 100 РАЗ!
+      id        # SELECT * FROM orders WHERE user_id = &#x27;usr_1&#x27;
+      total     # SELECT * FROM orders WHERE user_id = &#x27;usr_2&#x27;
+    }           # ... еще 98 отдельных SQL-запросов к БД!
+  }
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Итог: $1 + 100 = 101$ обращение к базе данных!</li>
 <li style="margin-bottom: 4px;">База данных захлебывается в сетевых круглых задержках (Round-Trips) и блокировках пула соединений.</li>
@@ -4354,21 +4322,19 @@ func TestNPlusOneCatastrophe(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Схема:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">type Post {</p>
-<p style="margin-bottom: 6px;">id: ID!</p>
-<p style="margin-bottom: 6px;">title: String!</p>
-<p style="margin-bottom: 6px;">body: String!</p>
-<p style="margin-bottom: 6px;">author: User!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">type Query {</p>
-<p style="margin-bottom: 6px;">posts: [Post!]!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">type Post {
+  id: ID!
+  title: String!
+  body: String!
+  author: User!
+}
+type Query {
+  posts: [Post!]!
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Если 50 постов написаны <strong>одним и тем же автором</strong> (например, официальный блог компании), наивный резолвер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Post.Author</code> выполнит:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM users WHERE id = 'author_1'</code> — <strong>50 раз подряд для одного и того же ID</strong>!</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM users WHERE id = &#x27;author_1&#x27;</code> — <strong>50 раз подряд для одного и того же ID</strong>!</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Это не просто N+1, это еще и полное дублирование одинаковых запросов.</li>
 </ul></div>
@@ -4598,7 +4564,7 @@ func TestPostFieldResolver(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Pagination</strong> (offset-based): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">users(limit: Int, offset: Int): [User!]!</code>. Верни <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">totalCount</code> через отдельный query или в payload. Обсуди проблемы offset-пагинации (performance при больших offset'ах).</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Pagination</strong> (offset-based): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">users(limit: Int, offset: Int): [User!]!</code>. Верни <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">totalCount</code> через отдельный query или в payload. Обсуди проблемы offset-пагинации (performance при больших offset&#x27;ах).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4712,7 +4678,7 @@ func TestOffsetPagination(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Для устранения проблем Offset-пагинации в HighLoad системах используют <strong>Keyset / Cursor Pagination</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WHERE id > last_seen_id ORDER BY id LIMIT 20</code>, работающую строго по индексу за $O(\log N)$ при любой глубине страниц.</p></div>
+    <div><p style="margin-bottom: 6px;">Для устранения проблем Offset-пагинации в HighLoad системах используют <strong>Keyset / Cursor Pagination</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WHERE id &gt; last_seen_id ORDER BY id LIMIT 20</code>, работающую строго по индексу за $O(\log N)$ при любой глубине страниц.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -4739,9 +4705,9 @@ func TestOffsetPagination(t *testing.T) {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Во время фазы исполнения GraphQL запроса каждый вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User.orders</code> не идет в БД, а регистрирует свой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">userID</code> в очереди DataLoader:</div>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">loader.Load(ctx, dataloader.StringKey(u.ID))</code></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В конце текущего тика цикла событий (Event Loop) или через микрозадержку (1–2 мс) DataLoader собирает все зарегистрированные ключи:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">keys = ["usr_1", "usr_2", ..., "usr_100"]</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">keys = [&quot;usr_1&quot;, &quot;usr_2&quot;, ..., &quot;usr_100&quot;]</code></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вызывает пользовательскую batch-функцию <strong>ровно 1 раз</strong>:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM orders WHERE user_id IN ('usr_1', 'usr_2', ..., 'usr_100')</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM orders WHERE user_id IN (&#x27;usr_1&#x27;, &#x27;usr_2&#x27;, ..., &#x27;usr_100&#x27;)</code></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Раскладывает полученные заказы по соответствующим пользователям в исходном порядке ключей.</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Результат: вместо 101 запроса выполняется <strong>ровно 2 запроса</strong>!</li>
@@ -4872,17 +4838,15 @@ func TestDataLoaderBatching(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graph/resolver.go</code>:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">type Resolver struct {</p>
-<p style="margin-bottom: 6px;">DB     *pgxpool.Pool</p>
-<p style="margin-bottom: 6px;">Logger *slog.Logger</p>
-<p style="margin-bottom: 6px;">Redis  *redis.Client</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">func NewResolver(db *pgxpool.Pool, log *slog.Logger, rdb *redis.Client) *Resolver {</p>
-<p style="margin-bottom: 6px;">return &Resolver{DB: db, Logger: log, Redis: rdb}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">type Resolver struct {
+    DB     *pgxpool.Pool
+    Logger *slog.Logger
+    Redis  *redis.Client
+}
+
+func NewResolver(db *pgxpool.Pool, log *slog.Logger, rdb *redis.Client) *Resolver {
+    return &amp;Resolver{DB: db, Logger: log, Redis: rdb}
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Резолверы получают доступ ко всей инфраструктуре через поле получателя метода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.DB</code> без использования антипаттерна глобальных переменных.</li>
 </ul></div>
@@ -4988,9 +4952,9 @@ func TestResolverDependencyInjection(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Сквозная аутентификация в GraphQL:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>HTTP Middleware (до GraphQL):</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Перехватывает HTTP-заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Authorization: Bearer <token></code>.</li>
+<li style="margin-bottom: 4px;">Перехватывает HTTP-заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Authorization: Bearer &lt;token&gt;</code>.</li>
 <li style="margin-bottom: 4px;">Валидирует JWT токен.</li>
-<li style="margin-bottom: 4px;">Извлекает пользователя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">auth.User{ID: "usr_77", Role: "ADMIN"}</code>.</li>
+<li style="margin-bottom: 4px;">Извлекает пользователя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">auth.User{ID: &quot;usr_77&quot;, Role: &quot;ADMIN&quot;}</code>.</li>
 <li style="margin-bottom: 4px;">Помещает пользователя в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.Context</code> с типизированным ключом.</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>GraphQL Resolver:</strong></div>
@@ -5209,7 +5173,7 @@ func TestQueryMetricsInterceptor(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как ограничить максимальную глубину (Query Depth) GraphQL запроса в gqlgen?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Зарегистрировать расширение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">server.Use(extension.FixedComplexityLimit(300))</code> или кастомный валидатор AST правил <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ast.QueryDocument</code>, который обходит дерево и подсчитывает максимальный уровень вложенности (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">depth</code>). Если глубина $> 6..8$, запрос отклоняется до резолвинга.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Зарегистрировать расширение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">server.Use(extension.FixedComplexityLimit(300))</code> или кастомный валидатор AST правил <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ast.QueryDocument</code>, который обходит дерево и подсчитывает максимальный уровень вложенности (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">depth</code>). Если глубина $&gt; 6..8$, запрос отклоняется до резолвинга.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-34">
@@ -5323,10 +5287,8 @@ func TestGqlgenInitStructure(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в CI/CD пайплайне гарантировать, что сгенерированный код GraphQL актуален?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> В GitHub Actions запускается шаг:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`bash</p>
-<p style="margin-bottom: 6px;">go run github.com/99designs/gqlgen generate</p>
-<p style="margin-bottom: 6px;">git diff --exit-code</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-bash"><code class="language-bash">go run github.com/99designs/gqlgen generate
+git diff --exit-code</code></pre></div>
 <p style="margin-bottom: 6px;">Если разработчик изменил <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.graphqls</code>, но забыл сгенерировать Go-код локально, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">git diff</code> вернет ненулевой код возврата и заблокирует слияние PR.</p></div>
   </div>
 </div>
@@ -5342,24 +5304,22 @@ func TestGqlgenInitStructure(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Формат ошибок GraphQL по спецификации RFC:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`json</p>
-<p style="margin-bottom: 6px;">{</p>
-<p style="margin-bottom: 6px;">"errors": [</p>
-<p style="margin-bottom: 6px;">{</p>
-<p style="margin-bottom: 6px;">"message": "недостаточно средств на счете",</p>
-<p style="margin-bottom: 6px;">"locations": [{ "line": 2, "column": 3 }],</p>
-<p style="margin-bottom: 6px;">"path": ["transferMoney"],</p>
-<p style="margin-bottom: 6px;">"extensions": {</p>
-<p style="margin-bottom: 6px;">"code": "INSUFFICIENT_FUNDS",</p>
-<p style="margin-bottom: 6px;">"current_balance": 150.0,</p>
-<p style="margin-bottom: 6px;">"required_amount": 500.0,</p>
-<p style="margin-bottom: 6px;">"timestamp": "2026-09-03T21:00:00Z"</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">],</p>
-<p style="margin-bottom: 6px;">"data": null</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-json"><code class="language-json">{
+  &quot;errors&quot;: [
+    {
+      &quot;message&quot;: &quot;недостаточно средств на счете&quot;,
+      &quot;locations&quot;: [{ &quot;line&quot;: 2, &quot;column&quot;: 3 }],
+      &quot;path&quot;: [&quot;transferMoney&quot;],
+      &quot;extensions&quot;: {
+        &quot;code&quot;: &quot;INSUFFICIENT_FUNDS&quot;,
+        &quot;current_balance&quot;: 150.0,
+        &quot;required_amount&quot;: 500.0,
+        &quot;timestamp&quot;: &quot;2026-09-03T21:00:00Z&quot;
+      }
+    }
+  ],
+  &quot;data&quot;: null
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">extensions</code> — единственный легитимный способ передавать типизированные метаданные ошибок клиентам.</li>
 </ul></div>
@@ -5456,7 +5416,7 @@ func TestCustomGqlError(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в GraphQL реализовать локализацию (i18n) сообщений об ошибках?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Сервер возвращает стабильный машиночитаемый код <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">extensions.code: "INSUFFICIENT_FUNDS"</code> и параметры подстановки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">extensions.params: { min: 500 }</code>). Клиентское приложение (React/Flutter) сопоставляет код с файлом локализации пользователя (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ru.json</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">en.json</code>) и отображает текст на языке устройства клиента.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Сервер возвращает стабильный машиночитаемый код <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">extensions.code: &quot;INSUFFICIENT_FUNDS&quot;</code> и параметры подстановки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">extensions.params: { min: 500 }</code>). Клиентское приложение (React/Flutter) сопоставляет код с файлом локализации пользователя (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ru.json</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">en.json</code>) и отображает текст на языке устройства клиента.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-36">
@@ -5471,32 +5431,30 @@ func TestCustomGqlError(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Спецификация Relay Cursor Connections:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">type PageInfo {</p>
-<p style="margin-bottom: 6px;">hasNextPage: Boolean!</p>
-<p style="margin-bottom: 6px;">hasPreviousPage: Boolean!</p>
-<p style="margin-bottom: 6px;">startCursor: String</p>
-<p style="margin-bottom: 6px;">endCursor: String</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type UserEdge {</p>
-<p style="margin-bottom: 6px;">cursor: String!</p>
-<p style="margin-bottom: 6px;">node: User!</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type UserConnection {</p>
-<p style="margin-bottom: 6px;">edges: [UserEdge!]!</p>
-<p style="margin-bottom: 6px;">pageInfo: PageInfo!</p>
-<p style="margin-bottom: 6px;">totalCount: Int!</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type Query {</p>
-<p style="margin-bottom: 6px;">users(first: Int, after: String): UserConnection!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type UserEdge {
+  cursor: String!
+  node: User!
+}
+
+type UserConnection {
+  edges: [UserEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type Query {
+  users(first: Int, after: String): UserConnection!
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Курсор кодируется в Base64 для непрозрачности (Opaque Token).</li>
-<li style="margin-bottom: 4px;">Запрос следующей страницы: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">users(first: 10, after: "dXNyXzEw")</code>.</li>
+<li style="margin-bottom: 4px;">Запрос следующей страницы: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">users(first: 10, after: &quot;dXNyXzEw&quot;)</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -5642,7 +5600,7 @@ func TestRelayPagination(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Курсорная пагинация транслируется в SQL: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM users WHERE id > :cursor_id ORDER BY id ASC LIMIT :first</code>. Это гарантирует чтение строго по индексу за доли миллисекунды независимо от глубины прокрутки ленты.</p></div>
+    <div><p style="margin-bottom: 6px;">Курсорная пагинация транслируется в SQL: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM users WHERE id &gt; :cursor_id ORDER BY id ASC LIMIT :first</code>. Это гарантирует чтение строго по индексу за доли миллисекунды независимо от глубины прокрутки ленты.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -5811,7 +5769,7 @@ func TestTypedDataloader(t *testing.T) {
 <li style="margin-bottom: 4px;">Если бэкенд выполняет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM products</code>, база перегоняет мегабайты неиспользуемых данных по сети.</li>
 <li style="margin-bottom: 4px;">С помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graphql.CollectFieldsCtx(ctx, nil)</code>:</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сервер извлекает точный список запрошенных клиентом колонок: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">["id", "title", "price"]</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сервер извлекает точный список запрошенных клиентом колонок: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[&quot;id&quot;, &quot;title&quot;, &quot;price&quot;]</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Формирует SQL: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT id, title, price FROM products</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Трафик сети и нагрузка на память уменьшаются в десятки раз!</div></div>
   </div>
@@ -5903,10 +5861,8 @@ func TestFieldMaskSQL(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в ORM (например GORM или Ent) передавать field masks из GraphQL?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> В GORM используют метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.Select(columns...)</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">fields := graphql.CollectAllFields(ctx)</p>
-<p style="margin-bottom: 6px;">db.Select(fields).Find(&users)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">fields := graphql.CollectAllFields(ctx)
+db.Select(fields).Find(&amp;users)</code></pre></div>
 <p style="margin-bottom: 6px;">Это предотвращает чтение неиспользуемых колонок на уровне базы данных.</p></div>
   </div>
 </div>
@@ -6025,25 +5981,23 @@ func TestNPlusOneLatencyImpact(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Паттерн динамической фильтрации в GraphQL:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">enum UserStatus { ACTIVE BLOCKED PENDING }</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">input UserFilter {</p>
-<p style="margin-bottom: 6px;">nameContains: String</p>
-<p style="margin-bottom: 6px;">status: UserStatus</p>
-<p style="margin-bottom: 6px;">minCreatedAt: Time</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type Query {</p>
-<p style="margin-bottom: 6px;">users(filter: UserFilter): [User!]!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">enum UserStatus { ACTIVE BLOCKED PENDING }
+
+input UserFilter {
+  nameContains: String
+  status: UserStatus
+  minCreatedAt: Time
+}
+
+type Query {
+  users(filter: UserFilter): [User!]!
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Логика построения SQL:</li>
 <li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filter == nil</code>, возвращаются все записи (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WHERE 1=1</code>).</li>
-<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filter.NameContains != nil</code>, добавляется: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AND name ILIKE '%' || $1 || '%'</code>.</li>
+<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filter.NameContains != nil</code>, добавляется: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AND name ILIKE &#x27;%&#x27; || $1 || &#x27;%&#x27;</code>.</li>
 <li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filter.Status != nil</code>, добавляется: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AND status = $2</code>.</li>
-<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filter.MinCreatedAt != nil</code>, добавляется: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AND created_at >= $3</code>.</li>
+<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filter.MinCreatedAt != nil</code>, добавляется: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AND created_at &gt;= $3</code>.</li>
 <li style="margin-bottom: 4px;">Все аргументы должны быть строго параметризованы для защиты от SQL-инъекций.</li>
 </ul></div>
   </div>
@@ -6162,7 +6116,7 @@ func TestDynamicFiltering(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как оптимизировать динамический поиск по подстроке ILIKE %text% в PostgreSQL?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Стандартный B-Tree индекс бесполезен при поиске с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%</code> в начале строки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ILIKE '%text%'</code>). Для мгновенного поиска по подстроке в PostgreSQL создают триграммный индекс с помощью расширения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pg_trgm</code>:</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Стандартный B-Tree индекс бесполезен при поиске с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%</code> в начале строки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ILIKE &#x27;%text%&#x27;</code>). Для мгновенного поиска по подстроке в PostgreSQL создают триграммный индекс с помощью расширения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pg_trgm</code>:</p>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CREATE INDEX idx_users_name_trgm ON users USING gin (name gin_trgm_ops);</code></p>
 <p style="margin-bottom: 6px;">Это превращает сканирование таблицы в быстрый индексный поиск по триграммам.</p></div>
   </div>
@@ -6186,7 +6140,7 @@ func TestDynamicFiltering(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Логика работы:</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> На входе — срез идентификаторов: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">["1", "2", "3"]</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> На входе — срез идентификаторов: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[&quot;1&quot;, &quot;2&quot;, &quot;3&quot;]</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Формируется один SQL-запрос:</div>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT id, name, email FROM users WHERE id = ANY($1)</code> (или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IN ($1, $2, $3)</code>).</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Результаты из БД индексируются во временную мапу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]*User</code>.</div>
@@ -6313,7 +6267,7 @@ func TestBatchGetUsers(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Этап 2: DataLoader собирает все $N$ идентификаторов и выполняет:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT id, title, user_id FROM posts WHERE user_id IN ('1', '2', ..., 'N')</code> $\to$ (2-й запрос).</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT id, title, user_id FROM posts WHERE user_id IN (&#x27;1&#x27;, &#x27;2&#x27;, ..., &#x27;N&#x27;)</code> $\to$ (2-й запрос).</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Связывание: полученные посты группируются по <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user_id</code> в Go-памяти за $O(M)$.</li>
 <li style="margin-bottom: 4px;">Суммарно для выборки сотен пользователей и тысяч постов выполняется <strong>строго 2 запроса</strong> к базе данных!</li>
@@ -6544,7 +6498,7 @@ func TestSortingWhitelist(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Конкатенировать пользовательские строки прямо в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ORDER BY</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf("ORDER BY %s", userColumn)</code> — классическая брешь SQL Injection.</p></div>
+    <div><p style="margin-bottom: 6px;">Конкатенировать пользовательские строки прямо в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ORDER BY</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf(&quot;ORDER BY %s&quot;, userColumn)</code> — классическая брешь SQL Injection.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -6570,21 +6524,17 @@ func TestSortingWhitelist(t *testing.T) {
 <li style="margin-bottom: 4px;">Жизненный цикл в Go:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создается HTTP-Middleware:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func DataLoaderMiddleware(db *sql.DB, next http.Handler) http.Handler {</p>
-<p style="margin-bottom: 6px;">return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {</p>
-<p style="margin-bottom: 6px;">loaders := NewLoaders(db)</p>
-<p style="margin-bottom: 6px;">ctx := context.WithValue(r.Context(), loadersKey, loaders)</p>
-<p style="margin-bottom: 6px;">next.ServeHTTP(w, r.WithContext(ctx))</p>
-<p style="margin-bottom: 6px;">})</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">     func DataLoaderMiddleware(db *sql.DB, next http.Handler) http.Handler {
+         return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+             loaders := NewLoaders(db)
+             ctx := context.WithValue(r.Context(), loadersKey, loaders)
+             next.ServeHTTP(w, r.WithContext(ctx))
+         })
+     }</code></pre></div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В резолвере <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Post.Author</code>:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func (r *postResolver) Author(ctx context.Context, obj *model.Post) (*model.User, error) {</p>
-<p style="margin-bottom: 6px;">return loaders.For(ctx).UserLoader.Load(ctx, obj.AuthorID)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p></div>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">     func (r *postResolver) Author(ctx context.Context, obj *model.Post) (*model.User, error) {
+         return loaders.For(ctx).UserLoader.Load(ctx, obj.AuthorID)
+     }</code></pre></div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -6824,11 +6774,9 @@ func TestDataLoaderMemoization(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Конфигурация в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen.yml</code>:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`yaml</p>
-<p style="margin-bottom: 6px;">models:</p>
-<p style="margin-bottom: 6px;">DateTime:</p>
-<p style="margin-bottom: 6px;">model: my-project/graph/model.DateTime</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-yaml"><code class="language-yaml">models:
+  DateTime:
+    model: my-project/graph/model.DateTime</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Методы:</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MarshalDateTime(t time.Time) graphql.Marshaler</code></li>
@@ -6911,7 +6859,7 @@ func TestDateTimeScalarPkg(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> обнаруживает функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Marshal<ScalarName></code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Unmarshal<ScalarName></code> по конвенции имен и подключает их к внутреннему реестру кодеков.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> обнаруживает функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Marshal&lt;ScalarName&gt;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Unmarshal&lt;ScalarName&gt;</code> по конвенции имен и подключает их к внутреннему реестру кодеков.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -7044,14 +6992,12 @@ func TestOneToManyDataLoader(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как ограничить количество дочерних записей (например, не более 5 комментариев на каждый пост) в батч-запросе SQL?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> С помощью оконных функций (Window Functions) в SQL:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`sql</p>
-<p style="margin-bottom: 6px;">SELECT * FROM (</p>
-<p style="margin-bottom: 6px;">SELECT id, post_id, text,</p>
-<p style="margin-bottom: 6px;">ROW_NUMBER() OVER (PARTITION BY post_id ORDER BY created_at DESC) as rn</p>
-<p style="margin-bottom: 6px;">FROM comments</p>
-<p style="margin-bottom: 6px;">WHERE post_id = ANY($1)</p>
-<p style="margin-bottom: 6px;">) ranked WHERE rn <= 5;</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-sql"><code class="language-sql">SELECT * FROM (
+    SELECT id, post_id, text,
+           ROW_NUMBER() OVER (PARTITION BY post_id ORDER BY created_at DESC) as rn
+    FROM comments
+    WHERE post_id = ANY($1)
+) ranked WHERE rn &lt;= 5;</code></pre></div>
 <p style="margin-bottom: 6px;">Это вернет не более 5 последних комментариев для каждого поста в рамках одного батч-запроса.</p></div>
   </div>
 </div>
@@ -7062,41 +7008,37 @@ func TestOneToManyDataLoader(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Union type</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">union SearchResult = User | Order | Product</code>. Query: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">search(query: String!): [SearchResult!]!</code>. В resolver'е верни разные типы. Клиент использует <strong>inline fragments</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">... on User { name } ... on Order { total }</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Union type</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">union SearchResult = User | Order | Product</code>. Query: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">search(query: String!): [SearchResult!]!</code>. В resolver&#x27;е верни разные типы. Клиент использует <strong>inline fragments</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">... on User { name } ... on Order { total }</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Архитектура многокомпонентного Union в GraphQL:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">union SearchResult = User | Order | Product</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type Query {</p>
-<p style="margin-bottom: 6px;">search(query: String!): [SearchResult!]!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">union SearchResult = User | Order | Product
+
+type Query {
+  search(query: String!): [SearchResult!]!
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Клиентский запрос:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">query GlobalSearch($q: String!) {</p>
-<p style="margin-bottom: 6px;">search(query: $q) {</p>
-<p style="margin-bottom: 6px;">__typename</p>
-<p style="margin-bottom: 6px;">... on User {</p>
-<p style="margin-bottom: 6px;">id</p>
-<p style="margin-bottom: 6px;">name</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">... on Order {</p>
-<p style="margin-bottom: 6px;">id</p>
-<p style="margin-bottom: 6px;">totalAmount</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">... on Product {</p>
-<p style="margin-bottom: 6px;">id</p>
-<p style="margin-bottom: 6px;">title</p>
-<p style="margin-bottom: 6px;">price</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">query GlobalSearch($q: String!) {
+  search(query: $q) {
+    __typename
+    ... on User {
+      id
+      name
+    }
+    ... on Order {
+      id
+      totalAmount
+    }
+    ... on Product {
+      id
+      title
+      price
+    }
+  }
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В Go каждый тип реализует маркерный метод интерфейса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IsSearchResult()</code>.</li>
 </ul></div>
@@ -7217,7 +7159,7 @@ func TestMultiUnionSearch(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dataloadgen</code> (современная альтернатива с код-генерацией) вместо ручного написания loader'ов.</p></div>
+    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dataloadgen</code> (современная альтернатива с код-генерацией) вместо ручного написания loader&#x27;ов.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7228,11 +7170,9 @@ func TestMultiUnionSearch(t *testing.T) {
 <li style="margin-bottom: 4px;"><strong>Не требует кодогенерации</strong> и генерации отдельных файлов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*_gen.go</code>!</li>
 <li style="margin-bottom: 4px;">Инициализация в одну строчку:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">loader := dataloadgen.NewLoader(func(ctx context.Context, keys []string) ([]*User, []error) {</p>
-<p style="margin-bottom: 6px;">return db.GetUsersByIDs(ctx, keys)</p>
-<p style="margin-bottom: 6px;">}, dataloadgen.WithWait(2*time.Millisecond))</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">    loader := dataloadgen.NewLoader(func(ctx context.Context, keys []string) ([]*User, []error) {
+        return db.GetUsersByIDs(ctx, keys)
+    }, dataloadgen.WithWait(2*time.Millisecond))</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Полная типобезопасность на этапе компиляции.</li>
 </ul></div>
@@ -7460,10 +7400,10 @@ func TestBenchmarkComparison(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Скаляр Date (календарная дата без времени):</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В отличие от <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DateTime</code>, скаляр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Date</code> не содержит часов, минут и таймзон:</li>
-<li style="margin-bottom: 4px;">Пример: день рождения пользователя (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"1995-04-12"</code>), дата поставки товара.</li>
+<li style="margin-bottom: 4px;">Пример: день рождения пользователя (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;1995-04-12&quot;</code>), дата поставки товара.</li>
 <li style="margin-bottom: 4px;">Методы сериализации:</li>
-<li style="margin-bottom: 4px;">Шаблон форматирования: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"2006-01-02"</code>.</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MarshalGQL</code>: сериализует дату как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"YYYY-MM-DD"</code>.</li>
+<li style="margin-bottom: 4px;">Шаблон форматирования: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;2006-01-02&quot;</code>.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MarshalGQL</code>: сериализует дату как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;YYYY-MM-DD&quot;</code>.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UnmarshalGQL</code>: проверяет точное соответствие формату из 10 символов.</li>
 </ul></div>
   </div>
@@ -7556,16 +7496,14 @@ func TestDateOnlyScalar(t *testing.T) {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen.yml</code> биндинг скаляра настраивается в секции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">models</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`yaml</p>
-<p style="margin-bottom: 6px;">models:</p>
-<p style="margin-bottom: 6px;">Date:</p>
-<p style="margin-bottom: 6px;">model: my-project/graph/model.Date</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-yaml"><code class="language-yaml">models:
+  Date:
+    model: my-project/graph/model.Date</code></pre></div>
 <p style="margin-bottom: 6px;">Генератор напрямую свяжет сгенерированные резолверы с методами типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Date</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать формат <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.DateOnly</code> в версиях Go старше 1.20: константа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.DateOnly = "2006-01-02"</code> была добавлена только в Go 1.20.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать формат <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.DateOnly</code> в версиях Go старше 1.20: константа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.DateOnly = &quot;2006-01-02&quot;</code> была добавлена только в Go 1.20.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -7711,21 +7649,19 @@ func TestUnixTimestampScalar(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Любая сущность системы реализует интерфейс:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">interface Node {</p>
-<p style="margin-bottom: 6px;">id: ID!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">type Query {</p>
-<p style="margin-bottom: 6px;">node(id: ID!): Node</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">interface Node {
+  id: ID!
+}
+type Query {
+  node(id: ID!): Node
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Идентификатор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id</code> глобально уникален во всей системе:</li>
-<li style="margin-bottom: 4px;">Часто кодируется как base64 от <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TypeName:ID</code> (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"VXNlcjoxMDI="</code> $\to$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User:102</code>).</li>
+<li style="margin-bottom: 4px;">Часто кодируется как base64 от <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TypeName:ID</code> (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;VXNlcjoxMDI=&quot;</code> $\to$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User:102</code>).</li>
 <li style="margin-bottom: 4px;">При получении запроса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">node(id)</code> сервер:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Декодирует base64.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Определяет тип сущности (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"User"</code>).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Определяет тип сущности (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;User&quot;</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Делегирует выборку в соответствующий репозиторий.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Возвращает объект с сохранением метаданных <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">__typename</code>.</div></div>
   </div>
@@ -7855,11 +7791,11 @@ func TestRelayGlobalNode(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать чистые числовые ID (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id: "1"</code>) в качестве Global ID: у пользователя ID=1 и у заказа ID=1 будут одинаковые идентификаторы, что вызовет коллизию и перезапись в кэше клиента.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать чистые числовые ID (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">id: &quot;1&quot;</code>) в качестве Global ID: у пользователя ID=1 и у заказа ID=1 будут одинаковые идентификаторы, что вызовет коллизию и перезапись в кэше клиента.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему Relay требует кодировать ID в base64, а не отдавать открытую строку "User:102"?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему Relay требует кодировать ID в base64, а не отдавать открытую строку &quot;User:102&quot;?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Принцип непрозрачности (Opaque Identifier). Клиент не должен строить бизнес-логику или парсить строку ID регулярными выражениями. Формат ID является закрытой деталью реализации сервера, а base64 защищает разработчиков фронтенда от соблазна ручного конструирования ID на клиенте.</p></div>
   </div>
 </div>
@@ -7878,14 +7814,12 @@ func TestRelayGlobalNode(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В схеме SDL:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">directive @auth(requires: Role = USER) on FIELD_DEFINITION</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type Query {</p>
-<p style="margin-bottom: 6px;">me: User! @auth</p>
-<p style="margin-bottom: 6px;">adminStats: Stats! @auth(requires: ADMIN)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">directive @auth(requires: Role = USER) on FIELD_DEFINITION
+
+type Query {
+  me: User! @auth
+  adminStats: Stats! @auth(requires: ADMIN)
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Преимущества перед проверками в коде каждого резолвера:</li>
 <li style="margin-bottom: 4px;">Безопасность декларативна: пропущенное поле видно на code review в Git.</li>
@@ -7996,7 +7930,7 @@ func TestAuthDirective(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>Error handling</strong>: кастомные ошибки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlerror.Error</code>. Добавь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">extensions</code> (код ошибки, поле): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&gqlerror.Error{Message: "validation failed", Extensions: map[string]interface{}{"code": "VALIDATION_ERROR", "field": "email"}}</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>Error handling</strong>: кастомные ошибки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlerror.Error</code>. Добавь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">extensions</code> (код ошибки, поле): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;gqlerror.Error{Message: &quot;validation failed&quot;, Extensions: map[string]interface{}{&quot;code&quot;: &quot;VALIDATION_ERROR&quot;, &quot;field&quot;: &quot;email&quot;}}</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8005,7 +7939,7 @@ func TestAuthDirective(t *testing.T) {
 <li style="margin-bottom: 4px;">Ошибки должны быть предсказуемыми и машиночитаемыми.</li>
 <li style="margin-bottom: 4px;">Поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">extensions</code> включает:</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">code</code>: категория сбоя (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">VALIDATION_ERROR</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NOT_FOUND</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RATE_LIMITED</code>).</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">field</code>: конкретное поле формы на фронтенде для подсветки ошибки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"email"</code>).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">field</code>: конкретное поле формы на фронтенде для подсветки ошибки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;email&quot;</code>).</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">details</code>: человекопонятное пояснение на русском языке.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace_id</code>: уникальный идентификатор трейса для техподдержки.</li>
 </ul></div>
@@ -8077,7 +8011,7 @@ func TestValidationErrorExtensions(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Возвращать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(...)</code> без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlerror.Error</code>: обычная ошибка Go теряет поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">extensions</code> и сериализуется как примитивный текст <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"message": "..."}</code> без машиночитаемого кода.</p></div>
+    <div><p style="margin-bottom: 6px;">Возвращать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(...)</code> без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlerror.Error</code>: обычная ошибка Go теряет поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">extensions</code> и сериализуется как примитивный текст <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;message&quot;: &quot;...&quot;}</code> без машиночитаемого кода.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -8106,12 +8040,10 @@ func TestValidationErrorExtensions(t *testing.T) {
 <li style="margin-bottom: 4px;"><strong>Статус ответа всегда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HTTP 200 OK</code></strong>, если сам транспортный HTTP-запрос был успешно доставлен и распарсен.</li>
 <li style="margin-bottom: 4px;">Тело ответа содержит:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`json</p>
-<p style="margin-bottom: 6px;">{</p>
-<p style="margin-bottom: 6px;">"data": { "user": null, "recommendedArticles": [...] },</p>
-<p style="margin-bottom: 6px;">"errors": [{ "message": "user not found", "path": ["user"] }]</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-json"><code class="language-json">    {
+      &quot;data&quot;: { &quot;user&quot;: null, &quot;recommendedArticles&quot;: [...] },
+      &quot;errors&quot;: [{ &quot;message&quot;: &quot;user not found&quot;, &quot;path&quot;: [&quot;user&quot;] }]
+    }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Это позволяет фронтенду отобразить успешную часть страницы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">recommendedArticles</code>), даже если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user</code> завершился ошибкой (Partial Success).</li>
 </ul></div>
@@ -8120,7 +8052,7 @@ func TestValidationErrorExtensions(t *testing.T) {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте макет HTTP handler'а GraphQL.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте макет HTTP handler&#x27;а GraphQL.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Смоделируйте ошибку выборки одного из полей.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убедитесь в возврате HTTP-статуса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">200 OK</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверьте одновременное наличие полей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors</code>.</div></div>
@@ -8225,7 +8157,7 @@ func TestGraphQLHTTPStatusSpecification(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему возврат HTTP 200 OK при ошибках в GraphQL создает сложности для систем мониторинга (Prometheus/Nginx)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Nginx и стандартные HTTP Ingress контроллеры отслеживают процент 5xx ошибок в HTTP access-логах. Если все GraphQL ошибки возвращают 200 OK, графики HTTP Error Rate показывают 0% сбоев («все отлично»), хотя клиенты получают ошибки. Решение: экспортировать метрики ошибок резолверов напрямую из приложения через Prometheus middleware (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graphql_errors_total{code="..."}</code>).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Nginx и стандартные HTTP Ingress контроллеры отслеживают процент 5xx ошибок в HTTP access-логах. Если все GraphQL ошибки возвращают 200 OK, графики HTTP Error Rate показывают 0% сбоев («все отлично»), хотя клиенты получают ошибки. Решение: экспортировать метрики ошибок резолверов напрямую из приложения через Prometheus middleware (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graphql_errors_total{code=&quot;...&quot;}</code>).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-57">
@@ -8240,27 +8172,23 @@ func TestGraphQLHTTPStatusSpecification(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Организация связей графа данных в SDL:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">type Post {</p>
-<p style="margin-bottom: 6px;">id: ID!</p>
-<p style="margin-bottom: 6px;">title: String!</p>
-<p style="margin-bottom: 6px;">body: String!</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type User {</p>
-<p style="margin-bottom: 6px;">id: ID!</p>
-<p style="margin-bottom: 6px;">name: String!</p>
-<p style="margin-bottom: 6px;">posts: [Post!]! # Связь 1-to-N</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">type Post {
+  id: ID!
+  title: String!
+  body: String!
+}
+
+type User {
+  id: ID!
+  name: String!
+  posts: [Post!]! # Связь 1-to-N
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Поскольку в Go-структуре модели <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User</code> нет поля <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Posts</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> объявляет интерфейс:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">type UserResolver interface {</p>
-<p style="margin-bottom: 6px;">Posts(ctx context.Context, obj *model.User) ([]*model.Post, error)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">type UserResolver interface {
+    Posts(ctx context.Context, obj *model.User) ([]*model.Post, error)
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Разработчик реализует этот метод, получая ID пользователя через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">obj.ID</code>.</li>
 </ul></div>
@@ -8357,18 +8285,18 @@ func TestUserPostsRelation(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Возвращать посты всех пользователей при пустом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">obj.ID</code>: если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">obj.ID == ""</code>, метод должен вернуть пустой список, иначе возникнет утечка конфиденциальных данных.</p></div>
+    <div><p style="margin-bottom: 6px;">Возвращать посты всех пользователей при пустом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">obj.ID</code>: если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">obj.ID == &quot;&quot;</code>, метод должен вернуть пустой список, иначе возникнет утечка конфиденциальных данных.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как предотвратить циклическую перегрузку графа вида user -> posts -> author -> posts -> author...?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1. Ограничение глубины запроса (<strong>Query Depth Limiting</strong>): запросы глубже 5–7 уровней блокируются. 2. Ограничение сложности (<strong>Query Complexity</strong>): каждому полю присваивается вес (например 1 очко за скаляр, 10 очков за список), и если сумма $> 300$, запрос отклоняется до исполнения.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как предотвратить циклическую перегрузку графа вида user -&gt; posts -&gt; author -&gt; posts -&gt; author...?»</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1. Ограничение глубины запроса (<strong>Query Depth Limiting</strong>): запросы глубже 5–7 уровней блокируются. 2. Ограничение сложности (<strong>Query Complexity</strong>): каждому полю присваивается вес (например 1 очко за скаляр, 10 очков за список), и если сумма $&gt; 300$, запрос отклоняется до исполнения.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-58">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #58</div>
-    <div style="flex: 1;"><h3 class="exercise-title">GraphQL Subscriptions в реальном времени: каналы Go <-chan *User и протокол WebSockets</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">GraphQL Subscriptions в реальном времени: каналы Go &lt;-chan *User и протокол WebSockets</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -8380,19 +8308,17 @@ func TestUserPostsRelation(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В SDL объявляется корневой тип:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">type Subscription {</p>
-<p style="margin-bottom: 6px;">userCreated: User!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">type Subscription {
+  userCreated: User!
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Сигнатура метода в Go резолвере:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func (r *subscriptionResolver) UserCreated(ctx context.Context) (<-chan *model.User, error)</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func (r *subscriptionResolver) UserCreated(ctx context.Context) (&lt;-chan *model.User, error)</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Клиент устанавливает постоянное WebSocket соединение (по протоколу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graphql-transport-ws</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graphql-ws</code>).</li>
 <li style="margin-bottom: 4px;">При возникновении события (например регистрация пользователя в мутации <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">createUser</code>):</li>
-<li style="margin-bottom: 4px;">Сервер отправляет объект в Go-канал: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">userChan <- newUser</code>.</li>
+<li style="margin-bottom: 4px;">Сервер отправляет объект в Go-канал: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">userChan &lt;- newUser</code>.</li>
 <li style="margin-bottom: 4px;">Рантайм <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> считывает объект из канала, форматирует JSON и отправляет по сокету подписчику.</li>
 </ul></div>
   </div>
@@ -8401,7 +8327,7 @@ func TestUserPostsRelation(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте структуру шины событий с брокером каналов.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуйте метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserCreated</code> возвращающий канал для чтения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-chan *User</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуйте метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserCreated</code> возвращающий канал для чтения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-chan *User</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте отправку события при создании пользователя.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Протестируйте получение события подписчиком.</div></div>
   </div>
@@ -8510,7 +8436,7 @@ func TestGraphQLSubscription(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Не слушать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ctx.Done()</code>: если клиент закрыл вкладку в браузере, а сервер продолжает держать канал в памяти, возникнет утечка памяти и горутин (Goroutine Leak).</p></div>
+    <div><p style="margin-bottom: 6px;">Не слушать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ctx.Done()</code>: если клиент закрыл вкладку в браузере, а сервер продолжает держать канал в памяти, возникнет утечка памяти и горутин (Goroutine Leak).</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -8530,22 +8456,20 @@ func TestGraphQLSubscription(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Комплексная мутация обновления данных:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">input UpdateUserInput {</p>
-<p style="margin-bottom: 6px;">name: String</p>
-<p style="margin-bottom: 6px;">email: String</p>
-<p style="margin-bottom: 6px;">bio: String</p>
-<p style="margin-bottom: 6px;">}</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type Mutation {</p>
-<p style="margin-bottom: 6px;">updateUser(id: ID!, input: UpdateUserInput!): User!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">input UpdateUserInput {
+  name: String
+  email: String
+  bio: String
+}
+
+type Mutation {
+  updateUser(id: ID!, input: UpdateUserInput!): User!
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Требования к надежности:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Если поле передано (не <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>), оно обязано пройти строгую валидацию.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если передано пустое имя (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code>), возвращается ошибка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">BAD_USER_INPUT</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если передано пустое имя (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code>), возвращается ошибка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">BAD_USER_INPUT</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если передан некорректный email, операция прерывается.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Если все поля валидны, сущность атомарно обновляется и возвращается клиенту.</div></div>
   </div>
@@ -8681,7 +8605,7 @@ func TestNestedInputUpdate(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Настройте <strong>Apollo Federation</strong>: разделите вашу схему на несколько "subgraph" сервисов (Users, Products, Orders) и объедините их через Federation Gateway.</p></div>
+    <div><p style="margin-bottom: 6px;">Настройте <strong>Apollo Federation</strong>: разделите вашу схему на несколько &quot;subgraph&quot; сервисов (Users, Products, Orders) и объедините их через Federation Gateway.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8690,7 +8614,7 @@ func TestNestedInputUpdate(t *testing.T) {
 <li style="margin-bottom: 4px;">Монолитный GraphQL API не масштабируется на 50 независимых продуктовых команд.</li>
 <li style="margin-bottom: 4px;"><strong>Federation разбивает API на независимые подграфы (Subgraphs):</strong></li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Users Subgraph</code>: владеет типом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User</code> с ключом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">@key(fields: "id")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Users Subgraph</code>: владеет типом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User</code> с ключом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">@key(fields: &quot;id&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Orders Subgraph</code>: расширяет тип <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User</code>, добавляя поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">orders: [Order!]!</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Products Subgraph</code>: владеет товарами.</div>
 <ul style="margin: 8px 0 8px 20px;">
@@ -8826,7 +8750,7 @@ func TestFederationReference(t *testing.T) {
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Клиент вычисляет SHA-256 хэш строки запроса: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hash = sha256(queryText)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Клиент отправляет на сервер только хэш:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"extensions": {"persistedQuery": {"version": 1, "sha256Hash": "a1b2c3..."}}}</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;extensions&quot;: {&quot;persistedQuery&quot;: {&quot;version&quot;: 1, &quot;sha256Hash&quot;: &quot;a1b2c3...&quot;}}}</code>.</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сервер ищет запрос в быстром кэше (Redis / In-Memory):</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Если найден $\to$ выполняет запрос без пересылки текста (размер запроса ~100 байт!).</li>
@@ -8946,7 +8870,7 @@ func TestAutomaticPersistedQueries(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Добавьте <strong>query complexity analysis</strong>: ограничьте сложность запросов (глубину вложенности, количество полей), чтобы клиенты не могли "положить" сервер.</p></div>
+    <div><p style="margin-bottom: 6px;">Добавьте <strong>query complexity analysis</strong>: ограничьте сложность запросов (глубину вложенности, количество полей), чтобы клиенты не могли &quot;положить&quot; сервер.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9205,17 +9129,13 @@ npx graphql-codegen --config codegen.yml
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Минимальный рабочий цикл разработки фичи в gqlgen:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Редактирование схемы SDL:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">type User { id: ID! name: String! }</p>
-<p style="margin-bottom: 6px;">type Query { user(id: ID!): User }</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">   type User { id: ID! name: String! }
+   type Query { user(id: ID!): User }</code></pre></div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Команда кодогенерации: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go run github.com/99designs/gqlgen generate</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Реализация метода в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schema.resolvers.go</code>:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {</p>
-<p style="margin-bottom: 6px;">return &model.User{ID: id, Name: "Тестовый Пользователь"}, nil</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">   func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
+       return &amp;model.User{ID: id, Name: &quot;Тестовый Пользователь&quot;}, nil
+   }</code></pre></div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запуск <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go run server.go</code> и тестирование в браузере.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -9315,11 +9235,11 @@ func TestFastUserResolver(t *testing.T) {
 <li style="margin-bottom: 4px;"><strong>С клиентским батчингом (Apollo BatchHttpLink):</strong></li>
 <li style="margin-bottom: 4px;">Запросы объединяются в один JSON массив:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[{"query": "..."}, {"query": "..."}, {"query": "..."}]</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[{&quot;query&quot;: &quot;...&quot;}, {&quot;query&quot;: &quot;...&quot;}, {&quot;query&quot;: &quot;...&quot;}]</code>.</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Сервер выполняет все 3 операции параллельно и возвращает массив ответов:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[{"data": {...}}, {"data": {...}}, {"data": {...}}]</code> в рамках одного TCP соединения!</p></div>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[{&quot;data&quot;: {...}}, {&quot;data&quot;: {...}}, {&quot;data&quot;: {...}}]</code> в рамках одного TCP соединения!</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -9532,7 +9452,7 @@ func TestCacheControlHeaders(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как кэшировать GraphQL запросы на CDN Cloudflare, если они отправляются методом POST?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Напрямую POST запросы не кэшируются. Используют <strong>Automatic Persisted Queries (APQ) поверх HTTP GET</strong>: клиент отправляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GET /query?extensions={"persistedQuery":{"sha256Hash":"..."}}</code>. Поскольку это идемпотентный GET запрос со стабильным URL, Cloudflare кэширует его на Edge-серверах как обычный статический ресурс.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Напрямую POST запросы не кэшируются. Используют <strong>Automatic Persisted Queries (APQ) поверх HTTP GET</strong>: клиент отправляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GET /query?extensions={&quot;persistedQuery&quot;:{&quot;sha256Hash&quot;:&quot;...&quot;}}</code>. Поскольку это идемпотентный GET запрос со стабильным URL, Cloudflare кэширует его на Edge-серверах как обычный статический ресурс.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-67">
@@ -9670,17 +9590,15 @@ func TestStandaloneGraphQLValidation(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В SDL:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">directive @deprecated(reason: String = "Устарело") on FIELD_DEFINITION | ENUM_VALUE</p>
-<p style="margin-bottom: 6px;">directive @auth(role: Role = ADMIN) on FIELD_DEFINITION</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">type User {</p>
-<p style="margin-bottom: 6px;">id: ID!</p>
-<p style="margin-bottom: 6px;">fullName: String!</p>
-<p style="margin-bottom: 6px;">oldName: String @deprecated(reason: "Используйте fullName")</p>
-<p style="margin-bottom: 6px;">salary: Float! @auth(role: HR)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">directive @deprecated(reason: String = &quot;Устарело&quot;) on FIELD_DEFINITION | ENUM_VALUE
+directive @auth(role: Role = ADMIN) on FIELD_DEFINITION
+
+type User {
+  id: ID!
+  fullName: String!
+  oldName: String @deprecated(reason: &quot;Используйте fullName&quot;)
+  salary: Float! @auth(role: HR)
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Преимущества:</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">@deprecated</code>: автоматически отображается в документации Playground и подсвечивается зачеркиванием в IDE разработчиков.</li>
@@ -9769,7 +9687,7 @@ func TestCustomDirectives(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Директивы компилируются <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> в цепочку вызовов функций (Middleware Chain): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Directive1(ctx, next -> Directive2(ctx, next -> Resolver(ctx)))</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Директивы компилируются <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> в цепочку вызовов функций (Middleware Chain): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Directive1(ctx, next -&gt; Directive2(ctx, next -&gt; Resolver(ctx)))</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -9778,7 +9696,7 @@ func TestCustomDirectives(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Каков жизненный цикл вывода поля из эксплуатации (Deprecation Lifecycle) в BigTech?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1. Поле помечается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">@deprecated(reason: "...")</code>. 2. Включается логирование использования поля (метрика Prometheus <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graphql_deprecated_field_usage_total</code>). 3. Отслеживается трафик от старых мобильных клиентов. 4. Когда трафик падает до 0.01%, поле безопасно удаляется из схемы.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1. Поле помечается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">@deprecated(reason: &quot;...&quot;)</code>. 2. Включается логирование использования поля (метрика Prometheus <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graphql_deprecated_field_usage_total</code>). 3. Отслеживается трафик от старых мобильных клиентов. 4. Когда трафик падает до 0.01%, поле безопасно удаляется из схемы.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-69">
@@ -9796,28 +9714,24 @@ func TestCustomDirectives(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Антипаттерн (жесткая конкатенация строк в запросе):</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">query { user(id: "101") { name } }</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">query { user(id: &quot;101&quot;) { name } }</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Промышленный стандарт (Variables):</strong></li>
 <li style="margin-bottom: 4px;">Окно запроса (Query Editor):</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">query GetUserProfile($userId: ID!) {</p>
-<p style="margin-bottom: 6px;">user(id: $userId) {</p>
-<p style="margin-bottom: 6px;">id</p>
-<p style="margin-bottom: 6px;">name</p>
-<p style="margin-bottom: 6px;">email</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">    query GetUserProfile($userId: ID!) {
+      user(id: $userId) {
+        id
+        name
+        email
+      }
+    }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Вкладка переменных (Query Variables):</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`json</p>
-<p style="margin-bottom: 6px;">{</p>
-<p style="margin-bottom: 6px;">"userId": "101"</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-json"><code class="language-json">    {
+      &quot;userId&quot;: &quot;101&quot;
+    }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Переменные передаются в отдельном ключе JSON <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">variables</code>, что исключает уязвимости инъекций и позволяет серверу кэшировать скомпилированное AST запроса.</li>
 </ul></div>
@@ -9917,16 +9831,14 @@ func TestPlaygroundParameterizedQuery(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Расширение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otelgraphql</code> создает иерархическое дерево спанов:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`text</p>
-<p style="margin-bottom: 6px;">Root HTTP POST /query (OpenTelemetry Span)</p>
-<p style="margin-bottom: 6px;">├── GraphQL Operation: GetUserDashboard</p>
-<p style="margin-bottom: 6px;">│   ├── Field: user (Duration: 5ms)</p>
-<p style="margin-bottom: 6px;">│   │   └── SQL: SELECT * FROM users (Span БД)</p>
-<p style="margin-bottom: 6px;">│   ├── Field: orders (Duration: 8ms)</p>
-<p style="margin-bottom: 6px;">│   │   └── SQL: SELECT * FROM orders WHERE user_id = ? (Span БД)</p>
-<p style="margin-bottom: 6px;">│   └── Field: bonuses (Duration: 12ms)</p>
-<p style="margin-bottom: 6px;">│       └── gRPC: LoyaltyService.GetBalance (Span gRPC)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-text"><code class="language-text">Root HTTP POST /query (OpenTelemetry Span)
+├── GraphQL Operation: GetUserDashboard
+│   ├── Field: user (Duration: 5ms)
+│   │   └── SQL: SELECT * FROM users (Span БД)
+│   ├── Field: orders (Duration: 8ms)
+│   │   └── SQL: SELECT * FROM orders WHERE user_id = ? (Span БД)
+│   └── Field: bonuses (Duration: 12ms)
+│       └── gRPC: LoyaltyService.GetBalance (Span gRPC)</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Это позволяет мгновенно обнаружить, какое именно вложенное поле тормозит выполнение общего запроса.</li>
 </ul></div>
@@ -10043,11 +9955,9 @@ func TestOpenTelemetryTracing(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В SDL:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`graphql</p>
-<p style="margin-bottom: 6px;">type Mutation {</p>
-<p style="margin-bottom: 6px;">createUser(name: String!): User!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-graphql"><code class="language-graphql">type Mutation {
+  createUser(name: String!): User!
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Метод резолвера:</li>
 </ul>
@@ -10126,7 +10036,7 @@ func TestSimpleCreateUserMutation(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Мутация гарантирует, что возвращенный объект немедленно доступен для чтения в том же запросе, если клиент запросил вложенные поля: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mutation { createUser(name: "...") { id name createdAt } }</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Мутация гарантирует, что возвращенный объект немедленно доступен для чтения в том же запросе, если клиент запросил вложенные поля: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mutation { createUser(name: &quot;...&quot;) { id name createdAt } }</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -10252,7 +10162,7 @@ func TestNPlusOneProof(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Алгоритм временного окна (Batch Window Dispatcher):</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Когда первый резолвер обращается к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">loader.Load("u1")</code>:</li>
+<li style="margin-bottom: 4px;">Когда первый резолвер обращается к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">loader.Load(&quot;u1&quot;)</code>:</li>
 <li style="margin-bottom: 4px;">Создается канал ожидания результата.</li>
 <li style="margin-bottom: 4px;">Запускается таймер окна <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.After(2 * time.Millisecond)</code>.</li>
 <li style="margin-bottom: 4px;">Все остальные резолверы, пришедшие в течение 2 мс, складывают свои <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">author_id</code> в общий срез.</li>
@@ -10552,7 +10462,7 @@ func TestECommercePlatform(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как предотвратить овербукинг (продажу одного товара двум покупателям) при GraphQL мутации createOrder?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать пессимистическую блокировку в SQL (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM inventory WHERE product_id = $1 FOR UPDATE</code>) или атомарное списание <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UPDATE inventory SET stock = stock - $2 WHERE product_id = $1 AND stock >= $2</code>. Если обновлено 0 строк, мутация возвращает ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OUT_OF_STOCK</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать пессимистическую блокировку в SQL (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM inventory WHERE product_id = $1 FOR UPDATE</code>) или атомарное списание <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UPDATE inventory SET stock = stock - $2 WHERE product_id = $1 AND stock &gt;= $2</code>. Если обновлено 0 строк, мутация возвращает ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OUT_OF_STOCK</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-75">
@@ -10564,7 +10474,7 @@ func TestECommercePlatform(t *testing.T) {
     <div class="callout-title">📌 Условие задачи</div>
     <div><p style="margin-bottom: 6px;">Реализуй <strong>GraphQL Gateway</strong> (Apollo Federation-style, упрощённо):</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">User Service: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type User @key(fields: "id") { id: ID! name: String! }</code></li>
+<li style="margin-bottom: 4px;">User Service: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type User @key(fields: &quot;id&quot;) { id: ID! name: String! }</code></li>
 </ul>
 <div style="height: 8px;"></div>
 <ul style="margin: 8px 0 8px 20px;">
@@ -10572,7 +10482,7 @@ func TestECommercePlatform(t *testing.T) {
 </ul>
 <div style="height: 8px;"></div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Gateway агрегирует schema'ы, маршрутизирует queries</li>
+<li style="margin-bottom: 4px;">Gateway агрегирует schema&#x27;ы, маршрутизирует queries</li>
 </ul></div>
   </div>
   <div class="callout callout-theory">
@@ -10582,8 +10492,8 @@ func TestECommercePlatform(t *testing.T) {
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">query { orders { id user { name } } }</code></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Шлюз анализирует план запроса (Query Plan):</div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Шаг 1: Выполнить запрос к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Order Service</code> $\to$ получить список заказов с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">userId: "u1"</code>.</li>
-<li style="margin-bottom: 4px;">Шаг 2: Выполнить запрос к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User Service</code> $\to$ передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">representations: [{__typename: "User", id: "u1"}]</code>.</li>
+<li style="margin-bottom: 4px;">Шаг 1: Выполнить запрос к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Order Service</code> $\to$ получить список заказов с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">userId: &quot;u1&quot;</code>.</li>
+<li style="margin-bottom: 4px;">Шаг 2: Выполнить запрос к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User Service</code> $\to$ передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">representations: [{__typename: &quot;User&quot;, id: &quot;u1&quot;}]</code>.</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Шлюз склеивает результаты в единое JSON-дерево и отдает клиенту.</div></div>
   </div>
@@ -10835,13 +10745,13 @@ func TestAuthMiddlewarePost(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать строковый ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"userID"</code> в контексте: строковые ключи подвержены коллизиям и считаются антипаттерном в Go (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go vet</code> выдает предупреждение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">should not use basic type string as key in context.WithValue</code>).</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать строковый ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;userID&quot;</code> в контексте: строковые ключи подвержены коллизиям и считаются антипаттерном в Go (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go vet</code> выдает предупреждение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">should not use basic type string as key in context.WithValue</code>).</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как передавать JWT токен в GraphQL Subscriptions по WebSocket?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> В WebSocket протоколе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">graphql-ws</code> заголовки HTTP не отправляются на каждый запрос. Клиент передает токен в первом служебном сообщении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ConnectionInit</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"type": "connection_init", "payload": {"Authorization": "Bearer ..."}}</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;type&quot;: &quot;connection_init&quot;, &quot;payload&quot;: {&quot;Authorization&quot;: &quot;Bearer ...&quot;}}</code>.</p>
 <p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gqlgen</code> настраивается хук <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">transport.Websocket{InitFunc: func(ctx context.Context, initPayload transport.InitPayload) (context.Context, error) { ... }}</code>, который извлекает токен из payload и валидирует сессию до открытия подписки.</p></div>
   </div>
 </div>
@@ -10860,22 +10770,18 @@ func TestAuthMiddlewarePost(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">server.go</code>:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">srv := handler.NewDefaultServer(generated.NewExecutableSchema(cfg))</p>
-<p style="margin-bottom: 6px;">srv.AddTransport(transport.Websocket{</p>
-<p style="margin-bottom: 6px;">KeepAlivePingInterval: 10 * time.Second,</p>
-<p style="margin-bottom: 6px;">})</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">srv := handler.NewDefaultServer(generated.NewExecutableSchema(cfg))
+srv.AddTransport(transport.Websocket{
+    KeepAlivePingInterval: 10 * time.Second,
+})</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Резолвер подписки:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func (r *subscriptionResolver) MessageReceived(ctx context.Context) (<-chan *model.Message, error) {</p>
-<p style="margin-bottom: 6px;">ch := make(chan *model.Message, 1)</p>
-<p style="margin-bottom: 6px;">r.bus.Subscribe(ctx, ch)</p>
-<p style="margin-bottom: 6px;">return ch, nil</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">func (r *subscriptionResolver) MessageReceived(ctx context.Context) (&lt;-chan *model.Message, error) {
+    ch := make(chan *model.Message, 1)
+    r.bus.Subscribe(ctx, ch)
+    return ch, nil
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Когда внешний HTTP обработчик вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">r.bus.Broadcast(msg)</code>, сообщение отправляется во все зарегистрированные каналы.</li>
 </ul></div>
@@ -11017,7 +10923,7 @@ func TestWebSocketSubscriptionIntegration(t *testing.T) {
 </ul>
 <div style="height: 8px;"></div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">GraphQL resolver'ы вызывают gRPC-сервисы</li>
+<li style="margin-bottom: 4px;">GraphQL resolver&#x27;ы вызывают gRPC-сервисы</li>
 </ul>
 <div style="height: 8px;"></div>
 <ul style="margin: 8px 0 8px 20px;">
@@ -11027,24 +10933,22 @@ func TestWebSocketSubscriptionIntegration(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Архитектурный эталон современного Enterprise BFF (Backend for Frontend):</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
-<p style="margin-bottom: 6px;">[ Frontend: React / iOS / Android ]</p>
-<p style="margin-bottom: 6px;">|  GraphQL (HTTP POST / WebSocket Subscriptions)</p>
-<p style="margin-bottom: 6px;">v</p>
-<p style="margin-bottom: 6px;">+-------------------------------------------------------+</p>
-<p style="margin-bottom: 6px;">|                 GRAPHQL BFF GATEWAY                   |</p>
-<p style="margin-bottom: 6px;">|  - gqlgen runtime, DataLoader, Auth, OpenTelemetry    |</p>
-<p style="margin-bottom: 6px;">|  - Трассировка, агрегация запросов, преобразование    |</p>
-<p style="margin-bottom: 6px;">+-------------------------------------------------------+</p>
-<p style="margin-bottom: 6px;">|  Внутренний gRPC (HTTP/2, Protobuf, mTLS)</p>
-<p style="margin-bottom: 6px;">+---+-------------------+-------------------+</p>
-<p style="margin-bottom: 6px;">|                       |                   |</p>
-<p style="margin-bottom: 6px;">v                       v                   v</p>
-<p style="margin-bottom: 6px;">+---------------+     +---------------+   +---------------+</p>
-<p style="margin-bottom: 6px;">| USER SERVICE  |     | ORDER SERVICE |   |PAYMENT SERVICE|</p>
-<p style="margin-bottom: 6px;">| (gRPC Server) |     | (gRPC Server) |   |(gRPC Streaming|</p>
-<p style="margin-bottom: 6px;">+---------------+     +---------------+   +---------------+</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-none"><code class="language-none">[ Frontend: React / iOS / Android ]
+          |  GraphQL (HTTP POST / WebSocket Subscriptions)
+          v
++-------------------------------------------------------+
+|                 GRAPHQL BFF GATEWAY                   |
+|  - gqlgen runtime, DataLoader, Auth, OpenTelemetry    |
+|  - Трассировка, агрегация запросов, преобразование    |
++-------------------------------------------------------+
+          |  Внутренний gRPC (HTTP/2, Protobuf, mTLS)
+      +---+-------------------+-------------------+
+      |                       |                   |
+      v                       v                   v
++---------------+     +---------------+   +---------------+
+| USER SERVICE  |     | ORDER SERVICE |   |PAYMENT SERVICE|
+| (gRPC Server) |     | (gRPC Server) |   |(gRPC Streaming|
++---------------+     +---------------+   +---------------+</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Преимущества:</strong></li>
 <li style="margin-bottom: 4px;">Клиенты получают гибкий GraphQL без Overfetching и Underfetching.</li>

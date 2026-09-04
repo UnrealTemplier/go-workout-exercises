@@ -749,7 +749,7 @@
       <a href="#ex-50" class="sub-exercise-link" title="Упр 50: Множество уникальных строк (Set) на struct{} vs bool: сравнение накладных расходов памяти">50. Множество уникальных строк (Set) на struct{} vs bool: сравнение накладных расходов памяти</a>
       <a href="#ex-51" class="sub-exercise-link" title="Упр 51: Инвертирование мапы с группировкой неуникальных значений в срезы map[V][]K">51. Инвертирование мапы с группировкой неуникальных значений в срезы map[V][]K</a>
       <a href="#ex-52" class="sub-exercise-link" title="Упр 52: Таблица маршрутизации команд map[string]func(int, int) int">52. Таблица маршрутизации команд map[string]func(int, int) int</a>
-      <a href="#ex-53" class="sub-exercise-link" title="Упр 53: Каверзный кейс: запрет взятия адреса элемента мапы &m[key] из-за динамического перехэширования">53. Каверзный кейс: запрет взятия адреса элемента мапы &m[key] из-за динамического перехэширования</a>
+      <a href="#ex-53" class="sub-exercise-link" title="Упр 53: Каверзный кейс: запрет взятия адреса элемента мапы &amp;m[key] из-за динамического перехэширования">53. Каверзный кейс: запрет взятия адреса элемента мапы &amp;m[key] из-за динамического перехэширования</a>
       <a href="#ex-54" class="sub-exercise-link" title="Упр 54: Ловушка паники записи в неинициализированную (nil) мапу и исправление через make">54. Ловушка паники записи в неинициализированную (nil) мапу и исправление через make</a>
       <a href="#ex-55" class="sub-exercise-link" title="Упр 55: Полная классификация типов ключей в Go: Comparable vs Non-Comparable типы">55. Полная классификация типов ключей в Go: Comparable vs Non-Comparable типы</a>
       <a href="#ex-56" class="sub-exercise-link" title="Упр 56: Собственная функция глубокого сравнения двух мап DeepEqualMaps(m1, m2)">56. Собственная функция глубокого сравнения двух мап DeepEqualMaps(m1, m2)</a>
@@ -1094,16 +1094,16 @@
     <div><p style="margin-bottom: 6px;"><strong>Поведение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[K]V</code> при обращении к отсутствующему ключу:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В отличие от Python (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">KeyError</code>) или C++ (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">std::map::at</code> out_of_range), в Go чтение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val := m[key]</code> <strong>никогда не вызывает панику</strong> и не завершает программу ошибкой;</li>
-<li style="margin-bottom: 4px;">Если ключ не найден в хэш-таблице, рантайм Go возвращает <strong>нулевое значение типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">V</code></strong> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code> для чисел, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code> для строк, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code> для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bool</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> для указателей/срезов/мап).</li>
+<li style="margin-bottom: 4px;">Если ключ не найден в хэш-таблице, рантайм Go возвращает <strong>нулевое значение типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">V</code></strong> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code> для чисел, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code> для строк, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code> для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bool</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> для указателей/срезов/мап).</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scores := map[string]int{"Alice": 95, "Bob": 80}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запрашиваем существующий ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Alice"</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запрашиваем отсутствующий ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Charlie"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scores := map[string]int{&quot;Alice&quot;: 95, &quot;Bob&quot;: 80}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запрашиваем существующий ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Alice&quot;</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запрашиваем отсутствующий ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Charlie&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сравниваем результаты.</div></div>
   </div>
   <div class="code-container">
@@ -1143,7 +1143,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Предположение, что возвращенный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code> означает, что ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Charlie": 0</code> реально сохранен в мапе. Для различения отсутствия и реального нуля используют идиому <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">comma-ok</code>.</li>
+<li style="margin-bottom: 4px;">Предположение, что возвращенный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code> означает, что ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Charlie&quot;: 0</code> реально сохранен в мапе. Для различения отсутствия и реального нуля используют идиому <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">comma-ok</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -1159,22 +1159,22 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Объяви var m map[string]int (nil map). Прочитай значение по ключу: v := m["key"]. Покажи, что не паникует, возвращает zero value (0). Затем попробуй записать: m["key"] = 1 — получи панику assignment to entry in nil map. Объясни, почему чтение безопасно, а запись — нет.</p></div>
+    <div><p style="margin-bottom: 6px;">Объяви var m map[string]int (nil map). Прочитай значение по ключу: v := m[&quot;key&quot;]. Покажи, что не паникует, возвращает zero value (0). Затем попробуй записать: m[&quot;key&quot;] = 1 — получи панику assignment to entry in nil map. Объясни, почему чтение безопасно, а запись — нет.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Nil Map в рантайме Go:</strong></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Неинициализированная мапа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var m map[string]int</code> имеет значение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> (внутренний указатель на структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hmap</code> равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x0</code>);</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Чтение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m["key"]</code>:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.mapaccess1</code> проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if h == nil { return zeroVal }</code> $ightarrow$ абсолютно безопасно;</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Запись <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m["key"] = 1</code>:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.mapassign</code> не может выделить память под бакеты, так как заголовка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hmap</code> не существует $ightarrow$ вызывает немедленную фатальную панику <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic: assignment to entry in nil map</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Чтение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[&quot;key&quot;]</code>:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.mapaccess1</code> проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if h == nil { return zeroVal }</code> $ightarrow$ абсолютно безопасно;</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Запись <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[&quot;key&quot;] = 1</code>:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.mapassign</code> не может выделить память под бакеты, так как заголовка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hmap</code> не существует $ightarrow$ вызывает немедленную фатальную панику <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic: assignment to entry in nil map</code>.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявляем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var m map[string]int</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Читаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v := m["test"]</code> и убеждаемся в отсутствии паники.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Перехватываем панику при записи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m["test"] = 100</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">recover()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Читаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v := m[&quot;test&quot;]</code> и убеждаемся в отсутствии паники.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Перехватываем панику при записи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[&quot;test&quot;] = 100</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">recover()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Исправляем инициализацией <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">make(map[string]int)</code>.</div></div>
   </div>
   <div class="code-container">
@@ -1246,7 +1246,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создай мапу-литерал: map[string]int{"one": 1, "two": 2, "three": 3}. Пройди по ней for k, v := range.</p></div>
+    <div><p style="margin-bottom: 6px;">Создай мапу-литерал: map[string]int{&quot;one&quot;: 1, &quot;two&quot;: 2, &quot;three&quot;: 3}. Пройди по ней for k, v := range.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1261,7 +1261,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Инициализируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">numbers := map[string]int{"one": 1, "two": 2, "three": 3}</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Инициализируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">numbers := map[string]int{&quot;one&quot;: 1, &quot;two&quot;: 2, &quot;three&quot;: 3}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проходим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for k, v := range numbers</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Печатаем пары ключ-значение.</div></div>
   </div>
@@ -1313,7 +1313,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Можно ли узнать емкость мапы через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cap(m)</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> НЕТ! Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cap()</code> запрещена для мап (ошибка компиляции). Мапа динамически расширяется по мере роста коэффициента заполнения (Load Factor $> 6.5$).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> НЕТ! Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cap()</code> запрещена для мап (ошибка компиляции). Мапа динамически расширяется по мере роста коэффициента заполнения (Load Factor $&gt; 6.5$).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-4">
@@ -1323,7 +1323,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Идиома Comma Ok: Как отличить, в мапе реально лежит ноль, или ключа просто нет? Запроси значение как val, ok := m["key"] и выведи ok.</p></div>
+    <div><p style="margin-bottom: 6px;">Идиома Comma Ok: Как отличить, в мапе реально лежит ноль, или ключа просто нет? Запроси значение как val, ok := m[&quot;key&quot;] и выведи ok.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1338,9 +1338,9 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">balances := map[string]int{"Alice": 0, "Bob": 500}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Alice"</code> (баланс 0, но клиент существует).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверяем ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Charlie"</code> (клиент отсутствует).</div></div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">balances := map[string]int{&quot;Alice&quot;: 0, &quot;Bob&quot;: 500}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Alice&quot;</code> (баланс 0, но клиент существует).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверяем ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Charlie&quot;</code> (клиент отсутствует).</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -1479,7 +1479,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Безопасное удаление: Используй функцию delete(m, "key"). Попробуй удалить ключ, которого нет в мапе (убедись, что это не вызывает ошибок).</p></div>
+    <div><p style="margin-bottom: 6px;">Безопасное удаление: Используй функцию delete(m, &quot;key&quot;). Попробуй удалить ключ, которого нет в мапе (убедись, что это не вызывает ошибок).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1494,9 +1494,9 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m := map[string]int{"auth": 1, "db": 2}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Удаляем существующий ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"auth"</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Удаляем отсутствующий ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"ghost"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m := map[string]int{&quot;auth&quot;: 1, &quot;db&quot;: 2}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Удаляем существующий ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;auth&quot;</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Удаляем отсутствующий ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;ghost&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Удаляем из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>-мапы.</div></div>
   </div>
   <div class="code-container">
@@ -1639,7 +1639,7 @@ func main() {
     <div><p style="margin-bottom: 6px;"><strong>Опасность вложенных мап (Nested Maps):</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">При создании внешней мапы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">outer := make(map[string]map[string]int)</code> все ее значения по умолчанию равны <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>;</li>
-<li style="margin-bottom: 4px;">Попытка записи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">outer["user1"]["score"] = 100</code> вызовет панику <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assignment to entry in nil map</code>, так как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">outer["user1"]</code> равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>;</li>
+<li style="margin-bottom: 4px;">Попытка записи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">outer[&quot;user1&quot;][&quot;score&quot;] = 100</code> вызовет панику <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assignment to entry in nil map</code>, так как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">outer[&quot;user1&quot;]</code> равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>;</li>
 <li style="margin-bottom: 4px;">Перед записью во внутреннюю мапу <strong>обязательно проверяют и инициализируют ее через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">make</code></strong>.</li>
 </ul></div>
   </div>
@@ -1700,7 +1700,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Прямая запись <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grades["Анна"]["Физика"] = 5</code> без предварительного <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">make</code> для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Анна"</code>.</li>
+<li style="margin-bottom: 4px;">Прямая запись <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grades[&quot;Анна&quot;][&quot;Физика&quot;] = 5</code> без предварительного <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">make</code> для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Анна&quot;</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -1716,13 +1716,13 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Попробуйте обратиться к несуществующему ключу в мапе. Какое значение "по умолчанию" вернется?</p></div>
+    <div><p style="margin-bottom: 6px;">Попробуйте обратиться к несуществующему ключу в мапе. Какое значение &quot;по умолчанию&quot; вернется?</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Сводная таблица Zero Values при промахе в map:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]string</code> $ightarrow <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]string</code> $ightarrow <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code></li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]bool</code> $ightarrow <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code></li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string][]int</code> $ightarrow <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> срез (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len=0</code>)</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]Point</code> $ightarrow <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Point{X: 0, Y: 0}</code></li>
@@ -1782,13 +1782,13 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Предположение, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mSlice["k"]</code> вернет аллоцированный срез: возвращается именно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>-срез.</li>
+<li style="margin-bottom: 4px;">Предположение, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mSlice[&quot;k&quot;]</code> вернет аллоцированный срез: возвращается именно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>-срез.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Можно ли делать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">append</code> к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mSlice["missing"]</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> ДА! <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mSlice["k"] = append(mSlice["k"], 10)</code> работает корректно, так как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">append(nil, 10)</code> создает валидный срез <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[10]</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Можно ли делать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">append</code> к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mSlice[&quot;missing&quot;]</code>?»</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> ДА! <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mSlice[&quot;k&quot;] = append(mSlice[&quot;k&quot;], 10)</code> работает корректно, так как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">append(nil, 10)</code> создает валидный срез <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[10]</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-10">
@@ -1878,15 +1878,15 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создай мапу map[string][]int (значение — слайс). Добавь элементы: m["nums"] = append(m["nums"], 1). Покажи, что если append вызывает реаллокацию, мапа не увидит новые элементы (потому что слайс в мапе — это struct data, и она не обновляется автоматически). Исправь через переприсваивание.</p></div>
+    <div><p style="margin-bottom: 6px;">Создай мапу map[string][]int (значение — слайс). Добавь элементы: m[&quot;nums&quot;] = append(m[&quot;nums&quot;], 1). Покажи, что если append вызывает реаллокацию, мапа не увидит новые элементы (потому что слайс в мапе — это struct data, и она не обновляется автоматически). Исправь через переприсваивание.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Механика срезов в значениях мапы:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Значением в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string][]int</code> хранится 24-байтная копия дескриптора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SliceHeader</code>;</li>
-<li style="margin-bottom: 4px;">Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">append(m["nums"], 1)</code> создает <strong>новый локальный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SliceHeader</code></strong>;</li>
-<li style="margin-bottom: 4px;">Если не сделать обратное присваивание <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m["nums"] = append(...)</code>, мапа сохранит старый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SliceHeader</code> со старой длиной <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Len</code>!</li>
+<li style="margin-bottom: 4px;">Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">append(m[&quot;nums&quot;], 1)</code> создает <strong>новый локальный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SliceHeader</code></strong>;</li>
+<li style="margin-bottom: 4px;">Если не сделать обратное присваивание <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[&quot;nums&quot;] = append(...)</code>, мапа сохранит старый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SliceHeader</code> со старой длиной <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Len</code>!</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -1937,7 +1937,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m["scores"]</code> возвращает копию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SliceHeader</code> по значению. Запись <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m["k"] = ...</code> перезаписывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SliceHeader</code> в бакете хэш-таблицы.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[&quot;scores&quot;]</code> возвращает копию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SliceHeader</code> по значению. Запись <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[&quot;k&quot;] = ...</code> перезаписывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SliceHeader</code> в бакете хэш-таблицы.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -2113,7 +2113,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Игнорирование знаков препинания при сложном парсинге (решается через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Trim(w, ".,!?:")</code>).</li>
+<li style="margin-bottom: 4px;">Игнорирование знаков препинания при сложном парсинге (решается через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Trim(w, &quot;.,!?:&quot;)</code>).</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -2228,7 +2228,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RuneFrequency(text string) map[rune]int</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Тестируем на мультиязычной строке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Go — это огонь! 🚀"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Тестируем на мультиязычной строке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Go — это огонь! 🚀&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Выводим результаты.</div></div>
   </div>
   <div class="code-container">
@@ -2323,7 +2323,7 @@ func main() {
     <div><p style="margin-bottom: 6px;"><strong>Специфика указателей как ключей мапы:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">При использовании указателя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*Point</code> в качестве ключа хэшируется и сравнивается <strong>сам числовой адрес ячейки памяти</strong>, а НЕ поля структуры;</li>
-<li style="margin-bottom: 4px;">Две разные переменные <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p1 := &Point{1, 2}</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p2 := &Point{1, 2}</code> имеют разные адреса (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p1 != p2</code>), поэтому <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[p2]</code> вернет пустую строку, даже если их координаты идентичны.</li>
+<li style="margin-bottom: 4px;">Две разные переменные <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p1 := &amp;Point{1, 2}</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p2 := &amp;Point{1, 2}</code> имеют разные адреса (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p1 != p2</code>), поэтому <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[p2]</code> вернет пустую строку, даже если их координаты идентичны.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -2539,9 +2539,9 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем мапу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">currencies := map[string]string{"USD": "Доллар", "EUR": "Евро"}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Удаляем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"USD"</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Пытаемся удалить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"GBP"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем мапу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">currencies := map[string]string{&quot;USD&quot;: &quot;Доллар&quot;, &quot;EUR&quot;: &quot;Евро&quot;}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Удаляем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;USD&quot;</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Пытаемся удалить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;GBP&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверяем длину.</div></div>
   </div>
   <div class="code-container">
@@ -2605,7 +2605,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Удали элемент через delete(m, "key"). Покажи, что удаление несуществующего ключа не паникует и не возвращает ошибку.</p></div>
+    <div><p style="margin-bottom: 6px;">Удали элемент через delete(m, &quot;key&quot;). Покажи, что удаление несуществующего ключа не паникует и не возвращает ошибку.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2615,8 +2615,8 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m := map[string]int{"status": 200}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызываем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">delete(m, "status")</code> 3 раза подряд.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m := map[string]int{&quot;status&quot;: 200}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызываем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">delete(m, &quot;status&quot;)</code> 3 раза подряд.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убеждаемся в стабильности работы.</div></div>
   </div>
   <div class="code-container">
@@ -2671,7 +2671,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Мапа с функциями (Command Dispatcher): Создай map[string]func(int, int) int. Положи туда ключи "add", "sub", "mul" и соответствующие анонимные функции. Вызови нужную функцию по строковому ключу.</p></div>
+    <div><p style="margin-bottom: 6px;">Мапа с функциями (Command Dispatcher): Создай map[string]func(int, int) int. Положи туда ключи &quot;add&quot;, &quot;sub&quot;, &quot;mul&quot; и соответствующие анонимные функции. Вызови нужную функцию по строковому ключу.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2686,7 +2686,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dispatcher := make(map[string]func(int, int) int)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Регистрируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"add"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"sub"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"mul"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Регистрируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;add&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;sub&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;mul&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Пишем безопасную функцию выполнения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Execute</code>.</div></div>
   </div>
   <div class="code-container">
@@ -2857,7 +2857,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Паника при инициализации: Объявите мапу var m map[string]int без инициализации. Попробуйте прочитать ключ — что вернет Go? Теперь попробуйте записать значение m["key"] = 1. Зафиксируйте панику. Инициализируйте мапу с помощью make и исправьте ошибку.</p></div>
+    <div><p style="margin-bottom: 6px;">Паника при инициализации: Объявите мапу var m map[string]int без инициализации. Попробуйте прочитать ключ — что вернет Go? Теперь попробуйте записать значение m[&quot;key&quot;] = 1. Зафиксируйте панику. Инициализируйте мапу с помощью make и исправьте ошибку.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2868,7 +2868,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявляем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var m map[string]int</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Читаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m["test"]</code> (возвращает 0).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Читаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[&quot;test&quot;]</code> (возвращает 0).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Перехватываем панику записи.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Исправляем через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">make(map[string]int)</code>.</div></div>
   </div>
@@ -2941,9 +2941,9 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Инверсия мапы (Key-Value Inversion):</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Исходная мапа сопоставляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string -> int</code>;</li>
-<li style="margin-bottom: 4px;">Инвертированная мапа сопоставляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int -> string</code>;</li>
-<li style="margin-bottom: 4px;"><strong>Проблема коллизий:</strong> если двум разным ключам соответствовало одно значение (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"admin": 1</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"root": 1</code>), в инвертированной мапе один ключ затрет другой!</li>
+<li style="margin-bottom: 4px;">Исходная мапа сопоставляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string -&gt; int</code>;</li>
+<li style="margin-bottom: 4px;">Инвертированная мапа сопоставляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int -&gt; string</code>;</li>
+<li style="margin-bottom: 4px;"><strong>Проблема коллизий:</strong> если двум разным ключам соответствовало одно значение (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;admin&quot;: 1</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;root&quot;: 1</code>), в инвертированной мапе один ключ затрет другой!</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -3018,7 +3018,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">[Каверзный кейс]: Объяви var m map[string]int. Попробуй сделать m["a"] = 1 (поймай панику записи в nil-мапу). Исправь с помощью make.</p></div>
+    <div><p style="margin-bottom: 6px;">[Каверзный кейс]: Объяви var m map[string]int. Попробуй сделать m[&quot;a&quot;] = 1 (поймай панику записи в nil-мапу). Исправь с помощью make.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3319,7 +3319,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Передача пустой строки: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Fields("")</code> вернет пустой срез, функция безопасно вернет пустую мапу.</li>
+<li style="margin-bottom: 4px;">Передача пустой строки: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Fields(&quot;&quot;)</code> вернет пустой срез, функция безопасно вернет пустую мапу.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -3350,7 +3350,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m := map[string]int{"A": 10, "B": 20}</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m := map[string]int{&quot;A&quot;: 10, &quot;B&quot;: 20}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Пробуем наивный цикл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for _, v := range m { v += 100 }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Показываем, что мапа не изменилась.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выполняем правильный цикл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for k := range m { m[k] += 100 }</code>.</div></div>
@@ -3426,7 +3426,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем справочник <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">capitals := map[string]string{ "Россия": "Москва", "Германия": "Берлин" }</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем справочник <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">capitals := map[string]string{ &quot;Россия&quot;: &quot;Москва&quot;, &quot;Германия&quot;: &quot;Берлин&quot; }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Ищем существующую страну.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Ищем отсутствующую страну.</div></div>
   </div>
@@ -3478,12 +3478,12 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">При отсутствии ключа рантайм возвращает пустую строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code> (длина 0, указатель nil).</p></div>
+    <div><p style="margin-bottom: 6px;">При отсутствии ключа рантайм возвращает пустую строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code> (длина 0, указатель nil).</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Проверка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if capitals[country] != ""</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">comma-ok</code>: если столица пустая строка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code> (город-государство без столицы), проверка выдаст ложный результат.</li>
+<li style="margin-bottom: 4px;">Проверка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if capitals[country] != &quot;&quot;</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">comma-ok</code>: если столица пустая строка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code> (город-государство без столицы), проверка выдаст ложный результат.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -3509,8 +3509,8 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем числовую мапу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ages := map[string]int{"Bob": 25}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Читаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Alice"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем числовую мапу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ages := map[string]int{&quot;Bob&quot;: 25}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Читаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Alice&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Печатаем нулевое значение.</div></div>
   </div>
   <div class="code-container">
@@ -3579,7 +3579,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем неупорядоченную мапу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scores := map[string]int{"Dan": 90, "Ann": 95, "Ben": 85}</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем неупорядоченную мапу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scores := map[string]int{&quot;Dan&quot;: 90, &quot;Ann&quot;: 95, &quot;Ben&quot;: 85}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Собираем ключи в срез <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">keys</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сортируем срез <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slices.Sort(keys)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выводим данные в строгом алфавитном порядке.</div></div>
@@ -3678,7 +3678,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем мапу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cache := map[string]int{"a": 1, "b": 2, "c": 3}</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем мапу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cache := map[string]int{&quot;a&quot;: 1, &quot;b&quot;: 2, &quot;c&quot;: 3}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем длину <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(cache)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вызываем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">clear(cache)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверяем длину и состояние мапы.</div></div>
@@ -3810,7 +3810,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.mapiterinit</code> поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">it.startBucket = fastrand() & (1<<h.B - 1)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.mapiterinit</code> поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">it.startBucket = fastrand() &amp; (1&lt;&lt;h.B - 1)</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -4005,8 +4005,8 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Заполняем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">serverConfigs := map[string]string{...}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Удаляем существующий ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"dev"</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Удаляем отсутствующий ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"staging"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Удаляем существующий ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;dev&quot;</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Удаляем отсутствующий ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;staging&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выводим оставшиеся конфигурации.</div></div>
   </div>
   <div class="code-container">
@@ -4067,13 +4067,13 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Fatal error: concurrent map writes: Создай мапу. В цикле запусти 100 горутин (добавь слово go перед вызовом анонимной функции go func(){ m["a"] = 1 }()), которые одновременно пишут в мапу. Поймай аварийное завершение программы. (Мапы в Go не потокобезопасны на запись!).</p></div>
+    <div><p style="margin-bottom: 6px;">Fatal error: concurrent map writes: Создай мапу. В цикле запусти 100 горутин (добавь слово go перед вызовом анонимной функции go func(){ m[&quot;a&quot;] = 1 }()), которые одновременно пишут в мапу. Поймай аварийное завершение программы. (Мапы в Go не потокобезопасны на запись!).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Потокобезопасность мап в Go:</strong></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Встроенные мапы в Go <strong>НЕ являются потокобезопасными (Not Thread-Safe)</strong>;</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> При одновременной записи из нескольких горутин рантайм Go обнаруживает гонку через битовый флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hmap.flags & hashWriting</code> и вызывает <strong>немедленный краш процесса</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fatal error: concurrent map writes</code>;</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> При одновременной записи из нескольких горутин рантайм Go обнаруживает гонку через битовый флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hmap.flags &amp; hashWriting</code> и вызывает <strong>немедленный краш процесса</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fatal error: concurrent map writes</code>;</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Эту фатальную ошибку <strong>НЕВОЗМОЖНО перехватить через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">recover()</code></strong>;</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Решение:</strong> использовать мьютексы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Mutex</code> / <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.RWMutex</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Map</code>.</div></div>
   </div>
@@ -4152,7 +4152,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В начале <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.mapassign</code> проверяется <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if h.flags&hashWriting != 0 { throw("concurrent map writes") }</code>. Флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hashWriting</code> выставляется на время модификации бакета.</p></div>
+    <div><p style="margin-bottom: 6px;">В начале <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.mapassign</code> проверяется <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if h.flags&amp;hashWriting != 0 { throw(&quot;concurrent map writes&quot;) }</code>. Флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hashWriting</code> выставляется на время модификации бакета.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -4247,7 +4247,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему компилятор запрещает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[1].Age = 20</code> для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[int]User</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что значения в бакетах мапы могут перемещаться в памяти при расширении (Growth / Evacuation), поэтому элементы мапы не являются адресуемыми (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&m[1]</code> запрещен).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что значения в бакетах мапы могут перемещаться в памяти при расширении (Growth / Evacuation), поэтому элементы мапы не являются адресуемыми (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;m[1]</code> запрещен).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-39">
@@ -4436,7 +4436,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">categories := make(map[string][]string)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Добавляем товары в категории <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"электроника"</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"книги"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Добавляем товары в категории <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;электроника&quot;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;книги&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Выводим результаты.</div></div>
   </div>
   <div class="code-container">
@@ -4679,7 +4679,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ports := map[int]string{443: "HTTPS", 80: "HTTP", 22: "SSH"}</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ports := map[int]string{443: &quot;HTTPS&quot;, 80: &quot;HTTP&quot;, 22: &quot;SSH&quot;}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Собираем ключи в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">keys := make([]int, 0, len(ports))</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сортируем через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slices.Sort(keys)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выводим в порядке возрастания.</div></div>
@@ -4756,7 +4756,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу "Частотный словарь": читай строку, разбивай на слова (strings.Fields), считай частоту каждого слова в map[string]int. Выведи топ-5 самых частых.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу &quot;Частотный словарь&quot;: читай строку, разбивай на слова (strings.Fields), считай частоту каждого слова в map[string]int. Выведи топ-5 самых частых.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4854,7 +4854,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Игнорирование знаков препинания: слова <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Go"</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Go,"</code> будут посчитаны как разные. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Trim</code> решает проблему.</li>
+<li style="margin-bottom: 4px;">Игнорирование знаков препинания: слова <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Go&quot;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Go,&quot;</code> будут посчитаны как разные. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Trim</code> решает проблему.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -5201,13 +5201,13 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализация множества (Set): Используя мапу, напишите структуру данных "Множество уникальных строк" (Set). В качестве значений мапы используйте пустую структуру struct{}. Напишите функции добавления элемента, удаления и проверки наличия. Объясните, почему struct{} предпочтительнее, чем bool.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализация множества (Set): Используя мапу, напишите структуру данных &quot;Множество уникальных строк&quot; (Set). В качестве значений мапы используйте пустую структуру struct{}. Напишите функции добавления элемента, удаления и проверки наличия. Объясните, почему struct{} предпочтительнее, чем bool.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Инженерное обоснование выбора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">struct{}</code> перед <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bool</code>:</strong></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Память:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bool</code> занимает 1 байт на каждое значение в бакете. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">struct{}</code> занимает строго <strong>0 байт</strong>;</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Семантическая чистота:</strong> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]bool</code> возможно неоднозначное состояние <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m["item"] = false</code>, которое вводит в заблуждение (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ok == true</code>, но <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val == false</code>);</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Семантическая чистота:</strong> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]bool</code> возможно неоднозначное состояние <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[&quot;item&quot;] = false</code>, которое вводит в заблуждение (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ok == true</code>, но <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val == false</code>);</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]struct{}</code> единственное допустимое значение — это маркер присутствия <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">struct{}{}</code>.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -5462,7 +5462,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Вызов несуществующего ключа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mathOps["abs"](10, 0)</code> приведет к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic: runtime error: invalid memory address or nil pointer dereference</code>.</li>
+<li style="margin-bottom: 4px;">Вызов несуществующего ключа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mathOps[&quot;abs&quot;](10, 0)</code> приведет к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic: runtime error: invalid memory address or nil pointer dereference</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -5474,24 +5474,24 @@ func main() {
 <div class="exercise-card" id="ex-53">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #53</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Каверзный кейс: запрет взятия адреса элемента мапы &m[key] из-за динамического перехэширования</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Каверзный кейс: запрет взятия адреса элемента мапы &amp;m[key] из-за динамического перехэширования</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">[Каверзный кейс]: Попробуй взять адрес элемента мапы &m["key"] (поймай ошибку компиляции — элементы мапы не адресуемы из-за возможного перехеширования).</p></div>
+    <div><p style="margin-bottom: 6px;">[Каверзный кейс]: Попробуй взять адрес элемента мапы &amp;m[&quot;key&quot;] (поймай ошибку компиляции — элементы мапы не адресуемы из-за возможного перехеширования).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Почему элементы мапы не адресуемы (Cannot take the address of <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[k]</code>):</strong></p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> В процессе роста мапы (когда Load Factor $> 6.5$) рантайм выделяет новый массив бакетов удвоенного размера и <strong>постепенно перемещает (эвакуирует) элементы</strong> на новые адреса памяти;</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если бы Go разрешил взять указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr := &m["key"]</code>, то после очередной вставки в мапу этот указатель стал бы указывать на старый удаленный бакет (<strong>Dangling Pointer</strong>);</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Поэтому компилятор Go строго запрещает операцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&m[k]</code> на уровне системы типов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cannot take address of m["key"]</code>).</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> В процессе роста мапы (когда Load Factor $&gt; 6.5$) рантайм выделяет новый массив бакетов удвоенного размера и <strong>постепенно перемещает (эвакуирует) элементы</strong> на новые адреса памяти;</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если бы Go разрешил взять указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr := &amp;m[&quot;key&quot;]</code>, то после очередной вставки в мапу этот указатель стал бы указывать на старый удаленный бакет (<strong>Dangling Pointer</strong>);</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Поэтому компилятор Go строго запрещает операцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;m[k]</code> на уровне системы типов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cannot take address of m[&quot;key&quot;]</code>).</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Показываем ошибку компиляции при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&m["key"]</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Показываем ошибку компиляции при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;m[&quot;key&quot;]</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Показываем правильные архитектурные решения:</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Хранить в мапе указатели: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]*User</code>;</li>
@@ -5552,12 +5552,12 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Попытка передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&m["key"]</code> в функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal(data, &m["key"])</code>: не скомпилируется. Сначала распарсите во временную переменную, затем положите в мапу.</li>
+<li style="margin-bottom: 4px;">Попытка передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;m[&quot;key&quot;]</code> в функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal(data, &amp;m[&quot;key&quot;])</code>: не скомпилируется. Сначала распарсите во временную переменную, затем положите в мапу.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему слайсы разрешают брать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&s[i]</code>, а мапы запрещают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&m[k]</code>?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему слайсы разрешают брать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;s[i]</code>, а мапы запрещают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;m[k]</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что доступ по индексу среза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s[i]</code> обращается к непрерывному массиву с фиксированным положением элементов, а мапа при вставках перемещает элементы между бакетами во время эвакуации.</p></div>
   </div>
 </div>
@@ -5652,7 +5652,7 @@ func main() {
 <p style="margin-bottom: 6px;">| :--- | :--- | :---: | :--- |</p>
 <p style="margin-bottom: 6px;">| <strong>Примитивные</strong> | <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int64</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">float64</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bool</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">byte</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rune</code> | ✅ <strong>ДА</strong> | Поддерживают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">==</code> и хэшируются нативно. |</p>
 <p style="margin-bottom: 6px;">| <strong>Указатели</strong> | <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*T</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">uintptr</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">unsafe.Pointer</code> | ✅ <strong>ДА</strong> | Сравниваются числовые адреса памяти. |</p>
-<p style="margin-bottom: 6px;">| <strong>Каналы</strong> | <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">chan T</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">chan<- T</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-chan T</code> | ✅ <strong>ДА</strong> | Сравниваются указатели на структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hchan</code>. |</p>
+<p style="margin-bottom: 6px;">| <strong>Каналы</strong> | <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">chan T</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">chan&lt;- T</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-chan T</code> | ✅ <strong>ДА</strong> | Сравниваются указатели на структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hchan</code>. |</p>
 <p style="margin-bottom: 6px;">| <strong>Массивы</strong> | <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[N]T</code> (где <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">T</code> comparable) | ✅ <strong>ДА</strong> | Фиксированный размер, поэлементное сравнение. |</p>
 <p style="margin-bottom: 6px;">| <strong>Структуры</strong> | <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">struct</code> (где ВСЕ поля comparable) | ✅ <strong>ДА</strong> | Поэлементное сравнение всех полей. |</p>
 <p style="margin-bottom: 6px;">| <strong>Интерфейсы</strong> | <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">any</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">error</code>, кастомные интерфейсы | ⚠️ <strong>ДА\</strong>* | Компилируется, но если в рантайме положить срез $ightarrow$ <strong>паника в рантайме!</strong> |</p>
@@ -6019,7 +6019,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Заполняем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m := map[string]int{"A": 1, "B": 2}</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Заполняем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m := map[string]int{&quot;A&quot;: 1, &quot;B&quot;: 2}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызываем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">clear(m)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверяем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(m) == 0</code>.</div></div>
   </div>
@@ -6156,7 +6156,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Переполнение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code> при $N > 92$ (требуется <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math/big.Int</code>).</li>
+<li style="margin-bottom: 4px;">Переполнение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code> при $N &gt; 92$ (требуется <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math/big.Int</code>).</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -6253,7 +6253,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Прямая запись <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schedule["ИВТ-101"]["Среда"] = ...</code> без проверки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s[group] == nil</code>.</li>
+<li style="margin-bottom: 4px;">Прямая запись <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schedule[&quot;ИВТ-101&quot;][&quot;Среда&quot;] = ...</code> без проверки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s[group] == nil</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -6361,7 +6361,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db["НеизвестныйГород"]["Район"]</code>: вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code> без паники, но попытка записи вызовет панику.</li>
+<li style="margin-bottom: 4px;">Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">db[&quot;НеизвестныйГород&quot;][&quot;Район&quot;]</code>: вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code> без паники, но попытка записи вызовет панику.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">

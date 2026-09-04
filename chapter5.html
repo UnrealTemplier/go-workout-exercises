@@ -695,7 +695,7 @@
       <a href="#ex-12" class="sub-exercise-link" title="Упр 12: Цепочка if-else if-else для перевода числовых оценок в буквенные">12. Цепочка if-else if-else для перевода числовых оценок в буквенные</a>
       <a href="#ex-13" class="sub-exercise-link" title="Упр 13: Затенение переменных (Variable Shadowing) в заголовке if">13. Затенение переменных (Variable Shadowing) в заголовке if</a>
       <a href="#ex-14" class="sub-exercise-link" title="Упр 14: Определение знака зодиака: каскадный if против tagless switch">14. Определение знака зодиака: каскадный if против tagless switch</a>
-      <a href="#ex-15" class="sub-exercise-link" title="Упр 15: Алгоритм проверки високосного года через логические операторы && и ||">15. Алгоритм проверки високосного года через логические операторы && и ||</a>
+      <a href="#ex-15" class="sub-exercise-link" title="Упр 15: Алгоритм проверки високосного года через логические операторы &amp;&amp; и ||">15. Алгоритм проверки високосного года через логические операторы &amp;&amp; и ||</a>
       <a href="#ex-16" class="sub-exercise-link" title="Упр 16: Булевы упрощения и идиоматичный синтаксис условий в Go">16. Булевы упрощения и идиоматичный синтаксис условий в Go</a>
       <a href="#ex-17" class="sub-exercise-link" title="Упр 17: Классический switch по числовому значению дня недели (1–7)">17. Классический switch по числовому значению дня недели (1–7)</a>
       <a href="#ex-18" class="sub-exercise-link" title="Упр 18: Базовый switch по значению с обязательной обработкой ветки default">18. Базовый switch по значению с обязательной обработкой ветки default</a>
@@ -733,7 +733,7 @@
       <a href="#ex-50" class="sub-exercise-link" title="Упр 50: Определение динамического типа интерфейса any через switch v := x.(type)">50. Определение динамического типа интерфейса any через switch v := x.(type)</a>
       <a href="#ex-51" class="sub-exercise-link" title="Упр 51: Идиома Comma-ok для безопасного чтения из map прямо в заголовке if">51. Идиома Comma-ok для безопасного чтения из map прямо в заголовке if</a>
       <a href="#ex-52" class="sub-exercise-link" title="Упр 52: Вычисление академического грейда по проценту через switch true">52. Вычисление академического грейда по проценту через switch true</a>
-      <a href="#ex-53" class="sub-exercise-link" title="Упр 53: Доказательство пропуска вызова isTrue() в выражении isFalse() && isTrue()">53. Доказательство пропуска вызова isTrue() в выражении isFalse() && isTrue()</a>
+      <a href="#ex-53" class="sub-exercise-link" title="Упр 53: Доказательство пропуска вызова isTrue() в выражении isFalse() &amp;&amp; isTrue()">53. Доказательство пропуска вызова isTrue() в выражении isFalse() &amp;&amp; isTrue()</a>
       <a href="#ex-54" class="sub-exercise-link" title="Упр 54: Сравнение отсутствия проваливания по умолчанию и ключевого слова fallthrough">54. Сравнение отсутствия проваливания по умолчанию и ключевого слова fallthrough</a>
       <a href="#ex-55" class="sub-exercise-link" title="Упр 55: Подсчет гласных букв в UTF-8 строке с помощью for range и switch">55. Подсчет гласных букв в UTF-8 строке с помощью for range и switch</a>
       <a href="#ex-56" class="sub-exercise-link" title="Упр 56: Двухуровневый вложенный switch для классификации арифметических и логических операций">56. Двухуровневый вложенный switch для классификации арифметических и логических операций</a>
@@ -1087,7 +1087,7 @@
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Условный оператор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if</code> в Go:</strong></p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Круглые скобки вокруг условия <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(x > 0)</code> <strong>запрещены</strong> (линтер и компилятор требуют <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if x > 0</code>);</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Круглые скобки вокруг условия <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(x &gt; 0)</code> <strong>запрещены</strong> (линтер и компилятор требуют <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if x &gt; 0</code>);</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Фигурные скобки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{ ... }</code> <strong>строго обязательны</strong>, даже если в блоке всего одна строка (в отличие от C/C++/Java);</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Ключевое слово <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">else</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">else if</code> обязано находиться <strong>на той же строке</strong>, что и закрывающая фигурная скобка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">}</code> предыдущего блока: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">} else if {</code> (из-за правила автоматической вставки точек с запятой компилятором).</div></div>
   </div>
@@ -1096,7 +1096,7 @@
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Считываем число из консоли через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Scan</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем условие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n > 0</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n < 0</code> и ветку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">else</code> для нуля.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем условие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n &gt; 0</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n &lt; 0</code> и ветку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">else</code> для нуля.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Выводим соответствующий вердикт.</div></div>
   </div>
   <div class="code-container">
@@ -1150,13 +1150,11 @@ func main() {
     <div><ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Перенос <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">else</code> на новую строку:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">if x > 0 {</p>
-<p style="margin-bottom: 6px;">// ...</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">else { // ОШИБКА КОМПИЛЯЦИИ: syntax error: unexpected else</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p></div>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  if x &gt; 0 {
+      // ...
+  }
+  else { // ОШИБКА КОМПИЛЯЦИИ: syntax error: unexpected else
+  }</code></pre></div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1171,7 +1169,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Базовый if-else: Считай из консоли число. Напиши проверку: если оно четное, выведи "Четное", иначе "Нечетное" (используй оператор остатка от деления %).</p></div>
+    <div><p style="margin-bottom: 6px;">Базовый if-else: Считай из консоли число. Напиши проверку: если оно четное, выведи &quot;Четное&quot;, иначе &quot;Нечетное&quot; (используй оператор остатка от деления %).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1232,13 +1230,13 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Написание <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if num % 2 == 1</code> для проверки нечетности: для числа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-3</code> остаток равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-1</code>, и условие ложно вернет "Четное". Всегда проверяйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">num % 2 != 0</code>.</li>
+<li style="margin-bottom: 4px;">Написание <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if num % 2 == 1</code> для проверки нечетности: для числа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-3</code> остаток равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-1</code>, и условие ложно вернет &quot;Четное&quot;. Всегда проверяйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">num % 2 != 0</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как проверить четность целого числа без операции деления <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Побитовой операцией <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(n & 1) == 0</code>. Если младший бит равен нулю — число четное.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Побитовой операцией <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(n &amp; 1) == 0</code>. Если младший бит равен нулю — число четное.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-3">
@@ -1335,7 +1333,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Считываем число.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем условие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">num % 2 == 0</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Печатаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Even"</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Odd"</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Печатаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Even&quot;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Odd&quot;</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -1395,7 +1393,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу с if с инициализацией: if x := rand.Intn(100); x > 50 { ... }. Покажи, что переменная x недоступна за пределами блока if. Попробуй обратиться к ней ниже — получи ошибку компиляции.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу с if с инициализацией: if x := rand.Intn(100); x &gt; 50 { ... }. Покажи, что переменная x недоступна за пределами блока if. Попробуй обратиться к ней ниже — получи ошибку компиляции.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1410,7 +1408,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Инициализируем псевдослучайное число <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x := rand.Intn(100)</code> прямо в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x > 50</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x &gt; 50</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Показываем, что в блоке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">else</code> переменная <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> также доступна.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Демонстрируем ошибку компиляции при попытке чтения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> после блока.</div></div>
   </div>
@@ -1485,7 +1483,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Получаем возраст.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем диапазоны: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">< 0</code> (ошибка), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><= 12</code> (ребенок), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><= 17</code> (подросток), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><= 59</code> (взрослый), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">>= 60</code> (пенсионер).</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем диапазоны: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt; 0</code> (ошибка), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;= 12</code> (ребенок), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;= 17</code> (подросток), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;= 59</code> (взрослый), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&gt;= 60</code> (пенсионер).</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -1538,7 +1536,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Нарушение порядка условий (например, проверка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">age <= 59</code> раньше <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">age <= 12</code> перехватит всех детей как взрослых).</li>
+<li style="margin-bottom: 4px;">Нарушение порядка условий (например, проверка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">age &lt;= 59</code> раньше <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">age &lt;= 12</code> перехватит всех детей как взрослых).</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -1554,7 +1552,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Множественные ветвления: Напишите программу, определяющую оценку студента по 100-балльной шкале: 90+ — "A", 80-89 — "B", 70-79 — "C", 50-69 — "D", меньше 50 — "F". Используйте цепочку if - else if - else.</p></div>
+    <div><p style="margin-bottom: 6px;">Множественные ветвления: Напишите программу, определяющую оценку студента по 100-балльной шкале: 90+ — &quot;A&quot;, 80-89 — &quot;B&quot;, 70-79 — &quot;C&quot;, 50-69 — &quot;D&quot;, меньше 50 — &quot;F&quot;. Используйте цепочку if - else if - else.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1635,12 +1633,12 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">При проверке сверху вниз <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">score >= 90</code> в следующей ветке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">else if score >= 80</code> верхняя граница <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">< 90</code> гарантируется автоматически.</p></div>
+    <div><p style="margin-bottom: 6px;">При проверке сверху вниз <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">score &gt;= 90</code> в следующей ветке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">else if score &gt;= 80</code> верхняя граница <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt; 90</code> гарантируется автоматически.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Лишние проверки вроде <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">else if score >= 80 && score < 90</code> засоряют код и замедляют чтение.</li>
+<li style="margin-bottom: 4px;">Лишние проверки вроде <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">else if score &gt;= 80 &amp;&amp; score &lt; 90</code> засоряют код и замедляют чтение.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -1815,7 +1813,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">If с инициализацией (Критически важно!): Напиши вызов функции, которая возвращает значение и ошибку (например, strconv.Atoi("123")). Сделай вызов и проверку ошибки прямо в заголовке if: if val, err := strconv.Atoi(...); err != nil { ... }.</p></div>
+    <div><p style="margin-bottom: 6px;">If с инициализацией (Критически важно!): Напиши вызов функции, которая возвращает значение и ошибку (например, strconv.Atoi(&quot;123&quot;)). Сделай вызов и проверку ошибки прямо в заголовке if: if val, err := strconv.Atoi(...); err != nil { ... }.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1830,7 +1828,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Парсим строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"1024"</code> прямо в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Парсим строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;1024&quot;</code> прямо в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В ветке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err != nil</code> логируем ошибку.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В ветке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">else</code> используем полученное число.</div></div>
   </div>
@@ -1889,7 +1887,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Инициализация внутри if: Напишите условную конструкцию с краткой инициализацией переменной: if x := getSomeValue(); x > limit { ... }. Попробуйте обратиться к переменной x вне этого блока if-else. Зафиксируйте ошибку компиляции и сделайте вывод о границах видимости (scope) такой переменной.</p></div>
+    <div><p style="margin-bottom: 6px;">Инициализация внутри if: Напишите условную конструкцию с краткой инициализацией переменной: if x := getSomeValue(); x &gt; limit { ... }. Попробуйте обратиться к переменной x вне этого блока if-else. Зафиксируйте ошибку компиляции и сделайте вывод о границах видимости (scope) такой переменной.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1904,7 +1902,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">getSystemLoad() float64</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Пишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if load := getSystemLoad(); load > 0.8</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Пишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if load := getSystemLoad(); load &gt; 0.8</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Показываем ошибку при попытке чтения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">load</code> ниже.</div></div>
   </div>
   <div class="code-container">
@@ -2046,7 +2044,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Теневое копирование (Shadowing) в if: Объяви x := 10 до if. Затем напиши if x := 5; x > 0 { fmt.Println(x) }. Выведи x после if. Пойми, почему внутри if была 5, а снаружи осталась 10.</p></div>
+    <div><p style="margin-bottom: 6px;">Теневое копирование (Shadowing) в if: Объяви x := 10 до if. Затем напиши if x := 5; x &gt; 0 { fmt.Println(x) }. Выведи x после if. Пойми, почему внутри if была 5, а снаружи осталась 10.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2063,7 +2061,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявляем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x := 10</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Пишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if x := 5; x > 0 { ... }</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Пишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if x := 5; x &gt; 0 { ... }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Выводим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> после блока.</div></div>
   </div>
   <div class="code-container">
@@ -2218,19 +2216,19 @@ func main() {
 <div class="exercise-card" id="ex-15">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #15</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Алгоритм проверки високосного года через логические операторы && и ||</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Алгоритм проверки високосного года через логические операторы &amp;&amp; и ||</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу, которая определяет високосный год. Условие: делится на 4, но не делится на 100, либо делится на 400. Используй логические операторы && и ||.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу, которая определяет високосный год. Условие: делится на 4, но не делится на 100, либо делится на 400. Используй логические операторы &amp;&amp; и ||.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Григорианский календарь:</strong></p>
 <p style="margin-bottom: 6px;">Год является високосным (Leap Year), если:</p>
-<p style="margin-bottom: 6px;">$$	ext{isLeap} = (year \% 4 == 0 \ \&\&\ year \% 100</p>
+<p style="margin-bottom: 6px;">$$	ext{isLeap} = (year \% 4 == 0 \ \&amp;\&amp;\ year \% 100</p>
 <p style="margin-bottom: 6px;">e 0)\ ||\ (year \% 400 == 0)$$</p>
-<p style="margin-bottom: 6px;">Приоритет оператора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&&</code> выше, чем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">||</code>, однако круглые скобки явно фиксируют порядок и улучшают читаемость.</p></div>
+<p style="margin-bottom: 6px;">Приоритет оператора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;&amp;</code> выше, чем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">||</code>, однако круглые скобки явно фиксируют порядок и улучшают читаемость.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -2280,7 +2278,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Компилятор Go использует короткое замыкание (Short-circuit Evaluation): если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">year % 4 == 0 && year % 100 != 0</code> истинно, правая часть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">year % 400 == 0</code> даже не вычисляется.</p></div>
+    <div><p style="margin-bottom: 6px;">Компилятор Go использует короткое замыкание (Short-circuit Evaluation): если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">year % 4 == 0 &amp;&amp; year % 100 != 0</code> истинно, правая часть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">year % 400 == 0</code> даже не вычисляется.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -2317,7 +2315,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем булевы переменные <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">isValid</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">isAdmin</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Пишем чистые условия <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if isValid</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if !isValid</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if isValid && !isAdmin</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Пишем чистые условия <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if isValid</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if !isValid</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if isValid &amp;&amp; !isAdmin</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -2477,7 +2475,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Базовый switch по значению: Напишите программу, которая принимает число от 1 до 7 (день недели) и с помощью конструкции switch выводит название этого дня (например, 1 — "Понедельник"). Добавьте ветку default для обработки некорректных чисел.</p></div>
+    <div><p style="margin-bottom: 6px;">Базовый switch по значению: Напишите программу, которая принимает число от 1 до 7 (день недели) и с помощью конструкции switch выводит название этого дня (например, 1 — &quot;Понедельник&quot;). Добавьте ветку default для обработки некорректных чисел.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2492,7 +2490,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GetDayTitle(day int) string</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Добавляем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">default: return "Ошибка: день должен быть от 1 до 7"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Добавляем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">default: return &quot;Ошибка: день должен быть от 1 до 7&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Тестируем граничные и невалидные значения.</div></div>
   </div>
   <div class="code-container">
@@ -2568,7 +2566,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу с switch по строке: принимает команду ("start", "stop", "restart", "status") и выполняет соответствующее действие (просто выводит сообщение). Добавь default для неизвестной команды.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу с switch по строке: принимает команду (&quot;start&quot;, &quot;stop&quot;, &quot;restart&quot;, &quot;status&quot;) и выполняет соответствующее действие (просто выводит сообщение). Добавь default для неизвестной команды.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2583,7 +2581,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Получаем текстовую команду службы.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch cmd</code> обрабатываем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"start"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"stop"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"restart"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"status"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch cmd</code> обрабатываем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;start&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;stop&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;restart&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;status&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">default</code> выводим предупреждение о неизвестной команде.</div></div>
   </div>
   <div class="code-container">
@@ -2636,7 +2634,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Чувствительность к регистру (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Start"</code> не совпадет со <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"start"</code>). Перед <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch</code> рекомендуется применять <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.ToLower(strings.TrimSpace(cmd))</code>.</li>
+<li style="margin-bottom: 4px;">Чувствительность к регистру (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Start&quot;</code> не совпадет со <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;start&quot;</code>). Перед <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch</code> рекомендуется применять <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.ToLower(strings.TrimSpace(cmd))</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -2721,7 +2719,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Игнорирование ошибки ввода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Scan</code>: если пользователь введет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"abc"</code>, переменная <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">day</code> останется <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code> и попадет в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">default</code>.</li>
+<li style="margin-bottom: 4px;">Игнорирование ошибки ввода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Scan</code>: если пользователь введет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;abc&quot;</code>, переменная <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">day</code> останется <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code> и попадет в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">default</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -2825,15 +2823,15 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу с tagless switch (switch true): проверяет диапазон возраста и выводит категорию ("ребёнок", "подросток", "взрослый", "пенсионер"). Используй сравнения в case.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу с tagless switch (switch true): проверяет диапазон возраста и выводит категорию (&quot;ребёнок&quot;, &quot;подросток&quot;, &quot;взрослый&quot;, &quot;пенсионер&quot;). Используй сравнения в case.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Tagless Switch идеально подходит для проверки диапазонов чисел:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case age < 13:</code></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case age < 18:</code></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case age < 60:</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case age &lt; 13:</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case age &lt; 18:</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case age &lt; 60:</code></li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">default:</code></li>
 </ul></div>
   </div>
@@ -2842,7 +2840,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Задаем возраст <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">age</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Используем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch { case age < 13: ... }</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Используем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch { case age &lt; 13: ... }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверяем порядок условий.</div></div>
   </div>
   <div class="code-container">
@@ -2897,7 +2895,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Если перепутать порядок (например, поставить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case age <= 59</code> первым), условие перехватит и детей, и подростков.</li>
+<li style="margin-bottom: 4px;">Если перепутать порядок (например, поставить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case age &lt;= 59</code> первым), условие перехватит и детей, и подростков.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -2913,7 +2911,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Множественный case: Перепиши упр. 117 так, чтобы на дни 1,2,3,4,5 программа выводила "Будний день", а на 6,7 — "Выходной", объединив значения через запятую в одном case.</p></div>
+    <div><p style="margin-bottom: 6px;">Множественный case: Перепиши упр. 117 так, чтобы на дни 1,2,3,4,5 программа выводила &quot;Будний день&quot;, а на 6,7 — &quot;Выходной&quot;, объединив значения через запятую в одном case.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2929,8 +2927,8 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Передаем номер дня.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В первом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case 1, 2, 3, 4, 5</code> выводим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Будний день"</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Во втором <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case 6, 7</code> выводим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Выходной"</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В первом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case 1, 2, 3, 4, 5</code> выводим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Будний день&quot;</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Во втором <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case 6, 7</code> выводим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Выходной&quot;</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -2995,7 +2993,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу с switch и fallthrough: по номеру месяца определяет сезон. Используй fallthrough для группировки месяцев в сезоны (например, декабрь → зима, но fallthrough в январь? Нет, сгруппируй case'ы: case 12, 1, 2:). Затем сделай версию с fallthrough, где каждый case "проваливается" в следующий для накопления описания.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу с switch и fallthrough: по номеру месяца определяет сезон. Используй fallthrough для группировки месяцев в сезоны (например, декабрь → зима, но fallthrough в январь? Нет, сгруппируй case&#x27;ы: case 12, 1, 2:). Затем сделай версию с fallthrough, где каждый case &quot;проваливается&quot; в следующий для накопления описания.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3101,7 +3099,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Множественные значения в case: Перепишите предыдущую программу с днями недели так, чтобы switch группировал дни: в одном case перечислялись будни (1, 2, 3, 4, 5) и выводилось "Будний день", а в другом — выходные (6, 7) с выводом "Выходной".</p></div>
+    <div><p style="margin-bottom: 6px;">Множественные значения в case: Перепишите предыдущую программу с днями недели так, чтобы switch группировал дни: в одном case перечислялись будни (1, 2, 3, 4, 5) и выводилось &quot;Будний день&quot;, а в другом — выходные (6, 7) с выводом &quot;Выходной&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3335,7 +3333,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Switch без выражения (аналог каскадного if): Перепиши упр. 113 (возрастные категории), используя конструкцию switch { case age < 13: ... } (без передачи переменной после слова switch).</p></div>
+    <div><p style="margin-bottom: 6px;">Switch без выражения (аналог каскадного if): Перепиши упр. 113 (возрастные категории), используя конструкцию switch { case age &lt; 13: ... } (без передачи переменной после слова switch).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3345,7 +3343,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем функцию через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch { case age < 13: ... }</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем функцию через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch { case age &lt; 13: ... }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Тестируем категории.</div></div>
   </div>
   <div class="code-container">
@@ -3413,18 +3411,18 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">switch без выражения (Tagless switch): Напишите аналог цепочки if-else из задачи на определение оценки по баллам, используя switch без указания переменной после ключевого слова (когда условия пишутся прямо в ветках case, например, case score >= 90:).</p></div>
+    <div><p style="margin-bottom: 6px;">switch без выражения (Tagless switch): Напишите аналог цепочки if-else из задачи на определение оценки по баллам, используя switch без указания переменной после ключевого слова (когда условия пишутся прямо в ветках case, например, case score &gt;= 90:).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Оценка по баллам через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch { case score >= 90: ... }</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Оценка по баллам через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch { case score &gt;= 90: ... }</code>.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GradeTagless(score int) string</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуем ветки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">score >= 90</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">>= 80</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">>= 70</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">>= 50</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">default</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуем ветки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">score &gt;= 90</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&gt;= 80</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&gt;= 70</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&gt;= 50</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">default</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -3477,13 +3475,13 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Забыть проверку верхнего диапазона <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">score > 100</code>.</li>
+<li style="margin-bottom: 4px;">Забыть проверку верхнего диапазона <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">score &gt; 100</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Можно ли объявить переменную прямо в заголовке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch</code> без тега?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> ДА! Например: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch score := getScore(); { case score >= 90: ... }</code>. Точка с запятой после инициализации обязательна.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> ДА! Например: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch score := getScore(); { case score &gt;= 90: ... }</code>. Точка с запятой после инициализации обязательна.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-30">
@@ -3583,7 +3581,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу с type switch, где в каждом case извлекается значение с тем же именем переменной: case int: fmt.Println(v * 2). Покажи, что переменная v в каждом case имеет тип конкретного case'а.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу с type switch, где в каждом case извлекается значение с тем же именем переменной: case int: fmt.Println(v * 2). Покажи, что переменная v в каждом case имеет тип конкретного case&#x27;а.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3832,7 +3830,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Компилятор Go компилирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if a > b { return a } return b</code> в условную инструкцию процессора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CMOVGT</code> (Conditional Move), работающую без ветвления и штрафов за сброс конвейера (Branch Misprediction Penalty).</p></div>
+    <div><p style="margin-bottom: 6px;">Компилятор Go компилирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if a &gt; b { return a } return b</code> в условную инструкцию процессора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CMOVGT</code> (Conditional Move), работающую без ветвления и штрафов за сброс конвейера (Branch Misprediction Penalty).</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -4231,7 +4229,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Принудительный выход из switch: Напишите switch, проверяющий тип операции (например, строка "sum"). Внутри одной из веток case добавьте условие: если дополнительный параметр равен нулю, прервать выполнение этой ветки досрочно с помощью break, не выполняя оставшуюся часть кода в этом case.</p></div>
+    <div><p style="margin-bottom: 6px;">Принудительный выход из switch: Напишите switch, проверяющий тип операции (например, строка &quot;sum&quot;). Внутри одной из веток case добавьте условие: если дополнительный параметр равен нулю, прервать выполнение этой ветки досрочно с помощью break, не выполняя оставшуюся часть кода в этом case.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4247,7 +4245,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ProcessOperation(op string, val int)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case "sum":</code> проверяем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if val == 0 { break }</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case &quot;sum&quot;:</code> проверяем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if val == 0 { break }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убеждаемся, что код после <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">break</code> пропускается.</div></div>
   </div>
   <div class="code-container">
@@ -4316,7 +4314,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Паттерн "Guard Clauses" (Ранний возврат): Напиши функцию с глубокой вложенностью (if a { if b { if c { return true } } }). Перепиши её в "плоском" стиле, инвертируя условия и используя return для раннего выхода (if !a { return false }). Это золотой стандарт чистого кода в Go.</p></div>
+    <div><p style="margin-bottom: 6px;">Паттерн &quot;Guard Clauses&quot; (Ранний возврат): Напиши функцию с глубокой вложенностью (if a { if b { if c { return true } } }). Перепиши её в &quot;плоском&quot; стиле, инвертируя условия и используя return для раннего выхода (if !a { return false }). Это золотой стандарт чистого кода в Go.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4514,15 +4512,15 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу с сложным логическим условием: проверка допуска на мероприятие. Условие: (возраст >= 18 || есть_сопровождение) && есть_билет && !в_чёрном_списке. Покажи short-circuit evaluation: создай функции-предикаты с fmt.Println внутри и убедись, что при false в левой части && правая часть не вычисляется.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу с сложным логическим условием: проверка допуска на мероприятие. Условие: (возраст &gt;= 18 || есть_сопровождение) &amp;&amp; есть_билет &amp;&amp; !в_чёрном_списке. Покажи short-circuit evaluation: создай функции-предикаты с fmt.Println внутри и убедись, что при false в левой части &amp;&amp; правая часть не вычисляется.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Короткое замыкание (Short-Circuit Evaluation):</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">A && B</code>: если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">A == false</code>, выражение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">B</code> <strong>никогда не вычисляется</strong> (результат уже гарантированно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>);</li>
+<li style="margin-bottom: 4px;">Для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">A &amp;&amp; B</code>: если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">A == false</code>, выражение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">B</code> <strong>никогда не вычисляется</strong> (результат уже гарантированно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>);</li>
 <li style="margin-bottom: 4px;">Для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">A || B</code>: если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">A == true</code>, выражение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">B</code> <strong>никогда не вычисляется</strong> (результат уже гарантированно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">true</code>);</li>
-<li style="margin-bottom: 4px;">Это предотвращает лишние тяжелые вызовы к базам данных и защищает от разыменования <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr != nil && ptr.Value > 0</code>).</li>
+<li style="margin-bottom: 4px;">Это предотвращает лишние тяжелые вызовы к базам данных и защищает от разыменования <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr != nil &amp;&amp; ptr.Value &gt; 0</code>).</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -4600,17 +4598,17 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Компилятор транслирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&&</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">||</code> в ветвления с переходами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">JZ</code> / <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">JNZ</code> сразу к следующей секции или ветке выхода.</p></div>
+    <div><p style="margin-bottom: 6px;">Компилятор транслирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;&amp;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">||</code> в ветвления с переходами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">JZ</code> / <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">JNZ</code> сразу к следующей секции или ветке выхода.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Помещение функций с побочными эффектами (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">saveToDB()</code>) в правую часть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&&</code>: если левая часть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, функция записи никогда не выполнится.</li>
+<li style="margin-bottom: 4px;">Помещение функций с побочными эффектами (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">saveToDB()</code>) в правую часть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;&amp;</code>: если левая часть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, функция записи никогда не выполнится.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему проверка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if user != nil && user.IsActive</code> безопасна в Go и не вызывает panic?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему проверка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if user != nil &amp;&amp; user.IsActive</code> безопасна в Go и не вызывает panic?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Благодаря Short-circuit evaluation: если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user == nil</code> истинно (левая часть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>), правая часть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user.IsActive</code> не вычисляется, и разыменования <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> не происходит.</p></div>
   </div>
 </div>
@@ -4699,7 +4697,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Инициализация внутри switch: Объявите и инициализируйте переменную прямо в строке объявления switch (например, switch age := getAge(); { case age < 18: ... }). Убедитесь, что переменная age недоступна за пределами блока switch.</p></div>
+    <div><p style="margin-bottom: 6px;">Инициализация внутри switch: Объявите и инициализируйте переменную прямо в строке объявления switch (например, switch age := getAge(); { case age &lt; 18: ... }). Убедитесь, что переменная age недоступна за пределами блока switch.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4714,7 +4712,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">getAge() int</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Пишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch age := getAge(); { case age < 18: ... }</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Пишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch age := getAge(); { case age &lt; 18: ... }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Показываем невозможность обращения к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">age</code> после <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch</code>.</div></div>
   </div>
   <div class="code-container">
@@ -4764,7 +4762,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем отличие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch x := f(); x { ... }</code> от <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch x := f(); { ... }</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В первом случае происходит сопоставление равенства со значением <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case 1:</code>). Во втором случае это Tagless Switch, где в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case</code> пишутся булевы условия (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case x < 10:</code>).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В первом случае происходит сопоставление равенства со значением <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case 1:</code>). Во втором случае это Tagless Switch, где в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case</code> пишутся булевы условия (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case x &lt; 10:</code>).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-44">
@@ -4774,15 +4772,15 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">FizzBuzz: Классика. Выведите числа от 1 до 100. Если делится на 3 — "Fizz", на 5 — "Buzz", на оба — "FizzBuzz". Решите через switch и через if/else.</p></div>
+    <div><p style="margin-bottom: 6px;">FizzBuzz: Классика. Выведите числа от 1 до 100. Если делится на 3 — &quot;Fizz&quot;, на 5 — &quot;Buzz&quot;, на оба — &quot;FizzBuzz&quot;. Решите через switch и через if/else.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>FizzBuzz:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Кратность 3 и 5 ($15$) $ightarrow$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"FizzBuzz"</code></li>
-<li style="margin-bottom: 4px;">Кратность 3 $ightarrow$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Fizz"</code></li>
-<li style="margin-bottom: 4px;">Кратность 5 $ightarrow$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Buzz"</code></li>
+<li style="margin-bottom: 4px;">Кратность 3 и 5 ($15$) $ightarrow$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;FizzBuzz&quot;</code></li>
+<li style="margin-bottom: 4px;">Кратность 3 $ightarrow$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Fizz&quot;</code></li>
+<li style="margin-bottom: 4px;">Кратность 5 $ightarrow$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Buzz&quot;</code></li>
 <li style="margin-bottom: 4px;">Иначе $ightarrow$ само число</li>
 </ul></div>
   </div>
@@ -4843,13 +4841,13 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Проверка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n % 3</code> раньше <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n % 15</code>: число 15 выведет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Fizz"</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"FizzBuzz"</code>.</li>
+<li style="margin-bottom: 4px;">Проверка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n % 3</code> раньше <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n % 15</code>: число 15 выведет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Fizz&quot;</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;FizzBuzz&quot;</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как решить FizzBuzz без деления на 15?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Конкатенацией строк: формировать буфер, добавляя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Fizz"</code> при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n % 3 == 0</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Buzz"</code> при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n % 5 == 0</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Конкатенацией строк: формировать буфер, добавляя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Fizz&quot;</code> при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n % 3 == 0</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Buzz&quot;</code> при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n % 5 == 0</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-45">
@@ -4859,14 +4857,14 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">for без постусловия: (как while): запрашивайте у пользователя пароль до тех пор, пока он не введёт "secret".</p></div>
+    <div><p style="margin-bottom: 6px;">for без постусловия: (как while): запрашивайте у пользователя пароль до тех пор, пока он не введёт &quot;secret&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>В Go нет ключевого слова <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">while</code>:</strong></p>
 <p style="margin-bottom: 6px;">Конструкция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for condition { ... }</code> полностью заменяет классический цикл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">while</code>:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Тело цикла повторяется, пока условие истинно (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">password != "secret"</code>).</li>
+<li style="margin-bottom: 4px;">Тело цикла повторяется, пока условие истинно (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">password != &quot;secret&quot;</code>).</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -4874,7 +4872,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Инициализируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var pass string</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запускаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for pass != "secret" { ... }</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запускаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for pass != &quot;secret&quot; { ... }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> При совпадении выходим из цикла.</div></div>
   </div>
   <div class="code-container">
@@ -5062,7 +5060,7 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Алгоритм линейного поиска экстремумов за $O(N)$:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Инициализируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">minVal</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxVal</code> первым элементом среза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slice[0]</code>;</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В цикле обновляем значения при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val < minVal</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val > maxVal</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В цикле обновляем значения при <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val &lt; minVal</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val &gt; maxVal</code>.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -5153,7 +5151,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Сложное условие с булевыми функциями: Напиши 3 функции, возвращающие bool (например, проверяющие строку на длину, на наличие цифр и на наличие заглавных букв). Сделай if, вызывающий их через &&. Добавь в функции вывод логов и посмотри на эффект "короткого замыкания" (short-circuit evaluation), когда при false первой функции остальные даже не вызываются.</p></div>
+    <div><p style="margin-bottom: 6px;">Сложное условие с булевыми функциями: Напиши 3 функции, возвращающие bool (например, проверяющие строку на длину, на наличие цифр и на наличие заглавных букв). Сделай if, вызывающий их через &amp;&amp;. Добавь в функции вывод логов и посмотри на эффект &quot;короткого замыкания&quot; (short-circuit evaluation), когда при false первой функции остальные даже не вызываются.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5234,7 +5232,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как гарантировать вызов всех трех функций, если их побочные эффекты обязательны?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Вычислить их заранее в отдельные переменные: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ok1 := checkLength(s); ok2 := checkDigits(s); ok3 := checkCaps(s); if ok1 && ok2 && ok3 { ... }</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Вычислить их заранее в отдельные переменные: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ok1 := checkLength(s); ok2 := checkDigits(s); ok3 := checkCaps(s); if ok1 &amp;&amp; ok2 &amp;&amp; ok3 { ... }</code>.</p></div>
   </div>
 </div>
 
@@ -5250,15 +5248,15 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу с switch с multiple cases: case "yes", "y", "да", "Да": → подтверждение, case "no", "n", "нет", "Нет": → отказ. Покажи удобство группировки.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу с switch с multiple cases: case &quot;yes&quot;, &quot;y&quot;, &quot;да&quot;, &quot;Да&quot;: → подтверждение, case &quot;no&quot;, &quot;n&quot;, &quot;нет&quot;, &quot;Нет&quot;: → отказ. Покажи удобство группировки.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Множественные строковые литералы в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case</code>:</strong></p>
-<p style="margin-bottom: 6px;">Синтаксис: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case "yes", "y", "да", "Да":</code></p>
+<p style="margin-bottom: 6px;">Синтаксис: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case &quot;yes&quot;, &quot;y&quot;, &quot;да&quot;, &quot;Да&quot;:</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Позволяет легко обрабатывать синонимы команд и локализацию;</li>
-<li style="margin-bottom: 4px;">Гораздо чище длинных цепочек <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cmd == "yes" || cmd == "y" || ...</code>.</li>
+<li style="margin-bottom: 4px;">Гораздо чище длинных цепочек <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cmd == &quot;yes&quot; || cmd == &quot;y&quot; || ...</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -5335,7 +5333,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strconv.ParseBool</code> устроена внутри?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Она использует в точности такой же <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch s</code> по строковым литералам: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case "1", "t", "T", "true", "TRUE", "True": return true, nil</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Она использует в точности такой же <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">switch s</code> по строковым литералам: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case &quot;1&quot;, &quot;t&quot;, &quot;T&quot;, &quot;true&quot;, &quot;TRUE&quot;, &quot;True&quot;: return true, nil</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-50">
@@ -5345,7 +5343,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Проверка типов (Type switch): Создайте переменную типа any (или interface{}). Присвойте ей сначала число, затем строку. Напишите конструкцию switch v := x.(type), которая определяет динамический тип переменной и выводит соответствующее сообщение (например, "Это целое число", "Это строка").</p></div>
+    <div><p style="margin-bottom: 6px;">Проверка типов (Type switch): Создайте переменную типа any (или interface{}). Присвойте ей сначала число, затем строку. Напишите конструкцию switch v := x.(type), которая определяет динамический тип переменной и выводит соответствующее сообщение (например, &quot;Это целое число&quot;, &quot;Это строка&quot;).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5357,7 +5355,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var data any = 100</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Анализируем через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Type Switch</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Переприсваиваем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data = "Теперь это строка"</code> и повторно анализируем.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Переприсваиваем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data = &quot;Теперь это строка&quot;</code> и повторно анализируем.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -5402,7 +5400,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">При присвоении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data = 100</code> интерфейс хранит дескриптор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code>. При <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data = "..."</code> дескриптор перезаписывается на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">При присвоении <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data = 100</code> интерфейс хранит дескриптор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code>. При <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">data = &quot;...&quot;</code> дескриптор перезаписывается на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -5423,7 +5421,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">If с мапой: Создай map[string]int. Используй идиому "comma ok" прямо в if, чтобы проверить наличие ключа: if val, ok := myMap["key"]; ok { ... }.</p></div>
+    <div><p style="margin-bottom: 6px;">If с мапой: Создай map[string]int. Используй идиому &quot;comma ok&quot; прямо в if, чтобы проверить наличие ключа: if val, ok := myMap[&quot;key&quot;]; ok { ... }.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5438,8 +5436,8 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем мапу пользователей и их балансов: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]int{"alice": 100, "bob": 0}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем наличие ключа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"bob"</code> (значение 0) и несуществующего ключа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"charlie"</code>.</div></div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем мапу пользователей и их балансов: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[string]int{&quot;alice&quot;: 100, &quot;bob&quot;: 0}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем наличие ключа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;bob&quot;</code> (значение 0) и несуществующего ключа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;charlie&quot;</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -5489,13 +5487,13 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Проверка наличия ключа через прямое чтение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if m["bob"] != 0</code>: если у пользователя реальный баланс 0, условие ложно посчитает, что пользователя нет. Всегда используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">comma-ok</code>.</li>
+<li style="margin-bottom: 4px;">Проверка наличия ключа через прямое чтение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if m[&quot;bob&quot;] != 0</code>: если у пользователя реальный баланс 0, условие ложно посчитает, что пользователя нет. Всегда используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">comma-ok</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В каких еще языковых конструкциях Go применяется идиома Comma-ok?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1) Чтение из канала: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v, ok := <-ch</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ok == false</code>, если канал закрыт); 2) Type Assertion: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v, ok := x.(T)</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ok == false</code>, если тип не совпал).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1) Чтение из канала: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v, ok := &lt;-ch</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ok == false</code>, если канал закрыт); 2) Type Assertion: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v, ok := x.(T)</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ok == false</code>, если тип не совпал).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-52">
@@ -5584,17 +5582,17 @@ func main() {
 <div class="exercise-card" id="ex-53">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #53</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Доказательство пропуска вызова isTrue() в выражении isFalse() && isTrue()</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Доказательство пропуска вызова isTrue() в выражении isFalse() &amp;&amp; isTrue()</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Логическое сокращение (Short-circuit): Напишите функцию isTrue() bool, которая выводит в консоль "Вызвана isTrue" и возвращает true, и аналогичную функцию isFalse() bool, возвращающую false. Напишите условие if isFalse() && isTrue(). Посмотрите на вывод в консоли и объясните, почему функция isTrue даже не была вызвана (эффект короткого замыкания логических операторов).</p></div>
+    <div><p style="margin-bottom: 6px;">Логическое сокращение (Short-circuit): Напишите функцию isTrue() bool, которая выводит в консоль &quot;Вызвана isTrue&quot; и возвращает true, и аналогичную функцию isFalse() bool, возвращающую false. Напишите условие if isFalse() &amp;&amp; isTrue(). Посмотрите на вывод в консоли и объясните, почему функция isTrue даже не была вызвана (эффект короткого замыкания логических операторов).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Прямой эксперимент, доказывающий оптимизацию Short-Circuit на уровне компилятора:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">isFalse() && isTrue()</code>: функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">isFalse()</code> возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>;</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">isFalse() &amp;&amp; isTrue()</code>: функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">isFalse()</code> возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>;</li>
 <li style="margin-bottom: 4px;">Логическое И требует истинности обоих операндов;</li>
 <li style="margin-bottom: 4px;">Так как первый операнд уже ложен, весь результат гарантированно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>, и второй операнд игнорируется.</li>
 </ul></div>
@@ -5604,8 +5602,8 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">isTrue()</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">isFalse()</code> с выводом в консоль.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызываем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if isFalse() && isTrue()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убеждаемся, что в консоли напечатано только <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Вызвана isFalse"</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызываем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if isFalse() &amp;&amp; isTrue()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убеждаемся, что в консоли напечатано только <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Вызвана isFalse&quot;</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -5663,7 +5661,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В каком порядке следует располагать предикаты в условии <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if FastCheck() && SlowDBCheck()</code>?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В каком порядке следует располагать предикаты в условии <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if FastCheck() &amp;&amp; SlowDBCheck()</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Всегда помещать самые быстрые проверки в памяти (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">FastCheck()</code>) первыми, а тяжелые вызовы сети или базы данных (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SlowDBCheck()</code>) последними.</p></div>
   </div>
 </div>
@@ -5828,7 +5826,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Итерация по байтам <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i < len(s); i++</code>: сломает кириллические буквы, так как они состоят из двух байт. Всегда используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for range</code>.</li>
+<li style="margin-bottom: 4px;">Итерация по байтам <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i &lt; len(s); i++</code>: сломает кириллические буквы, так как они состоят из двух байт. Всегда используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for range</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -5844,7 +5842,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу с вложенным switch: внешний — по типу операции ("арифметика", "логика"), внутренний — по конкретной операции (+, -, &&, ||). Обработай все ветки.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу с вложенным switch: внешний — по типу операции (&quot;арифметика&quot;, &quot;логика&quot;), внутренний — по конкретной операции (+, -, &amp;&amp;, ||). Обработай все ветки.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6038,7 +6036,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Битовые флаги в if: Используйте побитовое И (&) в условии if, чтобы проверить, установлен ли определенный бит (флаг) в целом числе (например, проверка прав доступа к файлу perm & 0400 != 0).</p></div>
+    <div><p style="margin-bottom: 6px;">Битовые флаги в if: Используйте побитовое И (&amp;) в условии if, чтобы проверить, установлен ли определенный бит (флаг) в целом числе (например, проверка прав доступа к файлу perm &amp; 0400 != 0).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6047,7 +6045,7 @@ func main() {
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0400</code> (Read by Owner);</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0200</code> (Write by Owner);</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0100</code> (Execute by Owner);</li>
-<li style="margin-bottom: 4px;">Проверка: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if (perm & 0400) != 0 { ... }</code>.</li>
+<li style="margin-bottom: 4px;">Проверка: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if (perm &amp; 0400) != 0 { ... }</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -6055,7 +6053,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Задаем битовую маску прав <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.FileMode(0755)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем права на чтение, запись и исполнение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем права на чтение, запись и исполнение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -6307,7 +6305,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Определяем тип обработчика <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type CommandHandler func(args []string) error</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем мапу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dispatchTable = make(map[string]CommandHandler)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Регистрируем обработчики <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"ping"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"stats"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"exit"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Регистрируем обработчики <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;ping&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;stats&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;exit&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выполняем диспетчеризацию по строковому ключу.</div></div>
   </div>
   <div class="code-container">
@@ -6387,13 +6385,13 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Инициализация в if и область видимости: if x := getValue(); x > 0 { ... } else { // здесь x тоже видна }, покажите ограниченную область x.</p></div>
+    <div><p style="margin-bottom: 6px;">Инициализация в if и область видимости: if x := getValue(); x &gt; 0 { ... } else { // здесь x тоже видна }, покажите ограниченную область x.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Переменная из заголовка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if</code> видна во всех ветках <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">else</code>:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if x := getValue(); x > 0 { ... } else { fmt.Println(x) }</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if x := getValue(); x &gt; 0 { ... } else { fmt.Println(x) }</code></li>
 <li style="margin-bottom: 4px;">Переменная <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> живет на протяжении <strong>всей условной цепочки</strong>, но исчезает сразу после выхода из блока <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">else</code>.</li>
 </ul></div>
   </div>
@@ -6462,7 +6460,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Конечный автомат (State Machine): Реализуйте простую логику NPC в игре (состояния: "Патруль", "Тревога", "Атака"), используя for для тиков времени и switch для перехода между состояниями в зависимости от событий.</p></div>
+    <div><p style="margin-bottom: 6px;">Конечный автомат (State Machine): Реализуйте простую логику NPC в игре (состояния: &quot;Патруль&quot;, &quot;Тревога&quot;, &quot;Атака&quot;), используя for для тиков времени и switch для перехода между состояниями в зависимости от событий.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6579,7 +6577,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Меню с бесконечным циклом и switch: программа постоянно показывает пункты меню, выполняет действие по вводу и выходит по "quit".</p></div>
+    <div><p style="margin-bottom: 6px;">Меню с бесконечным циклом и switch: программа постоянно показывает пункты меню, выполняет действие по вводу и выходит по &quot;quit&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6596,7 +6594,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запускаем бесконечный цикл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Считываем команду.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case "quit":</code> делаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">return</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">break</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">case &quot;quit&quot;:</code> делаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">return</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">break</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">

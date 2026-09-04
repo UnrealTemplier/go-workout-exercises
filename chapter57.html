@@ -983,7 +983,7 @@
       <a href="#ex-92" class="sub-exercise-link" title="Упр 92: OCSP Stapling: ускорение проверки статуса отзыва сертификатов">92. OCSP Stapling: ускорение проверки статуса отзыва сертификатов</a>
       <a href="#ex-93" class="sub-exercise-link" title="Упр 93: Certificate Transparency (CT): Signed Certificate Timestamps (SCT) и аудит открытых логов">93. Certificate Transparency (CT): Signed Certificate Timestamps (SCT) и аудит открытых логов</a>
       <a href="#ex-94" class="sub-exercise-link" title="Упр 94: mTLS (Mutual TLS): взаимная аутентификация в архитектуре Zero Trust">94. mTLS (Mutual TLS): взаимная аутентификация в архитектуре Zero Trust</a>
-      <a href="#ex-95" class="sub-exercise-link" title="Упр 95: ACME-клиент: автоматический заказ сертификатов Let's Encrypt (RFC 8555)">95. ACME-клиент: автоматический заказ сертификатов Let's Encrypt (RFC 8555)</a>
+      <a href="#ex-95" class="sub-exercise-link" title="Упр 95: ACME-клиент: автоматический заказ сертификатов Let&#x27;s Encrypt (RFC 8555)">95. ACME-клиент: автоматический заказ сертификатов Let&#x27;s Encrypt (RFC 8555)</a>
       <a href="#ex-96" class="sub-exercise-link" title="Упр 96: TLS Session Resumption: Session Tickets (RFC 5077) и оптимизация Handshake Latency">96. TLS Session Resumption: Session Tickets (RFC 5077) и оптимизация Handshake Latency</a>
       <a href="#ex-97" class="sub-exercise-link" title="Упр 97: SNI (Server Name Indication): виртуальный хостинг HTTPS через GetCertificate">97. SNI (Server Name Indication): виртуальный хостинг HTTPS через GetCertificate</a>
       <a href="#ex-98" class="sub-exercise-link" title="Упр 98: Низкоуровневая безопасность памяти: Zeroing Secrets, crypto/subtle и runtime.KeepAlive">98. Низкоуровневая безопасность памяти: Zeroing Secrets, crypto/subtle и runtime.KeepAlive</a>
@@ -1592,7 +1592,7 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Аллоцируйте буфер с предварительной емкостью: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nonceSize + len(plaintext) + gcm.Overhead()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сгенерируйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nonceSize</code> байт через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rand.Read</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Сформируйте итоговый срез: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gcm.Seal(nonce, nonce, plaintext, nil)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> При расшифровке проверьте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(ciphertext) >= nonceSize + gcm.Overhead()</code>, извлеките nonce и выполните <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gcm.Open(nil, nonce, ciphertext[nonceSize:], nil)</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> При расшифровке проверьте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(ciphertext) &gt;= nonceSize + gcm.Overhead()</code>, извлеките nonce и выполните <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gcm.Open(nil, nonce, ciphertext[nonceSize:], nil)</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -1754,10 +1754,10 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Инициализируйте AES-GCM шифр с 256-битным ключом.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Задайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">aad := []byte("tenant_id:ozon-global;user_id:4581")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Задайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">aad := []byte(&quot;tenant_id:ozon-global;user_id:4581&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Передайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">aad</code> четвертым аргументом в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gcm.Seal(nonce, nonce, plaintext, aad)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Попробуйте расшифровать данные с исходным <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">aad</code> — убедитесь в успехе.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Попробуйте расшифровать данные с поддельным <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tamperedAAD := []byte("tenant_id:ozon-global;user_id:1")</code> — убедитесь, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gcm.Open</code> возвращает ошибку аутентификации.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Попробуйте расшифровать данные с поддельным <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tamperedAAD := []byte(&quot;tenant_id:ozon-global;user_id:1&quot;)</code> — убедитесь, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gcm.Open</code> возвращает ошибку аутентификации.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -1841,7 +1841,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Забывать включать идентификатор контекста (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tenant_id</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user_id</code>) в AAD: если злоумышленник скопирует зашифрованное поле чужого пользователя в свою запись в БД, при отсутствии AAD сервис успешно расшифрует его.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Передача динамически сериализуемых структур в AAD без канонического порядка полей: если JSON-поля поменяются местами (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"a":1,"b":2}</code> vs <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"b":2,"a":1}</code>), AAD не сойдется.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Передача динамически сериализуемых структур в AAD без канонического порядка полей: если JSON-поля поменяются местами (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;a&quot;:1,&quot;b&quot;:2}</code> vs <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;b&quot;:2,&quot;a&quot;:1}</code>), AAD не сойдется.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2028,7 +2028,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Шифрование файлов гигантского размера (> 1-2 ГБ) через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.ReadFile</code>: GCM целиком держит открытый текст и шифротекст в RAM. При больших объемах это приведет к OOM (Out Of Memory). Для гигантских файлов применяется потоковый CTR/CBC с HMAC чанками.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Шифрование файлов гигантского размера (&gt; 1-2 ГБ) через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.ReadFile</code>: GCM целиком держит открытый текст и шифротекст в RAM. При больших объемах это приведет к OOM (Out Of Memory). Для гигантских файлов применяется потоковый CTR/CBC с HMAC чанками.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Прямая перезапись файла <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.OpenFile(..., os.O_TRUNC)</code>: при падении ОС в середине записи старый файл уничтожен, а новый записан наполовину.</div></div>
   </div>
   <div class="callout callout-bigtech">
@@ -2337,14 +2337,12 @@ func main() {
     <div><p style="margin-bottom: 6px;"><strong>Атака по времени (Timing Attack)</strong> — классический вид атак по побочным каналам (Side-Channel Attacks).</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Как работает стандартный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bytes.Equal(a, b)</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">for i := 0; i < len(a); i++ {</p>
-<p style="margin-bottom: 6px;">if a[i] != b[i] {</p>
-<p style="margin-bottom: 6px;">return false // Немедленный ранний выход!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">return true</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">for i := 0; i &lt; len(a); i++ {
+    if a[i] != b[i] {
+        return false // Немедленный ранний выход!
+    }
+}
+return true</code></pre></div>
 <p style="margin-bottom: 6px;">Если первый байт не совпал, функция завершается за $\sim 1$ такт процессора. Если совпали первые 10 байт, процессор выполняет 10 итераций цикла до прерывания.</p>
 <p style="margin-bottom: 6px;">Злоумышленник, измеряя время отклика сервера с высокой точностью (или усредняя миллионы запросов по локальной сети через статистический регрессионный анализ), может побайтово подобрать валидный HMAC:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Перебирает байт 0: правильный байт отвечает чуть-чуть дольше (на несколько наносекунд).</div>
@@ -2452,7 +2450,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Потоковое шифрование больших файлов.</strong>: Зашифруйте большой файл (>100MB) с использованием AES-CTR. Реализуйте потоковое чтение/запись через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cipher.StreamWriter</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cipher.StreamReader</code>, не загружая весь файл в память.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Потоковое шифрование больших файлов.</strong>: Зашифруйте большой файл (&gt;100MB) с использованием AES-CTR. Реализуйте потоковое чтение/запись через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cipher.StreamWriter</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cipher.StreamReader</code>, не загружая весь файл в память.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2641,7 +2639,7 @@ func main() {
 <li style="margin-bottom: 4px;">Данные шифруются с помощью DEK через AES-GCM.</li>
 <li style="margin-bottom: 4px;">Сам DEK шифруется с помощью KEK.</li>
 <li style="margin-bottom: 4px;">Исходный открытый DEK немедленно стирается из памяти.</li>
-<li style="margin-bottom: 4px;">Зашифрованные данные и зашифрованный DEK сохраняются вместе в хранилище ("конверт").</li>
+<li style="margin-bottom: 4px;">Зашифрованные данные и зашифрованный DEK сохраняются вместе в хранилище (&quot;конверт&quot;).</li>
 </ul>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>Преимущества ротации KEK:</strong></p>
@@ -3076,7 +3074,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использование детерминированного шифрования в базах данных для поиска по равенству (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM users WHERE ssn = Encrypt("12345")</code>). Хотя это позволяет выполнять точечный поиск, это раскрывает частотные распределения и дубликаты. В безопасной архитектуре для поиска используют слепые индексы (Blind Index) — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HMAC-SHA256(Value, BlindKey)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Использование детерминированного шифрования в базах данных для поиска по равенству (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SELECT * FROM users WHERE ssn = Encrypt(&quot;12345&quot;)</code>). Хотя это позволяет выполнять точечный поиск, это раскрывает частотные распределения и дубликаты. В безопасной архитектуре для поиска используют слепые индексы (Blind Index) — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HMAC-SHA256(Value, BlindKey)</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3103,8 +3101,8 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Математика: $c \equiv m^e \pmod n$, расшифровка: $m \equiv c^d \pmod n$.</div>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>Почему схема OAEP (Optimal Asymmetric Encryption Padding) обязательна:</strong></p>
-<p style="margin-bottom: 6px;">"Учебный" (textbook) RSA без дополнения фатально уязвим к мультипликативным атакам: $Enc(m_1) \cdot Enc(m_2) = Enc(m_1 \cdot m_2)$.</p>
-<p style="margin-bottom: 6px;">Старый стандарт <strong>PKCS#1 v1.5</strong> уязвим к атаке Блейхенбахера (Bleichenbacher's Million Message Attack) через анализ ответов об ошибках выравнивания.</p>
+<p style="margin-bottom: 6px;">&quot;Учебный&quot; (textbook) RSA без дополнения фатально уязвим к мультипликативным атакам: $Enc(m_1) \cdot Enc(m_2) = Enc(m_1 \cdot m_2)$.</p>
+<p style="margin-bottom: 6px;">Старый стандарт <strong>PKCS#1 v1.5</strong> уязвим к атаке Блейхенбахера (Bleichenbacher&#x27;s Million Message Attack) через анализ ответов об ошибках выравнивания.</p>
 <p style="margin-bottom: 6px;"><strong>RSA-OAEP</strong> (RFC 8017 / PKCS#1 v2.2) использует двустороннюю сеть Фейстеля с маскирующими криптографическими хеш-функциями (MGF1) и случайной солью, обеспечивая доказанную стойкость IND-CCA2 (стойкость против адаптивных атак на основе подобранного шифротекста).</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -3112,7 +3110,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте приватный ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.GenerateKey(rand.Reader, 4096)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Извлеките публичный ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pubKey := &privKey.PublicKey</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Извлеките публичный ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pubKey := &amp;privKey.PublicKey</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Зашифруйте сообщение с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.EncryptOAEP(sha256.New(), rand.Reader, pubKey, plaintext, label)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Метка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">label</code> может содержать открытый контекст или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Расшифруйте сообщение приватным ключом: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.DecryptOAEP(sha256.New(), rand.Reader, privKey, ciphertext, label)</code>.</div>
@@ -3185,7 +3183,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Попытка зашифровать длинный текст (> 446 байт для RSA-4096 с SHA-256): функция возвратит ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto/rsa: message too long for RSA key size</code>. RSA не предназначен для bulk-данных.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Попытка зашифровать длинный текст (&gt; 446 байт для RSA-4096 с SHA-256): функция возвратит ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto/rsa: message too long for RSA key size</code>. RSA не предназначен для bulk-данных.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Использование устаревшего <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.EncryptPKCS1v15</code>: этот метод признан небезопасным во всех современных стандартах безопасности.</div></div>
   </div>
   <div class="callout callout-bigtech">
@@ -3213,8 +3211,8 @@ func main() {
     <div><p style="margin-bottom: 6px;">Схема шифрования <strong>PKCS#1 v1.5</strong> была предложена в начале 1990-х годов и форматировала блок как: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x00 || 0x02 || RandomPadding || 0x00 || Data</code>.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">В 1998 году швейцарский криптограф Даниэль Блейхенбахер (Daniel Bleichenbacher) опубликовал сокрушительную атаку <strong>Million Message Attack</strong>:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Атакующий отправляет серверу случайно модифицированные шифротексты $c' = c \cdot s^e \pmod n$.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если расшифрованный блок начинается с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x00 0x02</code>, сервер выдает ошибку одного типа (например, "Bad Application Data"), а если паддинг нарушен — другого типа ("Decryption Error") или возвращает ответ с разницей во времени в несколько микросекунд.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Атакующий отправляет серверу случайно модифицированные шифротексты $c&#x27; = c \cdot s^e \pmod n$.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если расшифрованный блок начинается с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x00 0x02</code>, сервер выдает ошибку одного типа (например, &quot;Bad Application Data&quot;), а если паддинг нарушен — другого типа (&quot;Decryption Error&quot;) или возвращает ответ с разницей во времени в несколько микросекунд.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сервер выступает в роли оракула соответствия паддинга (Padding Oracle).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Методом адаптивного сужения интервалов атакующий полностью восстанавливает открытый текст (например, pre-master secret в TLS) примерно за $10^6$ запросов без знания приватного ключа!</div>
 <div style="height: 8px;"></div>
@@ -3326,7 +3324,7 @@ func main() {
 <p style="margin-bottom: 6px;"><strong>Почему ECB категорически запрещен к использованию:</strong></p>
 <p style="margin-bottom: 6px;">Если в открытом тексте есть два одинаковых 16-байтных блока ($P_i == P_j$), их шифротексты будут абсолютно идентичны: $C_i == C_j$.</p>
 <p style="margin-bottom: 6px;">В растровых изображениях (BMP, PPM) или структурированных протоколах (JSON, XML) огромные массивы пикселей фона или повторяющихся структур имеют одинаковые значения.</p>
-<p style="margin-bottom: 6px;">Зашифрованное в ECB изображение полностью сохраняет геометрические контуры и очертания объектов (хрестоматийный пример "ECB Penguin"), сводя конфиденциальность к нулю!</p>
+<p style="margin-bottom: 6px;">Зашифрованное в ECB изображение полностью сохраняет геометрические контуры и очертания объектов (хрестоматийный пример &quot;ECB Penguin&quot;), сводя конфиденциальность к нулю!</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">В стандартной библиотеке Go пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto/cipher</code> режим ECB <strong>намеренно отсутствует</strong>, чтобы инженеры физически не могли случайно использовать его.</p></div>
   </div>
@@ -3436,7 +3434,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в стандартной библиотеке Go нет конструктора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cipher.NewECBEncrypter</code>, тогда как CBC и CTR присутствуют?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это осознанное архитектурное решение команды безопасности Go (Brad Fitzpatrick, Filippo Valsorda, Russ Cox). Принцип стандартной библиотеки Go — "Safe by default". В криптографии нет ни одного легитимного сценария безопасного применения ECB к пользовательским данным. Добавление <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NewECBEncrypter</code> спровоцировало бы неквалифицированных разработчиков использовать его ради простоты (нет нужды генерировать IV/Nonce).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это осознанное архитектурное решение команды безопасности Go (Brad Fitzpatrick, Filippo Valsorda, Russ Cox). Принцип стандартной библиотеки Go — &quot;Safe by default&quot;. В криптографии нет ни одного легитимного сценария безопасного применения ECB к пользовательским данным. Добавление <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NewECBEncrypter</code> спровоцировало бы неквалифицированных разработчиков использовать его ради простоты (нет нужды генерировать IV/Nonce).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-17">
@@ -3577,7 +3575,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CryptBlocks</code> слайсы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dst</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src</code> обязаны быть кратны размеру блока (16 байт), и что произойдет, если передать некратный срез?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Алгоритм AES работает строго над матрицами состояния $4 \times 4$ байта. Если передать срез, длина которого не кратна 16 байтам, рантайм Go немедленно запаникует: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic("crypto/cipher: input not full blocks")</code>. Дополнение данных до кратности 16 байт (PKCS#7) является обязанностью вызывающего кода.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Алгоритм AES работает строго над матрицами состояния $4 \times 4$ байта. Если передать срез, длина которого не кратна 16 байтам, рантайм Go немедленно запаникует: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic(&quot;crypto/cipher: input not full blocks&quot;)</code>. Дополнение данных до кратности 16 байт (PKCS#7) является обязанностью вызывающего кода.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-18">
@@ -3587,7 +3585,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Padding Oracle Attack (теория)</strong>: Реализуйте PKCS#7 padding. Покажите, как атакующий, зная только валидность padding'а, может расшифровать любой ciphertext за 128 × 256 запросов.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Padding Oracle Attack (теория)</strong>: Реализуйте PKCS#7 padding. Покажите, как атакующий, зная только валидность padding&#x27;а, может расшифровать любой ciphertext за 128 × 256 запросов.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3597,11 +3595,11 @@ func main() {
 <p style="margin-bottom: 6px;">В режиме CBC расшифрование последнего блока $C_n$ дает открытый текст: $P_n = D_K(C_n) \oplus C_{n-1}$.</p>
 <p style="margin-bottom: 6px;">Сервер принимает шифротекст, расшифровывает его и проверяет PKCS#7 паддинг.</p>
 <p style="margin-bottom: 6px;">Если паддинг невалиден (например, последний байт равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x07</code>, но перед ним нет семи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x07</code>), сервер возвращает ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Invalid Padding</code> (или отвечает быстрее).</p>
-<p style="margin-bottom: 6px;">Атакующий манипулирует предпоследним блоком $C_{n-1}'$:</p>
+<p style="margin-bottom: 6px;">Атакующий манипулирует предпоследним блоком $C_{n-1}&#x27;$:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Он хочет узнать последний байт $P_n[15]$.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Он модифицирует байт $C_{n-1}'[15] = g$.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Когда сервер расшифровывает блок, значение $P_n'[15] = D_K(C_n)[15] \oplus g$.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Если угаданное значение $g$ приводит к тому, что $P_n'[15] == 0x01$, сервер считает паддинг валидным!</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Он модифицирует байт $C_{n-1}&#x27;[15] = g$.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Когда сервер расшифровывает блок, значение $P_n&#x27;[15] = D_K(C_n)[15] \oplus g$.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Если угаданное значение $g$ приводит к тому, что $P_n&#x27;[15] == 0x01$, сервер считает паддинг валидным!</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Атакующий перебирает всего от 1 до 256 вариантов для каждого байта.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Вычислив $D_K(C_n)[15] = g \oplus 0x01$, атакующий мгновенно восстанавливает истинный байт открытого текста: $P_n[15] = D_K(C_n)[15] \oplus C_{n-1}[15]$.</div>
 <p style="margin-bottom: 6px;">Повторяя эту процедуру побайтово справа налево, атакующий расшифровывает весь 16-байтный блок за максимум $16 \times 256 = 4096$ запросов, а 128-байтный файл — за $128 \times 256 = 32768$ запросов!</p></div>
@@ -3729,7 +3727,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Возвращение детализированных ошибок API ("Неверная контрольная сумма", "Неверный паддинг", "Ошибка синтаксиса"): любая селективность в ошибках моментально создает оракул для атакующего.</p></div>
+    <div><p style="margin-bottom: 6px;">Возвращение детализированных ошибок API (&quot;Неверная контрольная сумма&quot;, &quot;Неверный паддинг&quot;, &quot;Ошибка синтаксиса&quot;): любая селективность в ошибках моментально создает оракул для атакующего.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3749,7 +3747,7 @@ func main() {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Классические режимы шифрования (ECB, CBC, CTR) обеспечивают только <strong>конфиденциальность (Confidentiality)</strong>, но абсолютно не защищают от <strong>подделки данных (Malleability / Tampering)</strong>.</p>
-<p style="margin-bottom: 6px;">В потоковом режиме CTR инверсия $i$-го бита шифротекста $C_i' = C_i \oplus 1$ приводит к тому, что при расшифровке $P_i' = P_i \oplus 1$. Злоумышленник может изменить сумму банковского перевода с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">000100</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">900100</code>, не расшифровывая сообщение!</p>
+<p style="margin-bottom: 6px;">В потоковом режиме CTR инверсия $i$-го бита шифротекста $C_i&#x27; = C_i \oplus 1$ приводит к тому, что при расшифровке $P_i&#x27; = P_i \oplus 1$. Злоумышленник может изменить сумму банковского перевода с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">000100</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">900100</code>, не расшифровывая сообщение!</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>AES-GCM решает эту проблему за счет аутентифицированного шифрования (AEAD):</strong></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> В процессе шифрования вычисляется 16-байтный тег аутентификации (MAC Tag) с помощью полинома GHASH над полем Галуа $GF(2^{128})$.</div>
@@ -3903,7 +3901,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте пару ключей RSA-2048.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вычислите SHA-256 хеш исходного документа.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Подпишите хеш через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.SignPKCS1v15(rand.Reader, privKey, crypto.SHA256, hashed)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Подпишите тот же хеш через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.SignPSS(rand.Reader, privKey, crypto.SHA256, hashed, &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash})</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Подпишите тот же хеш через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.SignPSS(rand.Reader, privKey, crypto.SHA256, hashed, &amp;rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash})</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Проверьте подписи через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.VerifyPKCS1v15</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.VerifyPSS</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Покажите, что повторный вызов PSS дает новую подпись, а PKCS#1 v1.5 — идентичную.</div></div>
   </div>
@@ -3995,7 +3993,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в стандарте TLS 1.3 для подписей RSA разрешено использовать только RSA-PSS (схемы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa_pss_rsae_sha256</code>), а PKCS#1 v1.5 запрещен?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В PKCS#1 v1.5 исторически регулярно находили уязвимости реализации в криптографических библиотеках (Bleichenbacher'06, Berglund'14). Детерминированный паддинг PKCS#1 v1.5 требует парсинга вложенных структур ASN.1, где ошибки валидации лидирующих нулей приводили к подделке подписей. PSS математически доказан на уровне редукции к стойкости RSA и свободен от ASN.1 парсинга внутри блока подписи.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В PKCS#1 v1.5 исторически регулярно находили уязвимости реализации в криптографических библиотеках (Bleichenbacher&#x27;06, Berglund&#x27;14). Детерминированный паддинг PKCS#1 v1.5 требует парсинга вложенных структур ASN.1, где ошибки валидации лидирующих нулей приводили к подделке подписей. PSS математически доказан на уровне редукции к стойкости RSA и свободен от ASN.1 парсинга внутри блока подписи.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-21">
@@ -4014,7 +4012,7 @@ func main() {
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Исторически существовали три схемы композиции шифрования и аутентификации:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Encrypt-and-MAC (SSH)</strong>: $C = Enc(P)$, $T = MAC(P)$. Плохо: MAC вычисляется от открытого текста, может раскрывать информацию о $P$.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>MAC-then-Encrypt (TLS 1.0–1.2)</strong>: $P' = P \parallel MAC(P)$, $C = Enc(P')$. Катастрофа: чтобы проверить MAC, сервер сначала обязан расшифровать данные и снять паддинг, открывая окно для оракула паддинга!</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>MAC-then-Encrypt (TLS 1.0–1.2)</strong>: $P&#x27; = P \parallel MAC(P)$, $C = Enc(P&#x27;)$. Катастрофа: чтобы проверить MAC, сервер сначала обязан расшифровать данные и снять паддинг, открывая окно для оракула паддинга!</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Encrypt-then-MAC (IPsec / AEAD)</strong>: $C = Enc(P)$, $T = MAC(C)$. <strong>Идеально</strong>: получатель первым делом в константном времени проверяет $MAC(C)$. Если тег не сошелся, пакет отбрасывается без малейших попыток расшифровать его или проверить паддинг.</div>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Современные AEAD шифры (AES-GCM, ChaCha20-Poly1305) реализуют Encrypt-then-MAC на уровне математического примитива.</p></div>
@@ -4272,7 +4270,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Nonce reuse в CTR mode (катастрофа)</strong>: Зашифруйте два разных сообщения одним ключом и одним nonce. Покажите, что XOR ciphertext'ов даёт XOR plaintext'ов (можно восстановить оба сообщения!).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Nonce reuse в CTR mode (катастрофа)</strong>: Зашифруйте два разных сообщения одним ключом и одним nonce. Покажите, что XOR ciphertext&#x27;ов даёт XOR plaintext&#x27;ов (можно восстановить оба сообщения!).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4288,15 +4286,15 @@ func main() {
 <p style="margin-bottom: 6px;"><strong>Последствия:</strong></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Поток ключей $Keystream$ полностью взаимно уничтожается!</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Атакующий получает чистый результат $P_1 \oplus P_2$ (Two-Time Pad).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Используя естественную избыточность языка (частоты пробелов и гласных в ASCII) или зная часть шаблона одного сообщения (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"GET /api/v1/users"</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"status":</code>), атакующий мгновенно восстанавливает оба открытых текста!</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Используя естественную избыточность языка (частоты пробелов и гласных в ASCII) или зная часть шаблона одного сообщения (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;GET /api/v1/users&quot;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;status&quot;:</code>), атакующий мгновенно восстанавливает оба открытых текста!</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте ключ AES-256 и зафиксируйте статический <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nonce</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зашифруйте первое сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Msg1: "Secret Password 1"</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Зашифруйте второе сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Msg2: "Super Payment 99"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зашифруйте первое сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Msg1: &quot;Secret Password 1&quot;</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Зашифруйте второе сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Msg2: &quot;Super Payment 99&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вычислите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XOR(Ciphertext1, Ciphertext2)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Покажите, что результат в точности равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XOR(Msg1, Msg2)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Докажите, что зная открытый текст первого сообщения, атакующий восстанавливает второе без знания ключа.</div></div>
@@ -4393,7 +4391,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что такое атака Crib Dragging и как она позволяет читать зашифрованный трафик при повторе nonce?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Crib Dragging — метод взлома двух зашифрованных сообщений $C_1 \oplus C_2 = P_1 \oplus P_2$. Атакующий берет часто встречающееся предположительное слово ("crib", например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"The "</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"https://"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Authorization:"</code>) и последовательно выполняет XOR этого слова со всеми смещениями среза $P_1 \oplus P_2$. Если при смещении $k$ получается читаемый осмысленный текст на естественном языке, атакующий угадал слово во втором сообщении. Продолжая разматывать цепочку слов вправо и влево, аналитик восстанавливает оба текста целиком.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Crib Dragging — метод взлома двух зашифрованных сообщений $C_1 \oplus C_2 = P_1 \oplus P_2$. Атакующий берет часто встречающееся предположительное слово (&quot;crib&quot;, например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;The &quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;https://&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Authorization:&quot;</code>) и последовательно выполняет XOR этого слова со всеми смещениями среза $P_1 \oplus P_2$. Если при смещении $k$ получается читаемый осмысленный текст на естественном языке, атакующий угадал слово во втором сообщении. Продолжая разматывать цепочку слов вправо и влево, аналитик восстанавливает оба текста целиком.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-24">
@@ -4614,7 +4612,7 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Обеспечивает строгую безопасность <strong>AEAD (Authenticated Encryption with Associated Data)</strong>:</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Confidentiality</strong>: за счет режима CTR никто посторонний не может прочесть данные.</li>
-<li style="margin-bottom: 4px;"><strong>Authenticity & Integrity</strong>: за счет полинома GHASH $GF(2^{128})$ любая модификация даже одного бита шифротекста обнаруживается со 100% гарантией.</li>
+<li style="margin-bottom: 4px;"><strong>Authenticity &amp; Integrity</strong>: за счет полинома GHASH $GF(2^{128})$ любая модификация даже одного бита шифротекста обнаруживается со 100% гарантией.</li>
 <li style="margin-bottom: 4px;"><strong>Performance</strong>: параллелизуемость операций на всех современных процессорах x86_64 и ARM64 через аппаратные инструкции ускорения.</li>
 </ul></div>
   </div>
@@ -4743,7 +4741,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте пару ключей RSA-2048/4096.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создайте функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SignDocument(content []byte, privKey *rsa.PrivateKey) ([]byte, error)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Посчитайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sha256.Sum256(content)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.SignPSS(rand.Reader, privKey, crypto.SHA256, hash[:], &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash})</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.SignPSS(rand.Reader, privKey, crypto.SHA256, hash[:], &amp;rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash})</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Создайте функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">VerifyDocument(content, signature []byte, pubKey *rsa.PublicKey) error</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Проверьте подлинность оригинального файла и зафиксируйте отказ при модификации файла.</div></div>
   </div>
@@ -4843,7 +4841,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.VerifyPSS</code> открытый ключ вычисляет $m = s^e \pmod n$. Затем из $m$ извлекается маскированный блок $DB$ и хеш $H$. С помощью MGF1 снимается маска, восстанавливается случайная соль $salt$ и сверяется равенство $H == H'(Padding \parallel MHash \parallel salt)$. Весь процесс свободен от уязвимостей разбора ASN.1.</p></div>
+    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.VerifyPSS</code> открытый ключ вычисляет $m = s^e \pmod n$. Затем из $m$ извлекается маскированный блок $DB$ и хеш $H$. С помощью MGF1 снимается маска, восстанавливается случайная соль $salt$ и сверяется равенство $H == H&#x27;(Padding \parallel MHash \parallel salt)$. Весь процесс свободен от уязвимостей разбора ASN.1.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -5005,7 +5003,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Возьмите общий мастер-ключ (32 байта).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> С помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang.org/x/crypto/hkdf</code> выведите два независимых 32-байтных ключа: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encKey</code> с контекстом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info="enc"</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">macKey</code> с контекстом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info="mac"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> С помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang.org/x/crypto/hkdf</code> выведите два независимых 32-байтных ключа: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encKey</code> с контекстом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info=&quot;enc&quot;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">macKey</code> с контекстом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info=&quot;mac&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Зашифруйте данные в режиме AES-CBC с добавлением PKCS#7 паддинга.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вычислите HMAC-SHA256 от среза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[IV || Ciphertext]</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Соберите пакет: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[IV 16 байт][Ciphertext ...][HMAC 32 байта]</code>.</div>
@@ -5192,7 +5190,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в схеме Encrypt-then-MAC вектор инициализации IV обязательно должен входить в данные, подписываемые HMAC?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Дешифрование первого блока в CBC вычисляется как $P_1 = D_K(C_1) \oplus IV$. Если IV не защищен HMAC, злоумышленник в канале связи может изменить байты IV ($IV' = IV \oplus \Delta$). Проверка HMAC пройдет успешно, так как шифротекст $C$ не тронут, но в расшифрованном первом блоке значение изменится на $P_1 \oplus \Delta$. Включение IV в HMAC предотвращает эту атаку.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Дешифрование первого блока в CBC вычисляется как $P_1 = D_K(C_1) \oplus IV$. Если IV не защищен HMAC, злоумышленник в канале связи может изменить байты IV ($IV&#x27; = IV \oplus \Delta$). Проверка HMAC пройдет успешно, так как шифротекст $C$ не тронут, но в расшифрованном первом блоке значение изменится на $P_1 \oplus \Delta$. Включение IV в HMAC предотвращает эту атаку.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-29">
@@ -5303,7 +5301,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в токене PASETO v2/v4 для подписи выбран Ed25519 вместо классического набора алгоритмов JWT (RSA / ECDSA)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Стандарт JWT допускает заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"alg": "none"</code> или подмену асимметричного алгоритма на симметричный HMAC (атака Algorithm Confusion). Кроме того, ECDSA в JWT уязвим к утечке приватного ключа при плохом генераторе случайных чисел (RFC 6979 не везде соблюдается). PASETO устранил выбор алгоритмов: версия протокола жестко привязана к Ed25519. Публичный ключ занимает всего 32 байта, подпись — 64 байта, а детерминированная природа EdDSA исключает любые риски компрометации сида при генерации подписей.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Стандарт JWT допускает заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;alg&quot;: &quot;none&quot;</code> или подмену асимметричного алгоритма на симметричный HMAC (атака Algorithm Confusion). Кроме того, ECDSA в JWT уязвим к утечке приватного ключа при плохом генераторе случайных чисел (RFC 6979 не везде соблюдается). PASETO устранил выбор алгоритмов: версия протокола жестко привязана к Ed25519. Публичный ключ занимает всего 32 байта, подпись — 64 байта, а детерминированная природа EdDSA исключает любые риски компрометации сида при генерации подписей.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-30">
@@ -5436,7 +5434,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использование неструктурированных текстовых представлений для AAD (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf("%d:%d", a, b)</code>): при значениях (1, 23) и (12, 3) строка может совпасть без строгих разделителей.</p></div>
+    <div><p style="margin-bottom: 6px;">Использование неструктурированных текстовых представлений для AAD (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf(&quot;%d:%d&quot;, a, b)</code>): при значениях (1, 23) и (12, 3) строка может совпасть без строгих разделителей.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -5604,8 +5602,8 @@ func main() {
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>Магия параметра <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info</code> (Domain Separation):</strong></p>
 <p style="margin-bottom: 6px;">Параметр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info</code> обеспечивает строгое разделение криптографических контекстов.</p>
-<p style="margin-bottom: 6px;">Если передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info="tls13 client in"</code>, получится ключ клиента.</p>
-<p style="margin-bottom: 6px;">Если передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info="tls13 server in"</code>, получится ключ сервера.</p>
+<p style="margin-bottom: 6px;">Если передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info=&quot;tls13 client in&quot;</code>, получится ключ клиента.</p>
+<p style="margin-bottom: 6px;">Если передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info=&quot;tls13 server in&quot;</code>, получится ключ сервера.</p>
 <p style="margin-bottom: 6px;">Даже если один из выведенных ключей будет раскрыт, математические свойства односторонней функции HMAC гарантируют, что атакующий не сможет скомпрометировать мастер-секрет или другие ключи.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -5614,9 +5612,9 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте 32-байтный псевдослучайный Master Secret.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hkdf.Extract(sha256.New, masterSecret, salt)</code> для получения PRK.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Выведите ключ шифрования <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encKey</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info = []byte("App-Database-AES-256-Key")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выведите ключ аутентификации <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">macKey</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info = []byte("App-Message-HMAC-Auth-Key")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Выведите ключ экспорта данных <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">exportKey</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info = []byte("App-External-Export-Token")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Выведите ключ шифрования <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encKey</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info = []byte(&quot;App-Database-AES-256-Key&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выведите ключ аутентификации <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">macKey</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info = []byte(&quot;App-Message-HMAC-Auth-Key&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Выведите ключ экспорта данных <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">exportKey</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info = []byte(&quot;App-External-Export-Token&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Покажите, что все три ключа абсолютно независимы и уникальны.</div></div>
   </div>
   <div class="code-container">
@@ -5705,7 +5703,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использование пустого или одинакового параметра <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info</code> для разных задач: если для шифрования и для подписи использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info=""</code>, оба ключа совпадут, что нарушит изоляцию криптографических примитивов.</p></div>
+    <div><p style="margin-bottom: 6px;">Использование пустого или одинакового параметра <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info</code> для разных задач: если для шифрования и для подписи использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info=&quot;&quot;</code>, оба ключа совпадут, что нарушит изоляцию криптографических примитивов.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -5746,7 +5744,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте пару ключей Ed25519.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сериализуйте приватный ключ в бинарный ASN.1 PKCS#8 с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x509.MarshalPKCS8PrivateKey(privKey)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создайте структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Block{Type: "PRIVATE KEY", Bytes: derBytes}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создайте структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Block{Type: &quot;PRIVATE KEY&quot;, Bytes: derBytes}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запишите PEM-блок на диск через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Encode</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Прочитайте файл, декодируйте через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Decode</code> и восстановите ключ через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x509.ParsePKCS8PrivateKey</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Выполните приведение типов к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ed25519.PrivateKey</code>.</div></div>
@@ -6116,7 +6114,7 @@ func main() {
     <div><p style="margin-bottom: 6px;">В облачных архитектурах (AWS KMS, GCP Cloud Key Management, Yandex Cloud KMS) шифрование сотен гигабайт данных напрямую через сетевой вызов к KMS API невозможно из-за сетевых задержек и ограничений размера payload (максимум 4 КБ в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kms:Encrypt</code>).</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Стандартное решение — <strong>Envelope Encryption (Конвертное шифрование)</strong>:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сервис вызывает API KMS: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kms.GenerateDataKey(KeyId="alias/master-key", KeySpec="AES_256")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сервис вызывает API KMS: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kms.GenerateDataKey(KeyId=&quot;alias/master-key&quot;, KeySpec=&quot;AES_256&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> KMS внутри защищенного аппаратного модуля HSM генерирует 256-битный ключ <strong>DEK (Data Encryption Key)</strong> и возвращает его вызывающей стороне в двух видах:</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PlaintextKey</code>: открытый ключ (32 байта) — используется сервисом для локального шифрования файла через аппаратный AES-NI со скоростью нескольких гигабайт в секунду.</li>
@@ -6305,7 +6303,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что такое Encryption Context в AWS KMS и как он защищает от подмены зашифрованных файлов между S3-бакетами?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Encryption Context в AWS KMS — это словарь key-value пар (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"bucket": "finance-prod", "year": "2026"}</code>), который передается в KMS при вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GenerateDataKey</code> и используется как AAD (Additional Authenticated Data). При расшифровании DEK клиент обязан передать точно такой же Encryption Context. Если злоумышленник скопирует зашифрованный DEK из бакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">finance-prod</code> в тестовый бакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dev-test</code>, KMS откажет в расшифровке, предотвратив межпроектные атаки.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Encryption Context в AWS KMS — это словарь key-value пар (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;bucket&quot;: &quot;finance-prod&quot;, &quot;year&quot;: &quot;2026&quot;}</code>), который передается в KMS при вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GenerateDataKey</code> и используется как AAD (Additional Authenticated Data). При расшифровании DEK клиент обязан передать точно такой же Encryption Context. Если злоумышленник скопирует зашифрованный DEK из бакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">finance-prod</code> в тестовый бакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dev-test</code>, KMS откажет в расшифровке, предотвратив межпроектные атаки.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-36">
@@ -6517,7 +6515,7 @@ func main() {
 <p style="margin-bottom: 6px;"><strong>SQLCipher</strong> решает эту задачу на уровне страниц базы данных (Page-Level Encryption):</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Размер страницы SQLite (обычно 4096 байт) шифруется постранично через AES-256-CBC с HMAC-SHA256 или AES-256-GCM.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В конце каждой страницы резервируется место под уникальный IV и HMAC-тег страницы.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> При открытии соединения выполняется специальная команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PRAGMA key = 'passphrase'</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PRAGMA hexkey = 'hex_string'</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> При открытии соединения выполняется специальная команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PRAGMA key = &#x27;passphrase&#x27;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PRAGMA hexkey = &#x27;hex_string&#x27;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Движок прозрачно расшифровывает страницы при чтении в кэш страниц (Page Cache) и зашифровывает при сбросе (flush) на диск.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Для инженера Go работа с базой ведется через стандартный интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">database/sql</code>.</div></div>
   </div>
@@ -6831,7 +6829,7 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Subject</strong>: субъект, которому выдан сертификат (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CommonName</code> / CN). По современным стандартам (RFC 6125) поле CN признано устаревшим.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>SAN (Subject Alternative Name / <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DNSNames</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IPAddresses</code>)</strong>: обязательный список доменов и IP-адресов, для которых сертификат легитимен.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>NotBefore / NotAfter</strong>: временное окно валидности сертификата.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>KeyUsage & ExtKeyUsage</strong>: флаги назначения ключа (DigitalSignature, KeyEncipherment, ServerAuth, ClientAuth).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>KeyUsage &amp; ExtKeyUsage</strong>: флаги назначения ключа (DigitalSignature, KeyEncipherment, ServerAuth, ClientAuth).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> <strong>Цепочка доверия (Chain of Trust)</strong>: конечный сертификат (Leaf) подписывается промежуточным Удостоверяющим Центром (Intermediate CA), который в свою очередь подписывается корневым CA (Root CA). Проверка выполняется через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cert.Verify(opts)</code> с пулом доверенных корневых сертификатов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x509.CertPool</code>.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -6841,8 +6839,8 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте самоподписанный корневой сертификат CA и конечный сертификат сервера с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x509.CreateCertificate</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Распарсите бинарный DER через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x509.ParseCertificate</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверьте временные границы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Now().After(cert.NotAfter)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Реализуйте проверку доменного имени через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cert.VerifyHostname("api.ozon.ru")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Постройте кастомный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x509.CertPool</code>, добавьте туда корневой сертификат CA и вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">leafCert.Verify(x509.VerifyOptions{Roots: pool, DNSName: "api.ozon.ru"})</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Реализуйте проверку доменного имени через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cert.VerifyHostname(&quot;api.ozon.ru&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Постройте кастомный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x509.CertPool</code>, добавьте туда корневой сертификат CA и вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">leafCert.Verify(x509.VerifyOptions{Roots: pool, DNSName: &quot;api.ozon.ru&quot;})</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -7548,7 +7546,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">aes.NewCipher</code> пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto/aes</code> на этапе инициализации вызывает низкоуровневую проверку флагов CPUID: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cpu.X86.HasAES && cpu.X86.HasPCLMULQDQ</code>. Если флаги установлены, указатель на метод шифрования переключается на оптимизированную ассемблерную процедуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encryptBlockGoAsm</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">В функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">aes.NewCipher</code> пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto/aes</code> на этапе инициализации вызывает низкоуровневую проверку флагов CPUID: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cpu.X86.HasAES &amp;&amp; cpu.X86.HasPCLMULQDQ</code>. Если флаги установлены, указатель на метод шифрования переключается на оптимизированную ассемблерную процедуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">encryptBlockGoAsm</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -7711,7 +7709,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Уязвимость ECB (Теория в коде)</strong>: Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto/aes</code> для шифрования строки. Напиши (или найди) реализацию режима ECB. Зашифруй картинку (или блок повторяющихся данных). Изучи проблему "Пингвина ECB" — почему этот режим оставляет видимыми паттерны данных.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Уязвимость ECB (Теория в коде)</strong>: Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto/aes</code> для шифрования строки. Напиши (или найди) реализацию режима ECB. Зашифруй картинку (или блок повторяющихся данных). Изучи проблему &quot;Пингвина ECB&quot; — почему этот режим оставляет видимыми паттерны данных.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7943,7 +7941,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В алгоритме ChaCha20 внутреннее состояние представляет собой матрицу $4 \times 4$ 32-битных беззнаковых чисел (4 константы "expand 32-byte k", 8 слов ключа, 1 слово 32-битного счетчика блоков и 3 слова 96-битного nonce).</p>
+    <div><p style="margin-bottom: 6px;">В алгоритме ChaCha20 внутреннее состояние представляет собой матрицу $4 \times 4$ 32-битных беззнаковых чисел (4 константы &quot;expand 32-byte k&quot;, 8 слов ключа, 1 слово 32-битного счетчика блоков и 3 слова 96-битного nonce).</p>
 <p style="margin-bottom: 6px;">Первый блок гаммы шифрования (64 байта) используется особым образом: первые 32 байта становятся одноразовым ключом для Poly1305, что исключает необходимость отдельного обмена ключами аутентификации.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -7968,7 +7966,7 @@ func main() {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">При попытке зашифровать произвольный пользовательский файл через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.EncryptOAEP</code> разработчики неизбежно сталкиваются с фундаментальными математическими ограничениями RSA:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Математика RSA работает в кольце вычетов по модулю $N$. Открытый текст обязан быть строго меньше модуля: $m < N$.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Математика RSA работает в кольце вычетов по модулю $N$. Открытый текст обязан быть строго меньше модуля: $m &lt; N$.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Схема OAEP резервирует внутри блока $2 \times HashLen + 2$ байт под контрольные суммы, MGF1-маски и разделители.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Для ключа RSA-2048 максимальный размер открытого текста равен $256 - 66 = 190$ байт.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Попытка зашифровать файл размером 1 МБ прямым RSA потребует разбиения на более чем 5000 фрагментов, выполнения 5000 операций возведения в степень и раздует размер файла более чем в 1.35 раза!</div>
@@ -8066,12 +8064,10 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Формула длины в коде стандартной библиотеки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto/rsa/oaep.go</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">k := priv.Size()</p>
-<p style="margin-bottom: 6px;">if len(ciphertext) > k || k < 2*hash.Size()+2 {</p>
-<p style="margin-bottom: 6px;">return nil, ErrMessageTooLong</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">k := priv.Size()
+if len(ciphertext) &gt; k || k &lt; 2*hash.Size()+2 {
+    return nil, ErrMessageTooLong
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Благодаря гибридной схеме нагрузка на процессор сокращается на 99%, а размер зашифрованного сообщения увеличивается всего на 256 байт зашифрованного сессионного ключа независимо от размера самого файла.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -8212,7 +8208,7 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Textbook RSA (Учебный RSA)</strong> без паддинга абсолютно детерминирован:</p>
 <p style="margin-bottom: 6px;">$c \equiv m^e \pmod n$.</p>
-<p style="margin-bottom: 6px;">Если зашифровать слово <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"YES"</code>, результат всегда будет абсолютно одинаковым числом $c$. Атакующий может составить словарь всех возможных коротких ответов (YES, NO, APPROVED, REJECTED) и мгновенно расшифровывать сообщения.</p>
+<p style="margin-bottom: 6px;">Если зашифровать слово <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;YES&quot;</code>, результат всегда будет абсолютно одинаковым числом $c$. Атакующий может составить словарь всех возможных коротких ответов (YES, NO, APPROVED, REJECTED) и мгновенно расшифровывать сообщения.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>Схема OAEP (Optimal Asymmetric Encryption Padding):</strong></p>
 <p style="margin-bottom: 6px;">Перед возведением в степень открытый текст $M$ дополняется случайной солью ($Seed$ длиной равной размеру хеша, 32 байта для SHA-256):</p>
@@ -8227,7 +8223,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте пару RSA-2048.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зашифруйте сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"VOTE_FOR_CANDIDATE_A"</code> дважды с одним и тем же публичным ключом через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.EncryptOAEP</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зашифруйте сообщение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;VOTE_FOR_CANDIDATE_A&quot;</code> дважды с одним и тем же публичным ключом через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.EncryptOAEP</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Покажите, что полученные шифротексты побайтово кардинально различаются.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Расшифруйте оба шифротекста и убедитесь, что они восстанавливают один и тот же открытый текст.</div></div>
   </div>
@@ -8328,7 +8324,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте ключевую пару RSA-2048 через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.GenerateKey</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Преобразуйте приватный ключ в DER через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x509.MarshalPKCS8PrivateKey(privKey)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создайте структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Block{Type: "PRIVATE KEY", Bytes: derBytes}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создайте структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Block{Type: &quot;PRIVATE KEY&quot;, Bytes: derBytes}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запишите PEM-файл на диск с правами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0600</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Прочитайте файл с диска через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.ReadFile</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Decode</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Распарсите DER через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x509.ParsePKCS8PrivateKey</code> и приведите тип к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*rsa.PrivateKey</code>.</div></div>
@@ -8468,7 +8464,7 @@ func main() {
 <p style="margin-bottom: 6px;">$MaxPayloadLen = k - 2 \cdot hLen - 2$.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>Математическая раскладка 256-байтного блока (RSA-2048):</strong></p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>$1$ байт</strong>: лидирующий нулевой байт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x00</code> (гарантирует, что число $m < N$).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>$1$ байт</strong>: лидирующий нулевой байт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x00</code> (гарантирует, что число $m &lt; N$).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>$hLen$ байт ($32$ байта для SHA-256)</strong>: маскированный сид <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maskedSeed</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>$hLen$ байт ($32$ байта для SHA-256)</strong>: хеш открытого параметра контекста $Hash(L)$ (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lHash</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>$1$ байт</strong>: разделительный байт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x01</code>, отделяющий паддинг от данных.</div>
@@ -8579,7 +8575,7 @@ func main() {
 <p style="margin-bottom: 6px;">Сам блочный шифр AES — это лишь примитив отображения 16 байт в 16 байт.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>Почему AES-GCM является золотым стандартом:</strong></p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Authenticated Encryption (AEAD)</strong>: в отличие от связки "шифр + отдельный HMAC", GCM рассчитывает тег имитовставки непосредственно в ходе шифрования в едином математическом конвейере.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Authenticated Encryption (AEAD)</strong>: в отличие от связки &quot;шифр + отдельный HMAC&quot;, GCM рассчитывает тег имитовставки непосредственно в ходе шифрования в едином математическом конвейере.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Защита от атак активного посредника</strong>: ни один байт сообщения нельзя подменить без обнаружения.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Безопасность к утечкам через ошибки</strong>: единый статус отказа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cipher: message authentication failed</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Аппаратная поддержка</strong>: на современных процессорах вызовы GCM выполняются аппаратно через AES-NI и CLMUL.</div></div>
@@ -8683,7 +8679,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Hybrid encryption RSA + AES</strong>: Реализуйте паттерн: генерируем AES ключ → шифруем данные через AES-GCM → шифруем AES ключ через RSA-OAEP → передаём оба ciphertext'а.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Hybrid encryption RSA + AES</strong>: Реализуйте паттерн: генерируем AES ключ → шифруем данные через AES-GCM → шифруем AES ключ через RSA-OAEP → передаём оба ciphertext&#x27;а.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8865,7 +8861,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте пару ключей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">privKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вычислите SHA-256 хеш документа.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Подпишите хеш через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ecdsa.SignASN1(rand.Reader, privKey, hash[:])</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверьте подпись через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ecdsa.VerifyASN1(&privKey.PublicKey, hash[:], sig)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверьте подпись через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ecdsa.VerifyASN1(&amp;privKey.PublicKey, hash[:], sig)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Сравните размеры ключей с RSA.</div></div>
   </div>
   <div class="code-container">
@@ -8966,7 +8962,7 @@ func main() {
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[12 байт Nonce][Шифротекст произвольной длины][16 байт Auth Tag]</code>.</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> При дешифрации:</div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Проверяется <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(packet) >= 12 + 16 = 28</code> байт.</li>
+<li style="margin-bottom: 4px;">Проверяется <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(packet) &gt;= 12 + 16 = 28</code> байт.</li>
 <li style="margin-bottom: 4px;">Первые 12 байт срезаются: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nonce := packet[:12]</code>.</li>
 <li style="margin-bottom: 4px;">Остаток передается в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gcm.Open(nil, nonce, packet[12:], nil)</code>.</li>
 </ul></div>
@@ -9124,7 +9120,7 @@ func main() {
 <p style="margin-bottom: 6px;"><strong>Почему RSA-PSS доказуемо безопасна (Provably Secure):</strong></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> В отличие от эмпирических схем вроде PKCS#1 v1.5, для RSA-PSS существует строгое математическое доказательство безопасности: взлом схемы PSS эквивалентен решению задачи обращения односторонней функции RSA (факторизации больших чисел).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Вероятностный характер</strong>: каждая подпись использует свежую криптографическую соль <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">salt</code>. Даже если один и тот же файл подписывается миллион раз, все миллион подписей будут совершенно разными.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Отсутствие уязвимостей ASN.1</strong>: в схеме PSS внутри блока нет структур ASN.1 DigestInfo. Это полностью исключает атаки типа Bleichenbacher'06, связанные с неполным разбором ASN.1 парсерами.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Отсутствие уязвимостей ASN.1</strong>: в схеме PSS внутри блока нет структур ASN.1 DigestInfo. Это полностью исключает атаки типа Bleichenbacher&#x27;06, связанные с неполным разбором ASN.1 парсерами.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -9132,7 +9128,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте пару RSA-2048/4096.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вычислите криптографический хеш SHA-256 от сообщения.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Задайте опции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Задайте опции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Подпишите хеш через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.SignPSS(rand.Reader, privKey, crypto.SHA256, hash[:], opts)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Проверьте подпись через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.VerifyPSS(pubKey, crypto.SHA256, hash[:], sig, opts)</code>.</div></div>
   </div>
@@ -9210,7 +9206,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.SignPSS</code> сообщение и случайная соль $salt$ объединяются и хэшируются: $H = Hash(Padding_1 \parallel mHash \parallel salt)$. Затем с помощью маскирующей функции $MGF1(H)$ формируется маска для восстановления соли при проверке. Это исключает мультипликативные атаки, которым подвержен "учебный" RSA.</p></div>
+    <div><p style="margin-bottom: 6px;">В функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.SignPSS</code> сообщение и случайная соль $salt$ объединяются и хэшируются: $H = Hash(Padding_1 \parallel mHash \parallel salt)$. Затем с помощью маскирующей функции $MGF1(H)$ формируется маска для восстановления соли при проверке. Это исключает мультипликативные атаки, которым подвержен &quot;учебный&quot; RSA.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -9330,7 +9326,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему в RSA в качестве открытой экспоненты практически всегда выбирают число $e = 65537$ (Fermat prime $F_4$)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Число $65537 = 2^{16} + 1$ в двоичной записи имеет вид <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">10000000000000001</code> (всего две единицы). При возведении в степень методом "Square-and-Multiply" это требует 16 операций возведения в квадрат и всего 1 операцию умножения, что обеспечивает максимальную скорость верификации подписи и исключает атаку малых экспонент Блейхенбахера ($e=3$).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Число $65537 = 2^{16} + 1$ в двоичной записи имеет вид <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">10000000000000001</code> (всего две единицы). При возведении в степень методом &quot;Square-and-Multiply&quot; это требует 16 операций возведения в квадрат и всего 1 операцию умножения, что обеспечивает максимальную скорость верификации подписи и исключает атаку малых экспонент Блейхенбахера ($e=3$).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-58">
@@ -9464,8 +9460,8 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте ключ AES-256 и статический nonce (12 байт).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зашифруйте сообщение 1: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"CONFIDENTIAL_DATA_ALICE"</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Зашифруйте сообщение 2: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"CONFIDENTIAL_DATA_BOB__"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зашифруйте сообщение 1: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;CONFIDENTIAL_DATA_ALICE&quot;</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Зашифруйте сообщение 2: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;CONFIDENTIAL_DATA_BOB__&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Покажите, что $C_1 \oplus C_2 == P_1 \oplus P_2$.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Продемонстрируйте, как восстанавливается открытый текст второго сообщения без знания ключа.</div></div>
   </div>
@@ -9552,7 +9548,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Атака на вычисление ключа GHASH $H$ была детально описана Антуаном Жу (Antoine Joux) в 2006 году ("Authentication Failures in NIST version of GCM"). Разность тегов $T_1 \oplus T_2 = (C_1 \oplus C_2) \cdot H^2 + \dots$ является многочленом, корни которого находятся за миллисекунды алгоритмом Берлекэмпа.</p></div>
+    <div><p style="margin-bottom: 6px;">Атака на вычисление ключа GHASH $H$ была детально описана Антуаном Жу (Antoine Joux) в 2006 году (&quot;Authentication Failures in NIST version of GCM&quot;). Разность тегов $T_1 \oplus T_2 = (C_1 \oplus C_2) \cdot H^2 + \dots$ является многочленом, корни которого находятся за миллисекунды алгоритмом Берлекэмпа.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -9586,10 +9582,10 @@ func main() {
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>Решение: RSA Blinding (Ослепление):</strong></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Перед дешифрацией генерируется случайное число $r$ из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto/rand</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Шифротекст «ослепляется»: $c' = c \cdot r^e \pmod n$.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Выполняется дешифрация CRT: $m' = (c')^d \pmod n$.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выполняется снятие маски: $m = m' \cdot r^{-1} \pmod n$.</div>
-<p style="margin-bottom: 6px;">Так как $c'$ полностью случайно, процессор тратит случайное время, и атака по побочному каналу становится математически невозможной!</p></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Шифротекст «ослепляется»: $c&#x27; = c \cdot r^e \pmod n$.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Выполняется дешифрация CRT: $m&#x27; = (c&#x27;)^d \pmod n$.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выполняется снятие маски: $m = m&#x27; \cdot r^{-1} \pmod n$.</div>
+<p style="margin-bottom: 6px;">Так как $c&#x27;$ полностью случайно, процессор тратит случайное время, и атака по побочному каналу становится математически невозможной!</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -9670,7 +9666,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что такое атака Bellcore (RSA-CRT Fault Injection Attack) и как она позволяет извлечь приватный ключ RSA с помощью одного сбойного бита?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если во время вычисления $m_1 = c^{d_p} \pmod p$ в процессоре произойдет аппаратный сбой (например, скачок напряжения), а $m_2 = c^{d_q} \pmod q$ вычислится верно, ошибочное значение $m'$ приведет к тому, что $(m')^e - c$ будет делиться на $q$, но не будет делиться на $p$. Атакующий вычисляет наибольший общий делитель $НОД((m')^e - c, n) = q$ за доли микросекунды и мгновенно факторизует модуль $n$, находя приватный ключ! Защита заключается в перепроверке $(m)^e \equiv c \pmod n$ перед отправкой ответа наружу.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Если во время вычисления $m_1 = c^{d_p} \pmod p$ в процессоре произойдет аппаратный сбой (например, скачок напряжения), а $m_2 = c^{d_q} \pmod q$ вычислится верно, ошибочное значение $m&#x27;$ приведет к тому, что $(m&#x27;)^e - c$ будет делиться на $q$, но не будет делиться на $p$. Атакующий вычисляет наибольший общий делитель $НОД((m&#x27;)^e - c, n) = q$ за доли микросекунды и мгновенно факторизует модуль $n$, находя приватный ключ! Защита заключается в перепроверке $(m)^e \equiv c \pmod n$ перед отправкой ответа наружу.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-61">
@@ -9690,7 +9686,7 @@ func main() {
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>Почему это катастрофа в промышленном коде:</strong></p>
 <p style="margin-bottom: 6px;">В протоколах передачи данных (HTTP, JSON API, gRPC) первые байты сообщений часто стандартны:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"status":"ok","data":</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GET /api/v1/users/</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;status&quot;:&quot;ok&quot;,&quot;data&quot;:</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GET /api/v1/users/</code>.</p>
 <p style="margin-bottom: 6px;">Если атакующий знает хотя бы часть текста одного сообщения ($P_1$), он мгновенно вычисляет текст второго сообщения:</p>
 <p style="margin-bottom: 6px;">$P_2 = (C_1 \oplus C_2) \oplus P_1$.</p>
 <p style="margin-bottom: 6px;">Знание ключа шифрования для этого <strong>вообще не требуется</strong>!</p></div>
@@ -9700,8 +9696,8 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте ключ AES-256 и единый 16-байтный IV.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зашифруйте сообщение 1: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"CONFIDENTIAL_TOKEN_SECRET_A"</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Зашифруйте сообщение 2: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"FINANCIAL_REPORT_BUDGET_2026"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зашифруйте сообщение 1: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;CONFIDENTIAL_TOKEN_SECRET_A&quot;</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Зашифруйте сообщение 2: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;FINANCIAL_REPORT_BUDGET_2026&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вычислите побайтовый XOR двух шифротекстов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Покажите, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">xorCipher == xorPlain</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Восстановите сообщение 2, используя только шифротексты и известную строку 1.</div></div>
@@ -9956,17 +9952,17 @@ func main() {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">При интеграции с платежными шлюзами и внешними вебхуками (Stripe, GitHub, Tinkoff, ЮKassa) эндпоинт приложения доступен из публичного интернета.</p>
-<p style="margin-bottom: 6px;">Злоумышленник может отправить поддельный HTTP POST запрос вида <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"status": "payment_succeeded", "amount": 500000}</code>.</p>
+<p style="margin-bottom: 6px;">Злоумышленник может отправить поддельный HTTP POST запрос вида <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;status&quot;: &quot;payment_succeeded&quot;, &quot;amount&quot;: 500000}</code>.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>Промышленный стандарт подписи вебхуков (Stripe Standard):</strong></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> В заголовок запроса передается строка:</div>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Stripe-Signature: t=1725451200,v1=5257a869e7ecebeda32affa62cdca3fa51cad7e77a0e56ff536d0ce8e108d8bd</code>.</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t</code> — Unix timestamp времени отправки запроса.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сигнатура вычисляется от конкатенации: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t + "." + RequestBody</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сигнатура вычисляется от конкатенации: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t + &quot;.&quot; + RequestBody</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сервер-получатель:</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Проверяет дрейф времени: $|t_{current} - t| \le 300$ секунд (защита от <strong>Replay Attacks</strong> — атак повторного воспроизведения).</li>
-<li style="margin-bottom: 4px;">Вычисляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HMAC-SHA256(SecretKey, t + "." + RequestBody)</code>.</li>
+<li style="margin-bottom: 4px;">Вычисляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HMAC-SHA256(SecretKey, t + &quot;.&quot; + RequestBody)</code>.</li>
 <li style="margin-bottom: 4px;">Сравнивает полученный тег через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hmac.Equal()</code> в константном времени.</li>
 </ul></div>
   </div>
@@ -10140,7 +10136,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте ключ ECDSA P-256.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуйте итеративный генератор $k$ через HMAC-SHA256 от приватного ключа $D$ и хеша сообщения.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убедитесь, что $1 \le k < N$.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убедитесь, что $1 \le k &lt; N$.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Подпишите сообщение детерминированным методом.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Покажите, что повторный вызов подписи того же сообщения дает побайтово идентичные $r$ и $s$.</div></div>
   </div>
@@ -10926,7 +10922,7 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ecdh.X25519</code> перед вычислением скалярного умножения выполняется операция зажимания битов (Clamping):</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">k[0] &= 248; k[31] &= 127; k[31] |= 64</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">k[0] &amp;= 248; k[31] &amp;= 127; k[31] |= 64</code>.</p>
 <p style="margin-bottom: 6px;">Это сбрасывает 3 младших бита (нейтрализуя кофактор кривой 8 и защищая от атак малых подгрупп) и принудительно выставляет бит 64, гарантируя фиксированное число шагов в лестнице Монтгомери.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -10961,9 +10957,9 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте пару ключей через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.GenerateKey(rand.Reader, 2048)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Преобразуйте приватный ключ в ASN.1 PKCS#8 DER.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Оберните в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Block{Type: "PRIVATE KEY"}</code> и запишите на диск.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Оберните в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Block{Type: &quot;PRIVATE KEY&quot;}</code> и запишите на диск.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Преобразуйте открытый ключ в PKIX DER.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Оберните в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Block{Type: "PUBLIC KEY"}</code> и сохраните на диск.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Оберните в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Block{Type: &quot;PUBLIC KEY&quot;}</code> и сохраните на диск.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Проверьте права созданных файлов.</div></div>
   </div>
   <div class="code-container">
@@ -11468,9 +11464,9 @@ func main() {
     <div><p style="margin-bottom: 6px;">В рантайме Go интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto.PublicKey</code> является маркером (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type PublicKey any</code>).</p>
 <p style="margin-bottom: 6px;">Когда парсер X.509 парсит поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SubjectPublicKeyInfo</code>, он смотрит на OID алгоритма:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1.2.840.113549.1.1.1</code> -> инстанциирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*rsa.PublicKey</code></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1.2.840.10045.2.1</code> -> инстанциирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*ecdsa.PublicKey</code></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1.3.101.112</code> -> инстанциирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ed25519.PublicKey</code>.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1.2.840.113549.1.1.1</code> -&gt; инстанциирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*rsa.PublicKey</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1.2.840.10045.2.1</code> -&gt; инстанциирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*ecdsa.PublicKey</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">1.3.101.112</code> -&gt; инстанциирует <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ed25519.PublicKey</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -11581,7 +11577,7 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Сложность факторизации RSA растет сублинейно благодаря субэкспоненциальному алгоритму общего решета числового поля (GNFS): $O(\exp(c \cdot (\ln N)^{1/3} (\ln \ln N)^{2/3}))$.</p>
-<p style="margin-bottom: 6px;">Сложность дискретного логарифма на эллиптических кривых (ECDLP) растет строго экспоненциально: лучший известный метод (Pollard's rho) требует $O(\sqrt{n})$ операций. Поэтому для кривых достаточно в 10 раз меньшей длины ключа.</p></div>
+<p style="margin-bottom: 6px;">Сложность дискретного логарифма на эллиптических кривых (ECDLP) растет строго экспоненциально: лучший известный метод (Pollard&#x27;s rho) требует $O(\sqrt{n})$ операций. Поэтому для кривых достаточно в 10 раз меньшей длины ключа.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -11757,8 +11753,8 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Extract</strong>: $PRK = HMAC(Salt, MasterSecret)$.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Expand</strong>:</div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">$K_{aes} = HKDF-Expand(PRK, "AES-Encryption-Key", 32)$</li>
-<li style="margin-bottom: 4px;">$K_{hmac} = HKDF-Expand(PRK, "HMAC-Authentication-Key", 32)$</li>
+<li style="margin-bottom: 4px;">$K_{aes} = HKDF-Expand(PRK, &quot;AES-Encryption-Key&quot;, 32)$</li>
+<li style="margin-bottom: 4px;">$K_{hmac} = HKDF-Expand(PRK, &quot;HMAC-Authentication-Key&quot;, 32)$</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Даже если злоумышленник скомпрометирует ключ шифрования $K_{aes}$, он не сможет вычислить ключ аутентификации $K_{hmac}$ или мастер-секрет.</div></div>
   </div>
@@ -11767,8 +11763,8 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте 32-байтный общий мастер-секрет.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hkdf.New</code> с контекстной меткой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info="enc"</code> для генерации ключа AES-256.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hkdf.New</code> с меткой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info="mac"</code> для генерации ключа HMAC-SHA256.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hkdf.New</code> с контекстной меткой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info=&quot;enc&quot;</code> для генерации ключа AES-256.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hkdf.New</code> с меткой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info=&quot;mac&quot;</code> для генерации ключа HMAC-SHA256.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Зашифруйте сообщение ключом AES и подпишите шифротекст ключом HMAC.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Продемонстрируйте полную изоляцию ключей.</div></div>
   </div>
@@ -11869,11 +11865,11 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Hybrid classical+quantum</strong>: Реализуйте hybrid key exchange: X25519 + Kyber-768. Это защитит от атак типа "harvest now, decrypt later".</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Hybrid classical+quantum</strong>: Реализуйте hybrid key exchange: X25519 + Kyber-768. Это защитит от атак типа &quot;harvest now, decrypt later&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Для защиты от атак <strong>"Harvest Now, Decrypt Later" (HNDL)</strong> ведущие технологические гиганты (Google в Chrome 116+, Cloudflare в TLS 1.3) внедрили гибридный алгоритм <strong>X25519Kyber768Draft00</strong>:</p>
+    <div><p style="margin-bottom: 6px;">Для защиты от атак <strong>&quot;Harvest Now, Decrypt Later&quot; (HNDL)</strong> ведущие технологические гиганты (Google в Chrome 116+, Cloudflare в TLS 1.3) внедрили гибридный алгоритм <strong>X25519Kyber768Draft00</strong>:</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>Принцип двойной безопасности (Dual-PRF Combiner):</strong></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Клиент и сервер одновременно выполняют два независимых обмена ключами:</div>
@@ -12024,7 +12020,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте пару RSA-2048 (получатель).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Задайте открытый контекст <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">label</code> (или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Зашифруйте строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Sensitive Admin Auth Token"</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.EncryptOAEP(sha256.New(), rand.Reader, &privKey.PublicKey, msg, label)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Зашифруйте строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Sensitive Admin Auth Token&quot;</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.EncryptOAEP(sha256.New(), rand.Reader, &amp;privKey.PublicKey, msg, label)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Расшифруйте с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.DecryptOAEP</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Убедитесь в полном совпадении данных.</div></div>
   </div>
@@ -12097,7 +12093,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Зачем в схеме RSA-OAEP нужен параметр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">label</code> и как он защищает от межпротокольных атак?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Параметр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">label</code> связывает шифротекст с конкретным протокольным контекстом (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">label="password-reset"</code> vs <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">label="bank-transfer"</code>). Если злоумышленник перехватит зашифрованный токен сброса пароля и попытается скормить его эндпоинту подтверждения банковского перевода, сервер с другим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">label</code> не сможет расшифровать сообщение, предотвращая атаки повторного использования шифротекстов между разными API.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Параметр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">label</code> связывает шифротекст с конкретным протокольным контекстом (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">label=&quot;password-reset&quot;</code> vs <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">label=&quot;bank-transfer&quot;</code>). Если злоумышленник перехватит зашифрованный токен сброса пароля и попытается скормить его эндпоинту подтверждения банковского перевода, сервер с другим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">label</code> не сможет расшифровать сообщение, предотвращая атаки повторного использования шифротекстов между разными API.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-79">
@@ -12218,7 +12214,7 @@ func main() {
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Повторное использование $k$ (Nonce Reuse):</strong> Если для двух разных сообщений подписать хэши с одним и тем же $k$, приватный ключ $d$ тривиально восстанавливается элементарной алгеброй: $d = (s_1 z_2 - s_2 z_1) / (s_2 r - s_1 r) \pmod n$. Именно эта ошибка привела к взлому консоли Sony PlayStation 3.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Передача сырого сообщения вместо хэша:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ecdsa.SignASN1</code> ожидает дайджест фиксированной длины (хэш), а не произвольный текст. Если передать длинный текст напрямую, он будет урезан до размера порядка кривой.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Malleability (пластичность) подписи:</strong> Для точки $(r, s)$ пара $(r, -s \pmod n)$ также является валидной подписью. В финансовых протоколах (Bitcoin, Ethereum) это предотвращается требованием «Low-S» (s <= n/2).</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Malleability (пластичность) подписи:</strong> Для точки $(r, s)$ пара $(r, -s \pmod n)$ также является валидной подписью. В финансовых протоколах (Bitcoin, Ethereum) это предотвращается требованием «Low-S» (s &lt;= n/2).</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -12251,7 +12247,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте пару ключей RSA разрядностью 2048 бит.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сформируйте контракт/документ и вычислите его криптографический хэш SHA-256.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Настройте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.PSSOptions</code> с использованием хэш-функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto.SHA256</code> и автоматической длиной соли.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Подпишите дайджест с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.SignPSS(rand.Reader, privKey, crypto.SHA256, digest, &opts)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Подпишите дайджест с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.SignPSS(rand.Reader, privKey, crypto.SHA256, digest, &amp;opts)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Реализуйте функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">verifyDocumentPSS</code>, которая вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.VerifyPSS</code> и возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> при успехе или ошибку при компрометации данных.</div></div>
   </div>
   <div class="code-container">
@@ -12339,8 +12335,8 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В алгоритме RSA-PSS:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Хэш сообщения $m$ дополняется солью $salt$ случайной длины (обычно равной длине хэша, 32 байта для SHA-256): $M' = 00\ 00\ 00\ 00\ 00\ 00\ 00\ 00 \parallel mHash \parallel salt$.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вычисляется $H = \text{Hash}(M')$.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Хэш сообщения $m$ дополняется солью $salt$ случайной длины (обычно равной длине хэша, 32 байта для SHA-256): $M&#x27; = 00\ 00\ 00\ 00\ 00\ 00\ 00\ 00 \parallel mHash \parallel salt$.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вычисляется $H = \text{Hash}(M&#x27;)$.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Строится маскирующая строка $DB = PS \parallel 01 \parallel salt$ и шифруется с помощью функции маскирования MGF1 (Mask Generation Function на базе SHA-256): $maskedDB = DB \oplus \text{MGF1}(H, emLen - hLen - 1)$.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сформированный блок $EM = maskedDB \parallel H \parallel bc_{16}$ возводится в приватную степень $d \pmod N$: $S = EM^d \pmod N$.</div>
 <div style="height: 8px;"></div>
@@ -12385,7 +12381,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте пару ключей RSA 2048 бит.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зашифруйте тестовое конфиденциальное сообщение с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.EncryptOAEP</code> с контекстной меткой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[]byte("financial-report")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Зашифруйте тестовое конфиденциальное сообщение с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.EncryptOAEP</code> с контекстной меткой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[]byte(&quot;financial-report&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Реализуйте безопасную функцию расшифрования <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">decryptSecretOAEP</code>, вызывающую <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.DecryptOAEP</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Продемонстрируйте корректное восстановление открытого текста.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Продемонстрируйте защиту: при передаче неверной метки контекста расшифрование отклоняется ошибкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ErrDecryption</code>.</div></div>
@@ -12463,9 +12459,9 @@ func main() {
     <div><p style="margin-bottom: 6px;">Зачем функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.DecryptOAEP</code> параметр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Reader</code> (энтропия)?</p>
 <p style="margin-bottom: 6px;">При вычислении $c^d \pmod N$ время выполнения операции модульного возведения в степень сильно зависит от битов закрытого ключа $d$ (алгоритм Montgomery ladder или квадрат-умножение). Чтобы злоумышленник по задержкам ответов сервера (атака Kocher timing attack) не вычислил $d$, в Go встроен механизм <strong>RSA Blinding</strong>:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Выбирается случайное число $r$, взаимно простое с $N$.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Шифротекст умножается на $r^e \pmod N$: $c' = c \cdot r^e \pmod N$.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вычисляется модульное возведение в степень над «ослепленным» шифротекстом: $m' = (c')^d = (c \cdot r^e)^d = c^d \cdot r^{e \cdot d} = m \cdot r \pmod N$.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Результат умножается на модульный обратный элемент $r^{-1} \pmod N$: $m = m' \cdot r^{-1} \pmod N$.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Шифротекст умножается на $r^e \pmod N$: $c&#x27; = c \cdot r^e \pmod N$.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вычисляется модульное возведение в степень над «ослепленным» шифротекстом: $m&#x27; = (c&#x27;)^d = (c \cdot r^e)^d = c^d \cdot r^{e \cdot d} = m \cdot r \pmod N$.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Результат умножается на модульный обратный элемент $r^{-1} \pmod N$: $m = m&#x27; \cdot r^{-1} \pmod N$.</div>
 <p style="margin-bottom: 6px;">Благодаря этому рантайм Go математически изолирует замеры времени от значений битов ключа $d$.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -12806,7 +12802,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сгенерируйте пару ключей RSA и подпишите хэш транзакции с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.SignPSS</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Извлеките открытый ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&privKey.PublicKey</code> для имитации независимой проверяющей стороны.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Извлеките открытый ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;privKey.PublicKey</code> для имитации независимой проверяющей стороны.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rsa.VerifyPSS</code> для подтверждения подлинности оригинального сообщения.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Протестируйте три сценария сбоя проверки:</div>
 <ul style="margin: 8px 0 8px 20px;">
@@ -12915,8 +12911,8 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Из $EM$ извлекаются замаскированный блок $maskedDB$ и контрольный хэш $H$.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Вычисляется $dbMask = \text{MGF1}(H, \text{len}(maskedDB))$ и восстанавливается $DB = maskedDB \oplus dbMask$.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Проверяются старшие биты и разделитель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x01</code>, после чего извлекается соль $salt$.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">7.</span> Заново вычисляется $H' = \text{Hash}(00\ 00\ 00\ 00\ 00\ 00\ 00\ 00 \parallel mHash \parallel salt)$.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">8.</span> Значения $H$ и $H'$ сравниваются через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subtle.ConstantTimeCompare</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">7.</span> Заново вычисляется $H&#x27; = \text{Hash}(00\ 00\ 00\ 00\ 00\ 00\ 00\ 00 \parallel mHash \parallel salt)$.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">8.</span> Значения $H$ и $H&#x27;$ сравниваются через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subtle.ConstantTimeCompare</code>.</div></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -13069,7 +13065,7 @@ func main() {
 <p style="margin-bottom: 6px;">$$EM = 00_{16} \parallel \text{maskedSeed} \parallel \text{maskedDB}$$</p>
 <p style="margin-bottom: 6px;">где:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Первым идет обязательный ведущий нулевой байт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x00</code> (чтобы гарантировать $EM < N$).</li>
+<li style="margin-bottom: 4px;">Первым идет обязательный ведущий нулевой байт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x00</code> (чтобы гарантировать $EM &lt; N$).</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maskedSeed</code> имеет длину $hLen$ (32 байта для SHA-256).</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maskedDB</code> содержит: $lHash$ ($hLen$ байт), блок заполнителя $PS$ из нулей, разделитель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x01</code> (1 байт) и открытый текст $M$.</li>
 </ul>
@@ -13250,7 +13246,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте в памяти валидный тестовый PEM-сертификат (сгенерировав его через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x509.CreateCertificate</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Распарсите PEM-блок с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Decode</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убедитесь, что тип блока равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"CERTIFICATE"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убедитесь, что тип блока равен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;CERTIFICATE&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Распарсите бинарный DER-блок с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x509.ParseCertificate(block.Bytes)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Извлеките и напечатайте ключевые поля: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Subject</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Issuer</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NotBefore</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NotAfter</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DNSNames</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Вычислите оставшийся срок жизни сертификата и проверьте валидность на текущий момент времени.</div></div>
@@ -13383,7 +13379,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Проверка только pem.Decode без цикла:</strong> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.pem</code> файле может быть цепочка сертификатов (Fullchain = Leaf + Intermediate CA + Root CA). Если вызвать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Decode</code> один раз, будет прочитан только первый листовой сертификат, а остальные будут проигнорированы. Для полной цепочки необходим цикл: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for len(rest) > 0 { block, rest = pem.Decode(rest) ... }</code>.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Проверка только pem.Decode без цикла:</strong> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.pem</code> файле может быть цепочка сертификатов (Fullchain = Leaf + Intermediate CA + Root CA). Если вызвать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pem.Decode</code> один раз, будет прочитан только первый листовой сертификат, а остальные будут проигнорированы. Для полной цепочки необходим цикл: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for len(rest) &gt; 0 { block, rest = pem.Decode(rest) ... }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Игнорирование SAN (Subject Alternative Name):</strong> Современные браузеры и TLS-стеки (включая Go 1.15+) полностью игнорируют поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CommonName</code> при верификации домена и требуют наличия домена в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DNSNames</code> (SAN). Полагаться только на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cert.Subject.CommonName</code> небезопасно.</div></div>
   </div>
   <div class="callout callout-bigtech">
@@ -13728,7 +13724,7 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Сравнение Certificate Pinning vs SPKI Pinning (Subject Public Key Info Pinning):</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Привязка целого сертификата (Certificate Pinning):</strong> Хэшируется весь срез <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rawCerts[0]</code>. Минус подхода: при плановом перевыпуске сертификата (например, раз в 90 дней у Let's Encrypt) серийный номер и сроки меняются, из-за чего отпечаток меняется и клиенты теряют доступ («brick client issue»).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Привязка целого сертификата (Certificate Pinning):</strong> Хэшируется весь срез <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rawCerts[0]</code>. Минус подхода: при плановом перевыпуске сертификата (например, раз в 90 дней у Let&#x27;s Encrypt) серийный номер и сроки меняются, из-за чего отпечаток меняется и клиенты теряют доступ («brick client issue»).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Привязка открытого ключа (SPKI Pinning):</strong> Хэшируются только байты открытого ключа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cert.RawSubjectPublicKeyInfo</code>. При ротации сертификата разработчик выпускает новый сертификат на <strong>том же самом закрытом ключе</strong> (CSR генерируется из старого приватного ключа). В результате отпечаток SPKI остается прежним, и клиенты не ломаются.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В BigTech мобильных приложениях и микросервисах всегда зашивают как минимум 2 пина: текущий основной пин и резервный (Backup Pin) на случай экстренной компрометации ключа.</div></div>
   </div>
@@ -14649,26 +14645,26 @@ func main() {
 <div class="exercise-card" id="ex-95">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #95</div>
-    <div style="flex: 1;"><h3 class="exercise-title">ACME-клиент: автоматический заказ сертификатов Let's Encrypt (RFC 8555)</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">ACME-клиент: автоматический заказ сертификатов Let&#x27;s Encrypt (RFC 8555)</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>ACME client</strong>: Напишите простой ACME client (как cert-manager) для получения Let's Encrypt сертификатов автоматически.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>ACME client</strong>: Напишите простой ACME client (как cert-manager) для получения Let&#x27;s Encrypt сертификатов автоматически.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Протокол <strong>ACME (Automated Certificate Management Environment, RFC 8555)</strong> произвел революцию в веб-безопасности, позволив полностью автоматизировать выпуск, валидацию и продление TLS-сертификатов Удостоверяющего Центра Let's Encrypt.</p>
+    <div><p style="margin-bottom: 6px;">Протокол <strong>ACME (Automated Certificate Management Environment, RFC 8555)</strong> произвел революцию в веб-безопасности, позволив полностью автоматизировать выпуск, валидацию и продление TLS-сертификатов Удостоверяющего Центра Let&#x27;s Encrypt.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Принцип работы протокола ACME:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Регистрация аккаунта:</strong> Клиент генерирует пару ключей аккаунта и регистрируется в ACME-сервере (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">acme.Client</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Заказ сертификата (New Order):</strong> Клиент запрашивает выпуск сертификата для домена (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">api.example.com</code>).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Прохождение испытания (Challenge):</strong> Сервер Let's Encrypt требует подтвердить владение доменом:</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Прохождение испытания (Challenge):</strong> Сервер Let&#x27;s Encrypt требует подтвердить владение доменом:</div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><strong>HTTP-01:</strong> Клиент должен отдать специальный токен по пути <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http://<domain>/.well-known/acme-challenge/<token></code>.</li>
+<li style="margin-bottom: 4px;"><strong>HTTP-01:</strong> Клиент должен отдать специальный токен по пути <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http://&lt;domain&gt;/.well-known/acme-challenge/&lt;token&gt;</code>.</li>
 <li style="margin-bottom: 4px;"><strong>TLS-ALPN-01:</strong> Клиент должен согласовать протокол <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">acme-tls/1</code> в TLS-хэндшейке.</li>
-<li style="margin-bottom: 4px;"><strong>DNS-01:</strong> Клиент должен создать TXT-запись <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_acme-challenge.<domain></code>.</li>
+<li style="margin-bottom: 4px;"><strong>DNS-01:</strong> Клиент должен создать TXT-запись <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_acme-challenge.&lt;domain&gt;</code>.</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Финализация и выпуск:</strong> Клиент отправляет CSR, Let's Encrypt валидирует challenge и возвращает подписанную цепочку сертификатов.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Финализация и выпуск:</strong> Клиент отправляет CSR, Let&#x27;s Encrypt валидирует challenge и возвращает подписанную цепочку сертификатов.</div>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">В Go официальная библиотека <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang.org/x/crypto/acme/autocert</code> предоставляет готовый менеджер <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">autocert.Manager</code>, который бесшовно встраивается в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.Server</code>.</p></div>
   </div>
@@ -14678,7 +14674,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте экземпляр <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">autocert.Manager</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Настройте белый список разрешенных доменов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">autocert.HostWhitelist</code>).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Настройте кэширование сертификатов на диске (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">autocert.DirCache</code>), чтобы не превышать строгие лимиты (rate limits) Let's Encrypt.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Настройте кэширование сертификатов на диске (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">autocert.DirCache</code>), чтобы не превышать строгие лимиты (rate limits) Let&#x27;s Encrypt.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сконфигурируйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tls.Config{GetCertificate: certManager.GetCertificate}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Напишите HTTP-хэндлер для автоматического прохождения HTTP-01 challenge на 80-м порту.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Запустите безопасный HTTPS-сервер на 443 порту.</div></div>
@@ -14783,7 +14779,7 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если сертификата нет или осталось менее 30 дней, менеджер выполняет блокирующую операцию выпуска:</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Генерирует в памяти ключ ECDSA P-256.</li>
-<li style="margin-bottom: 4px;">Отправляет заказ в ACME API Let's Encrypt.</li>
+<li style="margin-bottom: 4px;">Отправляет заказ в ACME API Let&#x27;s Encrypt.</li>
 <li style="margin-bottom: 4px;">Активирует обработчик challenge токена.</li>
 <li style="margin-bottom: 4px;">Дожидается валидации и скачивает выпущенный сертификат.</li>
 <li style="margin-bottom: 4px;">Сохраняет сертификат в файловый кэш и отдает клиенту.</li>
@@ -14791,8 +14787,8 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Отсутствие DirCache (кэша на диске):</strong> При перезапуске сервиса или рестарте контейнера без постоянного тома (PVC) сервис будет запрашивать новый сертификат при каждом запуске. Вы мгновенно исчерпаете лимит Let's Encrypt (5 сертификатов на домен в неделю) и ваш сервис окажется недоступным на 7 дней!</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Блокировка 80 порта файрволом:</strong> Let's Encrypt обращается строго на 80-й порт для валидации HTTP-01 challenge. Закрытие 80 порта приведет к тайм-ауту проверки.</div></div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Отсутствие DirCache (кэша на диске):</strong> При перезапуске сервиса или рестарте контейнера без постоянного тома (PVC) сервис будет запрашивать новый сертификат при каждом запуске. Вы мгновенно исчерпаете лимит Let&#x27;s Encrypt (5 сертификатов на домен в неделю) и ваш сервис окажется недоступным на 7 дней!</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Блокировка 80 порта файрволом:</strong> Let&#x27;s Encrypt обращается строго на 80-й порт для валидации HTTP-01 challenge. Закрытие 80 порта приведет к тайм-ауту проверки.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -15142,7 +15138,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Блокирующие I/O вызовы внутри GetCertificate:</strong> Колбэк <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GetCertificate</code> вызывается синхронно во время рукопожатия TLS. Если делать внутри него синхронный HTTP-запрос в базу или Vault без кэширования, рукопожатие заблокирует сетевой поток на сотни миллисекунд и вызовет DoS-атаку на сервер. Сертификаты должны кэшироваться в памяти.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Отсутствие fallback-сертификата по умолчанию:</strong> Если клиент обратится по чистому IP-адресу без указания SNI (например, сканеры уязвимостей или старые клиенты), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info.ServerName</code> будет пустой строкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code>. Всегда предусматривайте сертификат по умолчанию (default fallback).</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Отсутствие fallback-сертификата по умолчанию:</strong> Если клиент обратится по чистому IP-адресу без указания SNI (например, сканеры уязвимостей или старые клиенты), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info.ServerName</code> будет пустой строкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code>. Всегда предусматривайте сертификат по умолчанию (default fallback).</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -15273,18 +15269,16 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Низкоуровневая реализация <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subtle.ConstantTimeCompare</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func ConstantTimeCompare(x, y []byte) int {</p>
-<p style="margin-bottom: 6px;">if len(x) != len(y) {</p>
-<p style="margin-bottom: 6px;">return 0</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">var v byte</p>
-<p style="margin-bottom: 6px;">for i := 0; i < len(x); i++ {</p>
-<p style="margin-bottom: 6px;">v |= x[i] ^ y[i]</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">return ConstantTimeByteEq(v, 0)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">func ConstantTimeCompare(x, y []byte) int {
+    if len(x) != len(y) {
+        return 0
+    }
+    var v byte
+    for i := 0; i &lt; len(x); i++ {
+        v |= x[i] ^ y[i]
+    }
+    return ConstantTimeByteEq(v, 0)
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Обратите внимание:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Цикл пробегает <strong>абсолютно все байты</strong> среза без досрочного выхода (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">break</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Операция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">^</code> (XOR) дает 0 только при побитовом совпадении.</div>
@@ -15458,7 +15452,7 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Стандарт <strong>JSON Web Token (JWT, RFC 7519)</strong> на протяжении десятилетия страдал от критических архитектурных уязвимостей, вызванных фатальным дефектом проектирования: алгоритм проверки передается внутри заголовка самого токена (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"alg": "none"</code>, смена асимметричного RS256 на симметричный HS256 с открытым ключом сервера в качестве секрета).</p>
+    <div><p style="margin-bottom: 6px;">Стандарт <strong>JSON Web Token (JWT, RFC 7519)</strong> на протяжении десятилетия страдал от критических архитектурных уязвимостей, вызванных фатальным дефектом проектирования: алгоритм проверки передается внутри заголовка самого токена (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;alg&quot;: &quot;none&quot;</code>, смена асимметричного RS256 на симметричный HS256 с открытым ключом сервера в качестве секрета).</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>PASETO (Platform-Agnostic Security Tokens):</strong></p>
 <p style="margin-bottom: 6px;">Современная криптографически стойкая альтернатива JWT, свободная от недостатков алгоритмической гибкости (Cipher Suite Negotiation Vulnerabilities):</p>
@@ -15477,7 +15471,7 @@ func main() {
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте структуру полезной нагрузки токена <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TokenClaims</code> со сроком действия, идентификатором пользователя и ролью.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сгенерируйте мастер-ключи Ed25519 (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ed25519.GenerateKey</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Реализуйте функцию сериализации <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Pre-Authentication Encoding (PAE)</code> в соответствии со спецификацией PASETO.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SignPasetoV4Public</code>, формирующую токен формата <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v4.public.<payload_base64_url>.<signature_base64_url></code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Напишите функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SignPasetoV4Public</code>, формирующую токен формата <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v4.public.&lt;payload_base64_url&gt;.&lt;signature_base64_url&gt;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Напишите функцию верификатора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">VerifyPasetoV4Public</code>, проверяющую подпись Ed25519 и срок действия.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Продемонстрируйте отказ при попытке подделки полезной нагрузки или при истечении времени жизни.</div></div>
   </div>
@@ -15640,7 +15634,7 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Зачем в PASETO алгоритм PAE (Pre-Authentication Encoding)?</p>
-<p style="margin-bottom: 6px;">В уязвимых протоколах данные часто склеиваются простой конкатенацией: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">header + "." + payload</code>.</p>
+<p style="margin-bottom: 6px;">В уязвимых протоколах данные часто склеиваются простой конкатенацией: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">header + &quot;.&quot; + payload</code>.</p>
 <p style="margin-bottom: 6px;">Если злоумышленник может сдвинуть границу между <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">header</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">payload</code>, возникает уязвимость Canonicalization Attack (атака двусмысленности парсинга).</p>
 <p style="margin-bottom: 6px;">Алгоритм PAE кодирует массив строк в бинарный поток с префиксами длины:</p>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[число кусков (8 байт)][длина куска 1 (8 байт)][кусок 1][длина куска 2 (8 байт)][кусок 2]...</code></p>
@@ -15649,7 +15643,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Пропуск валидации ExpiresAt:</strong> Подпись гарантирует неизменность данных, но не их актуальность! Если забыть проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Now().After(claims.ExpiresAt)</code>, украденный токен останется валидным навечно.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Использование JWT с 'alg': 'none':</strong> Историческая уязвимость многих JWT библиотек заключалась в том, что злоумышленник мог отправить токен с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"alg": "none"}</code> и стереть подпись, а сервер принимал его как доверенный. PASETO устраняет эту концептуальную уязвимость на уровне архитектуры протокола.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Использование JWT с &#x27;alg&#x27;: &#x27;none&#x27;:</strong> Историческая уязвимость многих JWT библиотек заключалась в том, что злоумышленник мог отправить токен с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;alg&quot;: &quot;none&quot;}</code> и стереть подпись, а сервер принимал его как доверенный. PASETO устраняет эту концептуальную уязвимость на уровне архитектуры протокола.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>

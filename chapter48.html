@@ -1132,7 +1132,7 @@
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем программу, считывающую текущее значение GOMAXPROCS.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Устанавливаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.GOMAXPROCS(1)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запускаем 10 горутин с бесконечными CPU-bound циклами (математические операции).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверяем загрузку процессора в терминале через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">top -pid <PID></code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">htop</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверяем загрузку процессора в терминале через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">top -pid &lt;PID&gt;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">htop</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Меняем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOMAXPROCS(4)</code> и наблюдаем рост потребления до 400% CPU.</div></div>
   </div>
   <div class="code-container">
@@ -1197,7 +1197,7 @@ go run main.go 4</code></pre>
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Когда вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.GOMAXPROCS(n)</code>, рантайм выполняет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">stopTheWorld("GOMAXPROCS")</code>. Все горутины приостанавливаются, существующие P реаллоцируются (массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">allp</code>), неиспользуемые P переводятся в статус <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Pidle</code>, а затем вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">startTheWorld()</code>. Каждый P имеет локальную очередь выполнения (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runq</code> размером 256 элементов), структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> для быстрой аллокации памяти без блокировок и кэш освобожденных горутин <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gFree</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Когда вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.GOMAXPROCS(n)</code>, рантайм выполняет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">stopTheWorld(&quot;GOMAXPROCS&quot;)</code>. Все горутины приостанавливаются, существующие P реаллоцируются (массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">allp</code>), неиспользуемые P переводятся в статус <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Pidle</code>, а затем вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">startTheWorld()</code>. Каждый P имеет локальную очередь выполнения (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runq</code> размером 256 элементов), структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> для быстрой аллокации памяти без блокировок и кэш освобожденных горутин <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gFree</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1308,7 +1308,7 @@ GODEBUG=schedtrace=500 ./sched_demo
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Почему в Go горутина создается за микросекунды и занимает всего ~2 КБ, тогда как создание потока ОС требует мегабайтов и значительно медленнее?</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Поток ОС требует участия ядра Linux: выделения структур <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">task_struct</code>, страничных таблиц, сигнальных масок и виртуальной памяти под стек (от 2 до 8 МБ). Переключение контекста потоков ОС требует смены привилегий Ring 3 -> Ring 0, сброса кэшей TLB и сохранения всех регистров CPU.</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Поток ОС требует участия ядра Linux: выделения структур <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">task_struct</code>, страничных таблиц, сигнальных масок и виртуальной памяти под стек (от 2 до 8 МБ). Переключение контекста потоков ОС требует смены привилегий Ring 3 -&gt; Ring 0, сброса кэшей TLB и сохранения всех регистров CPU.</p>
 <p style="margin-bottom: 6px;">Горутина — это структура пользовательского пространства (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.g</code>). Она создается без единого системного вызова (через пул <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gFree</code>), ее стек начинается всего с 2 КБ и динамически расширяется в куче (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.morestack</code>). Переключение между горутинами выполняет планировщик Go в user-space, сохраняя только 14 регистров (PC, SP, callee-save регистры), что занимает всего ~10–20 наносекунд.</p></div>
   </div>
 </div>
@@ -1337,7 +1337,7 @@ GODEBUG=schedtrace=500 ./sched_demo
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Устанавливаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOMAXPROCS(1)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запускаем две горутины с математическими расчетами в бесконечных циклах.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В главной горутине выводим PID процесса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Getpid()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">top -p <PID></code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ps</code> проверяем процент загрузки процессора.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">top -p &lt;PID&gt;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ps</code> проверяем процент загрузки процессора.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -1398,7 +1398,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">В микросервисах, запущенных в Kubernetes с квотой CPU (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">resources.limits.cpu: "500m"</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"1"</code>), рантайм без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">automaxprocs</code> видит все 32/64 ядра ноды Kubernetes и создает 32/64 <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">P</code>. Это приводит к тому, что 64 потока конкурируют за половинку ядра, вызывая катастрофический CFS Throttling и падение пропускной способности в 5-10 раз.</p></div>
+    <div><p style="margin-bottom: 6px;">В микросервисах, запущенных в Kubernetes с квотой CPU (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">resources.limits.cpu: &quot;500m&quot;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;1&quot;</code>), рантайм без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">automaxprocs</code> видит все 32/64 ядра ноды Kubernetes и создает 32/64 <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">P</code>. Это приводит к тому, что 64 потока конкурируют за половинку ядра, вызывая катастрофический CFS Throttling и падение пропускной способности в 5-10 раз.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1413,7 +1413,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Кооперативное вытеснение</strong>: Напишите горутину с бесконечным циклом без syscall'ов и函数 вызовов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for {}</code>). Убедитесь, что она блокирует весь P (в Go < 1.14). Изучите, как Go 1.14+ решил это через preemptive scheduling.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Кооперативное вытеснение</strong>: Напишите горутину с бесконечным циклом без syscall&#x27;ов и函数 вызовов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for {}</code>). Убедитесь, что она блокирует весь P (в Go &lt; 1.14). Изучите, как Go 1.14+ решил это через preemptive scheduling.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1486,7 +1486,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Когда поток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> видит, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Grunning</code> горутина исполняется непрерывно > 10 мс, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">preemptone(p)</code>. Планировщик устанавливает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gp.preempt = true</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gp.stackguard0 = stackPreempt</code>. Если горутина не входит в вызовы функций, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">signalM(mp, sigPreempt)</code> (сигнал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGURG</code>). Ядро ОС прерывает выполнение инструкций и переходит в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.sighandler</code>. Если текущий PC находится в безопасной точке (не во внутренностях рантайма и не в блоке unsafe без GC-карт), рантайм эмулирует вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.asyncPreempt</code>, сохраняет регистры и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schedule()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Когда поток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> видит, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Grunning</code> горутина исполняется непрерывно &gt; 10 мс, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">preemptone(p)</code>. Планировщик устанавливает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gp.preempt = true</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gp.stackguard0 = stackPreempt</code>. Если горутина не входит в вызовы функций, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">signalM(mp, sigPreempt)</code> (сигнал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGURG</code>). Ядро ОС прерывает выполнение инструкций и переходит в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.sighandler</code>. Если текущий PC находится в безопасной точке (не во внутренностях рантайма и не в блоке unsafe без GC-карт), рантайм эмулирует вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.asyncPreempt</code>, сохраняет регистры и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schedule()</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1711,7 +1711,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем программу, порождающую 100 000 горутин в цикле.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запускаем с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GODEBUG=schedtrace=1000</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Анализируем поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runqueue=<N></code> в выводе schedtrace — оно отражает количество горутин, вытесненных в Глобальную Очередь GRQ.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Анализируем поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runqueue=&lt;N&gt;</code> в выводе schedtrace — оно отражает количество горутин, вытесненных в Глобальную Очередь GRQ.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сравниваем его со значениями в квадратных скобках <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[n1 n2 ... nP]</code> (локальные очереди LRQ каждого P).</div></div>
   </div>
   <div class="code-container">
@@ -1899,7 +1899,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Local Run Queue (LRQ)</strong>: Создайте 10000 горутин. Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GODEBUG=scheddetail=1,schedtrace=100</code> для наблюдения, как горутины распределяются по P's local queues.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Local Run Queue (LRQ)</strong>: Создайте 10000 горутин. Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GODEBUG=scheddetail=1,schedtrace=100</code> для наблюдения, как горутины распределяются по P&#x27;s local queues.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1985,7 +1985,7 @@ GODEBUG=scheddetail=1,schedtrace=100 ./detail_demo 2&gt;&amp;1 | head -n 35
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Что означает поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schedtick</code> у <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">P</code> в выводе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scheddetail</code> и какое магическое число связано с ним в планировщике Go?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schedtick</code> — это монотонный счетчик квантов планирования, выполненных данным <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">P</code>.</p>
 <p style="margin-bottom: 6px;">Магическое число — <strong>61</strong>. В функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schedule()</code> перед тем как проверить локальную очередь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LRQ</code>, рантайм выполняет проверку:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if pp.schedtick%61 == 0 && sched.runqsize > 0 { ... забрать горутину из GRQ ... }</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if pp.schedtick%61 == 0 &amp;&amp; sched.runqsize &gt; 0 { ... забрать горутину из GRQ ... }</code></p>
 <p style="margin-bottom: 6px;">Это сделано для предотвращения <strong>starvation (голодания)</strong>: если бы планировщик всегда брал задачи только из локальной очереди, горутины в Глобальной Очереди (GRQ) могли бы бесконечно ждать выполнения при высокой активности локальных очередей.</p></div>
   </div>
 </div>
@@ -2203,7 +2203,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Global Run Queue (GRQ)</strong>: Запустите программу, которая создаёт горутины быстрее, чем P's могут их обрабатывать. Наблюдайте, как горутины попадают в global queue.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Global Run Queue (GRQ)</strong>: Запустите программу, которая создаёт горутины быстрее, чем P&#x27;s могут их обрабатывать. Наблюдайте, как горутины попадают в global queue.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2301,7 +2301,7 @@ GODEBUG=schedtrace=200 ./grq_demo
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Work Stealing]</strong>: Установи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOMAXPROCS=4</code>. Создай 4 горутины, которые做完 (засыпают на 1 сек), и 1 горутину, которая генерирует 1000 задач. Наблюдай через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schedtrace</code>, как простаивающие P "крадут" горутины из очереди занятого P.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Work Stealing]</strong>: Установи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOMAXPROCS=4</code>. Создай 4 горутины, которые做完 (засыпают на 1 сек), и 1 горутину, которая генерирует 1000 задач. Наблюдай через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schedtrace</code>, как простаивающие P &quot;крадут&quot; горутины из очереди занятого P.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2398,7 +2398,7 @@ GODEBUG=schedtrace=50 ./steal_demo
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Work Stealing</strong>: Запустите программу с 4 P, где один P выполняет долгую задачу, а остальные завершаются быстро. Наблюдайте, как idle P's "крадут" горутины из LRQ других P's или из GRQ.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Work Stealing</strong>: Запустите программу с 4 P, где один P выполняет долгую задачу, а остальные завершаются быстро. Наблюдайте, как idle P&#x27;s &quot;крадут&quot; горутины из LRQ других P&#x27;s или из GRQ.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2473,7 +2473,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Если задача на P0 не делает вызовов функций и скомпилирована в Go < 1.14, она могла полностью заблокировать P0. В Go 1.14+ асинхронный сигнал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGURG</code> позволяет прерывать даже такие циклы.</p></div>
+    <div><p style="margin-bottom: 6px;">Если задача на P0 не делает вызовов функций и скомпилирована в Go &lt; 1.14, она могла полностью заблокировать P0. В Go 1.14+ асинхронный сигнал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGURG</code> позволяет прерывать даже такие циклы.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2590,7 +2590,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Handoff</strong>: Когда M блокируется на syscall, P передаётся другому M. Создайте множество горутин, делающих блокирующие syscall'ы (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code>), и наблюдайте handoff через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schedtrace</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Handoff</strong>: Когда M блокируется на syscall, P передаётся другому M. Создайте множество горутин, делающих блокирующие syscall&#x27;ы (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code>), и наблюдайте handoff через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schedtrace</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2688,7 +2688,7 @@ GODEBUG=schedtrace=200 ./handoff_demo
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Work Stealing (Кража работы)</strong>: Напиши код, где только одна горутина порождает 100 тяжелых под-горутин, а остальные ядра простаивают. Открой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool trace</code>. Изучи на графике, как другие (свободные) <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">P</code> заглядывают в локальную очередь загруженного <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">P</code> и "крадут" у него половину горутин для балансировки нагрузки.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Work Stealing (Кража работы)</strong>: Напиши код, где только одна горутина порождает 100 тяжелых под-горутин, а остальные ядра простаивают. Открой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool trace</code>. Изучи на графике, как другие (свободные) <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">P</code> заглядывают в локальную очередь загруженного <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">P</code> и &quot;крадут&quot; у него половину горутин для балансировки нагрузки.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2903,7 +2903,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Spinning threads</strong>: Изучите концепцию spinning M's — потоков, которые активно ищут работу перед тем как заснуть. Это снижает latency при появлении новых горутин.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Spinning threads</strong>: Изучите концепцию spinning M&#x27;s — потоков, которые активно ищут работу перед тем как заснуть. Это снижает latency при появлении новых горутин.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3098,9 +3098,7 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">До версии Go 1.14 планировщик проверял необходимость вытеснения только в прологе функций (компилятор вставлял <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CALL runtime.morestack</code>).</p>
 <p style="margin-bottom: 6px;">Если в коде присутствовал плотный цикл без вызовов функций (busy loop):</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">for !done {}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">for !done {}</code></pre></div>
 <p style="margin-bottom: 6px;">он компилировался в инструкцию безусловного перехода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">JMP</code> на саму себя. Никаких проверок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">stackguard0</code> не происходило.</p>
 <p style="margin-bottom: 6px;">При <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOMAXPROCS=1</code> такая горутина навечно захватывала процессор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">P</code>.</p>
 <div style="height: 8px;"></div>
@@ -3296,7 +3294,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/netpoll_epoll.go</code> рантайм держит глобальный дескриптор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">epfd = epoll_create1(EPOLL_CLOEXEC)</code>. Каждый сокет регистрируется через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">epoll_ctl(EPOLL_CTL_ADD, fd, &ev)</code>. Когда горутина блокируется на чтении, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">netpollblock()</code>. Она связывает структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pollDesc</code> с текущей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">g</code> и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gopark()</code>. Фоновый поток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> или свободный M в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">findrunnable()</code> опрашивает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">netpoll(0)</code> без задержки и мгновенно переводит проснувшиеся горутины в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Grunnable</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/netpoll_epoll.go</code> рантайм держит глобальный дескриптор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">epfd = epoll_create1(EPOLL_CLOEXEC)</code>. Каждый сокет регистрируется через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">epoll_ctl(EPOLL_CTL_ADD, fd, &amp;ev)</code>. Когда горутина блокируется на чтении, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">netpollblock()</code>. Она связывает структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pollDesc</code> с текущей <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">g</code> и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gopark()</code>. Фоновый поток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> или свободный M в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">findrunnable()</code> опрашивает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">netpoll(0)</code> без задержки и мгновенно переводит проснувшиеся горутины в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Grunnable</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -3473,7 +3471,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем легковесный HTTP-сервер на стандартной библиотеке Go.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Имитируем конкурентные запросы через горутины.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Отслеживаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.NumGoroutine()</code> и системные потоки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/proc/<pid>/status</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Отслеживаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.NumGoroutine()</code> и системные потоки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/proc/&lt;pid&gt;/status</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -3747,9 +3745,9 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Почему в Go < 1.14 вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.GC()</code> мог привести к полному зависанию (deadlock) приложения, если в нем работал цикл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for {}</code>?</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Почему в Go &lt; 1.14 вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.GC()</code> мог привести к полному зависанию (deadlock) приложения, если в нем работал цикл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for {}</code>?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Сборка мусора в Go требует фазы Stop-The-World (остановки всех горутин) для фиксации корневых указателей стеков.</p>
-<p style="margin-bottom: 6px;">В Go < 1.14 планировщик полагался на кооперативное вытеснение: он выставлял флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">preempt = true</code> и ждал, пока каждая горутина сама вызовет функцию и проверит границу стека. Горутина с циклом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for {}</code> не вызывала функций и игнорировала флаг.</p>
+<p style="margin-bottom: 6px;">В Go &lt; 1.14 планировщик полагался на кооперативное вытеснение: он выставлял флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">preempt = true</code> и ждал, пока каждая горутина сама вызовет функцию и проверит границу стека. Горутина с циклом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for {}</code> не вызывала функций и игнорировала флаг.</p>
 <p style="margin-bottom: 6px;">В результате поток GC бесконечно ждал остановки этой горутины, а все остальные горутины уже были остановлены — наступал полный дедлок.</p></div>
   </div>
 </div>
@@ -3765,21 +3763,19 @@ func main() {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Канал в Go — это структура в куче <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.hchan</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">type hchan struct {</p>
-<p style="margin-bottom: 6px;">qcount   uint           // Всего элементов в буфере</p>
-<p style="margin-bottom: 6px;">dataqsiz uint           // Размер кольцевого буфера</p>
-<p style="margin-bottom: 6px;">buf      unsafe.Pointer // Указатель на массив данных</p>
-<p style="margin-bottom: 6px;">elemsize uint16</p>
-<p style="margin-bottom: 6px;">closed   uint32</p>
-<p style="margin-bottom: 6px;">elemtype *_type</p>
-<p style="margin-bottom: 6px;">sendx    uint           // Индекс отправки</p>
-<p style="margin-bottom: 6px;">recvx    uint           // Индекс приема</p>
-<p style="margin-bottom: 6px;">recvq    waitq          // Очередь заблокированных читателей (список sudog)</p>
-<p style="margin-bottom: 6px;">sendq    waitq          // Очередь заблокированных писателей (список sudog)</p>
-<p style="margin-bottom: 6px;">lock     mutex          // Спинлок канала</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">type hchan struct {
+    qcount   uint           // Всего элементов в буфере
+    dataqsiz uint           // Размер кольцевого буфера
+    buf      unsafe.Pointer // Указатель на массив данных
+    elemsize uint16
+    closed   uint32
+    elemtype *_type
+    sendx    uint           // Индекс отправки
+    recvx    uint           // Индекс приема
+    recvq    waitq          // Очередь заблокированных читателей (список sudog)
+    sendq    waitq          // Очередь заблокированных писателей (список sudog)
+    lock     mutex          // Спинлок канала
+}</code></pre></div>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Когда горутина блокируется на канале, она упаковывается в структуру <strong><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sudog</code></strong> (pseudo-g), которая связывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">g</code> с конкретным каналом, и уходит в сон через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gopark()</code>. При разблокировке парная горутина извлекает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sudog</code> из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">waitq</code> и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">goready()</code>.</p></div>
   </div>
@@ -3985,7 +3981,7 @@ func main() {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Если горутины такие легковесные (~2 КБ), почему в HighLoad системах не рекомендуют спавнить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go func()</code> на каждый входящий запрос без ограничений?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что закон сохранения ресурсов непреложен:</p>
-<p style="margin-bottom: 6px;">1) <strong>Память:</strong> 100 000 внезапных запросов потребуют >200 МБ только под стеки горутин;</p>
+<p style="margin-bottom: 6px;">1) <strong>Память:</strong> 100 000 внезапных запросов потребуют &gt;200 МБ только под стеки горутин;</p>
 <p style="margin-bottom: 6px;">2) <strong>Планировщик:</strong> Перегрузка очередей LRQ приводит к борьбе за <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sched.lock</code> при сбросе в GRQ;</p>
 <p style="margin-bottom: 6px;">3) <strong>GC:</strong> Сборщику мусора приходится сканировать стеки 100 000 горутин, что многократно увеличивает время GC Mark;</p>
 <p style="margin-bottom: 6px;">4) <strong>CFS Throttling:</strong> Неуправляемый спавн создает конкуренцию за CPU, вызывая спайки задержек p99. Ограничение конкурентности через Worker Pool или семафор гарантирует стабильный SLA.</p></div>
@@ -4080,7 +4076,7 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/sync/mutex.go</code> функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lockSlow()</code> проверяет:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Разрешен ли спиннинг: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime_canSpin(iter)</code>. Спиннинг разрешен только на многоядерных машинах (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOMAXPROCS > 1</code>), если локальная очередь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LRQ</code> пуста и процессор выполнил менее 4 спин-итераций <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">procyield(30)</code>.</li>
+<li style="margin-bottom: 4px;">Разрешен ли спиннинг: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime_canSpin(iter)</code>. Спиннинг разрешен только на многоядерных машинах (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOMAXPROCS &gt; 1</code>), если локальная очередь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">LRQ</code> пуста и процессор выполнил менее 4 спин-итераций <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">procyield(30)</code>.</li>
 <li style="margin-bottom: 4px;">Инструкция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">procyield(30)</code> компилируется в 30 инструкций ассемблера <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PAUSE</code>, снимающих нагрузку с конвейера CPU.</li>
 </ul></div>
   </div>
@@ -4327,7 +4323,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[sysmon: Retaking Bindings]</strong>: Если горутина выполняет CPU-bound работу без вызова функций (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i < 1e10; i++ {}</code>), как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> понимает, что нужно вытеснить (preempt) эту горутину? Напиши такой цикл и проверь, не блокирует ли он другие горутины (работает ли планировщик).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[sysmon: Retaking Bindings]</strong>: Если горутина выполняет CPU-bound работу без вызова функций (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i &lt; 1e10; i++ {}</code>), как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> понимает, что нужно вытеснить (preempt) эту горутину? Напиши такой цикл и проверь, не блокирует ли он другие горутины (работает ли планировщик).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4410,7 +4406,7 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">retake()</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/proc.go</code> условие вытеснения выглядит так:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if s == _Prunning { if pd.schedwhen + 10*1000*1000 < now { preemptone(pp) } }</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if s == _Prunning { if pd.schedwhen + 10*1000*1000 &lt; now { preemptone(pp) } }</code>.</p>
 <p style="margin-bottom: 6px;">Константа $10 \times 10^6$ наносекунд (10 мс) определяет базовый тайм-слайс планировщика Go.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -4730,14 +4726,12 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Компилятор Go (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cmd/compile</code>) отвечает за генерацию безопасных точек остановки.</p>
 <p style="margin-bottom: 6px;">В классической модели компилятор вставляет в пролог каждой функции:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`assembly</p>
-<p style="margin-bottom: 6px;">CMPQ SP, 16(R14)   // Сравнение указателя стека с g.stackguard0</p>
-<p style="margin-bottom: 6px;">JLS  morestack      // Если SP <= stackguard0, переход на выделение стека</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-assembly"><code class="language-assembly">CMPQ SP, 16(R14)   // Сравнение указателя стека с g.stackguard0
+JLS  morestack      // Если SP &lt;= stackguard0, переход на выделение стека</code></pre></div>
 <p style="margin-bottom: 6px;">Фокус архитектуры Go в том, что планировщик использует ту же самую проверку для кооперативного вытеснения!</p>
 <p style="margin-bottom: 6px;">Когда рантайм хочет вытеснить горутину, он присваивает:</p>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gp.stackguard0 = stackPreempt</code> (константа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0xfffffffffffffff0</code>).</p>
-<p style="margin-bottom: 6px;">При следующем вызове любой функции условие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SP <= stackguard0</code> гарантированно срабатывает. Вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.morestack()</code>, которая обнаруживает флаг прерывания, сохраняет контекст горутины и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.goschedImpl()</code>.</p></div>
+<p style="margin-bottom: 6px;">При следующем вызове любой функции условие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SP &lt;= stackguard0</code> гарантированно срабатывает. Вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.morestack()</code>, которая обнаруживает флаг прерывания, сохраняет контекст горутины и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.goschedImpl()</code>.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -4794,7 +4788,7 @@ func main() {
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Каким образом планировщик Go утилизирует проверку переполнения стека (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">morestack</code>) для кооперативного вытеснения горутин?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">g.stackguard0</code> хранит границу безопасного использования стека.</p>
 <p style="margin-bottom: 6px;">Когда планировщик хочет вытеснить горутину (например, при вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Gosched()</code> или по требованию GC), он искусственно завышает эту границу, записывая в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">stackguard0</code> специальное значение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">stackPreempt</code>.</p>
-<p style="margin-bottom: 6px;">В начале следующей вызываемой функции процессор проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SP <= stackguard0</code>. Условие неизбежно выполняется, и поток переходит в функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">morestack()</code>.</p>
+<p style="margin-bottom: 6px;">В начале следующей вызываемой функции процессор проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SP &lt;= stackguard0</code>. Условие неизбежно выполняется, и поток переходит в функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">morestack()</code>.</p>
 <p style="margin-bottom: 6px;">Внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">morestack()</code> рантайм проверяет: если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">stackguard0 == stackPreempt</code>, это не настоящее переполнение стека, а запрос на вытеснение. Рантайм паркует горутину и запускает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schedule()</code>.</p></div>
   </div>
 </div>
@@ -5062,7 +5056,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Если задачи микроскопические (<1 микросекунды), стоимость CAS-инструкций при краже работы может превышать выигрыш от параллелизма.</p></div>
+    <div><p style="margin-bottom: 6px;">Если задачи микроскопические (&lt;1 микросекунды), стоимость CAS-инструкций при краже работы может превышать выигрыш от параллелизма.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -5198,13 +5192,13 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Роль <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> (Системный монитор)</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> — это фоновый поток рантайма, который работает без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">P</code>. Его задачи: будить спящие таймеры, опрашивать сеть и... наказывать "жадные" горутины. *Просто запомни это для следующих двух упражнений.*</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Роль <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> (Системный монитор)</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> — это фоновый поток рантайма, который работает без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">P</code>. Его задачи: будить спящие таймеры, опрашивать сеть и... наказывать &quot;жадные&quot; горутины. *Просто запомни это для следующих двух упражнений.*</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Поток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> — это «сторожевой пес» (watchdog) всего рантайма Go.</p>
 <p style="margin-bottom: 6px;">Он выполняет:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Вытеснение горутин, работающих >10 мс (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">preemptone</code>);</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Вытеснение горутин, работающих &gt;10 мс (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">preemptone</code>);</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Отсоединение P от блокирующих системных вызовов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">handoffp</code>);</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Опрос сетевых сокетов в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">netpoll</code>, если они не опрашивались 10 мс;</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запуск принудительного цикла GC раз в 2 минуты (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">forcegcperiod</code>);</div>
@@ -5679,9 +5673,7 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GODEBUG=asyncpreemptoff=1</code> позволяет в деталях воспроизвести проблему, с которой инженеры Go боролись с 2012 по 2020 год (до релиза Go 1.14).</p>
 <p style="margin-bottom: 6px;">Без асинхронного вытеснения горутина с циклом:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">for !stop {}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">for !stop {}</code></pre></div>
 <p style="margin-bottom: 6px;">не содержит ни вызовов функций, ни аллокаций, ни работы с каналами. Компилятор не генерирует для такого цикла ни одного <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">morestack</code>.</p>
 <p style="margin-bottom: 6px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOMAXPROCS=1</code>, эта горутина монополизирует процессор навсегда: ни таймер, ни сетевой сокет, ни сборщик мусора не смогут получить управление.</p></div>
   </div>
@@ -6468,7 +6460,7 @@ func main() {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Начальный размер: <strong>2 КБ</strong>.</li>
 <li style="margin-bottom: 4px;">Максимальный размер по умолчанию: <strong>1 ГБ</strong> на 64-битных ОС (и 250 МБ на 32-битных ОС), настраивается через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">debug.SetMaxStack</code>.</li>
-<li style="margin-bottom: 4px;">При вызове каждой функции компилятор проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SP < stackguard0</code>. При исчерпании вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.morestack()</code>.</li>
+<li style="margin-bottom: 4px;">При вызове каждой функции компилятор проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SP &lt; stackguard0</code>. При исчерпании вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.morestack()</code>.</li>
 <li style="margin-bottom: 4px;">Рантайм выделяет блок размером $2 \times \text{current\_size}$, копирует фреймы и корректирует внутренние указатели.</li>
 <li style="margin-bottom: 4px;">В фазе сборки мусора рантайм может уменьшить стек вдвое (Stack Shrinking), если горутина использует менее 1/4 его емкости.</li>
 </ul></div>
@@ -6554,9 +6546,7 @@ func main() {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Что происходит, если горутина исполняет бесконечный цикл, состоящий исключительно из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.Gosched()</code>?</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">for { runtime.Gosched() }</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">for { runtime.Gosched() }</code></pre></div>
 <p style="margin-bottom: 6px;">Такая горутина называется «отравленной» (poisoned / spinning):</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">При каждом вызове она помещается в Глобальную Очередь (GRQ);</li>
@@ -6669,11 +6659,9 @@ func main() {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">При развертывании в Kubernetes контейнеру часто назначают квоты процессора:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`yaml</p>
-<p style="margin-bottom: 6px;">resources:</p>
-<p style="margin-bottom: 6px;">limits:</p>
-<p style="margin-bottom: 6px;">cpu: "2"</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-yaml"><code class="language-yaml">resources:
+  limits:
+    cpu: &quot;2&quot;</code></pre></div>
 <p style="margin-bottom: 6px;">Однако стандартный Go рантайм определяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOMAXPROCS</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.NumCPU()</code>, который считывает количество ядер <strong>физического хоста</strong> (например, 64 ядра).</p>
 <p style="margin-bottom: 6px;">В результате:</p>
 <ul style="margin: 8px 0 8px 20px;">
@@ -6688,7 +6676,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Демонстрируем подключение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">automaxprocs</code> через blank-import <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ "go.uber.org/automaxprocs"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Демонстрируем подключение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">automaxprocs</code> через blank-import <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ &quot;go.uber.org/automaxprocs&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуем fallback-алгоритм вычисления CFS-квоты вручную на Go.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверяем корректность вычисления.</div></div>
   </div>
@@ -6787,12 +6775,12 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Асинхронное вытеснение (Non-Cooperative Preemption)</strong>: Запусти код из упр. 622 на современной версии Go. Убедись, что программа работает нормально (другие горутины тоже получают процессорное время). Как это работает? <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> видит, что горутина крутится >10 мс, и отправляет потоку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">M</code> аппаратный сигнал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGURG</code>. Запусти программу с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GODEBUG=asyncpreemptoff=1</code> (отключение асинхронного вытеснения) — и посмотри, как твой пустой цикл снова намертво повесит ядро процессора!</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Асинхронное вытеснение (Non-Cooperative Preemption)</strong>: Запусти код из упр. 622 на современной версии Go. Убедись, что программа работает нормально (другие горутины тоже получают процессорное время). Как это работает? <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> видит, что горутина крутится &gt;10 мс, и отправляет потоку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">M</code> аппаратный сигнал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGURG</code>. Запусти программу с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GODEBUG=asyncpreemptoff=1</code> (отключение асинхронного вытеснения) — и посмотри, как твой пустой цикл снова намертво повесит ядро процессора!</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Асинхронное вытеснение в современном Go работает прозрачно для разработчика:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Поток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> детектирует, что горутина выполняется непрерывно >10 мс.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Поток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sysmon</code> детектирует, что горутина выполняется непрерывно &gt;10 мс.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Посылается сигнал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGURG</code> (через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tgkill</code> в Linux).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Обработчик сигналов рантайма перехватывает сигнал, проверяет стек-карту текущей инструкции.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выполняется сохранение регистров общего назначения и переключение контекста на другую горутину.</div>
@@ -7003,29 +6991,27 @@ func main() {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Анализ исходного кода рантайма в файлах <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/proc.go</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/signal_unix.go</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">// preemptone пытается вытеснить горутину gp, запущенную на pp.</p>
-<p style="margin-bottom: 6px;">func preemptone(pp *p) bool {</p>
-<p style="margin-bottom: 6px;">mp := pp.m.ptr()</p>
-<p style="margin-bottom: 6px;">if mp == nil || mp == getg().m {</p>
-<p style="margin-bottom: 6px;">return false</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">gp := mp.curg</p>
-<p style="margin-bottom: 6px;">if gp == nil || gp == mp.g0 {</p>
-<p style="margin-bottom: 6px;">return false</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">gp.preempt = true</p>
-<p style="margin-bottom: 6px;">// Кооперативный флаг: проверка переполнения стека</p>
-<p style="margin-bottom: 6px;">gp.stackguard0 = stackPreempt</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">// Асинхронный флаг: посылка сигнала SIGURG</p>
-<p style="margin-bottom: 6px;">if preemptMSupported && debug.asyncpreemptoff == 0 {</p>
-<p style="margin-bottom: 6px;">pp.preempt = true</p>
-<p style="margin-bottom: 6px;">preemptM(mp)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">return true</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">// preemptone пытается вытеснить горутину gp, запущенную на pp.
+func preemptone(pp *p) bool {
+    mp := pp.m.ptr()
+    if mp == nil || mp == getg().m {
+        return false
+    }
+    gp := mp.curg
+    if gp == nil || gp == mp.g0 {
+        return false
+    }
+    gp.preempt = true
+    // Кооперативный флаг: проверка переполнения стека
+    gp.stackguard0 = stackPreempt
+
+    // Асинхронный флаг: посылка сигнала SIGURG
+    if preemptMSupported &amp;&amp; debug.asyncpreemptoff == 0 {
+        pp.preempt = true
+        preemptM(mp)
+    }
+    return true
+}</code></pre></div>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">preemptM(mp)</code> вызывает платформенный системный вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">signalM(mp, sigPreempt)</code>, который через POSIX вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pthread_kill</code> шлет сигнал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGURG</code> ядру ОС.</p></div>
   </div>
@@ -7088,7 +7074,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/signal_unix.go</code> функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">preemptM()</code> проверяет атомарный флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">atomic.Cas(&mp.signalPending, 0, 1)</code>, чтобы не спамить сигналами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGURG</code>, если предыдущий сигнал еще не был обработан ядром ОС.</p></div>
+    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/signal_unix.go</code> функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">preemptM()</code> проверяет атомарный флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">atomic.Cas(&amp;mp.signalPending, 0, 1)</code>, чтобы не спамить сигналами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGURG</code>, если предыдущий сигнал еще не был обработан ядром ОС.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -7110,7 +7096,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Priority inversion</strong>: Go не поддерживает приоритеты горутин. Изучите, как это влияет на latency-sensitive задачи и какие workarounds существуют (separate P's, goroutine pools).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Priority inversion</strong>: Go не поддерживает приоритеты горутин. Изучите, как это влияет на latency-sensitive задачи и какие workarounds существуют (separate P&#x27;s, goroutine pools).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7255,7 +7241,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Высокая сложность — Go Trace]</strong>: Напиши программу с CPU-bound и IO-bound горутинами. Запусти её, записав трейс в файл: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cat > trace.out</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime/trace</code>. Открой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool trace trace.out</code>. Найди визуализацию GMP: посмотри, как горутины привязываются к P и M, и когда происходит блокировка.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Высокая сложность — Go Trace]</strong>: Напиши программу с CPU-bound и IO-bound горутинами. Запусти её, записав трейс в файл: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cat &gt; trace.out</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime/trace</code>. Открой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool trace trace.out</code>. Найди визуализацию GMP: посмотри, как горутины привязываются к P и M, и когда происходит блокировка.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7359,7 +7345,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Не открывайте гигантские файлы trace (>500 МБ) в браузере: движок визуализации может исчерпать оперативную память вкладки Chrome. Используйте флаг сэмплинга или профилируйте меньший интервал.</p></div>
+    <div><p style="margin-bottom: 6px;">Не открывайте гигантские файлы trace (&gt;500 МБ) в браузере: движок визуализации может исчерпать оперативную память вкладки Chrome. Используйте флаг сэмплинга или профилируйте меньший интервал.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -7389,7 +7375,7 @@ func main() {
 <li style="margin-bottom: 4px;">В Windows: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CreateIoCompletionPort</code> (IOCP).</li>
 </ul>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">Когда горутина блокируется на чтении из TCP-сокета, поток ОС <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">M</code> освобождается немедленно (за время <1 микросекунды). Это позволяет Go-серверу держать миллионы открытых WebSocket / gRPC / TCP соединений (C10M problem), расходуя только память под стеки и буферы ядра.</p></div>
+<p style="margin-bottom: 6px;">Когда горутина блокируется на чтении из TCP-сокета, поток ОС <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">M</code> освобождается немедленно (за время &lt;1 микросекунды). Это позволяет Go-серверу держать миллионы открытых WebSocket / gRPC / TCP соединений (C10M problem), расходуя только память под стеки и буферы ядра.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -7518,7 +7504,7 @@ func main() {
 <li style="margin-bottom: 4px;">Горутина 2: крутит бесконечный CPU-bound цикл.</li>
 </ul>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">В Go < 1.14 таймер на 1 мс не мог сработать вовремя: Горутина 2 блокировала P, и Горутина 1 ждала десятки или сотни миллисекунд.</p>
+<p style="margin-bottom: 6px;">В Go &lt; 1.14 таймер на 1 мс не мог сработать вовремя: Горутина 2 блокировала P, и Горутина 1 ждала десятки или сотни миллисекунд.</p>
 <p style="margin-bottom: 6px;">В Go 1.14+ таймеры встроены в процессор P (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p.timers</code>), а асинхронное вытеснение прерывает Горутину 2, гарантируя своевременное пробуждение спящей горутины.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -7610,7 +7596,7 @@ func main() {
 <p style="margin-bottom: 6px;">1) Паузы Stop-The-World (хоть и субмиллисекундные) создают недетерминированные задержки;</p>
 <p style="margin-bottom: 6px;">2) Квантование планировщика (10 мс) и непредсказуемость вытеснения не гарантируют микросекундные дедлайны;</p>
 <p style="margin-bottom: 6px;">3) Для жесткого реального времени применяются языки без сборщика мусора и без скрытого рантайма (C, C++, Rust, Zig) на специализированных RTOS (FreeRTOS, QNX, VxWorks).</p>
-<p style="margin-bottom: 6px;">Однако для Soft Real-Time (HighLoad бэкенды, биржевой финтех с p99 < 1 мс, стриминг) Go подходит идеально.</p></div>
+<p style="margin-bottom: 6px;">Однако для Soft Real-Time (HighLoad бэкенды, биржевой финтех с p99 &lt; 1 мс, стриминг) Go подходит идеально.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-63">
@@ -7620,7 +7606,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Состояния Горутин</strong>: Напиши программу, где одна горутина спит (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code>), другая ждет канал (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ch</code>), третья крутит CPU. Сделай дамп всех стеков программы через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.Stack(buf, true)</code> (или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGQUIT</code> - <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Ctrl+\</code>). Найди в дампе состояния горутин: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">running</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runnable</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sleep</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wait</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Состояния Горутин</strong>: Напиши программу, где одна горутина спит (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code>), другая ждет канал (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ch</code>), третья крутит CPU. Сделай дамп всех стеков программы через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.Stack(buf, true)</code> (или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGQUIT</code> - <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Ctrl+\</code>). Найди в дампе состояния горутин: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">running</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runnable</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sleep</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">wait</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7711,7 +7697,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Что означает статус <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[chan receive (nil chan)]</code> в дампе стека и чем он опасен?</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это признак чтения из неинициализированного (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>) канала: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ch chan int; <-ch</code>.</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это признак чтения из неинициализированного (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>) канала: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var ch chan int; &lt;-ch</code>.</p>
 <p style="margin-bottom: 6px;">В отличие от закрытого канала (который возвращает нулевое значение и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>), чтение или запись в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>-канал блокирует горутину <strong>навсегда</strong>.</p>
 <p style="margin-bottom: 6px;">Она никогда не проснется, навсегда зависнет в статусе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Gwaiting</code> и утечет из памяти вместе со своим стеком.</p></div>
   </div>
@@ -7730,7 +7716,7 @@ func main() {
     <div><p style="margin-bottom: 6px;">Для низкоуровневого мониторинга состояния рантайма Go стандартная библиотека предоставляет системные функции:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.NumGoroutine()</code>: текущее количество живых горутин (во всех состояниях, кроме <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Gdead</code>);</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.ReadMemStats(&m)</code>: полный снимок кучи, стеков, mcache, mspan и GC;</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.ReadMemStats(&amp;m)</code>: полный снимок кучи, стеков, mcache, mspan и GC;</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.NumCgoCall()</code>: суммарное количество совершенных CGO-вызовов;</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime/metrics</code>: современный интерфейс метрик (Go 1.16+), предоставляющий данные планировщика без STW-пауз.</li>
 </ul></div>
@@ -7822,7 +7808,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.ReadMemStats()</code> кратковременно останавливает мир (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">stopTheWorld("read mem stats")</code>) для снятия консистентного слепка памяти. В современных сервисах вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadMemStats</code> рекомендуется использовать пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime/metrics</code>, который считывает счетчики атомарно без остановки горутин.</p></div>
+    <div><p style="margin-bottom: 6px;">Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.ReadMemStats()</code> кратковременно останавливает мир (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">stopTheWorld(&quot;read mem stats&quot;)</code>) для снятия консистентного слепка памяти. В современных сервисах вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadMemStats</code> рекомендуется использовать пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime/metrics</code>, который считывает счетчики атомарно без остановки горутин.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -7927,7 +7913,7 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/proc.go</code> функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">checkdead()</code> проверяет:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if sched.nmspinning == 0 && sched.npidle == gomaxprocs { throw("all goroutines are asleep - deadlock!") }</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if sched.nmspinning == 0 &amp;&amp; sched.npidle == gomaxprocs { throw(&quot;all goroutines are asleep - deadlock!&quot;) }</code>.</p>
 <p style="margin-bottom: 6px;">Эта проверка работает <strong>только если заблокированы ВСЕ пользовательские горутины программы</strong>. Если хотя бы одна горутина крутит бесконечный фоновый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep</code> или слушает сетевой сокет, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">checkdead</code> не сработает, и скрытый дедлок останется незамеченным.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -8026,7 +8012,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/proc.go</code> функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">newm()</code> инкрементирует счетчик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sched.mcount</code>. Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sched.mcount > sched.maxmcount</code>, рантайм не вызывает системный вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">clone()</code>/<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pthread_create()</code>, а немедленно роняет процесс с паникой.</p></div>
+    <div><p style="margin-bottom: 6px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/proc.go</code> функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">newm()</code> инкрементирует счетчик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sched.mcount</code>. Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sched.mcount &gt; sched.maxmcount</code>, рантайм не вызывает системный вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">clone()</code>/<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pthread_create()</code>, а немедленно роняет процесс с паникой.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -8138,7 +8124,7 @@ func main() {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Какую роль играет константа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">61</code> в предотвращении голодания в планировщике Go?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> В цикле функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">schedule()</code> рантайм Go проверяет условие:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if pp.schedtick%61 == 0 && sched.runqsize > 0</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if pp.schedtick%61 == 0 &amp;&amp; sched.runqsize &gt; 0</code></p>
 <p style="margin-bottom: 6px;">Число 61 — <strong>простое число</strong>.</p>
 <p style="margin-bottom: 6px;">Использование простого числа исключает нежелательную периодическую синхронизацию (резонанс) с регулярными циклами приложения (например, тиками таймеров с шагом 10, 20 или 50 итераций).</p>
 <p style="margin-bottom: 6px;">Благодаря этому ровно каждый 61-й шаг планирования процессор гарантированно забирает задачу из Глобальной Очереди (GRQ), исключая голодание задач, вытесненных другими P.</p></div>
@@ -8362,7 +8348,7 @@ func main() {
 <p style="margin-bottom: 6px;">1) <strong>Создание:</strong> Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">newproc()</code>. Берется структура <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">g</code> из пула <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gFree</code> (или аллоцируется), выделяется 2 КБ стека;</p>
 <p style="margin-bottom: 6px;">2) <strong>Постановка в очередь:</strong> Горутина помещается в слот <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runnext</code> текущего P (или в кольцевой буфер LRQ);</p>
 <p style="margin-bottom: 6px;">3) <strong>Исполнение:</strong> Свободный поток M забирает ее через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runqget()</code>, переключается на стек горутины через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gogo()</code> и меняет статус на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Grunning</code>;</p>
-<p style="margin-bottom: 6px;">4) <strong>Ожидание/Вытеснение:</strong> При I/O уходит в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Gwaiting</code> (Netpoller), при >10 мс вытесняется сигналом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGURG</code>;</p>
+<p style="margin-bottom: 6px;">4) <strong>Ожидание/Вытеснение:</strong> При I/O уходит в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Gwaiting</code> (Netpoller), при &gt;10 мс вытесняется сигналом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGURG</code>;</p>
 <p style="margin-bottom: 6px;">5) <strong>Завершение:</strong> Вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">goexit()</code>, статус меняется на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Gdead</code>, дескриптор возвращается в пул <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gFree</code> для повторного использования.</p></div>
   </div>
 </div>
@@ -8621,7 +8607,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Включаем блок-профайлер через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.SetBlockProfileRate(1)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем преднамеренные задержки на каналах и мьютексах.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сохраняем профиль через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof.Lookup("block").WriteTo(f, 0)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сохраняем профиль через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof.Lookup(&quot;block&quot;).WriteTo(f, 0)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Анализируем отчет в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof</code>.</div></div>
   </div>
   <div class="code-container">
@@ -8722,7 +8708,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Mutex profiler</strong>: Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.SetMutexProfileFraction(1)</code> для профилирования contention на mutex'ах.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Mutex profiler</strong>: Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.SetMutexProfileFraction(1)</code> для профилирования contention на mutex&#x27;ах.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8732,8 +8718,8 @@ func main() {
 <p style="margin-bottom: 6px;">Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.SetMutexProfileFraction(rate int)</code> включает сбор:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rate = 1</code>, рантайм фиксирует абсолютно 100% событий contention (задержек на мьютексах).</li>
-<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rate > 1</code>, рантайм сэмплирует события с вероятностью $1/rate$.</li>
-<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rate <= 0</code>, профилирование выключается.</li>
+<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rate &gt; 1</code>, рантайм сэмплирует события с вероятностью $1/rate$.</li>
+<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rate &lt;= 0</code>, профилирование выключается.</li>
 </ul>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">В продакшене <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rate = 1</code> обычно включают кратковременно для точной диагностики, либо задают умеренное сэмплирование (например, 5 или 10) во избежание просадки RPS.</p></div>
@@ -8744,7 +8730,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Установите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.SetMutexProfileFraction(1)</code> в начале функции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Смоделируйте нагруженную критическую секцию с высоким contention, где несколько горутин конкурируют за один <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Mutex</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сохраните профиль contention в файл с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof.Lookup("mutex").WriteTo(f, 0)</code> или подключите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net/http/pprof</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сохраните профиль contention в файл с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof.Lookup(&quot;mutex&quot;).WriteTo(f, 0)</code> или подключите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net/http/pprof</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проанализируйте полученный файл через утилиту <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof</code>.</div></div>
   </div>
   <div class="code-container">
@@ -8815,9 +8801,9 @@ go tool pprof -top mutex.pprof</code></pre>
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Когда горутина пытается вызвать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mu.Lock()</code> и мьютекс уже захвачен, после нескольких неудачных спин-циклов в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.runtime_SemacquireMutex</code> рантайм паркует горутину (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">goparkunlock(&m.sema, waitReasonSyncMutexLock)</code>).</p>
+    <div><p style="margin-bottom: 6px;">Когда горутина пытается вызвать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mu.Lock()</code> и мьютекс уже захвачен, после нескольких неудачных спин-циклов в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.runtime_SemacquireMutex</code> рантайм паркует горутину (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">goparkunlock(&amp;m.sema, waitReasonSyncMutexLock)</code>).</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">Рантайм замеряет количество наносекунд, проведенных горутиной в спящем состоянии. Если сэмплирование активно, в структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> и глобальный хеш-бакет мьютекс-профайлера добавляется стек вызова и дельта времени задержки. При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof.Lookup("mutex")</code> отдаются агрегированные данные: количество блокировок и суммарное время ожидания.</p></div>
+<p style="margin-bottom: 6px;">Рантайм замеряет количество наносекунд, проведенных горутиной в спящем состоянии. Если сэмплирование активно, в структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> и глобальный хеш-бакет мьютекс-профайлера добавляется стек вызова и дельта времени задержки. При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof.Lookup(&quot;mutex&quot;)</code> отдаются агрегированные данные: количество блокировок и суммарное время ожидания.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -9143,12 +9129,12 @@ func BenchmarkAtomic(b *testing.B) {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">При захвате свободной блокировки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Mutex.Lock()</code> выполняется ровно одна ассемблерная инструкция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync/atomic.CompareAndSwapInt32</code>, которая занимает ~10-15 наносекунд без обращения к рантайму.</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">При отправке в канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ch <- val</code>:</p>
+<p style="margin-bottom: 6px;">При отправке в канал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ch &lt;- val</code>:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Вызывается функция рантайма <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.chansend</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Захватывается внутренний спинлок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lock(&c.lock)</code> внутри структуры <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hchan</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Захватывается внутренний спинлок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">lock(&amp;c.lock)</code> внутри структуры <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hchan</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Выполняется проверка закрытия канала, проверка длины буфера.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выполняется копирование данных памяти через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">typedmemmove</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Освобождается внутренний спинлок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">unlock(&c.lock)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Освобождается внутренний спинлок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">unlock(&amp;c.lock)</code>.</div>
 <p style="margin-bottom: 6px;">Накладные расходы канала в 5–15 раз выше, чем у <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Mutex</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -9799,7 +9785,7 @@ go tool pprof -top -cum block.pprof</code></pre>
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof.Lookup("mutex").WriteTo(w, 0)</code> рантайм формирует proto-буфер со списком записей профиля.</p>
+    <div><p style="margin-bottom: 6px;">При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof.Lookup(&quot;mutex&quot;).WriteTo(w, 0)</code> рантайм формирует proto-буфер со списком записей профиля.</p>
 <p style="margin-bottom: 6px;">Каждая запись содержит:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">stack</code>: массив адресов инструкций PC на момент блокировки.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cycles</code>: общее количество процессорных тактов или наносекунд, проведенных в ожидании.</div>
@@ -9809,7 +9795,7 @@ go tool pprof -top -cum block.pprof</code></pre>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Включение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetBlockProfileRate(1)</code> на production-сервере под 50k RPS приведет к катастрофической деградации производительности из-за накладных расходов на снятие стектрейсов на каждый сетевой пакет. Рекомендуется ставить значение от 10000 (10 микросекунд) или 100000.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof.Lookup("block")</code> агрегирует данные накопительным итогом с момента старта процесса. Для получения картины за последние 30 секунд в HTTP pprof используют эндпоинт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/block?seconds=30</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof.Lookup(&quot;block&quot;)</code> агрегирует данные накопительным итогом с момента старта процесса. Для получения картины за последние 30 секунд в HTTP pprof используют эндпоинт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/block?seconds=30</code>.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -9924,7 +9910,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Runtime bugs и edge cases</strong>: Изучите известные issues в Go runtime (например, goroutine leaks при неправильном использовании context, GC pauses при больших heap'ах до Go 1.19).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Runtime bugs и edge cases</strong>: Изучите известные issues в Go runtime (например, goroutine leaks при неправильном использовании context, GC pauses при больших heap&#x27;ах до Go 1.19).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -10019,7 +10005,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Заблокированная в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ch <- err</code> горутина переходит в статус <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Gwaiting</code> и навсегда привязывается к очереди <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sendq</code> канала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ch</code>.</p>
+    <div><p style="margin-bottom: 6px;">Заблокированная в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ch &lt;- err</code> горутина переходит в статус <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_Gwaiting</code> и навсегда привязывается к очереди <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sendq</code> канала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ch</code>.</p>
 <p style="margin-bottom: 6px;">Поскольку горутина держит ссылку на канал, а канал хранит указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sudog</code> на стек горутины, сборщик мусора GC не имеет права удалить ни стек горутины, ни сам канал, ни замыкания переменных, находящихся в её стеке!</p>
 <p style="margin-bottom: 6px;">Каждая утекшая горутина потребляет минимум 2 КБ стека + структуры рантайма, вызывая прогрессирующую деградацию RAM.</p></div>
   </div>
@@ -10125,7 +10111,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.After()</code> в версиях Go < 1.23 в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> цикле — одна из самых частых причин утечек оперативной памяти на HighLoad.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.After()</code> в версиях Go &lt; 1.23 в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select</code> цикле — одна из самых частых причин утечек оперативной памяти на HighLoad.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Старый код, рассчитывавший на разделение одной переменной цикла между итерациями, в Go 1.22+ может изменить поведение.</div></div>
   </div>
   <div class="callout callout-bigtech">
@@ -10133,8 +10119,8 @@ func main() {
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Какие изменения в работе таймеров произошли в Go 1.23 и почему это фундаментально для сетевых микросервисов?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> В Go 1.23 рантайм таймеров был полностью переписан:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Таймеры теперь подвержены сборке мусора (GC-eligible). Если горутина бросила канал таймера, GC удаляет его из очередей рантайма.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">timer.Reset()</code> теперь гарантированно потокобезопасна и не требует вычитывания из канала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-t.C</code> после остановки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Stop()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Это устранило многолетние утечки памяти в паттернах таймаутов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select { case <-t.C: ... }</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">timer.Reset()</code> теперь гарантированно потокобезопасна и не требует вычитывания из канала <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-t.C</code> после остановки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t.Stop()</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Это устранило многолетние утечки памяти в паттернах таймаутов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select { case &lt;-t.C: ... }</code>.</div></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-86">
@@ -10224,7 +10210,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Высокий показатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GCCPUFraction</code> (> 0.25) свидетельствует о том, что горутины тратят более 25% CPU на GC Assist вместо выполнения полезной бизнес-логики.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Высокий показатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GCCPUFraction</code> (&gt; 0.25) свидетельствует о том, что горутины тратят более 25% CPU на GC Assist вместо выполнения полезной бизнес-логики.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Неправильная настройка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOMEMLIMIT</code> может вызвать постоянный «GC Thrashing» — непрерывную фоновую сборку мусора с падением пропускной способности сервиса практически до нуля.</div></div>
   </div>
   <div class="callout callout-bigtech">
@@ -10255,7 +10241,7 @@ func main() {
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">regalloc</code>: распределение физических регистров процессора.</li>
 </ul>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">Флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOSSAFUNC=<func_name></code> заставляет компилятор сгенерировать интерактивный HTML-файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ssa.html</code>, где показан код после каждого прохода.</p></div>
+<p style="margin-bottom: 6px;">Флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOSSAFUNC=&lt;func_name&gt;</code> заставляет компилятор сгенерировать интерактивный HTML-файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ssa.html</code>, где показан код после каждого прохода.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -10309,7 +10295,7 @@ ls -lh ssa.html</code></pre>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Файл <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ssa.html</code> для крупных функций может весить десятки мегабайт и сильно нагружать браузер при рендеринге. Всегда исследуйте компактные функции.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если имя функции содержит пакет (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(*MyType).Method</code>), передавайте имя в точности так, как его ожидает компилятор: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOSSAFUNC="(*MyType).Method" go build</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если имя функции содержит пакет (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(*MyType).Method</code>), передавайте имя в точности так, как его ожидает компилятор: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOSSAFUNC=&quot;(*MyType).Method&quot; go build</code>.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -10324,18 +10310,16 @@ ls -lh ssa.html</code></pre>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Assembly inspection</strong>: Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-S"</code> для просмотра сгенерированного assembly. Изучите, как выглядят write barriers, preemption checks.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Assembly inspection</strong>: Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-S&quot;</code> для просмотра сгенерированного assembly. Изучите, как выглядят write barriers, preemption checks.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Компилятор Go транслирует исходный код в машинно-независимый ассемблер стиля Plan 9.</p>
-<p style="margin-bottom: 6px;">Анализ сгенерированного ассемблера (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-S"</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool objdump</code>) позволяет увидеть скрытую работу рантайма:</p>
+<p style="margin-bottom: 6px;">Анализ сгенерированного ассемблера (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-S&quot;</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool objdump</code>) позволяет увидеть скрытую работу рантайма:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Стек-чеки и Preemption Checks:</strong> в начале каждой обычной функции стоит проверка:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`text</p>
-<p style="margin-bottom: 6px;">MOVQ (TLS), CX</p>
-<p style="margin-bottom: 6px;">CMPQ SP, 16(CX)  ; сравнение указателя стека с g.stackguard0</p>
-<p style="margin-bottom: 6px;">JLS  morestack   ; переход на расширение стека или вытеснение</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-text"><code class="language-text">   MOVQ (TLS), CX
+   CMPQ SP, 16(CX)  ; сравнение указателя стека с g.stackguard0
+   JLS  morestack   ; переход на расширение стека или вытеснение</code></pre></div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Барьеры записи (Write Barriers):</strong> при записи указателя в кучу компилятор вставляет проверку флага <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.writeBarrier.enabled</code>. Если сборщик мусора активен, вызывается специальная функция рантайма <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.gcWriteBarrier</code> для окраски объектов в серый цвет.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -10343,7 +10327,7 @@ ls -lh ssa.html</code></pre>
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите код с записью указателя в кучу.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Скомпилируйте код с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags="-S"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Скомпилируйте код с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags=&quot;-S&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Найдите в листинге инструкции проверки стека <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">morestack</code> и барьера записи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gcWriteBarrier</code>.</div></div>
   </div>
   <div class="code-container">
@@ -10491,7 +10475,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Инструмент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags="-m"</code> выполняет анализ побега (escape analysis).</p>
+    <div><p style="margin-bottom: 6px;">Инструмент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags=&quot;-m&quot;</code> выполняет анализ побега (escape analysis).</p>
 <p style="margin-bottom: 6px;">Если тип конкретной переменной приводится к интерфейсному типу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">interface{}</code> / <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">any</code>, компилятор не всегда может доказать, что время жизни переменной не превысит вызывающий стек. В результате генерируется вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.convT64</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.newobject</code>, выделяющий память в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mcache</code> кучи.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -10808,7 +10792,7 @@ shutdown:
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Выставление <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GOMEMLIMIT</code> впритык к лимиту контейнера (например, 512MB limit при cgroup 512MB) приведет к OOM, так как лимит рантайма учитывает память кучи и стеков Go, но не учитывает память бинарника, Cgo и оверхед ядра ОС. Задавайте лимит с запасом 10–20%.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Забытый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ "net/http/pprof"</code> без авторизации в публичной сети создает критическую уязвимость безопасности (Remote Code & Memory Exposure).</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Забытый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ &quot;net/http/pprof&quot;</code> без авторизации в публичной сети создает критическую уязвимость безопасности (Remote Code &amp; Memory Exposure).</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -10827,9 +10811,9 @@ shutdown:
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>BCE (Bounds Check Elimination)</strong>: При доступе к элементу среза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a[i]</code> Go вставляет скрытую проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if i >= len(a) { panic(...) }</code>. Это замедляет циклы.</p>
-<p style="margin-bottom: 6px;">Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func sum(a []int) { for i:=0; i<len(a); i++ { a[i]... } }</code>.</p>
-<p style="margin-bottom: 6px;">Запусти <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-d=ssa/check_bce/debug=1"</code>. Посмотри в логи: компилятор убрал проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a[i]</code>, так как математически доказал, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">i</code> всегда меньше длины!</p>
+    <div><p style="margin-bottom: 6px;"><strong>BCE (Bounds Check Elimination)</strong>: При доступе к элементу среза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a[i]</code> Go вставляет скрытую проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if i &gt;= len(a) { panic(...) }</code>. Это замедляет циклы.</p>
+<p style="margin-bottom: 6px;">Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func sum(a []int) { for i:=0; i&lt;len(a); i++ { a[i]... } }</code>.</p>
+<p style="margin-bottom: 6px;">Запусти <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-d=ssa/check_bce/debug=1&quot;</code>. Посмотри в логи: компилятор убрал проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a[i]</code>, так как математически доказал, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">i</code> всегда меньше длины!</p>
 <p style="margin-bottom: 6px;">А теперь напиши код, где обращаешься к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a[3]</code> напрямую внутри функции. Ты увидишь <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Found IsInBounds</code> — проверка вставлена. Добавь строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ = a[3]</code> *до* цикла, и посмотри, как последующие проверки для индексов 0,1,2,3 в этой функции магически исчезнут!</p></div>
   </div>
   <div class="callout callout-theory">
@@ -10837,10 +10821,8 @@ shutdown:
     <div><p style="margin-bottom: 6px;">Безопасность памяти в Go гарантирует, что обращение к срезу за пределами его длины вызывает контролируемую панику <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime error: index out of range</code>, а не повреждение памяти, как в C.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Для этого компилятор генерирует машинные инструкции проверки границ (Bounds Checks):</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`text</p>
-<p style="margin-bottom: 6px;">CMPQ AX, CX  ; сравнение индекса i с длиной len(slice)</p>
-<p style="margin-bottom: 6px;">JAE  panicIndex</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-text"><code class="language-text">CMPQ AX, CX  ; сравнение индекса i с длиной len(slice)
+JAE  panicIndex</code></pre></div>
 <p style="margin-bottom: 6px;">В высоконагруженных циклах (обработка видео, сетевых пакетов, криптография) эти проверки создают существенный оверхед и мешают векторизации инструкций процессора (SIMD).</p>
 <p style="margin-bottom: 6px;">Компилятор Go содержит оптимизатор <strong>BCE (Bounds Check Elimination)</strong>, который математически доказывает границы индексов и выбрасывает ненужные проверки.</p></div>
   </div>
@@ -10848,10 +10830,10 @@ shutdown:
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите функцию суммирования среза в цикле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i < len(a); i++</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Напишите функцию суммирования среза в цикле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i &lt; len(a); i++</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Напишите функцию прямого чтения нескольких фиксированных индексов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Продемонстрируйте трюк поднятия проверки границы (hoisting bounds check) с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ = a[3]</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запустите сборку с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags="-d=ssa/check_bce/debug=1"</code> и изучите диагностические логи компилятора.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Запустите сборку с флагом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-gcflags=&quot;-d=ssa/check_bce/debug=1&quot;</code> и изучите диагностические логи компилятора.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -10904,7 +10886,7 @@ go build -gcflags=&quot;-d=ssa/check_bce/debug=1&quot; bce.go</code></pre>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Проход <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">prove</code> в SSA строит граф фактов и неравенств для всех целочисленных переменных функции.</p>
-<p style="margin-bottom: 6px;">Когда компилятор встречает операцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ = a[3]</code>, он вставляет проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IsInBounds</code> и добавляет в контекст факт: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(a) > 3</code>.</p>
+<p style="margin-bottom: 6px;">Когда компилятор встречает операцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ = a[3]</code>, он вставляет проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IsInBounds</code> и добавляет в контекст факт: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(a) &gt; 3</code>.</p>
 <p style="margin-bottom: 6px;">Для последующих обращений к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a[0]</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a[1]</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a[2]</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a[3]</code> компилятор видит, что константы 0, 1, 2, 3 строго меньше доказанной границы длины, и заменяет проверку на прямую инструкцию чтения из памяти без единого <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CMP</code> и условного перехода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">JAE</code>!</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -10915,7 +10897,7 @@ go build -gcflags=&quot;-d=ssa/check_bce/debug=1&quot; bce.go</code></pre>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Что такое BCE (Bounds Check Elimination) в компиляторе Go и как написать код декодирования бинарного протокола (например, 8-байтного заголовка) максимально быстро?</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> BCE — это фаза оптимизации в SSA компилятора, удаляющая рантайм-проверки выхода за границы слайса, если доказано, что индекс валиден. При парсинге 8-байтного пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">buf []byte</code> первым делом пишут проверку длины <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if len(buf) < 8 { return err }</code> или инструкцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ = buf[7]</code>. После этого компилятор доказывает, что байты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">buf[0]</code>...<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">buf[7]</code> безопасны, и компилирует всю сборку 64-битного числа в одну ассемблерную инструкцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MOVQ</code> без единого ветвления.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> BCE — это фаза оптимизации в SSA компилятора, удаляющая рантайм-проверки выхода за границы слайса, если доказано, что индекс валиден. При парсинге 8-байтного пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">buf []byte</code> первым делом пишут проверку длины <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if len(buf) &lt; 8 { return err }</code> или инструкцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ = buf[7]</code>. После этого компилятор доказывает, что байты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">buf[0]</code>...<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">buf[7]</code> безопасны, и компилирует всю сборку 64-битного числа в одну ассемблерную инструкцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MOVQ</code> без единого ветвления.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-93">
@@ -10928,13 +10910,11 @@ go build -gcflags=&quot;-d=ssa/check_bce/debug=1&quot; bce.go</code></pre>
     <div><p style="margin-bottom: 6px;">Исходники рантайма читайте параллельно: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/proc.go</code> (планировщик), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/malloc.go</code> (аллокатор), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">src/runtime/mgc.go</code> (GC).</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>Ключевые переменные окружения для тренировки:</strong></p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`bash</p>
-<p style="margin-bottom: 6px;">GODEBUG=schedtrace=1000,scheddetail=1   # планировщик</p>
-<p style="margin-bottom: 6px;">GODEBUG=gctrace=1                      # GC</p>
-<p style="margin-bottom: 6px;">GODEBUG=asyncpreemptoff=1              # отключить асинхронное вытеснение</p>
-<p style="margin-bottom: 6px;">GOGC=50                                # агрессивный GC</p>
-<p style="margin-bottom: 6px;">GOMEMLIMIT=128MiB                      # soft memory limit</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-bash"><code class="language-bash">GODEBUG=schedtrace=1000,scheddetail=1   # планировщик
+GODEBUG=gctrace=1                      # GC
+GODEBUG=asyncpreemptoff=1              # отключить асинхронное вытеснение
+GOGC=50                                # агрессивный GC
+GOMEMLIMIT=128MiB                      # soft memory limit</code></pre></div>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Если нужно — могу детально расписать <strong>одно конкретное упражнение</strong> с примером кода-шаблона, или составить план для следующих тем (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Pool</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">channels в рантайме</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">сетевой поллер</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cgo</code>).</p></div>
   </div>

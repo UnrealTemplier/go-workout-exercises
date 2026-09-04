@@ -1044,7 +1044,7 @@
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Подключи пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ "net/http/pprof"</code> и запусти отдельный HTTP-сервер на порту 6060. Открой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http://localhost:6060/debug/pprof/</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Подключи пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ &quot;net/http/pprof&quot;</code> и запусти отдельный HTTP-сервер на порту 6060. Открой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http://localhost:6060/debug/pprof/</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1145,11 +1145,11 @@ func TestPprofIsolatedServer(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">При импорте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ "net/http/pprof"</code> срабатывает функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">init()</code>, которая вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.Handle("/debug/pprof/", http.HandlerFunc(Index))</code> в глобальном объекте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.DefaultServeMux</code>. Если ваше основное приложение использует кастомный роутер (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">chi</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gin</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mux</code>), эндпоинты pprof не попадут в публичную маршрутизацию, если вы явно не примонтируете их.</p></div>
+    <div><p style="margin-bottom: 6px;">При импорте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ &quot;net/http/pprof&quot;</code> срабатывает функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">init()</code>, которая вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.Handle(&quot;/debug/pprof/&quot;, http.HandlerFunc(Index))</code> в глобальном объекте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.DefaultServeMux</code>. Если ваше основное приложение использует кастомный роутер (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">chi</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gin</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mux</code>), эндпоинты pprof не попадут в публичную маршрутизацию, если вы явно не примонтируете их.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Подключать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof</code> на публичный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.DefaultServeMux</code>, выставленный в интернет через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.ListenAndServe(":8080", nil)</code>: любой внешний злоумышленник сможет прочитать исходные коды функций, токены из дампа кучи или запустить CPU-профайлинг на 300 секунд, вызвав отказ в обслуживании (DDoS).</p></div>
+    <div><p style="margin-bottom: 6px;">Подключать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof</code> на публичный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.DefaultServeMux</code>, выставленный в интернет через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.ListenAndServe(&quot;:8080&quot;, nil)</code>: любой внешний злоумышленник сможет прочитать исходные коды функций, токены из дампа кучи или запустить CPU-профайлинг на 300 секунд, вызвав отказ в обслуживании (DDoS).</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1176,7 +1176,7 @@ func TestPprofIsolatedServer(t *testing.T) {
 <li style="margin-bottom: 4px;">Обработчик сигнала в рантайме Go перехватывает Program Counter (PC) всех активных потоков ОС (потоков M в модели GMP) и записывает текущий стек вызовов.</li>
 <li style="margin-bottom: 4px;"><strong>Инструмент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof</code>:</strong></li>
 <li style="margin-bottom: 4px;">Команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">top10</code>: показывает 10 функций, потребляющих больше всего процессорного времени (столбцы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">flat</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cum</code>).</li>
-<li style="margin-bottom: 4px;">Команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">list <FunctionName></code>: построчный просмотр ассемблерного или Go-кода с указанием точного времени на каждой строке.</li>
+<li style="margin-bottom: 4px;">Команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">list &lt;FunctionName&gt;</code>: построчный просмотр ассемблерного или Go-кода с указанием точного времени на каждой строке.</li>
 <li style="margin-bottom: 4px;">Команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">web</code> / флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-http=:8080</code>: интерактивный граф и Flame Graph (огненный график).</li>
 </ul></div>
   </div>
@@ -1286,7 +1286,7 @@ go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Природа утечек памяти в языках со сборщиком мусора:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">В Go нет ручного <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">free()</code>, сборщик мусора GC использует триколорный марк-энд-свип (Tri-color Mark & Sweep).</li>
+<li style="margin-bottom: 4px;">В Go нет ручного <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">free()</code>, сборщик мусора GC использует триколорный марк-энд-свип (Tri-color Mark &amp; Sweep).</li>
 <li style="margin-bottom: 4px;">Объект <strong>не может быть освобожден</strong>, пока до него существует путь по ссылкам от корневых объектов (Root Set: глобальные переменные, стеки активных горутин).</li>
 <li style="margin-bottom: 4px;"><strong>Сценарий утечки:</strong></li>
 <li style="margin-bottom: 4px;">Добавление элементов в срез, привязанный к глобальной переменной или долгоживущему синглтону.</li>
@@ -1373,7 +1373,7 @@ go tool pprof -inuse_space http://localhost:6060/debug/pprof/heap
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Память в куче Go аллоцируется страницами размером 8 КБ через аллокатор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tcmalloc</code>-подобной архитектуры (mcache -> mcentral -> mheap). Профиль кучи собирается сэмплированием: по умолчанию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.MemProfileRate = 512 * 1024</code> (сохраняется срез стека на каждые 512 КБ выделений), что снижает оверхед в продакшене до минимума.</p></div>
+    <div><p style="margin-bottom: 6px;">Память в куче Go аллоцируется страницами размером 8 КБ через аллокатор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tcmalloc</code>-подобной архитектуры (mcache -&gt; mcentral -&gt; mheap). Профиль кучи собирается сэмплированием: по умолчанию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.MemProfileRate = 512 * 1024</code> (сохраняется срез стека на каждые 512 КБ выделений), что снижает оверхед в продакшене до минимума.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1400,8 +1400,8 @@ go tool pprof -inuse_space http://localhost:6060/debug/pprof/heap
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Каждая горутина в Go резервирует минимум <strong>2 КБ памяти</strong> под свой стек (динамически расширяется до 1 ГБ на 64-битных ОС).</li>
 <li style="margin-bottom: 4px;"><strong>Сценарий утечки:</strong></li>
-<li style="margin-bottom: 4px;">Горутина ждет чтения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-ch</code> из канала, в который никто никогда ничего не отправит.</li>
-<li style="margin-bottom: 4px;">Или ждет записи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ch <- val</code> в небуферизированный канал, из которого никто не читает.</li>
+<li style="margin-bottom: 4px;">Горутина ждет чтения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-ch</code> из канала, в который никто никогда ничего не отправит.</li>
+<li style="margin-bottom: 4px;">Или ждет записи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ch &lt;- val</code> в небуферизированный канал, из которого никто не читает.</li>
 <li style="margin-bottom: 4px;"><strong>GC не собирает заблокированные горутины!</strong></li>
 </ul>
 <p style="margin-bottom: 6px;">Если горутина заблокирована, она и все объекты, на которые она ссылается в своем стеке, остаются в памяти навсегда. 100 000 утекших горутин съедят сотни мегабайт памяти и приведут к OOMKilled.</p></div>
@@ -1482,7 +1482,7 @@ go tool pprof http://localhost:6060/debug/pprof/goroutine
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Запускать горутину без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.Context</code> или канала отмены <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">done</code>: если родительская операция завершилась по таймауту, фоновая горутина обязана узнать об этом через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select { case <-ctx.Done(): return }</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Запускать горутину без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">context.Context</code> или канала отмены <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">done</code>: если родительская операция завершилась по таймауту, фоновая горутина обязана узнать об этом через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select { case &lt;-ctx.Done(): return }</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -1620,7 +1620,7 @@ func TestDeadlockSemacquire(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши бенчмарк, который alloc'ает много памяти. Запусти его с флагами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-benchmem -memprofile=mem.out</code>. Проанализируй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mem.out</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши бенчмарк, который alloc&#x27;ает много памяти. Запусти его с флагами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-benchmem -memprofile=mem.out</code>. Проанализируй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">mem.out</code> через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1742,7 +1742,7 @@ go tool pprof -alloc_space mem.out
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Настрой <strong>Continuous Profiling</strong> (Pyroscope/Parca/Cloud Profiler): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/grafana/pyroscope-go</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pyroscope.Start(pyroscope.Config{ApplicationName: "order-service", ServerAddress: "http://pyroscope:4040"})</code>. Автоматический профиль 24/7, historical comparison.</p></div>
+    <div><p style="margin-bottom: 6px;">Настрой <strong>Continuous Profiling</strong> (Pyroscope/Parca/Cloud Profiler): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/grafana/pyroscope-go</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pyroscope.Start(pyroscope.Config{ApplicationName: &quot;order-service&quot;, ServerAddress: &quot;http://pyroscope:4040&quot;})</code>. Автоматический профиль 24/7, historical comparison.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1752,7 +1752,7 @@ go tool pprof -alloc_space mem.out
 <li style="margin-bottom: 4px;">Инженер снимает профиль только тогда, когда сервис уже упал или дежурный получил алерт.</li>
 <li style="margin-bottom: 4px;">«Поймать» всплеск нагрузки длительностью 2 секунды вручную невозможно.</li>
 <li style="margin-bottom: 4px;"><strong>Continuous Profiling (Непрерывное профилирование 24/7):</strong></li>
-<li style="margin-bottom: 4px;">Легковесный агент (Pyroscope / Parca) непрерывно собирает профили (CPU, Heap, Goroutines, Mutex) со всех реплик сервиса с микроскопическим оверхедом (< 1% CPU).</li>
+<li style="margin-bottom: 4px;">Легковесный агент (Pyroscope / Parca) непрерывно собирает профили (CPU, Heap, Goroutines, Mutex) со всех реплик сервиса с микроскопическим оверхедом (&lt; 1% CPU).</li>
 <li style="margin-bottom: 4px;">Сжатые профили сохраняются в специализированную TSDB.</li>
 <li style="margin-bottom: 4px;">Позволяет сравнить профиль сегодня в 14:00 с профилем недельной давности (Diff View) и моментально найти регрессию после недавнего релиза!</li>
 </ul></div>
@@ -1872,11 +1872,9 @@ func TestPyroscopeContinuousProfiling(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Программный запуск:</strong></li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">f, _ := os.Create("trace.out")</p>
-<p style="margin-bottom: 6px;">trace.Start(f)</p>
-<p style="margin-bottom: 6px;">defer trace.Stop()</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  f, _ := os.Create(&quot;trace.out&quot;)
+  trace.Start(f)
+  defer trace.Stop()</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Просмотр:</strong></li>
 </ul>
@@ -1979,7 +1977,7 @@ func TestProgrammaticRuntimeTrace(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Включи <strong>pprof</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">import _ "net/http/pprof"</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.ListenAndServe(":6060", nil)</code>. Собери <strong>CPU profile</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">curl -o cpu.prof http://localhost:6060/debug/pprof/profile?seconds=30</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof -http=:8080 cpu.prof</code>. Покажи flame graph, top functions.</p></div>
+    <div><p style="margin-bottom: 6px;">Включи <strong>pprof</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">import _ &quot;net/http/pprof&quot;</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.ListenAndServe(&quot;:6060&quot;, nil)</code>. Собери <strong>CPU profile</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">curl -o cpu.prof http://localhost:6060/debug/pprof/profile?seconds=30</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof -http=:8080 cpu.prof</code>. Покажи flame graph, top functions.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2079,7 +2077,7 @@ go tool pprof -http=:8080 cpu.prof</code></pre>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что означает "эффект ледяного пика" (Icicle Graph) по сравнению с классическим Flame Graph?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что означает &quot;эффект ледяного пика&quot; (Icicle Graph) по сравнению с классическим Flame Graph?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это тот же самый график, но перевернутый сверху вниз: корневой вызов отображается на верхней строке, а вызываемые подфункции «стекают» сосульками вниз. В pprof через меню Views можно переключаться между классическим Flame Graph и Icicle Graph в зависимости от привычки инженера.</p></div>
   </div>
 </div>
@@ -2090,7 +2088,7 @@ go tool pprof -http=:8080 cpu.prof</code></pre>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Включите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net/http/pprof</code> и изучите endpoint'ы: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/heap</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/goroutine</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/profile</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Включите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net/http/pprof</code> и изучите endpoint&#x27;ы: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/heap</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/goroutine</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/profile</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2200,7 +2198,7 @@ func TestPprofEndpointsSurvey(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Интеграция HTTP-профайлера <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof</code></strong>: Подключите стандартный пакет профайлинга к вашему работающему веб-приложению, импортировав пустой пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ "net/http/pprof"</code>. Настройте запуск вспомогательного HTTP-сервера на отдельном порту (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">localhost:6060</code>) только для нужд диагностики, чтобы закрыть доступ к диагностическим эндпоинтам из внешней сети.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Интеграция HTTP-профайлера <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pprof</code></strong>: Подключите стандартный пакет профайлинга к вашему работающему веб-приложению, импортировав пустой пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ &quot;net/http/pprof&quot;</code>. Настройте запуск вспомогательного HTTP-сервера на отдельном порту (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">localhost:6060</code>) только для нужд диагностики, чтобы закрыть доступ к диагностическим эндпоинтам из внешней сети.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2439,9 +2437,7 @@ func TestGoroutineProfileAnalyzer(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в продакшене автоматически алертить об утечке горутин до того, как сервис упадет по OOM?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Настраивают Prometheus-алерт по метрике <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go_goroutines</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`promql</p>
-<p style="margin-bottom: 6px;">deriv(go_goroutines[15m]) > 5</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-promql"><code class="language-promql">deriv(go_goroutines[15m]) &gt; 5</code></pre></div>
 <p style="margin-bottom: 6px;">Если число горутин монотонно растет на протяжении 15 минут без возврата к базовому уровню, дежурный инженер получает уведомление задолго до исчерпания памяти хоста.</p></div>
   </div>
 </div>
@@ -2458,7 +2454,7 @@ func TestGoroutineProfileAnalyzer(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime/trace</code> для записи execution trace: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool trace trace.out</code>. Изучите timeline горутин, GC, syscall'ов.</p></div>
+    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime/trace</code> для записи execution trace: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool trace trace.out</code>. Изучите timeline горутин, GC, syscall&#x27;ов.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2466,7 +2462,7 @@ func TestGoroutineProfileAnalyzer(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool trace trace.out</code> предоставляет визуализатор на базе движка Perfetto / Catapult:</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Timeline потоков (Goroutines & Procs):</strong> отображает загрузку каждого процессора P во времени.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Timeline потоков (Goroutines &amp; Procs):</strong> отображает загрузку каждого процессора P во времени.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Фазы GC:</strong> графически подсвечивает Stop-the-World фазы (Sweep Termination и Mark Termination) и фоновую разметку памяти (Concurrent Mark).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Syscalls:</strong> показывает время блокировки потоков M на дисковых и сетевых системных вызовах ОС.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Network Wait:</strong> задержки ожидания событий в epoll/kqueue.</div>
@@ -2673,7 +2669,7 @@ go tool pprof -alloc_space http://localhost:6060/debug/pprof/allocs</code></pre>
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Ключевые метрики структуры runtime.MemStats:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.ReadMemStats(&m)</code> заполняет детальную статистику рантайма:</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.ReadMemStats(&amp;m)</code> заполняет детальную статистику рантайма:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.HeapAlloc</code>: байты в куче, занятые живыми объектами.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m.HeapInuse</code>: байты во всех активных страницах кучи (включая фрагментацию).</div>
@@ -2792,14 +2788,14 @@ func TestRuntimeMemstatsExporter(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Пошаговый траблшутинг CPU-спайков в продакшене:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Дежурный видит алерт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CPUUsage > 90%</code> на одном из подов сервиса.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Подключается через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kubectl port-forward <pod-name> 6060:6060</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Дежурный видит алерт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CPUUsage &gt; 90%</code> на одном из подов сервиса.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Подключается через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kubectl port-forward &lt;pod-name&gt; 6060:6060</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Запускает команду сбора:</div>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30</code></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> В консоли pprof:</div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">top</code>: мгновенно выводит имя виновной функции на первой строке.</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">list <FunctionName></code>: открывает листинг исходного кода и показывает точный процент CPU напротив каждой строки (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">line 42: for !isDone { ... } 85.4%</code>).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">list &lt;FunctionName&gt;</code>: открывает листинг исходного кода и показывает точный процент CPU напротив каждой строки (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">line 42: for !isDone { ... } 85.4%</code>).</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Инженер локализует дефект за 60 секунд!</div></div>
   </div>
@@ -2878,7 +2874,7 @@ go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Собирать профиль при стрипнутом бинарнике (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -ldflags="-s -w"</code>): без таблицы символов DWARF pprof покажет только шестнадцатеричные адреса памяти (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x4a12f0</code>), сделав команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">list</code> бесполезной.</p></div>
+    <div><p style="margin-bottom: 6px;">Собирать профиль при стрипнутом бинарнике (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -ldflags=&quot;-s -w&quot;</code>): без таблицы символов DWARF pprof покажет только шестнадцатеричные адреса памяти (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x4a12f0</code>), сделав команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">list</code> бесполезной.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3245,10 +3241,10 @@ func TestPprofSecurityFirewall(t *testing.T) {
 <li style="margin-bottom: 4px;"><strong>Алгоритм локализации:</strong></li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Снять базовый профиль:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">curl -s http://localhost:6060/debug/pprof/heap > base.heap</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">curl -s http://localhost:6060/debug/pprof/heap &gt; base.heap</code></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Подождать 10 минут, пока память вырастет.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Снять второй профиль:</div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">curl -s http://localhost:6060/debug/pprof/heap > current.heap</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">curl -s http://localhost:6060/debug/pprof/heap &gt; current.heap</code></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выполнить сравнительный анализ:</div>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof -base base.heap -inuse_space current.heap</code></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> Команда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">top</code> покажет ТОЛЬКО ту память, которая утекла за эти 10 минут!</div></div>
@@ -3351,7 +3347,7 @@ go tool pprof -inuse_space http://localhost:6060/debug/pprof/heap
 <li style="margin-bottom: 4px;">Metrics: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">requests_per_second</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cpu_usage_per_request</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">memory_per_request</code></li>
 <li style="margin-bottom: 4px;">Forecast: linear regression on historical data</li>
 <li style="margin-bottom: 4px;">Plan: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">current_capacity = 1000 RPS</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">growth = 20%/month</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">target_headroom = 30%</code></li>
-<li style="margin-bottom: 4px;">Alert: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">predicted_capacity_exhaustion < 30 days</code></li>
+<li style="margin-bottom: 4px;">Alert: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">predicted_capacity_exhaustion &lt; 30 days</code></li>
 <li style="margin-bottom: 4px;">Action: scale horizontally (add pods), vertically (bigger instances), or optimize (reduce resource per request)</li>
 </ul></div>
   </div>
@@ -3486,7 +3482,7 @@ func TestCapacityPlanningForecast(t *testing.T) {
 <li style="margin-bottom: 4px;">Profile: high CPU usage due to inefficient algorithm</li>
 <li style="margin-bottom: 4px;">Optimize: algorithmic improvement, caching, batching</li>
 <li style="margin-bottom: 4px;">Measure: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cost_per_request</code> reduced 5x</li>
-<li style="margin-bottom: 4px;">Alert: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cost_per_request > threshold</code> for any service</li>
+<li style="margin-bottom: 4px;">Alert: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cost_per_request &gt; threshold</code> for any service</li>
 </ul></div>
   </div>
   <div class="callout callout-theory">
@@ -3706,23 +3702,19 @@ func TestProductionPprofIsolation(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.NewServeMux()</code> вместо глобального <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.DefaultServeMux</code> изолирует таблицу маршрутов. Даже если в проекте где-то подключен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ "net/http/pprof"</code>, его эндпоинты зарегистрируются в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DefaultServeMux</code> и никогда не попадут в ваш кастомный роутер.</p></div>
+    <div><p style="margin-bottom: 6px;">Использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.NewServeMux()</code> вместо глобального <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.DefaultServeMux</code> изолирует таблицу маршрутов. Даже если в проекте где-то подключен <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ &quot;net/http/pprof&quot;</code>, его эндпоинты зарегистрируются в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DefaultServeMux</code> и никогда не попадут в ваш кастомный роутер.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать конструкцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.ListenAndServe(":8080", nil)</code>: второй аргумент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> означает использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DefaultServeMux</code>, мгновенно открывая все pprof-эндпоинты всему миру.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать конструкцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.ListenAndServe(&quot;:8080&quot;, nil)</code>: второй аргумент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> означает использование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DefaultServeMux</code>, мгновенно открывая все pprof-эндпоинты всему миру.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как безопасно передать профиль pprof с продакшн-пода Kubernetes на свой локальный ноутбук?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Ни в коем случае не открывать внешние порты. Используют команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kubectl exec</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kubectl port-forward</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`bash</p>
-<p style="margin-bottom: 6px;">kubectl -n production port-forward pod/order-service-77df-xyz 6060:6060</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-bash"><code class="language-bash">kubectl -n production port-forward pod/order-service-77df-xyz 6060:6060</code></pre></div>
 <p style="margin-bottom: 6px;">Затем локально запускают:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`bash</p>
-<p style="margin-bottom: 6px;">go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-bash"><code class="language-bash">go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30</code></pre></div>
 <p style="margin-bottom: 6px;">Трафик передается по защищенному каналу Kube API с авторизацией через личный токен инженера.</p></div>
   </div>
 </div>

@@ -796,7 +796,7 @@
       <a href="#ex-37" class="sub-exercise-link" title="Упр 37: Сетевое взаимодействие UDP: сервер дейтаграмм и клиентский сокет">37. Сетевое взаимодействие UDP: сервер дейтаграмм и клиентский сокет</a>
       <a href="#ex-38" class="sub-exercise-link" title="Упр 38: Учебный протокол удаленного выполнения команд (Remote Command Exec / Reverse TCP)">38. Учебный протокол удаленного выполнения команд (Remote Command Exec / Reverse TCP)</a>
       <a href="#ex-39" class="sub-exercise-link" title="Упр 39: UDP Uppercase Сервер и анализ фундаментальных отличий от TCP в Go">39. UDP Uppercase Сервер и анализ фундаментальных отличий от TCP в Go</a>
-      <a href="#ex-40" class="sub-exercise-link" title="Упр 40: Сетевой бенчмаркер производительности TCP Load Tester (Latency & RPS)">40. Сетевой бенчмаркер производительности TCP Load Tester (Latency & RPS)</a>
+      <a href="#ex-40" class="sub-exercise-link" title="Упр 40: Сетевой бенчмаркер производительности TCP Load Tester (Latency &amp; RPS)">40. Сетевой бенчмаркер производительности TCP Load Tester (Latency &amp; RPS)</a>
       <a href="#ex-41" class="sub-exercise-link" title="Упр 41: Настройка низкоуровневых параметров TCP Keep-Alive и TCP_NODELAY">41. Настройка низкоуровневых параметров TCP Keep-Alive и TCP_NODELAY</a>
       <a href="#ex-42" class="sub-exercise-link" title="Упр 42: Утилита быстрой проверки списка открытых TCP-портов хоста">42. Утилита быстрой проверки списка открытых TCP-портов хоста</a>
       <a href="#ex-43" class="sub-exercise-link" title="Упр 43: Централизованный сетевой TCP-логгер с префиксом [IP:PORT] и sync.Mutex">43. Централизованный сетевой TCP-логгер с префиксом [IP:PORT] и sync.Mutex</a>
@@ -1087,13 +1087,13 @@
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Сетевой фундамент Go: пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net</code> инкапсулирует системные сокеты операционной системы. Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen("tcp", addr)</code> выполняет системные вызовы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">socket()</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bind()</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">listen()</code>, возвращая интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listener</code>. Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">listener.Accept()</code> блокирует выполнение до появления нового входящего TCP-соединения (3-Way Handshake SYN, SYN-ACK, ACK), возвращая двунаправленный поток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Conn</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.ReadWriteCloser</code>).</p></div>
+    <div><p style="margin-bottom: 6px;">Сетевой фундамент Go: пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net</code> инкапсулирует системные сокеты операционной системы. Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen(&quot;tcp&quot;, addr)</code> выполняет системные вызовы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">socket()</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bind()</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">listen()</code>, возвращая интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listener</code>. Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">listener.Accept()</code> блокирует выполнение до появления нового входящего TCP-соединения (3-Way Handshake SYN, SYN-ACK, ACK), возвращая двунаправленный поток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Conn</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.ReadWriteCloser</code>).</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим слушатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">listener, err := net.Listen("tcp", "127.0.0.1:0")</code> (динамический порт для тестов).</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим слушатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">listener, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;)</code> (динамический порт для тестов).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запустим серверную горутину с циклом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Accept()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Считываем данные в цикле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.Read(buf)</code> до получения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.EOF</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Записываем прочитанные байты обратно в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.Write(buf[:n])</code>.</div>
@@ -1203,11 +1203,11 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>TCP-сервер (Echo)</strong>: Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen("tcp", ":8080")</code>. Напиши цикл, который принимает подключения (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Accept()</code>). При подключении читай данные из соединения и отправляй их обратно клиенту (эхо). (Для теста используй утилиту <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">telnet</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc</code> в консоли).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>TCP-сервер (Echo)</strong>: Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen(&quot;tcp&quot;, &quot;:8080&quot;)</code>. Напиши цикл, который принимает подключения (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Accept()</code>). При подключении читай данные из соединения и отправляй их обратно клиенту (эхо). (Для теста используй утилиту <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">telnet</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nc</code> в консоли).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Архитектура TCP Client-Server: Сервер регистрирует сокет в ОС через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen</code>, а клиент инициирует установление TCP сессии вызовом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial("tcp", hostPort)</code>. Полнодуплексный канал позволяет обеим сторонам независимо передавать байты.</p></div>
+    <div><p style="margin-bottom: 6px;">Архитектура TCP Client-Server: Сервер регистрирует сокет в ОС через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen</code>, а клиент инициирует установление TCP сессии вызовом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial(&quot;tcp&quot;, hostPort)</code>. Полнодуплексный канал позволяет обеим сторонам независимо передавать байты.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -1313,11 +1313,11 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>TCP-эхо-сервер</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen("tcp", ":8080")</code>, принимай соединение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Accept()</code>, читай строку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bufio.Reader</code>, пиши её обратно с префиксом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Echo: "</code>. Закрой соединение после одного ответа.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>TCP-эхо-сервер</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen(&quot;tcp&quot;, &quot;:8080&quot;)</code>, принимай соединение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Accept()</code>, читай строку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bufio.Reader</code>, пиши её обратно с префиксом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Echo: &quot;</code>. Закрой соединение после одного ответа.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Построчный протокол передачи данных: потоковый TCP не имеет границ сообщений. Для текстовых протоколов (SMTP, Redis RESP, IRC) используют разделитель строк <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\n</code>. Структура <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bufio.Reader</code> буферизует поток байт и предоставляет метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadString('\n')</code>, считывающий данные строго до символа новой строки.</p></div>
+    <div><p style="margin-bottom: 6px;">Построчный протокол передачи данных: потоковый TCP не имеет границ сообщений. Для текстовых протоколов (SMTP, Redis RESP, IRC) используют разделитель строк <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\n</code>. Структура <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bufio.Reader</code> буферизует поток байт и предоставляет метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadString(&#x27;\n&#x27;)</code>, считывающий данные строго до символа новой строки.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -1325,8 +1325,8 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим TCP Listener.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> При подключении создадим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reader := bufio.NewReader(conn)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Прочитаем строку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">line, err := reader.ReadString('\n')</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Отправим ответ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Echo: " + line</code> и закроем сокет.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Прочитаем строку через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">line, err := reader.ReadString(&#x27;\n&#x27;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Отправим ответ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Echo: &quot; + line</code> и закроем сокет.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -1403,11 +1403,11 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Если вредоносный клиент отправит гигабайтный поток байт без символа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\n</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadString('\n')</code> выделит гигабайт памяти в куче, вызвав OOM. Для безопасности ограничивают чтение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.LimitReader</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Если вредоносный клиент отправит гигабайтный поток байт без символа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\n</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadString(&#x27;\n&#x27;)</code> выделит гигабайт памяти в куче, вызвав OOM. Для безопасности ограничивают чтение через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.LimitReader</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем опасность использования bufio.Reader.ReadString('\\n') в публичном сетевом сервисе?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем опасность использования bufio.Reader.ReadString(&#x27;\\n&#x27;) в публичном сетевом сервисе?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Риск DoS-атаки переполнением памяти (Unbounded Memory Allocation). Злоумышленник может непрерывно слать байты без символа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\n</code>, из-за чего буфер будет расти до полного исчерпания RAM сервера.</p></div>
   </div>
 </div>
@@ -1429,7 +1429,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запустим локальный мок HTTP/1.1 сервера на чистом TCP-сокете.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Клиент подключается через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial("tcp", addr)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Клиент подключается через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial(&quot;tcp&quot;, addr)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Отправляет сырую текстовую строку с HTTP-заголовками и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\r\n\r\n</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Считывает статусный HTTP-ответ.</div></div>
   </div>
@@ -1765,11 +1765,11 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>line-delimited protocol</strong>: сервер читает строки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadString('\n')</code>), парсит команду (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"ADD 5 3"</code> → <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">8</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"MUL 4 2"</code> → <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">8</code>), отправляет результат. Клиент отправляет команды интерактивно (чтение из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Stdin</code>).</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>line-delimited protocol</strong>: сервер читает строки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadString(&#x27;\n&#x27;)</code>), парсит команду (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;ADD 5 3&quot;</code> → <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">8</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;MUL 4 2&quot;</code> → <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">8</code>), отправляет результат. Клиент отправляет команды интерактивно (чтение из <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Stdin</code>).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Текстовые командные протоколы (Command Protocols): парсинг протоколов вида <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">COMMAND ARG1 ARG2\n</code>. Сервер валидирует формат, выполняет операцию и возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OK <result>\n</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ERR <reason>\n</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Текстовые командные протоколы (Command Protocols): парсинг протоколов вида <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">COMMAND ARG1 ARG2\n</code>. Сервер валидирует формат, выполняет операцию и возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OK &lt;result&gt;\n</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ERR &lt;reason&gt;\n</code>.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -1913,7 +1913,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запустим тестовый сервер.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В клиенте вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial("tcp", addr)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В клиенте вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial(&quot;tcp&quot;, addr)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Вычитаем данные с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.ReadAll(conn)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выведем сообщение.</div></div>
   </div>
@@ -1995,7 +1995,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Простейший TCP-клиент</strong>: Напишите клиентское приложение, которое подключается к вашему Echo-серверу с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial("tcp", "localhost:8080")</code>. Клиент должен считать строку из консоли (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Stdin</code>), отправить её на сервер, дождаться ответа от сервера, вывести его на экран и завершить работу.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Простейший TCP-клиент</strong>: Напишите клиентское приложение, которое подключается к вашему Echo-серверу с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial(&quot;tcp&quot;, &quot;localhost:8080&quot;)</code>. Клиент должен считать строку из консоли (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">os.Stdin</code>), отправить её на сервер, дождаться ответа от сервера, вывести его на экран и завершить работу.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2187,7 +2187,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Изучите проблему "Read deadlocks" в TCP: что будет, если клиент подключится, но не отправит данные, а сервер будет вечно ждать в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.Read()</code>? Добавьте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetReadDeadline</code>, чтобы решить это.</p></div>
+    <div><p style="margin-bottom: 6px;">Изучите проблему &quot;Read deadlocks&quot; в TCP: что будет, если клиент подключится, но не отправит данные, а сервер будет вечно ждать в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.Read()</code>? Добавьте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetReadDeadline</code>, чтобы решить это.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2397,7 +2397,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Обязательно проверяйте максимальный лимит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">length</code> (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if length > 10*1024*1024</code>), чтобы злоумышленник не прислал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0xFFFFFFFF</code> и не вызвал OOM.</p></div>
+    <div><p style="margin-bottom: 6px;">Обязательно проверяйте максимальный лимит <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">length</code> (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if length &gt; 10*1024*1024</code>), чтобы злоумышленник не прислал <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0xFFFFFFFF</code> и не вызвал OOM.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2520,11 +2520,11 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуйте обмен данными по TCP с использованием "Length-Prefixed" протокола (сначала отправляем 4 байта длины сообщения, затем само сообщение). Это решает классическую проблему "TCP stream framing" (склеивание и разрыв пакетов).</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуйте обмен данными по TCP с использованием &quot;Length-Prefixed&quot; протокола (сначала отправляем 4 байта длины сообщения, затем само сообщение). Это решает классическую проблему &quot;TCP stream framing&quot; (склеивание и разрыв пакетов).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Проблема TCP Stream Framing: алгоритм Нагла (Nagle's Algorithm) и фрагментация IP-пакетов могут объединить три вызова <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Write</code> в один TCP-сегмент (Packet Coalescing/Склеивание) или разбить одно сообщение на два сегмента (Fragmentation). Length-Prefixed протокол гарантирует точное восстановление границ сообщений.</p></div>
+    <div><p style="margin-bottom: 6px;">Проблема TCP Stream Framing: алгоритм Нагла (Nagle&#x27;s Algorithm) и фрагментация IP-пакетов могут объединить три вызова <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Write</code> в один TCP-сегмент (Packet Coalescing/Склеивание) или разбить одно сообщение на два сегмента (Fragmentation). Length-Prefixed протокол гарантирует точное восстановление границ сообщений.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -2629,7 +2629,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что такое алгоритм Нагла (Nagle's Algorithm) и как его отключить в Go?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что такое алгоритм Нагла (Nagle&#x27;s Algorithm) и как его отключить в Go?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Алгоритм Нагла объединяет мелкие TCP-пакеты в один для уменьшения накладных расходов сети. В Go его отключают вызовом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">tcpConn.SetNoDelay(true)</code>, что переводит сокет в режим немедленной отправки данных (критично для gRPC, трейдинга и игр).</p></div>
   </div>
 </div>
@@ -2640,7 +2640,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>TCP-чат-сервер</strong>: храни <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[net.Conn]bool</code> (активные клиенты) с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Mutex</code>. При получении сообщения от одного клиента — broadcast'ь его всем остальным. Напиши клиент, который читает сообщения в одной горутине и пишет в другой.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>TCP-чат-сервер</strong>: храни <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">map[net.Conn]bool</code> (активные клиенты) с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.Mutex</code>. При получении сообщения от одного клиента — broadcast&#x27;ь его всем остальным. Напиши клиент, который читает сообщения в одной горутине и пишет в другой.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3219,8 +3219,8 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Попробуем подключиться к закрытому TCP порту -> получим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">connection refused</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Попробуем отправить пакет на закрытый UDP порт -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Write()</code> вернет успех <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err == nil</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Попробуем подключиться к закрытому TCP порту -&gt; получим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">connection refused</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Попробуем отправить пакет на закрытый UDP порт -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Write()</code> вернет успех <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err == nil</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сравним поведение обоих протоколов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выведем результаты.</div></div>
   </div>
@@ -3275,7 +3275,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial("udp", ...)</code> не отправляет никаких пакетов по сети, а лишь сохраняет удаленный адрес в дескрипторе сокета ядра для удобства вызова <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">write()</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sendto()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial(&quot;udp&quot;, ...)</code> не отправляет никаких пакетов по сети, а лишь сохраняет удаленный адрес в дескрипторе сокета ядра для удобства вызова <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">write()</code> вместо <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sendto()</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -3419,11 +3419,11 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>TCP heartbeat</strong>: клиент каждые 3 секунды отправляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"PING"</code>, сервер отвечает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"PONG"</code>. Если сервер не получил PING за 10 секунд — закрой соединение. Если клиент не получил PONG — переподключись.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>TCP heartbeat</strong>: клиент каждые 3 секунды отправляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;PING&quot;</code>, сервер отвечает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;PONG&quot;</code>. Если сервер не получил PING за 10 секунд — закрой соединение. Если клиент не получил PONG — переподключись.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Прикладной Heartbeat (Keep-Alive): если физический кабель оборван или маршрутизатор перезагрузился, TCP-сокет может часами оставаться в состоянии ESTABLISHED без ошибок. Периодический обмен сообщениями <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PING</code> -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PONG</code> с жестким дедлайном позволяет обнаружить мертвую сессию за считанные секунды.</p></div>
+    <div><p style="margin-bottom: 6px;">Прикладной Heartbeat (Keep-Alive): если физический кабель оборван или маршрутизатор перезагрузился, TCP-сокет может часами оставаться в состоянии ESTABLISHED без ошибок. Периодический обмен сообщениями <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PING</code> -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PONG</code> с жестким дедлайном позволяет обнаружить мертвую сессию за считанные секунды.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -3534,7 +3534,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуйте простой "Ping" (ICMP) с использованием сырых сокетов (потребует прав администратора/root) или пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang.org/x/net/icmp</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Реализуйте простой &quot;Ping&quot; (ICMP) с использованием сырых сокетов (потребует прав администратора/root) или пакета <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang.org/x/net/icmp</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3617,11 +3617,11 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">TCP Ping измеряет время 3-Way Handshake (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SYN -> SYN-ACK -> ACK</code>), что точно отражает сетевую задержку канала связи.</p></div>
+    <div><p style="margin-bottom: 6px;">TCP Ping измеряет время 3-Way Handshake (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SYN -&gt; SYN-ACK -&gt; ACK</code>), что точно отражает сетевую задержку канала связи.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Создание сырых сокетов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial("ip4:icmp", ...)</code> в Linux требует прав <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CAP_NET_RAW</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sudo</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Создание сырых сокетов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial(&quot;ip4:icmp&quot;, ...)</code> в Linux требует прав <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CAP_NET_RAW</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sudo</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -3646,8 +3646,8 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим UDP адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ResolveUDPAddr("udp", "127.0.0.1:0")</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Откроем сокет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ListenUDP("udp", addr)</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим UDP адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ResolveUDPAddr(&quot;udp&quot;, &quot;127.0.0.1:0&quot;)</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Откроем сокет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ListenUDP(&quot;udp&quot;, addr)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Считаем дейтаграмму и адрес клиента через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadFromUDP</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Отправим ответ через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WriteToUDP</code>.</div></div>
   </div>
@@ -3959,7 +3959,7 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Архитектура сетевого сканера безопасности (Port Scanner): пул из $W$ горутин-воркеров забирает номера портов из очереди <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ports chan int</code> и выполняет попытку подключения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.DialTimeout("tcp", addr, timeout)</code>. Если порт открыт, сервер отвечает SYN-ACK и соединение успешно устанавливается.</p></div>
+    <div><p style="margin-bottom: 6px;">Архитектура сетевого сканера безопасности (Port Scanner): пул из $W$ горутин-воркеров забирает номера портов из очереди <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ports chan int</code> и выполняет попытку подключения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.DialTimeout(&quot;tcp&quot;, addr, timeout)</code>. Если порт открыт, сервер отвечает SYN-ACK и соединение успешно устанавливается.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -4054,7 +4054,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем отличие SYN-сканирования (Stealth Scan в nmap) от стандартного TCP Connect сканирования?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> TCP Connect сканирование завершает полный 3-Way Handshake (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SYN -> SYN-ACK -> ACK</code>), логируясь в журналах сервера. SYN-сканирование после получения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SYN-ACK</code> отправляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RST</code>, не завершая соединение, что делает сканирование быстрее и незаметнее.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> TCP Connect сканирование завершает полный 3-Way Handshake (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SYN -&gt; SYN-ACK -&gt; ACK</code>), логируясь в журналах сервера. SYN-сканирование после получения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SYN-ACK</code> отправляет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RST</code>, не завершая соединение, что делает сканирование быстрее и незаметнее.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-27">
@@ -4179,7 +4179,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Обязательно освобождайте слот <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><-sem</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer</code> функции клиента.</p></div>
+    <div><p style="margin-bottom: 6px;">Обязательно освобождайте слот <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;-sem</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer</code> функции клиента.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -4327,7 +4327,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>TCP-сервер с ограничением соединений</strong> (semaphore): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sem := make(chan struct{}, 50)</code>. Каждое новое соединение захватывает слот. Если слотов нет — немедленно закрой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn</code> с ошибкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"server busy"</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>TCP-сервер с ограничением соединений</strong> (semaphore): <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sem := make(chan struct{}, 50)</code>. Каждое новое соединение захватывает слот. Если слотов нет — немедленно закрой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn</code> с ошибкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;server busy&quot;</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4561,7 +4561,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>TCP port scanner</strong>: сканируй порты 1–1024 на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">localhost</code>. Для каждого порта <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.DialTimeout("tcp", addr, 100ms)</code>. Выведи открытые порты. Ускорь через конкурентность ( semaphore на 50 горутин).</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>TCP port scanner</strong>: сканируй порты 1–1024 на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">localhost</code>. Для каждого порта <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.DialTimeout(&quot;tcp&quot;, addr, 100ms)</code>. Выведи открытые порты. Ускорь через конкурентность ( semaphore на 50 горутин).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4663,7 +4663,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему net.JoinHostPort("::1", "80") возвращает [::1]:80 с квадратными скобками?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему net.JoinHostPort(&quot;::1&quot;, &quot;80&quot;) возвращает [::1]:80 с квадратными скобками?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Квадратные скобки вокруг IPv6 адреса обязательны согласно RFC 3986, чтобы двоеточие в шестнадцатеричных группах адреса не конфликтовало с двоеточием перед номером порта.</p></div>
   </div>
 </div>
@@ -5293,7 +5293,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">В реальных файловых серверах валидируйте имя файла от атак Path Traversal (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Clean</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Contains(path, "..")</code>).</p></div>
+    <div><p style="margin-bottom: 6px;">В реальных файловых серверах валидируйте имя файла от атак Path Traversal (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">filepath.Clean</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">strings.Contains(path, &quot;..&quot;)</code>).</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -5318,7 +5318,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запустим UDP Listener <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ListenPacket("udp", "127.0.0.1:0")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запустим UDP Listener <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ListenPacket(&quot;udp&quot;, &quot;127.0.0.1:0&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Клиент отправляет дейтаграмму.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сервер отвечает на адрес клиента.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверим прием ответа.</div></div>
@@ -5414,7 +5414,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запустим командный сервер.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Агент подключается по TCP.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сервер отправляет команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"echo Golang_TCP_Agent"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сервер отправляет команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;echo Golang_TCP_Agent&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Агент выполняет команду и возвращает вывод в сокет.</div></div>
   </div>
   <div class="code-container">
@@ -5533,8 +5533,8 @@ func main() {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Сравнение API TCP и UDP в стандартной библиотеке Go:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>TCP:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen</code> -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">listener.Accept()</code> (блокируется на 3-Way Handshake) -> поток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Conn</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>UDP:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ListenUDP</code> -> нет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Accept()</code>, сразу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadFromUDP(buf)</code> -> возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">remoteAddr</code> для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WriteToUDP</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>TCP:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen</code> -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">listener.Accept()</code> (блокируется на 3-Way Handshake) -&gt; поток <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Conn</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>UDP:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ListenUDP</code> -&gt; нет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Accept()</code>, сразу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadFromUDP(buf)</code> -&gt; возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">remoteAddr</code> для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WriteToUDP</code>.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -5625,7 +5625,7 @@ func main() {
 <div class="exercise-card" id="ex-40">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #40</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Сетевой бенчмаркер производительности TCP Load Tester (Latency & RPS)</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Сетевой бенчмаркер производительности TCP Load Tester (Latency &amp; RPS)</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -5863,7 +5863,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetNoDelay</code> вызывает системный вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &val, ...)</code>, запрещая ядру задерживать отправку мелких пакетов.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SetNoDelay</code> вызывает системный вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &amp;val, ...)</code>, запрещая ядру задерживать отправку мелких пакетов.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -6237,7 +6237,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>UDP-эхо-сервер</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ListenUDP("udp", addr)</code>. Читай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadFromUDP</code>, отправляй обратно тому же адресу через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WriteToUDP</code>. Покажи, что UDP — connectionless, и один сервер обрабатывает всех клиентов в одном потоке.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>UDP-эхо-сервер</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ListenUDP(&quot;udp&quot;, addr)</code>. Читай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadFromUDP</code>, отправляй обратно тому же адресу через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WriteToUDP</code>. Покажи, что UDP — connectionless, и один сервер обрабатывает всех клиентов в одном потоке.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6337,7 +6337,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Если обработка одной дейтаграммы займет слишком много времени, буфер сокета переполнится, и ядро начнет отбрасывать входящие пакеты (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">netstat -su | grep "receive errors"</code>).</p></div>
+    <div><p style="margin-bottom: 6px;">Если обработка одной дейтаграммы займет слишком много времени, буфер сокета переполнится, и ядро начнет отбрасывать входящие пакеты (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">netstat -su | grep &quot;receive errors&quot;</code>).</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -6461,7 +6461,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Какой средний процент потери пакетов (Packet Loss) считается нормальным в сети Интернет?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В качественных проводных сетях loss $< 0.1\%$. В мобильных 4G/5G и Wi-Fi сетях нормальным считается loss до $1\text{–}3\%$, поэтому протоколы на UDP обязаны реализовывать механизмы подтверждения и повторной отправки.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В качественных проводных сетях loss $&lt; 0.1\%$. В мобильных 4G/5G и Wi-Fi сетях нормальным считается loss до $1\text{–}3\%$, поэтому протоколы на UDP обязаны реализовывать механизмы подтверждения и повторной отправки.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-47">
@@ -6471,7 +6471,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>UDP DNS-like resolver</strong> (учебный): клиент отправляет доменное имя, сервер возвращает "IP-адрес" (заглушку). Покажи, что UDP подходит для коротких запрос-ответов.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>UDP DNS-like resolver</strong> (учебный): клиент отправляет доменное имя, сервер возвращает &quot;IP-адрес&quot; (заглушку). Покажи, что UDP подходит для коротких запрос-ответов.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6483,7 +6483,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим таблицу сопоставления доменов и IP-адресов.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сервер парсит доменное имя и возвращает IP.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Клиент запрашивает резолюцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"google.com"</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"yandex.ru"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Клиент запрашивает резолюцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;google.com&quot;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;yandex.ru&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверим мгновенный ответ.</div></div>
   </div>
   <div class="code-container">
@@ -6581,11 +6581,11 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>"Reliable UDP"</strong> (упрощённый): клиент отправляет пакет с sequence number, ждёт ACK в течение 500ms. Если ACK не пришёл — ретрансмит (3 попытки). Сервер отправляет ACK на каждый пакет.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>&quot;Reliable UDP&quot;</strong> (упрощённый): клиент отправляет пакет с sequence number, ждёт ACK в течение 500ms. Если ACK не пришёл — ретрансмит (3 попытки). Сервер отправляет ACK на каждый пакет.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Паттерн Reliable UDP (RUDP / ARQ — Automatic Repeat reQuest): реализация гарантии доставки поверх ненадежного UDP. Каждый пакет снабжается порядковым номером <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SeqID</code>. Получатель возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ACK <SeqID></code>, а отправитель удерживает таймер и выполняет повторную передачу (Retransmission) при неполучении подтверждения.</p></div>
+    <div><p style="margin-bottom: 6px;">Паттерн Reliable UDP (RUDP / ARQ — Automatic Repeat reQuest): реализация гарантии доставки поверх ненадежного UDP. Каждый пакет снабжается порядковым номером <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SeqID</code>. Получатель возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ACK &lt;SeqID&gt;</code>, а отправитель удерживает таймер и выполняет повторную передачу (Retransmission) при неполучении подтверждения.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -6730,7 +6730,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client chan<- string</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client chan&lt;- string</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуем центральный селектор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">broadcaster()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Реализуем обработчик сессии <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">handleConn(conn)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверим параллельный диалог между двумя пользователями.</div></div>
@@ -6885,7 +6885,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши <strong>UDP broadcast</strong> клиент: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.DialUDP("udp", nil, &net.UDPAddr{IP: net.IPv4bcast, Port: 9999})</code>. Отправь broadcast-сообщение. Напиши сервер, который слушает broadcast и отвечает. Обсуди, когда broadcast уместен, а когда — multicast.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши <strong>UDP broadcast</strong> клиент: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.DialUDP(&quot;udp&quot;, nil, &amp;net.UDPAddr{IP: net.IPv4bcast, Port: 9999})</code>. Отправь broadcast-сообщение. Напиши сервер, который слушает broadcast и отвечает. Обсуди, когда broadcast уместен, а когда — multicast.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6974,7 +6974,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Для включения Broadcast на физическом сокете в Linux вызывают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">setsockopt(fd, SOL_SOCKET, SO_BROADCAST, &val, ...)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Для включения Broadcast на физическом сокете в Linux вызывают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">setsockopt(fd, SOL_SOCKET, SO_BROADCAST, &amp;val, ...)</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -7127,7 +7127,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>TCP-клиент</strong>: Напиши отдельную программу. Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial("tcp", "localhost:8080")</code>. Отправь строку на сервер из упр. 326, прочитай ответ и выведи в консоль.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>TCP-клиент</strong>: Напиши отдельную программу. Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Dial(&quot;tcp&quot;, &quot;localhost:8080&quot;)</code>. Отправь строку на сервер из упр. 326, прочитай ответ и выведи в консоль.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7139,7 +7139,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Запустим тестовый сервер.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Клиент подключается к <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">127.0.0.1</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Отправляет команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"PING_SERVER\n"</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Отправляет команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;PING_SERVER\n&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Считывает ответ и валидирует статус.</div></div>
   </div>
   <div class="code-container">
@@ -7222,7 +7222,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Какое значение таймаута TCP Connect рекомендуется для микросервисов внутри одного датацентра?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Не более 50–100 миллисекунд. Внутри одного ДЦ сетевой RTT составляет $< 1\text{ мс}$, и если сокет не открылся за 100 мс, сервер либо лежит, либо перегружен.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Не более 50–100 миллисекунд. Внутри одного ДЦ сетевой RTT составляет $&lt; 1\text{ мс}$, и если сокет не открылся за 100 мс, сервер либо лежит, либо перегружен.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-53">
@@ -7572,17 +7572,17 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши TCP-сервер с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen("tcp", ":9000")</code>. Прими соединение (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Accept()</code>) и выведи адрес клиента.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши TCP-сервер с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen(&quot;tcp&quot;, &quot;:9000&quot;)</code>. Прими соединение (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Accept()</code>) и выведи адрес клиента.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Диагностика сетевых адресов: метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.RemoteAddr().String()</code> возвращает удаленный IP и порт клиента, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.RemoteAddr().Network()</code> возвращает тип сети (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"tcp"</code>).</p></div>
+    <div><p style="margin-bottom: 6px;">Диагностика сетевых адресов: метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.RemoteAddr().String()</code> возвращает удаленный IP и порт клиента, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.RemoteAddr().Network()</code> возвращает тип сети (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;tcp&quot;</code>).</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen("tcp", "127.0.0.1:0")</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Примем соединение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn, _ := l.Accept()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Распечатаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">conn.RemoteAddr()</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Закроем сокет.</div></div>
@@ -7656,7 +7656,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши TCP-сервер, который читает данные построчно с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bufio.NewReader(conn).ReadString('\n')</code> и отправляет их обратно (Echo-сервер).</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши TCP-сервер, который читает данные построчно с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">bufio.NewReader(conn).ReadString(&#x27;\n&#x27;)</code> и отправляет их обратно (Echo-сервер).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7667,7 +7667,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создадим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.Listen</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В цикле читаем строки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reader.ReadString('\n')</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> В цикле читаем строки через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">reader.ReadString(&#x27;\n&#x27;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Отправляем эхо назад.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверим работу.</div></div>
   </div>
@@ -7731,7 +7731,7 @@ func main() {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Всегда отправляйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\n</code> в конце строки, иначе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadString('\n')</code> заблокируется в ожидании разделителя.</p></div>
+    <div><p style="margin-bottom: 6px;">Всегда отправляйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">\n</code> в конце строки, иначе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ReadString(&#x27;\n&#x27;)</code> заблокируется в ожидании разделителя.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -7746,7 +7746,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.LookupHost("google.com")</code> для получения IP-адресов. Покажи IPv4 и IPv6 адреса.</p></div>
+    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.LookupHost(&quot;google.com&quot;)</code> для получения IP-адресов. Покажи IPv4 и IPv6 адреса.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7756,7 +7756,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.LookupHost("google.com")</code> (или локальный mock/localhost).</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Вызовем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.LookupHost(&quot;google.com&quot;)</code> (или локальный mock/localhost).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Разделим адреса на IPv4 и IPv6 с помощью <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ParseIP</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверим метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ip.To4() != nil</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выведем списки адресов.</div></div>
@@ -7834,7 +7834,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.LookupMX("gmail.com")</code>, чтобы получить MX-записи (почтовые сервера) домена.</p></div>
+    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.LookupMX(&quot;gmail.com&quot;)</code>, чтобы получить MX-записи (почтовые сервера) домена.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7908,7 +7908,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.LookupPort("tcp", "http")</code> → вернёт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">80</code>. Покажи преобразование имени сервиса в порт.</p></div>
+    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.LookupPort(&quot;tcp&quot;, &quot;http&quot;)</code> → вернёт <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">80</code>. Покажи преобразование имени сервиса в порт.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7918,7 +7918,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Преобразуем сервисы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"http"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"https"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"ssh"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"smtp"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Преобразуем сервисы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;http&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;https&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;ssh&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;smtp&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Выведем соответствующие числовые порты TCP.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Проверим обработку неизвестного сервиса.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Выведем таблицу соответствий.</div></div>
@@ -7986,7 +7986,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ParseIP("192.168.1.1")</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ParseIP("::1")</code>. Покажи проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IP.To4()</code> vs <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IP.To16()</code>. Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IsPrivateIP(ip string) bool</code>, проверяющую частные диапазоны (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16).</p></div>
+    <div><p style="margin-bottom: 6px;">Используй <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ParseIP(&quot;192.168.1.1&quot;)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net.ParseIP(&quot;::1&quot;)</code>. Покажи проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IP.To4()</code> vs <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IP.To16()</code>. Напиши функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">IsPrivateIP(ip string) bool</code>, проверяющую частные диапазоны (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>

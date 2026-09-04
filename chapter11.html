@@ -705,16 +705,16 @@
       <span class="status-badge done">49/49</span>
     </a>
     <div class="sub-exercises-list" id="active-sub-exercises">
-      <a href="#ex-1" class="sub-exercise-link" title="Упр 1: Сравнение встроенной функции new(T) и литерального взятия адреса &T{}">1. Сравнение встроенной функции new(T) и литерального взятия адреса &T{}</a>
+      <a href="#ex-1" class="sub-exercise-link" title="Упр 1: Сравнение встроенной функции new(T) и литерального взятия адреса &amp;T{}">1. Сравнение встроенной функции new(T) и литерального взятия адреса &amp;T{}</a>
       <a href="#ex-2" class="sub-exercise-link" title="Упр 2: Мутация элементов среза vs append внутри функции: передача по значению []int vs указатель *[]int">2. Мутация элементов среза vs append внутри функции: передача по значению []int vs указатель *[]int</a>
       <a href="#ex-3" class="sub-exercise-link" title="Упр 3: Указатель на фиксированный массив *[N]int и прямая модификация элементов">3. Указатель на фиксированный массив *[N]int и прямая модификация элементов</a>
-      <a href="#ex-4" class="sub-exercise-link" title="Упр 4: Операторы адресации & и разыменования * в языке Go">4. Операторы адресации & и разыменования * в языке Go</a>
+      <a href="#ex-4" class="sub-exercise-link" title="Упр 4: Операторы адресации &amp; и разыменования * в языке Go">4. Операторы адресации &amp; и разыменования * в языке Go</a>
       <a href="#ex-5" class="sub-exercise-link" title="Упр 5: Доступ к полям структуры через указатель: синтаксический сахар u.Name vs (*u).Name">5. Доступ к полям структуры через указатель: синтаксический сахар u.Name vs (*u).Name</a>
       <a href="#ex-6" class="sub-exercise-link" title="Упр 6: Идиоматичное обращение к полям структуры без явного разыменования ptr.Name">6. Идиоматичное обращение к полям структуры без явного разыменования ptr.Name</a>
       <a href="#ex-7" class="sub-exercise-link" title="Упр 7: Создание указателя p на переменную x и чтение значения через *p">7. Создание указателя p на переменную x и чтение значения через *p</a>
       <a href="#ex-8" class="sub-exercise-link" title="Упр 8: Очистка среза ClearSlice(s *[]int) с сохранением емкости (*s = (*s)[:0])">8. Очистка среза ClearSlice(s *[]int) с сохранением емкости (*s = (*s)[:0])</a>
       <a href="#ex-9" class="sub-exercise-link" title="Упр 9: Возврат указателя на локальную переменную: Escape Analysis и безопасность памяти в Go">9. Возврат указателя на локальную переменную: Escape Analysis и безопасность памяти в Go</a>
-      <a href="#ex-10" class="sub-exercise-link" title="Упр 10: Выделение памяти new(int) vs литеральная инициализация &Person{}">10. Выделение памяти new(int) vs литеральная инициализация &Person{}</a>
+      <a href="#ex-10" class="sub-exercise-link" title="Упр 10: Выделение памяти new(int) vs литеральная инициализация &amp;Person{}">10. Выделение памяти new(int) vs литеральная инициализация &amp;Person{}</a>
       <a href="#ex-11" class="sub-exercise-link" title="Упр 11: Анатомия nil-указателя и перехват паники nil pointer dereference">11. Анатомия nil-указателя и перехват паники nil pointer dereference</a>
       <a href="#ex-12" class="sub-exercise-link" title="Упр 12: Указатель на указатель **int: изменение внешнего адреса внутри функции">12. Указатель на указатель **int: изменение внешнего адреса внутри функции</a>
       <a href="#ex-13" class="sub-exercise-link" title="Упр 13: Объявление указателя без инициализации и проверка на nil">13. Объявление указателя без инициализации и проверка на nil</a>
@@ -723,8 +723,8 @@
       <a href="#ex-16" class="sub-exercise-link" title="Упр 16: Возврат адреса локальной переменной и валидация через Escape-анализ">16. Возврат адреса локальной переменной и валидация через Escape-анализ</a>
       <a href="#ex-17" class="sub-exercise-link" title="Упр 17: Двойное разыменование **int и мутация базовой переменной">17. Двойное разыменование **int и мутация базовой переменной</a>
       <a href="#ex-18" class="sub-exercise-link" title="Упр 18: Безопасная функция SafeValue(ptr *int) int со значением по умолчанию (Nil-Safety Helper)">18. Безопасная функция SafeValue(ptr *int) int со значением по умолчанию (Nil-Safety Helper)</a>
-      <a href="#ex-19" class="sub-exercise-link" title="Упр 19: Ловушка сохранения адреса переменной цикла &v в слайс указателей []*T">19. Ловушка сохранения адреса переменной цикла &v в слайс указателей []*T</a>
-      <a href="#ex-20" class="sub-exercise-link" title="Упр 20: Получение адреса переменной через &x и форматированный вывод указателя %p">20. Получение адреса переменной через &x и форматированный вывод указателя %p</a>
+      <a href="#ex-19" class="sub-exercise-link" title="Упр 19: Ловушка сохранения адреса переменной цикла &amp;v в слайс указателей []*T">19. Ловушка сохранения адреса переменной цикла &amp;v в слайс указателей []*T</a>
+      <a href="#ex-20" class="sub-exercise-link" title="Упр 20: Получение адреса переменной через &amp;x и форматированный вывод указателя %p">20. Получение адреса переменной через &amp;x и форматированный вывод указателя %p</a>
       <a href="#ex-21" class="sub-exercise-link" title="Упр 21: Типы указателей *int, *string, *bool и строгая типизация">21. Типы указателей *int, *string, *bool и строгая типизация</a>
       <a href="#ex-22" class="sub-exercise-link" title="Упр 22: Выделение памяти через new(int) и модификация значения через указатель">22. Выделение памяти через new(int) и модификация значения через указатель</a>
       <a href="#ex-23" class="sub-exercise-link" title="Упр 23: Классическая функция обмена значений Swap(a, b *int) через указатели">23. Классическая функция обмена значений Swap(a, b *int) через указатели</a>
@@ -733,15 +733,15 @@
       <a href="#ex-26" class="sub-exercise-link" title="Упр 26: Функция AppendWithPointer(s *[]int, val int) с сохранением нового заголовка среза">26. Функция AppendWithPointer(s *[]int, val int) с сохранением нового заголовка среза</a>
       <a href="#ex-27" class="sub-exercise-link" title="Упр 27: Обмен числовых значений SwapValues(a, b *int) через разыменование указателей">27. Обмен числовых значений SwapValues(a, b *int) через разыменование указателей</a>
       <a href="#ex-28" class="sub-exercise-link" title="Упр 28: Модификация значения переменной x через разыменование указателя *p = 100">28. Модификация значения переменной x через разыменование указателя *p = 100</a>
-      <a href="#ex-29" class="sub-exercise-link" title="Упр 29: Взятие адреса отдельного элемента массива &arr[0] и мутация через указатель">29. Взятие адреса отдельного элемента массива &arr[0] и мутация через указатель</a>
+      <a href="#ex-29" class="sub-exercise-link" title="Упр 29: Взятие адреса отдельного элемента массива &amp;arr[0] и мутация через указатель">29. Взятие адреса отдельного элемента массива &amp;arr[0] и мутация через указатель</a>
       <a href="#ex-30" class="sub-exercise-link" title="Упр 30: Сравнение указателей с помощью оператора равенства == (Identity vs Equality)">30. Сравнение указателей с помощью оператора равенства == (Identity vs Equality)</a>
       <a href="#ex-31" class="sub-exercise-link" title="Упр 31: Выделение памяти под целое число функцией new(int) и вывод адреса">31. Выделение памяти под целое число функцией new(int) и вывод адреса</a>
       <a href="#ex-32" class="sub-exercise-link" title="Упр 32: Функция AppendToSlice(s, val) []int и правила переприсваивания срезов">32. Функция AppendToSlice(s, val) []int и правила переприсваивания срезов</a>
-      <a href="#ex-33" class="sub-exercise-link" title="Упр 33: Сравнение способов выделения: p1 := new(int) vs var x int; p2 := &x">33. Сравнение способов выделения: p1 := new(int) vs var x int; p2 := &x</a>
+      <a href="#ex-33" class="sub-exercise-link" title="Упр 33: Сравнение способов выделения: p1 := new(int) vs var x int; p2 := &amp;x">33. Сравнение способов выделения: p1 := new(int) vs var x int; p2 := &amp;x</a>
       <a href="#ex-34" class="sub-exercise-link" title="Упр 34: Мутация значения переменной любого типа через reflect.ValueOf(ptr).Elem()">34. Мутация значения переменной любого типа через reflect.ValueOf(ptr).Elem()</a>
       <a href="#ex-35" class="sub-exercise-link" title="Упр 35: Передача примитива по значению IncrementByValue(x int) и изоляция стекового кадра">35. Передача примитива по значению IncrementByValue(x int) и изоляция стекового кадра</a>
       <a href="#ex-36" class="sub-exercise-link" title="Упр 36: Каверза со ссылкой на переменную цикла в отложенных горутинах/замыканиях">36. Каверза со ссылкой на переменную цикла в отложенных горутинах/замыканиях</a>
-      <a href="#ex-37" class="sub-exercise-link" title="Упр 37: Escape-анализ: функция GetLocalPointer() *int и диагностика компилятора -gcflags='-m'">37. Escape-анализ: функция GetLocalPointer() *int и диагностика компилятора -gcflags='-m'</a>
+      <a href="#ex-37" class="sub-exercise-link" title="Упр 37: Escape-анализ: функция GetLocalPointer() *int и диагностика компилятора -gcflags=&#x27;-m&#x27;">37. Escape-анализ: функция GetLocalPointer() *int и диагностика компилятора -gcflags=&#x27;-m&#x27;</a>
       <a href="#ex-38" class="sub-exercise-link" title="Упр 38: Обнуление значения по указателю Zeroify(val *int)">38. Обнуление значения по указателю Zeroify(val *int)</a>
       <a href="#ex-39" class="sub-exercise-link" title="Упр 39: Опасность записи в nil-мапу NilMap(m map[string]int) и правильная инициализация">39. Опасность записи в nil-мапу NilMap(m map[string]int) и правильная инициализация</a>
       <a href="#ex-40" class="sub-exercise-link" title="Упр 40: Разыменование указателя *p и чтение значения из памяти">40. Разыменование указателя *p и чтение значения из памяти</a>
@@ -751,7 +751,7 @@
       <a href="#ex-44" class="sub-exercise-link" title="Упр 44: Реализация односвязного списка (Singly Linked List) на структуре Node с полем Next *Node">44. Реализация односвязного списка (Singly Linked List) на структуре Node с полем Next *Node</a>
       <a href="#ex-45" class="sub-exercise-link" title="Упр 45: Опциональные поля структуры через указатели Profile { Name string, Age *int }">45. Опциональные поля структуры через указатели Profile { Name string, Age *int }</a>
       <a href="#ex-46" class="sub-exercise-link" title="Упр 46: Безопасное разыменование: паттерн Guard Clause if p != nil">46. Безопасное разыменование: паттерн Guard Clause if p != nil</a>
-      <a href="#ex-47" class="sub-exercise-link" title="Упр 47: Сравнение указателей: Identity адресов (&a == &b) против Equality значений (*p1 == *p2)">47. Сравнение указателей: Identity адресов (&a == &b) против Equality значений (*p1 == *p2)</a>
+      <a href="#ex-47" class="sub-exercise-link" title="Упр 47: Сравнение указателей: Identity адресов (&amp;a == &amp;b) против Equality значений (*p1 == *p2)">47. Сравнение указателей: Identity адресов (&amp;a == &amp;b) против Equality значений (*p1 == *p2)</a>
       <a href="#ex-48" class="sub-exercise-link" title="Упр 48: Инициализация массива указателей [3]*int адресами трех независимых переменных">48. Инициализация массива указателей [3]*int адресами трех независимых переменных</a>
       <a href="#ex-49" class="sub-exercise-link" title="Упр 49: Исследование размеров типов через unsafe.Sizeof: инвариант 8-байтных указателей">49. Исследование размеров типов через unsafe.Sizeof: инвариант 8-байтных указателей</a>
     </div>
@@ -1070,19 +1070,19 @@
 <div class="exercise-card" id="ex-1">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #1</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Сравнение встроенной функции new(T) и литерального взятия адреса &T{}</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Сравнение встроенной функции new(T) и литерального взятия адреса &amp;T{}</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Сравните работу оператора new и взятия адреса от литерала &struct{} для создания указателей на структуры.</p></div>
+    <div><p style="margin-bottom: 6px;">Сравните работу оператора new и взятия адреса от литерала &amp;struct{} для создания указателей на структуры.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Два способа создания указателей на структуры в Go:</strong></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new(User)</code>: выделяет память, заполняет все поля нулевыми значениями (Zero Values) и возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*User</code>;</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&User{Name: "Иван", Age: 30}</code>: создает экземпляр с возможностью явной инициализации полей и возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*User</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;User{Name: &quot;Иван&quot;, Age: 30}</code>: создает экземпляр с возможностью явной инициализации полей и возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*User</code>.</div>
 <div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">Оба способа семантически эквивалентны при создании структуры с нулевыми полями (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new(User)</code> $\equiv$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&User{}</code>). Однако в промышленной разработке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&User{...}</code> предпочтительнее благодаря гибкости инициализации.</p></div>
+<p style="margin-bottom: 6px;">Оба способа семантически эквивалентны при создании структуры с нулевыми полями (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new(User)</code> $\equiv$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;User{}</code>). Однако в промышленной разработке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;User{...}</code> предпочтительнее благодаря гибкости инициализации.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -1090,7 +1090,7 @@
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type User struct { Name string; Age int }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u1 := new(User)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u2 := &User{Name: "Алексей", Age: 28}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u2 := &amp;User{Name: &quot;Алексей&quot;, Age: 28}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сравниваем типы и значения.</div></div>
   </div>
   <div class="code-container">
@@ -1134,7 +1134,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В компиляторе Go <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new(T)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&T{}</code> компилируются в идентичные AST-узлы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ONIT</code> и обрабатываются одинаково аллокатором памяти рантайма (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.newobject</code>).</p></div>
+    <div><p style="margin-bottom: 6px;">В компиляторе Go <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new(T)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;T{}</code> компилируются в идентичные AST-узлы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ONIT</code> и обрабатываются одинаково аллокатором памяти рантайма (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.newobject</code>).</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1218,7 +1218,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">При передаче <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&data</code> функция получает адрес структуры <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SliceHeader</code> на стеке вызывающей функции и обновляет поля <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Data</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Len</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Cap</code> напрямую по адресу.</p></div>
+    <div><p style="margin-bottom: 6px;">При передаче <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;data</code> функция получает адрес структуры <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SliceHeader</code> на стеке вызывающей функции и обновляет поля <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Data</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Len</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Cap</code> напрямую по адресу.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1254,7 +1254,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arr := [3]int{10, 20, 30}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Получаем указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr := &arr</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Получаем указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr := &amp;arr</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Модифицируем элементы через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr[0]</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(*ptr)[1]</code>.</div></div>
   </div>
   <div class="code-container">
@@ -1308,17 +1308,17 @@ func main() {
 <div class="exercise-card" id="ex-4">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #4</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Операторы адресации & и разыменования * в языке Go</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Операторы адресации &amp; и разыменования * в языке Go</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создайте переменную, получите её адрес с помощью &, сохраните его в указатель и выведите значение указателя и значение по адресу (*).</p></div>
+    <div><p style="margin-bottom: 6px;">Создайте переменную, получите её адрес с помощью &amp;, сохраните его в указатель и выведите значение указателя и значение по адресу (*).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Базовые операции с указателями:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&x</code>: оператор взятия адреса памяти переменной <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> (возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*T</code>);</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;x</code>: оператор взятия адреса памяти переменной <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> (возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*T</code>);</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*p</code>: оператор разыменования (доступ к значению, хранящемуся по адресу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p</code>).</li>
 </ul></div>
   </div>
@@ -1327,7 +1327,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Объявляем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x := 42</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сохраняем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr := &x</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сохраняем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr := &amp;x</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Печатаем адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr</code> и разыменованное значение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*ptr</code>.</div></div>
   </div>
   <div class="code-container">
@@ -1372,7 +1372,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Попытка взять адрес константы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&42</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&"hello"</code> (ошибка компиляции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cannot take the address of literal</code>).</li>
+<li style="margin-bottom: 4px;">Попытка взять адрес константы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;42</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;&quot;hello&quot;</code> (ошибка компиляции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">cannot take the address of literal</code>).</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -1394,8 +1394,8 @@ func main() {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Автоматическое разыменование структур в Go:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">В C++ для указателей на структуры используется оператор стрелочки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u->Name</code>;</li>
-<li style="margin-bottom: 4px;">В Go оператора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-></code> нет! Компилятор автоматически подставляет разыменование при обращении через точку: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u.Name</code> $\equiv$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(*u).Name</code>.</li>
+<li style="margin-bottom: 4px;">В C++ для указателей на структуры используется оператор стрелочки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u-&gt;Name</code>;</li>
+<li style="margin-bottom: 4px;">В Go оператора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-&gt;</code> нет! Компилятор автоматически подставляет разыменование при обращении через точку: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u.Name</code> $\equiv$ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(*u).Name</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -1403,7 +1403,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User{Name string, Age int}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u := &User{Name: "Дмитрий", Age: 30}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u := &amp;User{Name: &quot;Дмитрий&quot;, Age: 30}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Меняем поля через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(*u).Age</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u.Name</code>.</div></div>
   </div>
   <div class="code-container">
@@ -1452,7 +1452,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему создатели Go отказались от оператора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-></code>?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему создатели Go отказались от оператора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-&gt;</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Для упрощения синтаксиса языка: компилятор Go всегда знает тип переменной и автоматически разыменовывает указатель при доступе к полю или вызове метода.</p></div>
   </div>
 </div>
@@ -1474,7 +1474,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ServerConfig</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Инициализируем через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&ServerConfig{...}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Инициализируем через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;ServerConfig{...}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Читаем и меняем поля через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr.Field</code>.</div></div>
   </div>
   <div class="code-container">
@@ -1549,7 +1549,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x := 99</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p := &x</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p := &amp;x</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Выводим <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*p</code>.</div></div>
   </div>
   <div class="code-container">
@@ -1590,7 +1590,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Какой тип имеет выражение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&x</code>, если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> имеет тип <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code>?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Какой тип имеет выражение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;x</code>, если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> имеет тип <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Тип <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*int</code>.</p></div>
   </div>
 </div>
@@ -1699,7 +1699,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NewCounter() *int</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем локальную переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">count := 100</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Возвращаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&count</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Возвращаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;count</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверяем работу в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main()</code>.</div></div>
   </div>
   <div class="code-container">
@@ -1735,7 +1735,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Флаг сборки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m"</code> выводит диагностику: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">moved to heap: count</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Флаг сборки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m&quot;</code> выводит диагностику: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">moved to heap: count</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -1746,17 +1746,17 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как проверить, какие переменные убегают в кучу при компиляции Go-проекта?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Собрать бинарник с флагом escape-анализа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m -m" main.go</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Собрать бинарник с флагом escape-анализа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m -m&quot; main.go</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-10">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #10</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Выделение памяти new(int) vs литеральная инициализация &Person{}</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Выделение памяти new(int) vs литеральная инициализация &amp;Person{}</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Создайте переменные через new(int) и &int{} (для структур &Person{}), объясните разницу.</p></div>
+    <div><p style="margin-bottom: 6px;">Создайте переменные через new(int) и &amp;int{} (для структур &amp;Person{}), объясните разницу.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1767,7 +1767,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pInt := new(int)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pPerson := &Person{Name: "Илья"}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pPerson := &amp;Person{Name: &quot;Илья&quot;}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сравниваем работу.</div></div>
   </div>
   <div class="code-container">
@@ -1811,13 +1811,13 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Попытка написать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&int{42}</code> — синтаксическая ошибка (в Go нет литералов примитивных типов через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{}</code>).</li>
+<li style="margin-bottom: 4px;">Попытка написать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;int{42}</code> — синтаксическая ошибка (в Go нет литералов примитивных типов через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{}</code>).</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в Go лаконично получить указатель на примитивное значение (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*string</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*bool</code>)?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через вспомогательную generic-функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func Ptr[T any](v T) *T { return &v }</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через вспомогательную generic-функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">func Ptr[T any](v T) *T { return &amp;v }</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-11">
@@ -1897,7 +1897,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Может ли метод с pointer receiver успешно выполниться для <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>-указателя?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> ДА! Если внутри метода нет обращения к полям структуры (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if u == nil { return "empty" }</code>), вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u.String()</code> отработает без паники.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> ДА! Если внутри метода нет обращения к полям структуры (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if u == nil { return &quot;empty&quot; }</code>), вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u.String()</code> отработает без паники.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-12">
@@ -1981,7 +1981,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Объяви указатель на int без начального значения. Выведи его (должен быть <nil>).</p></div>
+    <div><p style="margin-bottom: 6px;">Объяви указатель на int без начального значения. Выведи его (должен быть &lt;nil&gt;).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2090,7 +2090,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Запись адреса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&b</code> в переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Запись адреса <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;b</code> в переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -2193,7 +2193,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CreateMessage(text string) *string</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Возвращаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&text</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Возвращаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;text</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Печатаем строку в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">main()</code>.</div></div>
   </div>
   <div class="code-container">
@@ -2250,14 +2250,14 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Цепочка адресации <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x <- ptr <- pptr</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Цепочка адресации <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x &lt;- ptr &lt;- pptr</code>.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val := 10</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr := &val</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pptr := &ptr</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptr := &amp;val</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pptr := &amp;ptr</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Присваиваем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">**pptr = 999</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Проверяем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val</code>.</div></div>
   </div>
@@ -2303,7 +2303,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Какой тип имеет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&pptr</code>?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Какой тип имеет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;pptr</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">***int</code> (тройной указатель).</p></div>
   </div>
 </div>
@@ -2377,13 +2377,13 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в SDK AWS / Google Cloud реализованы хелперы работы с опциональными полями?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Функциями вроде <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">aws.StringValue(p *string) string</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">aws.String("val") *string</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Функциями вроде <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">aws.StringValue(p *string) string</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">aws.String(&quot;val&quot;) *string</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-19">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #19</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Ловушка сохранения адреса переменной цикла &v в слайс указателей []*T</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Ловушка сохранения адреса переменной цикла &amp;v в слайс указателей []*T</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
@@ -2391,11 +2391,11 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;"><strong>Классический баг сохранения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&v</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for range</code> (до Go 1.22):</strong></p>
+    <div><p style="margin-bottom: 6px;"><strong>Классический баг сохранения <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;v</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for range</code> (до Go 1.22):</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Переменная <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v</code> в цикле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for _, v := range items</code> переиспользовалась;</li>
-<li style="margin-bottom: 4px;">Сохранение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&v</code> приводило к тому, что все элементы среза указателей ссылались на один и тот же адрес с последним значением;</li>
-<li style="margin-bottom: 4px;">В Go 1.22+ скоуп <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v</code> изолирован, но паттерн явного взятия адреса элемента среза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&items[i]</code> является эталоном безопасности для всех версий Go.</li>
+<li style="margin-bottom: 4px;">Сохранение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;v</code> приводило к тому, что все элементы среза указателей ссылались на один и тот же адрес с последним значением;</li>
+<li style="margin-bottom: 4px;">В Go 1.22+ скоуп <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v</code> изолирован, но паттерн явного взятия адреса элемента среза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;items[i]</code> является эталоном безопасности для всех версий Go.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -2403,7 +2403,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем срез <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">items := []int{10, 20, 30}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сохраняем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&items[i]</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сохраняем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;items[i]</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Печатаем разыменованные значения.</div></div>
   </div>
   <div class="code-container">
@@ -2448,23 +2448,23 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Написание <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pointers = append(pointers, &v)</code> в старых версиях Go 1.21.</li>
+<li style="margin-bottom: 4px;">Написание <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pointers = append(pointers, &amp;v)</code> в старых версиях Go 1.21.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем преимущество <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&items[i]</code> перед <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val := v; &val</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&items[i]</code> ссылается непосредственно на элемент массива среза и не требует создания промежуточных копий в куче.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем преимущество <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;items[i]</code> перед <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val := v; &amp;val</code>?»</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;items[i]</code> ссылается непосредственно на элемент массива среза и не требует создания промежуточных копий в куче.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-20">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #20</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Получение адреса переменной через &x и форматированный вывод указателя %p</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Получение адреса переменной через &amp;x и форматированный вывод указателя %p</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Получение адреса: Объяви переменную x := 42. Получи её адрес в памяти через оператор & и выведи его.</p></div>
+    <div><p style="margin-bottom: 6px;">Получение адреса: Объяви переменную x := 42. Получи её адрес в памяти через оператор &amp; и выведи его.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2475,8 +2475,8 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x := 42</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Выводим `fmt.Printf("%p</div>
-<p style="margin-bottom: 6px;">", &x)`.</p></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Выводим `fmt.Printf(&quot;%p</div>
+<p style="margin-bottom: 6px;">&quot;, &amp;x)`.</p></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -2537,7 +2537,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">i := 10</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s := "Go"</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">b := true</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">i := 10</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s := &quot;Go&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">b := true</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Получаем указатели <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pi</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ps</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pb</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Печатаем типы через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">%T</code>.</div></div>
   </div>
@@ -2649,7 +2649,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Чем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var x int; p := &x</code> отличается от <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p := new(int)</code>?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Чем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var x int; p := &amp;x</code> отличается от <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p := new(int)</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Ничем, они дают абсолютно одинаковый результат и ассемблерный код.</p></div>
   </div>
 </div>
@@ -2671,7 +2671,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Swap(a, b *int)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a != nil && b != nil</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверяем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a != nil &amp;&amp; b != nil</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Меняем значения местами.</div></div>
   </div>
   <div class="code-container">
@@ -2715,7 +2715,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Swap(nil, &y)</code> без проверки на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>.</li>
+<li style="margin-bottom: 4px;">Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Swap(nil, &amp;y)</code> без проверки на <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -2735,7 +2735,7 @@ func main() {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Сравнение локального свопа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x, y = y, x</code> и межфункционального <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">swap(&x, &y)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Сравнение локального свопа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x, y = y, x</code> и межфункционального <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">swap(&amp;x, &amp;y)</code>.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -2783,7 +2783,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Попытка передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">swap(a, b)</code> без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&</code>.</li>
+<li style="margin-bottom: 4px;">Попытка передать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">swap(a, b)</code> без <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -3032,7 +3032,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что произойдет, если передать один и тот же указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SwapValues(&x, &x)</code>?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что произойдет, если передать один и тот же указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SwapValues(&amp;x, &amp;x)</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Значение переменной останется неизменным.</p></div>
   </div>
 </div>
@@ -3054,7 +3054,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x := 10</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p := &x</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p := &amp;x</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*p = 100</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Печатаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code>.</div></div>
   </div>
@@ -3106,15 +3106,15 @@ func main() {
 <div class="exercise-card" id="ex-29">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #29</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Взятие адреса отдельного элемента массива &arr[0] и мутация через указатель</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Взятие адреса отдельного элемента массива &amp;arr[0] и мутация через указатель</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Получи указатель на элемент массива (или среза) &arr[0]. Измени элемент через указатель.</p></div>
+    <div><p style="margin-bottom: 6px;">Получи указатель на элемент массива (или среза) &amp;arr[0]. Измени элемент через указатель.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;"><strong>Указатель на элемент коллекции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&arr[i]</code>:</strong></p>
+    <div><p style="margin-bottom: 6px;"><strong>Указатель на элемент коллекции <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;arr[i]</code>:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Позволяет получить прямой доступ к конкретному элементу массива или среза;</li>
 <li style="margin-bottom: 4px;">Изменение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*ptr = val</code> обновляет элемент в коллекции.</li>
@@ -3124,9 +3124,9 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arr := [3]string{"Go", "Python", "Java"}</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Берем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pFirst := &arr[0]</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Присваиваем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*pFirst = "Golang Highload"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arr := [3]string{&quot;Go&quot;, &quot;Python&quot;, &quot;Java&quot;}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Берем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pFirst := &amp;arr[0]</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Присваиваем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*pFirst = &quot;Golang Highload&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Печатаем массив.</div></div>
   </div>
   <div class="code-container">
@@ -3164,12 +3164,12 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Сохранение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&s[0]</code> для среза, который впоследствии растет через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">append</code>: срез переедет в новый буфер, а указатель останется указывать на старый массив!</li>
+<li style="margin-bottom: 4px;">Сохранение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;s[0]</code> для среза, который впоследствии растет через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">append</code>: срез переедет в новый буфер, а указатель останется указывать на старый массив!</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему опасно сохранять указатель на элемент среза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&s[i]</code> при динамическом добавлении элементов?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему опасно сохранять указатель на элемент среза <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;s[i]</code> при динамическом добавлении элементов?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> При реаллокации среза базовый массив копируется в новую область памяти, и сохраненный указатель перестает указывать на актуальный элемент среза.</p></div>
   </div>
 </div>
@@ -3195,7 +3195,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a := 42</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">b := 42</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p1 := &a</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p2 := &a</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p3 := &b</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p1 := &amp;a</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p2 := &amp;a</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p3 := &amp;b</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сравниваем указатели.</div></div>
   </div>
   <div class="code-container">
@@ -3241,7 +3241,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Когда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&struct{}</code> вернет одинаковый адрес для двух разных переменных?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Когда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;struct{}</code> вернет одинаковый адрес для двух разных переменных?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Для пустых структур <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">struct{}</code> компилятор может вернуть один и тот же глобальный адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">zerobase</code> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0x...</code>).</p></div>
   </div>
 </div>
@@ -3379,19 +3379,19 @@ func main() {
 <div class="exercise-card" id="ex-33">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #33</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Сравнение способов выделения: p1 := new(int) vs var x int; p2 := &x</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Сравнение способов выделения: p1 := new(int) vs var x int; p2 := &amp;x</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Сравнение способов выделения: Сравните создание указателя через p1 := new(int) и var x int; p2 := &x. Будут ли они вести себя одинаково при работе с памятью?</p></div>
+    <div><p style="margin-bottom: 6px;">Сравнение способов выделения: Сравните создание указателя через p1 := new(int) и var x int; p2 := &amp;x. Будут ли они вести себя одинаково при работе с памятью?</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;"><strong>Сравнение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new(T)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&x</code>:</strong></p>
+    <div><p style="margin-bottom: 6px;"><strong>Сравнение <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new(T)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;x</code>:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Оба варианта создают зануленную переменную типа <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">T</code> и возвращают указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*T</code>;</li>
 <li style="margin-bottom: 4px;">С точки зрения оптимизатора компилятора оба выражения абсолютно эквивалентны;</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var x int; p2 := &x</code> дает переменной имя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> в текущем скоупе, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new(int)</code> создает анонимное значение.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var x int; p2 := &amp;x</code> дает переменной имя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x</code> в текущем скоупе, а <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">new(int)</code> создает анонимное значение.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -3399,7 +3399,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p1 := new(int)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var x int; p2 := &x</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var x int; p2 := &amp;x</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сравниваем поведение.</div></div>
   </div>
   <div class="code-container">
@@ -3531,7 +3531,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal(data, &v)</code> требует обязательной передачи указателя?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json.Unmarshal(data, &amp;v)</code> требует обязательной передачи указателя?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что рефлексия может записать десериализованные данные в структуру только тогда, когда передан указатель (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CanSet() == true</code>).</p></div>
   </div>
 </div>
@@ -3681,11 +3681,11 @@ func main() {
 <div class="exercise-card" id="ex-37">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #37</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Escape-анализ: функция GetLocalPointer() *int и диагностика компилятора -gcflags='-m'</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Escape-анализ: функция GetLocalPointer() *int и диагностика компилятора -gcflags=&#x27;-m&#x27;</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Escape-анализ (Возврат указателя): Напишите функцию GetLocalPointer() *int, которая создает локальную переменную внутри себя, присваивает ей значение и возвращает её адрес. Безопасно ли это в Go? (Изучите, почему компилятор Go переносит такую переменную в кучу — Escape Analysis, запустив сборку с флагом go build -gcflags="-m").</p></div>
+    <div><p style="margin-bottom: 6px;">Escape-анализ (Возврат указателя): Напишите функцию GetLocalPointer() *int, которая создает локальную переменную внутри себя, присваивает ей значение и возвращает её адрес. Безопасно ли это в Go? (Изучите, почему компилятор Go переносит такую переменную в кучу — Escape Analysis, запустив сборку с флагом go build -gcflags=&quot;-m&quot;).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3693,7 +3693,7 @@ func main() {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Компилятор строит граф направленной достижимости (Escape Graph);</li>
 <li style="margin-bottom: 4px;">Если адрес локальной переменной возвращается наружу, компилятор генерирует вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.newobject</code>;</li>
-<li style="margin-bottom: 4px;">Проверить это можно командой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags="-m"</code>.</li>
+<li style="margin-bottom: 4px;">Проверить это можно командой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go build -gcflags=&quot;-m&quot;</code>.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -3701,7 +3701,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GetLocalPointer() *int</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Возвращаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&val</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Возвращаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;val</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Анализируем вывод компилятора.</div></div>
   </div>
   <div class="code-container">
@@ -3834,7 +3834,7 @@ func main() {
     <div><p style="margin-bottom: 6px;"><strong>Nil Map Mechanics:</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Чтение из nil-мапы безопасно (возвращает Zero Value);</li>
-<li style="margin-bottom: 4px;">Запись в nil-мапу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m["key"] = 1</code> вызывает фатальную панику <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic: assignment to entry in nil map</code>;</li>
+<li style="margin-bottom: 4px;">Запись в nil-мапу <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m[&quot;key&quot;] = 1</code> вызывает фатальную панику <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic: assignment to entry in nil map</code>;</li>
 <li style="margin-bottom: 4px;">Для записи мапа обязана быть инициализирована через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">make(map[K]V)</code>.</li>
 </ul></div>
   </div>
@@ -3886,7 +3886,7 @@ func main() {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.mapassign</code> проверяет заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hmap</code>: если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">h == nil</code>, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic("assignment to entry in nil map")</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.mapassign</code> проверяет заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">hmap</code>: если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">h == nil</code>, вызывается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">panic(&quot;assignment to entry in nil map&quot;)</code>.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -3918,7 +3918,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">target := 888</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Получаем указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p := &target</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Получаем указатель <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p := &amp;target</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Разыменовываем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*p</code>.</div></div>
   </div>
   <div class="code-container">
@@ -3958,7 +3958,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Каков приоритет унарного оператора <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Такой же, как у унарного <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">!</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Такой же, как у унарного <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">!</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-41">
@@ -4128,7 +4128,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем переменные <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a, b, c := 10, 20, 30</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptrs := [3]*int{&a, &b, &c}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем массив <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ptrs := [3]*int{&amp;a, &amp;b, &amp;c}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> В цикле умножаем каждое значение на 10.</div></div>
   </div>
   <div class="code-container">
@@ -4201,7 +4201,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">type Node struct { Value int; Next *Node }</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем цепочку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n1 -> n2 -> n3</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем цепочку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n1 -&gt; n2 -&gt; n3</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Обходим список циклом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">for curr := head; curr != nil; curr = curr.Next</code>.</div></div>
   </div>
   <div class="code-container">
@@ -4264,14 +4264,14 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Опциональные поля через указатели: Создайте структуру Profile с полями Name string и Age *int. Напишите логику: если Age равен nil, выводить "Возраст не указан", иначе выводить реальное значение. Инициализируйте два профиля (с указанием возраста и без).</p></div>
+    <div><p style="margin-bottom: 6px;">Опциональные поля через указатели: Создайте структуру Profile с полями Name string и Age *int. Напишите логику: если Age равен nil, выводить &quot;Возраст не указан&quot;, иначе выводить реальное значение. Инициализируйте два профиля (с указанием возраста и без).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Паттерн опциональных полей (Optional Fields / Nullable):</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В Go примитивный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">int</code> всегда имеет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code>, поэтому нельзя отличить «возраст равен 0» от «возраст не указан»;</li>
-<li style="margin-bottom: 4px;">Поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Age *int</code> позволяет точно различить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> (поле отсутствует) и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&0</code> (поле равно 0);</li>
+<li style="margin-bottom: 4px;">Поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Age *int</code> позволяет точно различить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nil</code> (поле отсутствует) и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;0</code> (поле равно 0);</li>
 <li style="margin-bottom: 4px;">Стандарт де-факто для JSON REST API (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">omitempty</code>).</li>
 </ul></div>
   </div>
@@ -4281,7 +4281,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Profile{Name string, Age *int}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p1</code> (без возраста, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Age: nil</code>).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p2</code> (с возрастом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Age: &age</code>).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p2</code> (с возрастом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Age: &amp;age</code>).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Форматируем вывод.</div></div>
   </div>
   <div class="code-container">
@@ -4337,8 +4337,8 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в Go сериализовать JSON с опциональными полями без отправки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Объявить поля как указатели <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*int</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*string</code> с тегом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:"age,omitempty"</code>.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в Go сериализовать JSON с опциональными полями без отправки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code>?»</p>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Объявить поля как указатели <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*int</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*string</code> с тегом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">json:&quot;age,omitempty&quot;</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-46">
@@ -4359,7 +4359,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Пишем функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SafePrint(p *int)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Добавляем проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if p == nil { fmt.Println("указатель nil"); return }</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Добавляем проверку <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">if p == nil { fmt.Println(&quot;указатель nil&quot;); return }</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Печатаем значение.</div></div>
   </div>
   <div class="code-container">
@@ -4415,17 +4415,17 @@ func main() {
 <div class="exercise-card" id="ex-47">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #47</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Сравнение указателей: Identity адресов (&a == &b) против Equality значений (*p1 == *p2)</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Сравнение указателей: Identity адресов (&amp;a == &amp;b) против Equality значений (*p1 == *p2)</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Сравнение указателей: Создай две разные переменные с одинаковым значением (например, 10). Сравни их адреса (&a == &b). Пойми, почему результат false. Затем присвой два указателя на одну и ту же переменную и убедись, что они равны.</p></div>
+    <div><p style="margin-bottom: 6px;">Сравнение указателей: Создай две разные переменные с одинаковым значением (например, 10). Сравни их адреса (&amp;a == &amp;b). Пойми, почему результат false. Затем присвой два указателя на одну и ту же переменную и убедись, что они равны.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;"><strong>Различие идентичности (Identity) и равенства (Equality):</strong></p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&a == &b</code>: сравнивает физические адреса в оперативной памяти (два разных объекта в памяти всегда имеют разные адреса);</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;a == &amp;b</code>: сравнивает физические адреса в оперативной памяти (два разных объекта в памяти всегда имеют разные адреса);</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">*p1 == *p2</code>: сравнивает логические значения по этим адресам.</li>
 </ul></div>
   </div>
@@ -4434,8 +4434,8 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">a, b := 10, 10</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сравниваем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&a == &b</code> (false).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p1 := &a</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p2 := &a</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Сравниваем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;a == &amp;b</code> (false).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p1 := &amp;a</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p2 := &amp;a</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Сравниваем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">p1 == p2</code> (true).</div></div>
   </div>
   <div class="code-container">
@@ -4505,7 +4505,7 @@ func main() {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">x, y, z := 1, 2, 3</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arr := [3]*int{&x, &y, &z}</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Создаем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">arr := [3]*int{&amp;x, &amp;y, &amp;z}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Печатаем адреса и значения.</div></div>
   </div>
   <div class="code-container">

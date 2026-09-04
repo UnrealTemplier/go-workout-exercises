@@ -761,7 +761,7 @@
       <a href="#ex-42" class="sub-exercise-link" title="Упр 42: Универсальный детектор истинного nil: функция IsReallyNil(v any) bool через reflect">42. Универсальный детектор истинного nil: функция IsReallyNil(v any) bool через reflect</a>
       <a href="#ex-43" class="sub-exercise-link" title="Упр 43: Главная ловушка интерфейсов: возврат nil-указателя ошибки в функции GetError() error">43. Главная ловушка интерфейсов: возврат nil-указателя ошибки в функции GetError() error</a>
       <a href="#ex-44" class="sub-exercise-link" title="Упр 44: Композиция интерфейсов: объединение встроенных io.Reader и io.Writer в ReadWriter">44. Композиция интерфейсов: объединение встроенных io.Reader и io.Writer в ReadWriter</a>
-      <a href="#ex-45" class="sub-exercise-link" title="Упр 45: Принцип Postel's Law в Go: «Принимай интерфейсы, возвращай структуры» (Accept Interfaces, Return Structs)">45. Принцип Postel's Law в Go: «Принимай интерфейсы, возвращай структуры» (Accept Interfaces, Return Structs)</a>
+      <a href="#ex-45" class="sub-exercise-link" title="Упр 45: Принцип Postel&#x27;s Law в Go: «Принимай интерфейсы, возвращай структуры» (Accept Interfaces, Return Structs)">45. Принцип Postel&#x27;s Law в Go: «Принимай интерфейсы, возвращай структуры» (Accept Interfaces, Return Structs)</a>
       <a href="#ex-46" class="sub-exercise-link" title="Упр 46: Интерфейс fmt.Stringer: реализация метода String() для структуры User">46. Интерфейс fmt.Stringer: реализация метода String() для структуры User</a>
       <a href="#ex-47" class="sub-exercise-link" title="Упр 47: Различие типов: кастомный тип type MyInt int и паника при i.(int)">47. Различие типов: кастомный тип type MyInt int и паника при i.(int)</a>
       <a href="#ex-48" class="sub-exercise-link" title="Упр 48: Каверзный кейс: реализация интерфейса с Pointer Receiver и ошибка передачи значения">48. Каверзный кейс: реализация интерфейса с Pointer Receiver и ошибка передачи значения</a>
@@ -1769,7 +1769,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Перепиши через "comma ok": s, ok := v.(string). Обработай false без паники. Напиши graceful degradation.</p></div>
+    <div><p style="margin-bottom: 6px;">Перепиши через &quot;comma ok&quot;: s, ok := v.(string). Обработай false без паники. Напиши graceful degradation.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1833,7 +1833,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val, ok := v.(string)</code>, если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v == nil</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val = ""</code> (пустая строка) и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ok = false</code> без паники.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Вернет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val = &quot;&quot;</code> (пустая строка) и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ok = false</code> без паники.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-10">
@@ -1843,7 +1843,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Утверждение типа (Type Assertion): Внутри функции попытайся привести v к строке: str, ok := v.(string). Если ok — выведи длину строки, иначе выведи "Не строка".</p></div>
+    <div><p style="margin-bottom: 6px;">Утверждение типа (Type Assertion): Внутри функции попытайся привести v к строке: str, ok := v.(string). Если ok — выведи длину строки, иначе выведи &quot;Не строка&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -1904,7 +1904,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len("Привет") == 12</code>?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">len(&quot;Привет&quot;) == 12</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что каждая кириллическая буква в UTF-8 кодируется 2 байтами.</p></div>
   </div>
 </div>
@@ -2654,7 +2654,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Может ли <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Read</code> вернуть одновременно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n > 0</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err == io.EOF</code>?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Может ли <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Read</code> вернуть одновременно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n &gt; 0</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err == io.EOF</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> ДА! Спецификация <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.Reader</code> разрешает вернуть последние прочитанные байты вместе с ошибкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">io.EOF</code>.</p></div>
   </div>
 </div>
@@ -2665,7 +2665,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Каверзный случай: Value vs Pointer Receiver: Реализуй метод Speak() для *Dog (по указателю). Попробуй положить в срез []Speaker значение Dog{} (без &). Изучи ошибку: интерфейс не реализован для значения, только для указателя!</p></div>
+    <div><p style="margin-bottom: 6px;">Каверзный случай: Value vs Pointer Receiver: Реализуй метод Speak() для *Dog (по указателю). Попробуй положить в срез []Speaker значение Dog{} (без &amp;). Изучи ошибку: интерфейс не реализован для значения, только для указателя!</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2682,7 +2682,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Dog</code> с методом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(d *Dog) Speak() string</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Показываем ошибку при попытке положить <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Dog{}</code> в интерфейс.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Исправляем передачей указателя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&Dog{}</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Исправляем передачей указателя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;Dog{}</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -2757,7 +2757,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var myVar any = "Go 1.22"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем переменную <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var myVar any = &quot;Go 1.22&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Извлекаем через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">val, ok := myVar.(string)</code>.</div></div>
   </div>
   <div class="code-container">
@@ -2877,7 +2877,7 @@ func main() {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Printf("%T")</code> узнает точный тип структуры внутри интерфейса?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Printf(&quot;%T&quot;)</code> узнает точный тип структуры внутри интерфейса?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через поле <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">itab._type.string()</code> метаданных типа рантайма.</p></div>
   </div>
 </div>
@@ -2974,7 +2974,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MyBuffer{data []byte}</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Пишем метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(b *MyBuffer) Write(p []byte) (int, error)</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Пишем в буфер через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Fprintf(buf, "...")</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Пишем в буфер через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Fprintf(buf, &quot;...&quot;)</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -3059,7 +3059,7 @@ func main() {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создаем структуру <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">MemoryStream</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Реализуем методы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Read</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Write</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Присваиваем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var rw io.ReadWriter = &MemoryStream{}</code>.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Присваиваем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var rw io.ReadWriter = &amp;MemoryStream{}</code>.</div></div>
   </div>
   <div class="code-container">
     <div class="code-header">
@@ -3238,7 +3238,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Приведение типов (Type Assertion): Создайте функцию, принимающую пустой интерфейс any (или interface{}). Внутри функции проверьте, лежит ли там строка, используя синтаксис str, ok := val.(string). Если это строка, выведите её длину, если нет — выведите сообщение "Не строка".</p></div>
+    <div><p style="margin-bottom: 6px;">Приведение типов (Type Assertion): Создайте функцию, принимающую пустой интерфейс any (или interface{}). Внутри функции проверьте, лежит ли там строка, используя синтаксис str, ok := val.(string). Если это строка, выведите её длину, если нет — выведите сообщение &quot;Не строка&quot;.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -3674,7 +3674,7 @@ func main() {
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
-    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Инициализируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var data any = "Golang Backend"</code>.</div>
+    <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Инициализируем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">var data any = &quot;Golang Backend&quot;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Извлекаем строку с проверкой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ok</code>.</div></div>
   </div>
   <div class="code-container">
@@ -3788,12 +3788,12 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf("%s", b)</code> внутри метода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(b Book) String()</code> — приведет к <strong>бесконечной рекурсии и переполнению стека (Stack Overflow Panic)</strong>!</li>
+<li style="margin-bottom: 4px;">Вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf(&quot;%s&quot;, b)</code> внутри метода <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">(b Book) String()</code> — приведет к <strong>бесконечной рекурсии и переполнению стека (Stack Overflow Panic)</strong>!</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf("%v", s)</code> внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s.String()</code> приводит к крашу программы?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf(&quot;%v&quot;, s)</code> внутри <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s.String()</code> приводит к крашу программы?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf</code> внутри снова проверяет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Stringer</code> и рекурсивно вызывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">s.String()</code>, приводя к исчерпанию стека (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime: goroutine stack exceeds 1000000000-byte limit</code>).</p></div>
   </div>
 </div>
@@ -3949,7 +3949,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Передача <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">memoryBuf</code> по значению вместо указателя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&memoryBuf</code>.</li>
+<li style="margin-bottom: 4px;">Передача <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">memoryBuf</code> по значению вместо указателя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;memoryBuf</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
@@ -4046,7 +4046,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем преимущество <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> перед прямым Type Assertion <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">err.(ValidationError)</code>?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> умеет рекурсивно разворачивать цепочки ошибок, обернутых через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf("%w", err)</code> (Unwrap).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">errors.As</code> умеет рекурсивно разворачивать цепочки ошибок, обернутых через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Errorf(&quot;%w&quot;, err)</code> (Unwrap).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-37">
@@ -4375,7 +4375,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Каверзный случай: Изучите "nil interface vs nil pointer in interface". Создайте указатель на структуру (равный nil), присвойте его переменной интерфейса и проверьте, равно ли myInterface == nil. (Спойлер: интерфейс не будет nil, так как хранит информацию о типе!).</p></div>
+    <div><p style="margin-bottom: 6px;">Каверзный случай: Изучите &quot;nil interface vs nil pointer in interface&quot;. Создайте указатель на структуру (равный nil), присвойте его переменной интерфейса и проверьте, равно ли myInterface == nil. (Спойлер: интерфейс не будет nil, так как хранит информацию о типе!).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4449,7 +4449,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши функцию IsReallyNil(v interface{}) bool, которая корректно определяет "настоящий" nil (через reflect.ValueOf(v).IsNil() с осторожностью). Обработай panic от IsNil на non-pointer types.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши функцию IsReallyNil(v interface{}) bool, которая корректно определяет &quot;настоящий&quot; nil (через reflect.ValueOf(v).IsNil() с осторожностью). Обработай panic от IsNil на non-pointer types.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4697,11 +4697,11 @@ func main() {
 <div class="exercise-card" id="ex-45">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #45</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Принцип Postel's Law в Go: «Принимай интерфейсы, возвращай структуры» (Accept Interfaces, Return Structs)</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Принцип Postel&#x27;s Law в Go: «Принимай интерфейсы, возвращай структуры» (Accept Interfaces, Return Structs)</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Интерфейс как возвращаемый тип (Антипаттерн): Напиши функцию, возвращающую интерфейс, и функцию, возвращающую структуру. Осознай правило Go: Принимай интерфейсы, возвращай структуры (Postel's Law в контексте Go).</p></div>
+    <div><p style="margin-bottom: 6px;">Интерфейс как возвращаемый тип (Антипаттерн): Напиши функцию, возвращающую интерфейс, и функцию, возвращающую структуру. Осознай правило Go: Принимай интерфейсы, возвращай структуры (Postel&#x27;s Law в контексте Go).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4998,12 +4998,12 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Забыть символ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&</code>.</li>
+<li style="margin-bottom: 4px;">Забыть символ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;</code>.</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему компилятор не может сам взять адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&c</code> при передаче в функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DoReset(c)</code>?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему компилятор не может сам взять адрес <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&amp;c</code> при передаче в функцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DoReset(c)</code>?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Потому что передача аргумента по значению создает временную копию, и взятие ее адреса изменило бы только копию, что привело бы к скрытому логическому багу.</p></div>
   </div>
 </div>
@@ -5173,7 +5173,7 @@ func main() {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как сделать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CountingWriter</code> потокобезопасным без мьютексов?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать атомарную операцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">atomic.AddInt64(&cw.TotalBytes, int64(len(p)))</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать атомарную операцию <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">atomic.AddInt64(&amp;cw.TotalBytes, int64(len(p)))</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-51">
@@ -5688,7 +5688,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Mocking (Заглушки для тестов): Создай интерфейс DB с методом Save(). Напиши функцию ProcessData(db DB). В main передай реальную базу, а для "теста" напиши структуру MockDB, которая просто пишет в консоль, и передай её.</p></div>
+    <div><p style="margin-bottom: 6px;">Mocking (Заглушки для тестов): Создай интерфейс DB с методом Save(). Напиши функцию ProcessData(db DB). В main передай реальную базу, а для &quot;теста&quot; напиши структуру MockDB, которая просто пишет в консоль, и передай её.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5946,7 +5946,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">[Каверзный кейс]: "Nil interface": объяви переменную типа интерфейс var s Shape. Сравни её с nil (должно быть true). Присвой ей указатель на структуру, который равен nil. Сравни снова (теперь false! Интерфейс внутри содержит тип, хотя указатель nil). Обработай эту ситуацию.</p></div>
+    <div><p style="margin-bottom: 6px;">[Каверзный кейс]: &quot;Nil interface&quot;: объяви переменную типа интерфейс var s Shape. Сравни её с nil (должно быть true). Присвой ей указатель на структуру, который равен nil. Сравни снова (теперь false! Интерфейс внутри содержит тип, хотя указатель nil). Обработай эту ситуацию.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7075,7 +7075,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Напиши программу с interface pollution антипаттерном: создай интерфейс заранее, "на всякий случай". Перепиши правильно: accept interfaces, return structs — создай интерфейс там, где он используется (в функции-параметре), а не в определении типа.</p></div>
+    <div><p style="margin-bottom: 6px;">Напиши программу с interface pollution антипаттерном: создай интерфейс заранее, &quot;на всякий случай&quot;. Перепиши правильно: accept interfaces, return structs — создай интерфейс там, где он используется (в функции-параметре), а не в определении типа.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7227,7 +7227,7 @@ func main() {
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
     <div><ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Неправильный знак <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Less</code> (приведет к обратной сортировке).</li>
+<li style="margin-bottom: 4px;">Неправильный знак <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;</code> в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Less</code> (приведет к обратной сортировке).</li>
 </ul></div>
   </div>
   <div class="callout callout-bigtech">

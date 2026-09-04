@@ -839,7 +839,7 @@
       <a href="#ex-44" class="sub-exercise-link" title="Упр 44: Внутренняя маршрутизация Kubernetes Service: резолвинг по FQDN имени и виртуальная балансировка">44. Внутренняя маршрутизация Kubernetes Service: резолвинг по FQDN имени и виртуальная балансировка</a>
       <a href="#ex-45" class="sub-exercise-link" title="Упр 45: Методология GitOps с ArgoCD: Git как единственный источник правды и атомарный откат версий">45. Методология GitOps с ArgoCD: Git как единственный источник правды и атомарный откат версий</a>
       <a href="#ex-46" class="sub-exercise-link" title="Упр 46: Сквозная трассировка OpenTelemetry: упаковка и извлечение TraceID в метаданных gRPC">46. Сквозная трассировка OpenTelemetry: упаковка и извлечение TraceID в метаданных gRPC</a>
-      <a href="#ex-47" class="sub-exercise-link" title="Упр 47: Каскадная трассировка через 3 микросервиса: граф вызовов API Gateway -> User Service -> Auth Service">47. Каскадная трассировка через 3 микросервиса: граф вызовов API Gateway -> User Service -> Auth Service</a>
+      <a href="#ex-47" class="sub-exercise-link" title="Упр 47: Каскадная трассировка через 3 микросервиса: граф вызовов API Gateway -&gt; User Service -&gt; Auth Service">47. Каскадная трассировка через 3 микросервиса: граф вызовов API Gateway -&gt; User Service -&gt; Auth Service</a>
       <a href="#ex-48" class="sub-exercise-link" title="Упр 48: Межсервисное взаимодействие (Service-to-Service): gRPC клиент в OrderService для вызова InventoryService">48. Межсервисное взаимодействие (Service-to-Service): gRPC клиент в OrderService для вызова InventoryService</a>
       <a href="#ex-49" class="sub-exercise-link" title="Упр 49: Метрики gRPC через перехватчики: автоматический сбор RPS, времени ответа и кодов ошибок">49. Метрики gRPC через перехватчики: автоматический сбор RPS, времени ответа и кодов ошибок</a>
       <a href="#ex-50" class="sub-exercise-link" title="Упр 50: Балансировка нагрузки на клиенте с dns:/// и Headless Service: алгоритм round-robin">50. Балансировка нагрузки на клиенте с dns:/// и Headless Service: алгоритм round-robin</a>
@@ -1546,7 +1546,7 @@ func TestServiceDiscoveryTTL(t *testing.T) {
 <li style="margin-bottom: 4px;">Архитектура:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Сервис при старте вычитывает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GET /config/app.json</code> из etcd.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запускается фоновая горутина с подпиской <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">watcher := client.Watch(ctx, "/config/app.json")</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Запускается фоновая горутина с подпиской <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">watcher := client.Watch(ctx, &quot;/config/app.json&quot;)</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> При изменении значения в etcd событие прилетает в Go-канал.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Менеджер конфигурации атомарно (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">atomic.Pointer</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sync.RWMutex</code>) обновляет структуру конфигурации в ОЗУ.</div></div>
   </div>
@@ -1692,12 +1692,12 @@ func TestDynamicHotReload(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Принцип циклической балансировки нагрузки (Client-Side Round-Robin):</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">У клиента есть список адресов бэкендов: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">["10.0.1.1:50051", "10.0.1.2:50052"]</code>.</li>
+<li style="margin-bottom: 4px;">У клиента есть список адресов бэкендов: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[&quot;10.0.1.1:50051&quot;, &quot;10.0.1.2:50052&quot;]</code>.</li>
 <li style="margin-bottom: 4px;">Для распределения вызовов используется атомарный счетчик:</li>
 </ul>
 <p style="margin-bottom: 6px;">$\text{index} = \text{counter} \pmod N$</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Атомарный инкремент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">atomic.AddUint64(&counter, 1)</code> гарантирует потокобезопасность вызова без захвата тяжелых мьютексов.</li>
+<li style="margin-bottom: 4px;">Атомарный инкремент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">atomic.AddUint64(&amp;counter, 1)</code> гарантирует потокобезопасность вызова без захвата тяжелых мьютексов.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -1929,7 +1929,7 @@ func TestPrometheusExport(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dns</code> резолвер gRPC: зарегистрируйте несколько адресов для имени в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/etc/hosts</code> (или локальном DNS) и проверьте балансировку с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc.Dial("dns:///service:50051")</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Используйте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">dns</code> резолвер gRPC: зарегистрируйте несколько адресов для имени в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/etc/hosts</code> (или локальном DNS) и проверьте балансировку с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc.Dial(&quot;dns:///service:50051&quot;)</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -2188,10 +2188,8 @@ func TestSagaFlow(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Попытка сохранить заказ в БД и отправить сообщение в Kafka:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">db.Exec("INSERT INTO orders ...")</p>
-<p style="margin-bottom: 6px;">kafka.Produce("OrderCreated") // ЕСЛИ ЗДЕСЬ СБОЙ СЕТИ ИЛИ ПАДЕНИЕ ПОДА — СОБЫТИЕ ПОТЕРЯНО!</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  db.Exec(&quot;INSERT INTO orders ...&quot;)
+  kafka.Produce(&quot;OrderCreated&quot;) // ЕСЛИ ЗДЕСЬ СБОЙ СЕТИ ИЛИ ПАДЕНИЕ ПОДА — СОБЫТИЕ ПОТЕРЯНО!</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Паттерн Transactional Outbox:</strong></li>
 </ul>
@@ -2347,10 +2345,10 @@ func TestTransactionalOutbox(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Спецификация балансировки gRPC Client-Side Balancer:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Библиотека <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">google.golang.org/grpc/balancer/roundrobin</code>:</li>
-<li style="margin-bottom: 4px;">Регистрирует билдер балансировщика под именем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"round_robin"</code>.</li>
+<li style="margin-bottom: 4px;">Регистрирует билдер балансировщика под именем <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;round_robin&quot;</code>.</li>
 <li style="margin-bottom: 4px;">Клиент передает опцию:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc.WithDefaultServiceConfig(</code>{"loadBalancingPolicy":"round_robin"}<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">)</code>.</p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc.WithDefaultServiceConfig(</code>{&quot;loadBalancingPolicy&quot;:&quot;round_robin&quot;}<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">)</code>.</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Клиент открывает SubConn (постоянные сокеты) к каждому IP-адресу из списка резолвера.</li>
 <li style="margin-bottom: 4px;">Каждый RPC вызов выбирает следующий SubConn в циклическом порядке.</li>
@@ -2442,7 +2440,7 @@ func TestThreeNodeRoundRobin(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Забыть импортировать анонимно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ "google.golang.org/grpc/balancer/roundrobin"</code>: балансировщик не зарегистрируется в глобальном реестре, и gRPC клиент упадет с ошибкой неизвестной политики.</p></div>
+    <div><p style="margin-bottom: 6px;">Забыть импортировать анонимно <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">_ &quot;google.golang.org/grpc/balancer/roundrobin&quot;</code>: балансировщик не зарегистрируется в глобальном реестре, и gRPC клиент упадет с ошибкой неизвестной политики.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -2596,10 +2594,10 @@ func TestCQRSFlow(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Архитектура на основе источника событий (Event Sourcing):</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Вместо хранения текущего состояния таблицы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UPDATE users SET email = 'new@mail.ru'</code>), система сохраняет <strong>неизменяемую последовательность фактов (Events)</strong>:</li>
+<li style="margin-bottom: 4px;">Вместо хранения текущего состояния таблицы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UPDATE users SET email = &#x27;new@mail.ru&#x27;</code>), система сохраняет <strong>неизменяемую последовательность фактов (Events)</strong>:</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Event 1: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserCreated{ID: "1", Name: "Иван", Email: "ivan@old.ru"}</code></div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Event 2: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserEmailChanged{ID: "1", NewEmail: "ivan@new.ru"}</code></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Event 1: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserCreated{ID: &quot;1&quot;, Name: &quot;Иван&quot;, Email: &quot;ivan@old.ru&quot;}</code></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Event 2: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserEmailChanged{ID: &quot;1&quot;, NewEmail: &quot;ivan@new.ru&quot;}</code></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Таблица событий — строго <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">APPEND-ONLY</code> (запрещены <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UPDATE</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DELETE</code>).</li>
 <li style="margin-bottom: 4px;">Текущее состояние вычисляется сверткой (Replay / Fold) всех событий сущности.</li>
@@ -2846,7 +2844,7 @@ func TestFullJitterProperties(t *testing.T) {
 <li style="margin-bottom: 4px;">Реактивный подход:</li>
 <li style="margin-bottom: 4px;">Клиент открывает долгоживущий gRPC-стрим или Long Polling к etcd/Consul:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">watchChan := etcdClient.Watch(ctx, "/services/orders/", clientv3.WithPrefix())</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">watchChan := etcdClient.Watch(ctx, &quot;/services/orders/&quot;, clientv3.WithPrefix())</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">При добавлении (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">PUT</code>) или падении (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">DELETE</code>) пода etcd мгновенно пушит событие в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">watchChan</code>.</li>
 <li style="margin-bottom: 4px;">gRPC балансировщик на лету обновляет адреса без разрыва существующих соединений.</li>
@@ -2996,7 +2994,7 @@ func TestDynamicWatcher(t *testing.T) {
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Сквозная трассировка распределенных вызовов (Distributed Tracing):</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">В цепочке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Gateway -> Order Service -> Payment Service -> Bank</code>:</li>
+<li style="margin-bottom: 4px;">В цепочке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Gateway -&gt; Order Service -&gt; Payment Service -&gt; Bank</code>:</li>
 <li style="margin-bottom: 4px;">Каждый сервис создает дочерний отрезок времени — <strong>Span</strong>.</li>
 <li style="margin-bottom: 4px;">Все спаны объединяются глобальным 128-битным идентификатором <strong>Trace ID</strong>.</li>
 <li style="margin-bottom: 4px;">Контекст пробрасывается через сетевые метаданные HTTP/2 по стандарту <strong>W3C TraceContext</strong> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">traceparent</code>).</li>
@@ -3102,7 +3100,7 @@ func TestDistributedTracePropagation(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Что такое Tail-Based Sampling в OpenTelemetry Collector?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> При обычном Head-Based сэмплировании решение о записи трейса принимается на входе (случайно 1%). Если запрос упал с ошибкой 500 в глубине стека, трейс может быть потерян. При Tail-Based сэмплировании OTel Collector буферизирует весь граф спанов в памяти до окончания запроса и гарантированно сохраняет трейс, если в нем возникла ошибка или латентность превысила SLA (например > 500 мс).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> При обычном Head-Based сэмплировании решение о записи трейса принимается на входе (случайно 1%). Если запрос упал с ошибкой 500 в глубине стека, трейс может быть потерян. При Tail-Based сэмплировании OTel Collector буферизирует весь граф спанов в памяти до окончания запроса и гарантированно сохраняет трейс, если в нем возникла ошибка или латентность превысила SLA (например &gt; 500 мс).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-16">
@@ -3122,11 +3120,9 @@ func TestDistributedTracePropagation(t *testing.T) {
 <li style="margin-bottom: 4px;">Если зависимый сервис завис, клиентские горутины будут блокироваться, накапливаясь в памяти до падения по OOM (Cascading Failure).</li>
 <li style="margin-bottom: 4px;">Каждый межсервисный вызов ОБЯЗАН иметь явный таймаут:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">ctx, cancel := context.WithTimeout(parentCtx, 2*time.Second)</p>
-<p style="margin-bottom: 6px;">defer cancel()</p>
-<p style="margin-bottom: 6px;">resp, err := client.DoSomething(ctx, req)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  ctx, cancel := context.WithTimeout(parentCtx, 2*time.Second)
+  defer cancel()
+  resp, err := client.DoSomething(ctx, req)</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">gRPC транслирует оставшееся время в заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc-timeout: 2S</code>, заставляя удаленный сервер также прервать обработку.</li>
 </ul></div>
@@ -3245,7 +3241,7 @@ func TestFailFastDeadline(t *testing.T) {
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace_id</code>: сквозной идентификатор запроса.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">level</code>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">INFO</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">WARN</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ERROR</code>.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">msg</code>: каноническое описание события.</li>
-<li style="margin-bottom: 4px;">В ELK / OpenSearch запрос <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace_id: "4bf92f35..."</code> за секунду находит логи всех 5 сервисов, участвовавших в обработке конкретного клика пользователя.</li>
+<li style="margin-bottom: 4px;">В ELK / OpenSearch запрос <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace_id: &quot;4bf92f35...&quot;</code> за секунду находит логи всех 5 сервисов, участвовавших в обработке конкретного клика пользователя.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -3333,12 +3329,12 @@ func TestStructuredLogCorrelation(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать форматирование строк <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf</code> внутри сообщения лога: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">logger.Info(fmt.Sprintf("user %s", id))</code> — это тратит CPU на конкатенацию строк даже если уровень лога выключен. Используйте атрибуты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slog.String("user_id", id)</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать форматирование строк <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">fmt.Sprintf</code> внутри сообщения лога: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">logger.Info(fmt.Sprintf(&quot;user %s&quot;, id))</code> — это тратит CPU на конкатенацию строк даже если уровень лога выключен. Используйте атрибуты <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slog.String(&quot;user_id&quot;, id)</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как автоматически пробрасывать trace_id из OpenTelemetry спана в slog без ручной передачи в контекст?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Реализовать кастомный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slog.Handler</code>: в методе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Handle(ctx, record)</code> вызывать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace.SpanFromContext(ctx).SpanContext().TraceID().String()</code> и автоматически добавлять атрибут <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slog.String("trace_id", tid)</code> в каждую запись журнала.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Реализовать кастомный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slog.Handler</code>: в методе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Handle(ctx, record)</code> вызывать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace.SpanFromContext(ctx).SpanContext().TraceID().String()</code> и автоматически добавлять атрибут <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">slog.String(&quot;trace_id&quot;, tid)</code> в каждую запись журнала.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-18">
@@ -3353,23 +3349,21 @@ func TestStructuredLogCorrelation(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Конечный автомат паттерна Circuit Breaker:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
-<p style="margin-bottom: 6px;">+---------+  5 ошибок подряд   +--------+</p>
-<p style="margin-bottom: 6px;">| CLOSED  | -----------------> |  OPEN  |</p>
-<p style="margin-bottom: 6px;">+---------+                    +--------+</p>
-<p style="margin-bottom: 6px;">^                              |</p>
-<p style="margin-bottom: 6px;">Пробный вызов|                              | Кулдаун 10 сек</p>
-<p style="margin-bottom: 6px;">успешен      |                              v</p>
-<p style="margin-bottom: 6px;">+-----------+                  +----------+</p>
-<p style="margin-bottom: 6px;">| HALF-OPEN | <---------------+ | (Таймер) |</p>
-<p style="margin-bottom: 6px;">+-----------+                  +----------+</p>
-<p style="margin-bottom: 6px;">|</p>
-<p style="margin-bottom: 6px;">| Ошибка в пробном вызове</p>
-<p style="margin-bottom: 6px;">v</p>
-<p style="margin-bottom: 6px;">+--------+</p>
-<p style="margin-bottom: 6px;">|  OPEN  |</p>
-<p style="margin-bottom: 6px;">+--------+</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-none"><code class="language-none">           +---------+  5 ошибок подряд   +--------+
+           | CLOSED  | -----------------&gt; |  OPEN  |
+           +---------+                    +--------+
+                ^                              |
+   Пробный вызов|                              | Кулдаун 10 сек
+   успешен      |                              v
+           +-----------+                  +----------+
+           | HALF-OPEN | &lt;---------------+ | (Таймер) |
+           +-----------+                  +----------+
+                |
+                | Ошибка в пробном вызове
+                v
+           +--------+
+           |  OPEN  |
+           +--------+</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Предотвращает забивание сетевых сокетов запросами к заведомо мертвому сервису.</li>
 </ul></div>
@@ -3525,7 +3519,7 @@ func TestCircuitBreakerFSM(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему популярна библиотека sony/gobreaker?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sony/gobreaker</code> — проверенная годами реализация автомата Microsoft Circuit Breaker Specification. Она поддерживает гибкие политики срабатывания (например, процент ошибок > 60% при объеме запросов более 100 в скользящем окне) и потокобезопасные счетчики.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sony/gobreaker</code> — проверенная годами реализация автомата Microsoft Circuit Breaker Specification. Она поддерживает гибкие политики срабатывания (например, процент ошибок &gt; 60% при объеме запросов более 100 в скользящем окне) и потокобезопасные счетчики.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-19">
@@ -3778,7 +3772,7 @@ func TestGobreakerThreshold(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как предохранитель взаимодействует с метриками Prometheus?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В настройках <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OnStateChange</code> передается коллбек, инкрементирующий счетчик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">circuit_breaker_state_changes_total{name="...", from="...", to="..."}</code>. Это позволяет выводить график состояний (Closed/Open/HalfOpen) в Grafana и настраивать тревожные оповещения инженерам.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В настройках <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OnStateChange</code> передается коллбек, инкрементирующий счетчик <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">circuit_breaker_state_changes_total{name=&quot;...&quot;, from=&quot;...&quot;, to=&quot;...&quot;}</code>. Это позволяет выводить график состояний (Closed/Open/HalfOpen) в Grafana и настраивать тревожные оповещения инженерам.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-21">
@@ -3890,7 +3884,7 @@ func TestFallbackPipeline(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">В заголовках HTTP ответов при выдаче stale-данных возвращается директива <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Warning: 110 - "Response is Stale"</code>, информирующая клиента о временной деградации источника.</p></div>
+    <div><p style="margin-bottom: 6px;">В заголовках HTTP ответов при выдаче stale-данных возвращается директива <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Warning: 110 - &quot;Response is Stale&quot;</code>, информирующая клиента о временной деградации источника.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -3916,7 +3910,7 @@ func TestFallbackPipeline(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Протокол gRPC Health Checking Protocol (v1):</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">google.golang.org/grpc/health</code> реализует интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc_health_v1</code>:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Check(ctx, &HealthCheckRequest{Service: ""})</code> $\to$ возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SERVING</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NOT_SERVING</code>.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Check(ctx, &amp;HealthCheckRequest{Service: &quot;&quot;})</code> $\to$ возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SERVING</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NOT_SERVING</code>.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Watch(req, stream)</code> $\to$ серверный стрим мгновенного оповещения о смене статуса.</li>
 <li style="margin-bottom: 4px;">Балансировщики нагрузки (Kubernetes kubelet, Envoy) опрашивают этот сервис для определения работоспособности пода.</li>
 </ul></div>
@@ -4023,14 +4017,12 @@ func TestGRPCHealthCheckClient(t *testing.T) {
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в Kubernetes 1.24+ настроить нативную проверку gRPC health check без сторонних бинарников?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать нативную директиву <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc</code> в спецификации контейнера:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`yaml</p>
-<p style="margin-bottom: 6px;">livenessProbe:</p>
-<p style="margin-bottom: 6px;">grpc:</p>
-<p style="margin-bottom: 6px;">port: 50051</p>
-<p style="margin-bottom: 6px;">service: "order.v1.OrderService"</p>
-<p style="margin-bottom: 6px;">initialDelaySeconds: 5</p>
-<p style="margin-bottom: 6px;">periodSeconds: 10</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-yaml"><code class="language-yaml">livenessProbe:
+  grpc:
+    port: 50051
+    service: &quot;order.v1.OrderService&quot;
+  initialDelaySeconds: 5
+  periodSeconds: 10</code></pre></div>
 <p style="margin-bottom: 6px;">Kubelet сам открывает gRPC соединение и вызывает метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Check</code> без необходимости установки curl или bash в образ контейнера.</p></div>
   </div>
 </div>
@@ -4337,7 +4329,7 @@ func TestRetryInterceptorFlow(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Алгоритм работы сервера:</li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Проверяем наличие ключа в Redis: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GET idempotency:<key></code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Проверяем наличие ключа в Redis: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GET idempotency:&lt;key&gt;</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Если найден: возвращаем <strong>сохраненный ранее результат</strong> со статусом <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">HTTP 200 / OK</code> без повторного списания с карты!</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Если не найден: атомарно захватываем распределенный замок (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SETNX</code>), выполняем платеж, сохраняем ответ в Redis с TTL=24h и возвращаем клиенту.</div></div>
   </div>
@@ -4447,7 +4439,7 @@ func TestIdempotencyProtection(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Для защиты от одновременных параллельных запросов с одним и тем же ключом используется атомарная команда Redis <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET idempotency:<key> "PROCESSING" NX EX 60</code>. Второй запрос получает отказ о том, что транзакция уже в процессе выполнения.</p></div>
+    <div><p style="margin-bottom: 6px;">Для защиты от одновременных параллельных запросов с одним и тем же ключом используется атомарная команда Redis <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SET idempotency:&lt;key&gt; &quot;PROCESSING&quot; NX EX 60</code>. Второй запрос получает отказ о том, что транзакция уже в процессе выполнения.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -4610,10 +4602,8 @@ func TestDeadLetterQueueRouting(t *testing.T) {
 <li style="margin-bottom: 4px;">Сервис А потратил 300 мс на чтение кэша и собирается вызвать Сервис B.</li>
 <li style="margin-bottom: 4px;">Сервис А обязан передать в исходящий вызов тот же самый <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code>:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">// gRPC автоматически берет ctx.Deadline() и передает заголовок grpc-timeout: 700mS</p>
-<p style="margin-bottom: 6px;">respB, err := clientB.DoTask(ctx, reqB)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  // gRPC автоматически берет ctx.Deadline() и передает заголовок grpc-timeout: 700mS
+  respB, err := clientB.DoTask(ctx, reqB)</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Сервис B получает контекст с оставшимся временем в 700 мс.</li>
 </ul></div>
@@ -4693,7 +4683,7 @@ func TestDeadlinePropagation(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Спецификация gRPC кодирует оставшееся время в заголовке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc-timeout: <number><unit></code>, где <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">unit</code> может быть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">H</code> (часы), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">M</code> (минуты), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">S</code> (секунды), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m</code> (миллисекунды), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u</code> (микросекунды), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n</code> (наносекунды).</p></div>
+    <div><p style="margin-bottom: 6px;">Спецификация gRPC кодирует оставшееся время в заголовке <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc-timeout: &lt;number&gt;&lt;unit&gt;</code>, где <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">unit</code> может быть <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">H</code> (часы), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">M</code> (минуты), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">S</code> (секунды), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">m</code> (миллисекунды), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">u</code> (микросекунды), <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">n</code> (наносекунды).</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -4735,7 +4725,7 @@ func TestDeadlinePropagation(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте gRPC mock-сервер, эмулирующий долгий запрос к БД.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверьте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select <-ctx.Done()</code> во время выполнения тяжелой работы.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверьте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select &lt;-ctx.Done()</code> во время выполнения тяжелой работы.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Сымитируйте отмену HTTP-запроса через контекст.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Убедитесь в досрочном прерывании работы бэкенда.</div></div>
   </div>
@@ -4823,7 +4813,7 @@ func TestEndToEndCancellation(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Настрой <strong>health checks</strong>: Kubernetes liveness probe (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/healthz</code> — HTTP 200, сервис жив), readiness probe (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/ready</code> — сервис готов принимать трафик, например БД подключена). Разные endpoint'ы!</p></div>
+    <div><p style="margin-bottom: 6px;">Настрой <strong>health checks</strong>: Kubernetes liveness probe (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/healthz</code> — HTTP 200, сервис жив), readiness probe (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/ready</code> — сервис готов принимать трафик, например БД подключена). Разные endpoint&#x27;ы!</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -4948,7 +4938,7 @@ func TestK8sProbes(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Превентивная проверка готовности (Pre-flight Health Verification):</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Перед выполнением критического пакетного вызова клиент может быстро запросить статус здоровья целевого сервиса.</li>
-<li style="margin-bottom: 4px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">healthClient.Check(ctx, &HealthCheckRequest{Service: "service_name"})</code>:</li>
+<li style="margin-bottom: 4px;">Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">healthClient.Check(ctx, &amp;HealthCheckRequest{Service: &quot;service_name&quot;})</code>:</li>
 <li style="margin-bottom: 4px;">Если вернулся статус <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">SERVING</code> — выполняем запрос.</li>
 <li style="margin-bottom: 4px;">Если вернулся статус <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NOT_SERVING</code> — перенаправляем запрос на резервный кластер или возвращаем понятную бизнес-ошибку.</li>
 </ul></div>
@@ -5071,11 +5061,11 @@ func TestPreflightHealthCheck(t *testing.T) {
     <div><p style="margin-bottom: 6px;">Инженерные дашборды мониторинга микросервисов:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Стандартные метрики библиотеки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go-grpc-prometheus</code>:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc_server_handled_total{grpc_service="...", grpc_method="...", grpc_code="OK"}</code> — счетчик обработанных вызовов.</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc_server_handling_seconds_bucket{le="0.05"}</code> — гистограмма длительности обработки запросов.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc_server_handled_total{grpc_service=&quot;...&quot;, grpc_method=&quot;...&quot;, grpc_code=&quot;OK&quot;}</code> — счетчик обработанных вызовов.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc_server_handling_seconds_bucket{le=&quot;0.05&quot;}</code> — гистограмма длительности обработки запросов.</li>
 <li style="margin-bottom: 4px;">PromQL формулы для Grafana:</li>
 <li style="margin-bottom: 4px;"><strong>RPS:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sum(rate(grpc_server_handled_total[1m])) by (grpc_method)</code></li>
-<li style="margin-bottom: 4px;"><strong>Error Rate:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sum(rate(grpc_server_handled_total{grpc_code!="OK"}[1m])) / sum(rate(grpc_server_handled_total[1m])) * 100</code></li>
+<li style="margin-bottom: 4px;"><strong>Error Rate:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">sum(rate(grpc_server_handled_total{grpc_code!=&quot;OK&quot;}[1m])) / sum(rate(grpc_server_handled_total[1m])) * 100</code></li>
 <li style="margin-bottom: 4px;"><strong>Latency 99th Percentile:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket[5m])) by (le))</code></li>
 </ul></div>
   </div>
@@ -5181,7 +5171,7 @@ func TestPrometheusPercentiles(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Настрой <strong>profiling</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net/http/pprof</code> endpoint'ы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/heap</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/goroutine</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/cpu</code>). Собирай профили в production (с осторожностью). Анализируй через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Настрой <strong>profiling</strong>: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">net/http/pprof</code> endpoint&#x27;ы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/heap</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/goroutine</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/cpu</code>). Собирай профили в production (с осторожностью). Анализируй через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go tool pprof</code>.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -5268,7 +5258,7 @@ go tool pprof cpu.pprof</code></pre>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать дефолтный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">import _ "net/http/pprof"</code> вместе с публичным <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.ListenAndServe(":8080", nil)</code>: злоумышленники получат доступ к коду, дампу памяти и смогут положить сервис DoS-атакой через вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/profile</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать дефолтный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">import _ &quot;net/http/pprof&quot;</code> вместе с публичным <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">http.ListenAndServe(&quot;:8080&quot;, nil)</code>: злоумышленники получат доступ к коду, дампу памяти и смогут положить сервис DoS-атакой через вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/debug/pprof/profile</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -5292,7 +5282,7 @@ go tool pprof cpu.pprof</code></pre>
 <li style="margin-bottom: 4px;"><strong>Stage 1 (Builder):</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golang:1.24-alpine</code></li>
 <li style="margin-bottom: 4px;">Компиляция строго статического бинарника без зависимостей от libc:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /app/server ./cmd/server</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CGO_ENABLED=0 GOOS=linux go build -ldflags=&quot;-s -w&quot; -o /app/server ./cmd/server</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Stage 2 (Runtime):</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scratch</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">gcr.io/distroless/static-debian12</code></li>
 <li style="margin-bottom: 4px;">Вес итогового образа: <strong>15–25 МБ</strong> (вместо 1.2 ГБ).</li>
@@ -5369,7 +5359,7 @@ trivy image company/order-service:v1.0.0
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-ldflags="-s -w"</code> удаляет таблицу символов (Symbol Table) и отладочную информацию DWARF, уменьшая размер скомпилированного бинарника Go на 30–40%.</p></div>
+    <div><p style="margin-bottom: 6px;">Флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-ldflags=&quot;-s -w&quot;</code> удаляет таблицу символов (Symbol Table) и отладочную информацию DWARF, уменьшая размер скомпилированного бинарника Go на 30–40%.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -5388,26 +5378,22 @@ trivy image company/order-service:v1.0.0
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>gRPC-Gateway (REST -> gRPC)</strong>: Клиенту (например, браузеру на JS) сложно общаться по чистому gRPC. Установи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc-ecosystem/grpc-gateway</code>. Разметь свой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user.proto</code> аннотациями <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">google.api.http</code>. Сгенерируй реверс-прокси, который поднимет HTTP REST сервер и будет "на лету" транслировать JSON-запросы в Protobuf и отправлять твоему gRPC-серверу.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>gRPC-Gateway (REST -&gt; gRPC)</strong>: Клиенту (например, браузеру на JS) сложно общаться по чистому gRPC. Установи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc-ecosystem/grpc-gateway</code>. Разметь свой <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user.proto</code> аннотациями <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">google.api.http</code>. Сгенерируй реверс-прокси, который поднимет HTTP REST сервер и будет &quot;на лету&quot; транслировать JSON-запросы в Protobuf и отправлять твоему gRPC-серверу.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Архитектура gRPC-Gateway:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
-<p style="margin-bottom: 6px;">[ Browser / curl ] -- HTTP/1.1 JSON --> [ gRPC-Gateway Proxy ] -- gRPC HTTP/2 --> [ Core Service ]</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-none"><code class="language-none">[ Browser / curl ] -- HTTP/1.1 JSON --&gt; [ gRPC-Gateway Proxy ] -- gRPC HTTP/2 --&gt; [ Core Service ]</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.proto</code> методам RPC добавляются аннотации Google API:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`protobuf</p>
-<p style="margin-bottom: 6px;">import "google/api/annotations.proto";</p>
-<div style="height: 8px;"></div>
-<p style="margin-bottom: 6px;">rpc GetUser (GetUserRequest) returns (UserResponse) {</p>
-<p style="margin-bottom: 6px;">option (google.api.http) = {</p>
-<p style="margin-bottom: 6px;">get: "/v1/users/{id}"</p>
-<p style="margin-bottom: 6px;">};</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-protobuf"><code class="language-protobuf">  import &quot;google/api/annotations.proto&quot;;
+
+  rpc GetUser (GetUserRequest) returns (UserResponse) {
+    option (google.api.http) = {
+      get: &quot;/v1/users/{id}&quot;
+    };
+  }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Генератор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">protoc-gen-grpc-gateway</code> создает высокопроизводительный мультиплексор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">runtime.ServeMux</code>, транслирующий JSON в бинарный Protobuf и проксирующий запрос по локальному сокету.</li>
 </ul></div>
@@ -5509,7 +5495,7 @@ func TestGatewayTranscoder(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Забыть включить флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">emitUnpopulated: true</code> в JSONPb опциях: по умолчанию Protobuf v3 пропускает нулевые значения полей (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>), и клиент в ответе получит пустой JSON <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{}</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Забыть включить флаг <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">emitUnpopulated: true</code> в JSONPb опциях: по умолчанию Protobuf v3 пропускает нулевые значения полей (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">0</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">false</code>), и клиент в ответе получит пустой JSON <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">{}</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -5656,22 +5642,20 @@ func TestTraceContextPropagation(t *testing.T) {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Процесс Service Registration & Client Lookup в Consul:</p>
+    <div><p style="margin-bottom: 6px;">Процесс Service Registration &amp; Client Lookup в Consul:</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Регистрация сервиса при запуске:</strong></div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">registration := &api.AgentServiceRegistration{</p>
-<p style="margin-bottom: 6px;">ID:      "order-service-pod-42",</p>
-<p style="margin-bottom: 6px;">Name:    "order-service",</p>
-<p style="margin-bottom: 6px;">Port:    50051,</p>
-<p style="margin-bottom: 6px;">Address: "10.0.1.15",</p>
-<p style="margin-bottom: 6px;">Check:   &api.AgentServiceCheck{GRPC: "10.0.1.15:50051", Interval: "10s"},</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">consul.Agent().ServiceRegister(registration)</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">   registration := &amp;api.AgentServiceRegistration{
+       ID:      &quot;order-service-pod-42&quot;,
+       Name:    &quot;order-service&quot;,
+       Port:    50051,
+       Address: &quot;10.0.1.15&quot;,
+       Check:   &amp;api.AgentServiceCheck{GRPC: &quot;10.0.1.15:50051&quot;, Interval: &quot;10s&quot;},
+   }
+   consul.Agent().ServiceRegister(registration)</code></pre></div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Graceful Deregistration при завершении:</strong></div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer consul.Agent().ServiceDeregister("order-service-pod-42")</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">defer consul.Agent().ServiceDeregister(&quot;order-service-pod-42&quot;)</code></p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Клиентский Lookup:</strong></div>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">entries, _, _ := consul.Health().Service("order-service", "", true, nil)</code> — возвращает только здоровые поды.</p></div>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">entries, _, _ := consul.Health().Service(&quot;order-service&quot;, &quot;&quot;, true, nil)</code> — возвращает только здоровые поды.</p></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -5947,8 +5931,8 @@ docker compose ps
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><strong>Deployment:</strong> управляет 3 подами, задает ресурсы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">requests</code>/<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">limits</code>, настраивает Liveness и Readiness пробы.</li>
 <li style="margin-bottom: 4px;"><strong>Service (ClusterIP):</strong> внутренний стабильный виртуальный IP и порт балансировки.</li>
-<li style="margin-bottom: 4px;"><strong>Ingress:</strong> входная точка L7 с аннотацией <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nginx.ingress.kubernetes.io/backend-protocol: "GRPC"</code>.</li>
-<li style="margin-bottom: 4px;"><strong>HPA (Horizontal Pod Autoscaler):</strong> динамически увеличивает число реплик от 3 до 10 при загрузке CPU > 75%.</li>
+<li style="margin-bottom: 4px;"><strong>Ingress:</strong> входная точка L7 с аннотацией <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nginx.ingress.kubernetes.io/backend-protocol: &quot;GRPC&quot;</code>.</li>
+<li style="margin-bottom: 4px;"><strong>HPA (Horizontal Pod Autoscaler):</strong> динамически увеличивает число реплик от 3 до 10 при загрузке CPU &gt; 75%.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -6071,7 +6055,7 @@ kubectl get hpa order-service-hpa -n production
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему Ingress NGINX требует специальную аннотацию для gRPC?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> gRPC использует протокол HTTP/2 с постоянным мультиплексированием стримов. Без аннотации <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nginx.ingress.kubernetes.io/backend-protocol: "GRPC"</code> NGINX будет пытаться проксировать запросы как стандартный HTTP/1.1 с закрытием соединений, что сломает стриминг и заголовки трейлеров.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> gRPC использует протокол HTTP/2 с постоянным мультиплексированием стримов. Без аннотации <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nginx.ingress.kubernetes.io/backend-protocol: &quot;GRPC&quot;</code> NGINX будет пытаться проксировать запросы как стандартный HTTP/1.1 с закрытием соединений, что сломает стриминг и заголовки трейлеров.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-39">
@@ -6203,7 +6187,7 @@ func Test12FactorConfigOverride(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему популярна библиотека spf13/viper для 12-Factor конфигурации?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">viper</code> умеет автоматически связывать JSON/YAML конфиги с переменными окружения через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">viper.SetEnvPrefix("APP")</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">viper.AutomaticEnv()</code>, а также поддерживает динамический Hot Reload из etcd/Consul через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">viper.WatchRemoteConfig()</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">viper</code> умеет автоматически связывать JSON/YAML конфиги с переменными окружения через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">viper.SetEnvPrefix(&quot;APP&quot;)</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">viper.AutomaticEnv()</code>, а также поддерживает динамический Hot Reload из etcd/Consul через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">viper.WatchRemoteConfig()</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-40">
@@ -6326,7 +6310,7 @@ func TestTraceBottleneckDetection(t *testing.T) {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Принцип работы Istio Service Mesh (Data Plane & Control Plane):</p>
+    <div><p style="margin-bottom: 6px;">Принцип работы Istio Service Mesh (Data Plane &amp; Control Plane):</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В каждый под автоматически внедряется sidecar-контейнер <strong>Envoy Proxy</strong> (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">istio-proxy</code>).</li>
 <li style="margin-bottom: 4px;">Все входящие и исходящие TCP соединения прозрачно перехватываются правилами <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">iptables</code>.</li>
@@ -6444,7 +6428,7 @@ istioctl proxy-status
     <div><p style="margin-bottom: 6px;">Архитектура виртуальной адресации в Kubernetes:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Поды эфемерны: при падении, перезапуске или скейлинге под получает новый случайный IP из подсети ноды (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">10.244.x.x</code>).</li>
-<li style="margin-bottom: 4px;"><strong>Решение проблемы (Kubernetes Service & ClusterIP):</strong></li>
+<li style="margin-bottom: 4px;"><strong>Решение проблемы (Kubernetes Service &amp; ClusterIP):</strong></li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создается объект <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Service</code> с постоянным виртуальным IP (ClusterIP), например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">10.96.0.100</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Этот IP никогда не меняется на протяжении жизни сервиса.</div>
@@ -6574,7 +6558,7 @@ func TestClusterIPStability(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Настрой <strong>CI/CD pipeline</strong> (GitHub Actions/GitLab CI): lint (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golangci-lint</code>), test (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -race -cover</code>), build, push Docker image, deploy to staging. Gate: coverage > 80%, no critical vulnerabilities.</p></div>
+    <div><p style="margin-bottom: 6px;">Настрой <strong>CI/CD pipeline</strong> (GitHub Actions/GitLab CI): lint (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">golangci-lint</code>), test (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -race -cover</code>), build, push Docker image, deploy to staging. Gate: coverage &gt; 80%, no critical vulnerabilities.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -6586,7 +6570,7 @@ func TestClusterIPStability(t *testing.T) {
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Testing with Race Detector:</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go test -race -v -coverprofile=coverage.out ./...</code> (выявление Data Races).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <strong>Coverage Enforcement:</strong> скрипт проверяет, что суммарное покрытие кода тестами строго $\ge 80\%$.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> <strong>Security Scan:</strong> Trivy сканирует уязвимости в зависимостях Go и базовом образе Docker.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> <strong>Build & Push:</strong> сборка мультистейдж Docker-образа и отправка в Container Registry.</div></div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">5.</span> <strong>Build &amp; Push:</strong> сборка мультистейдж Docker-образа и отправка в Container Registry.</div></div>
   </div>
   <div style="margin: 18px 0 10px;">
     <h4 style="color: #38bdf8; font-size: 1.05rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -6685,7 +6669,7 @@ go tool cover -func=coverage.out | grep total
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как ускорить время прохождения CI пайплайна для монорепозитория из 20 микросервисов?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1. Использовать матричные сборки (Matrix Strategy) для параллельного тестирования сервисов на разных runner'ах. 2. Настроить кэширование модулей Go (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">~/.cache/go-build</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$GOPATH/pkg/mod</code>). 3. Запускать тесты только для измененных директорий через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">git diff --name-only</code> или инструмент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nx / bazel</code>.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1. Использовать матричные сборки (Matrix Strategy) для параллельного тестирования сервисов на разных runner&#x27;ах. 2. Настроить кэширование модулей Go (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">~/.cache/go-build</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">$GOPATH/pkg/mod</code>). 3. Запускать тесты только для измененных директорий через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">git diff --name-only</code> или инструмент <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">nx / bazel</code>.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-44">
@@ -6701,7 +6685,7 @@ go tool cover -func=coverage.out | grep total
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Формат полного доменного имени FQDN (Fully Qualified Domain Name) в Kubernetes:</p>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Синтаксис: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"><service-name>.<namespace>.svc.<cluster-domain></code>:</li>
+<li style="margin-bottom: 4px;">Синтаксис: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&lt;service-name&gt;.&lt;namespace&gt;.svc.&lt;cluster-domain&gt;</code>:</li>
 </ul>
 <p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">user-service.default.svc.cluster.local:50051</code></p>
 <ul style="margin: 8px 0 8px 20px;">
@@ -6822,7 +6806,7 @@ func TestK8sFQDNResolution(t *testing.T) {
 <li style="margin-bottom: 4px;"><strong>Declarative Description:</strong> все манифесты инфраструктуры хранятся в Git в виде декларативных YAML файлов (или Helm/Kustomize).</li>
 <li style="margin-bottom: 4px;"><strong>Single Source of Truth:</strong> Git-репозиторий является единственным источником правды. Прямые вызовы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kubectl apply</code> вручную строго запрещены.</li>
 <li style="margin-bottom: 4px;"><strong>Continuous Reconciliation:</strong> контроллер ArgoCD в кластере непрерывно сравнивает желаемое состояние в Git с реальным состоянием в Kubernetes.</li>
-<li style="margin-bottom: 4px;"><strong>Атомарный откат (Instant Rollback):</strong> для отката неудачного релиза инженер выполняет команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">git revert <commit></code>, пушит в Git, и ArgoCD мгновенно восстанавливает предыдущую стабильную версию в кластере.</li>
+<li style="margin-bottom: 4px;"><strong>Атомарный откат (Instant Rollback):</strong> для отката неудачного релиза инженер выполняет команду <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">git revert &lt;commit&gt;</code>, пушит в Git, и ArgoCD мгновенно восстанавливает предыдущую стабильную версию в кластере.</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -6910,15 +6894,15 @@ argocd app sync order-service-prod</code></pre>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Когда клиент инициирует вызов, OpenTelemetry Tracer создает корневой спан:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, span := tracer.Start(ctx, "APIGateway.Forward")</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx, span := tracer.Start(ctx, &quot;APIGateway.Forward&quot;)</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Клиентский интерцептор использует OTel Propagator:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otel.GetTextMapPropagator().Inject(ctx, &metadataSupplier{md})</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">otel.GetTextMapPropagator().Inject(ctx, &amp;metadataSupplier{md})</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Серверный интерцептор извлекает контекст:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx := otel.GetTextMapPropagator().Extract(ctx, &metadataSupplier{md})</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx := otel.GetTextMapPropagator().Extract(ctx, &amp;metadataSupplier{md})</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Благодаря этому серверный спан становится дочерним к клиентскому, формируя непрерывное дерево вызовов.</li>
 </ul></div>
@@ -7018,18 +7002,18 @@ func TestOTelMetadataPropagation(t *testing.T) {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Зачем нужен span.SetStatus(codes.Error, "...") при ошибках?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Зачем нужен span.SetStatus(codes.Error, &quot;...&quot;) при ошибках?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Простого логирования ошибки недостаточно. Метод <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">span.SetStatus</code> помечает отрезок времени красным цветом в интерфейсе Jaeger/Grafana Tempo. Это позволяет мониторингу строить графики Error Budget и настраивать автоматические алерты по соотношению сбойных спанов.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-47">
   <div class="exercise-header">
     <div class="exercise-num-badge">Упражнение #47</div>
-    <div style="flex: 1;"><h3 class="exercise-title">Каскадная трассировка через 3 микросервиса: граф вызовов API Gateway -> User Service -> Auth Service</h3></div>
+    <div style="flex: 1;"><h3 class="exercise-title">Каскадная трассировка через 3 микросервиса: граф вызовов API Gateway -&gt; User Service -&gt; Auth Service</h3></div>
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Distributed Tracing (OpenTelemetry)</strong>: У тебя 3 микросервиса: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">API-Gateway</code> -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User-Service</code> -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Auth-Service</code>. Установи OpenTelemetry. Настрой проброс TraceID (через метаданные контекста gRPC) сквозь все три сервиса. (Можно поднять локально Jaeger в Docker и посмотреть на красивые графики "путешествия" запроса).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Distributed Tracing (OpenTelemetry)</strong>: У тебя 3 микросервиса: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">API-Gateway</code> -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User-Service</code> -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Auth-Service</code>. Установи OpenTelemetry. Настрой проброс TraceID (через метаданные контекста gRPC) сквозь все три сервиса. (Можно поднять локально Jaeger в Docker и посмотреть на красивые графики &quot;путешествия&quot; запроса).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7140,7 +7124,7 @@ func TestCascadeThreeHopTrace(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как связать трассировку синхронного вызова gRPC с асинхронным сообщением в Kafka?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> При публикации сообщения в Kafka продюсер инжектирует TraceID в бинарные заголовки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kafka.RecordHeader{Key: "traceparent", Value: ...}</code>. Консьюмер Kafka извлекает заголовок и создает спан с типом связи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace.Link</code>, соединяя синхронный HTTP/gRPC трейс с асинхронной обработкой в брокере.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> При публикации сообщения в Kafka продюсер инжектирует TraceID в бинарные заголовки <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kafka.RecordHeader{Key: &quot;traceparent&quot;, Value: ...}</code>. Консьюмер Kafka извлекает заголовок и создает спан с типом связи <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">trace.Link</code>, соединяя синхронный HTTP/gRPC трейс с асинхронной обработкой в брокере.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-48">
@@ -7271,7 +7255,7 @@ func TestServiceToServiceInteraction(t *testing.T) {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Каковы риски синхронных цепочек вызовов (A -> B -> C -> D)?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Каковы риски синхронных цепочек вызовов (A -&gt; B -&gt; C -&gt; D)?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1. <strong>Латентность суммируется</strong> ($T = T_A + T_B + T_C + T_D$). 2. <strong>Надежность падает мультипликативно:</strong> если каждый сервис имеет SLA 99.9%, то цепочка из 4 сервисов имеет SLA $0.999^4 \approx 99.6\%$. 3. <strong>Риск каскадного отказа:</strong> зависание сервиса D блокирует потоки во всех вышележащих сервисах. Решение: заменять синхронные цепочки асинхронными событиями и кэшированием.</p></div>
   </div>
 </div>
@@ -7522,7 +7506,7 @@ func main() {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Изучите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpclb</code> — протокол gRPC Load Balancing, где отдельный load balancer сервис отдает клиенту список backend'ов.</p></div>
+    <div><p style="margin-bottom: 6px;">Изучите <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpclb</code> — протокол gRPC Load Balancing, где отдельный load balancer сервис отдает клиенту список backend&#x27;ов.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -7634,7 +7618,7 @@ func TestGrpclbProtocolModel(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">resolver.Builder</code>:</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error)</code></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Scheme() string</code> — префикс схемы, например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"consul"</code>.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Scheme() string</code> — префикс схемы, например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;consul&quot;</code>.</li>
 <li style="margin-bottom: 4px;">Интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">resolver.Resolver</code>:</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ResolveNow(resolver.ResolveNowOptions)</code> — принудительное обновление адресов.</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Close()</code> — освобождение ресурсов.</li>
@@ -7723,7 +7707,7 @@ func TestCustomResolverRegistration(t *testing.T) {
   </div>
   <div class="callout callout-hood">
     <div class="callout-title">⚙️ Под капотом Go (Compiler, Linker & Runtime)</div>
-    <div><p style="margin-bottom: 6px;">Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">resolver.Register</code> сохраняет билдер в глобальной потокобезопасной карте. При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc.NewClient("myconsul:///service")</code> gRPC автоматически выбирает нужный билдер по схеме URI.</p></div>
+    <div><p style="margin-bottom: 6px;">Функция <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">resolver.Register</code> сохраняет билдер в глобальной потокобезопасной карте. При вызове <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc.NewClient(&quot;myconsul:///service&quot;)</code> gRPC автоматически выбирает нужный билдер по схеме URI.</p></div>
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
@@ -7974,7 +7958,7 @@ func TestGracefulStopCompletion(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Зачем нужен preStop hook в Kubernetes перед GracefulStop сервиса?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Когда Kubernetes удаляет под, обновление правил <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">iptables</code> на нодах кластера занимает 1–3 секунды. Если сразу вызвать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GracefulStop()</code>, сервис перестанет принимать соединения, а kube-proxy еще будет слать на него новые запросы. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">preStop: exec: command: ["sleep", "5"]</code> дает время кластеру убрать IP пода из эндпоинтов до начала остановки сервера.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Когда Kubernetes удаляет под, обновление правил <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">iptables</code> на нодах кластера занимает 1–3 секунды. Если сразу вызвать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">GracefulStop()</code>, сервис перестанет принимать соединения, а kube-proxy еще будет слать на него новые запросы. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">preStop: exec: command: [&quot;sleep&quot;, &quot;5&quot;]</code> дает время кластеру убрать IP пода из эндпоинтов до начала остановки сервера.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-55">
@@ -7992,22 +7976,20 @@ func TestGracefulStopCompletion(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Вместо написания десятков кастомных интерцепторов параметры надежности задаются в стандартизированном формате JSON:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`json</p>
-<p style="margin-bottom: 6px;">{</p>
-<p style="margin-bottom: 6px;">"loadBalancingPolicy": "round_robin",</p>
-<p style="margin-bottom: 6px;">"methodConfig": [{</p>
-<p style="margin-bottom: 6px;">"name": [{"service": "order.v1.OrderService"}],</p>
-<p style="margin-bottom: 6px;">"timeout": "2s",</p>
-<p style="margin-bottom: 6px;">"retryPolicy": {</p>
-<p style="margin-bottom: 6px;">"maxAttempts": 4,</p>
-<p style="margin-bottom: 6px;">"initialBackoff": "0.1s",</p>
-<p style="margin-bottom: 6px;">"maxBackoff": "1s",</p>
-<p style="margin-bottom: 6px;">"backoffMultiplier": 2.0,</p>
-<p style="margin-bottom: 6px;">"retryableStatusCodes": ["UNAVAILABLE", "RESOURCE_EXHAUSTED"]</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}]</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-json"><code class="language-json">{
+  &quot;loadBalancingPolicy&quot;: &quot;round_robin&quot;,
+  &quot;methodConfig&quot;: [{
+    &quot;name&quot;: [{&quot;service&quot;: &quot;order.v1.OrderService&quot;}],
+    &quot;timeout&quot;: &quot;2s&quot;,
+    &quot;retryPolicy&quot;: {
+      &quot;maxAttempts&quot;: 4,
+      &quot;initialBackoff&quot;: &quot;0.1s&quot;,
+      &quot;maxBackoff&quot;: &quot;1s&quot;,
+      &quot;backoffMultiplier&quot;: 2.0,
+      &quot;retryableStatusCodes&quot;: [&quot;UNAVAILABLE&quot;, &quot;RESOURCE_EXHAUSTED&quot;]
+    }
+  }]
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Передается клиенту через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc.WithDefaultServiceConfig(jsonConfig)</code>.</li>
 </ul></div>
@@ -8096,11 +8078,11 @@ func TestServiceConfigValidation(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Опечатка в названии статус-кода (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"Unavailable"</code> вместо капслока <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"UNAVAILABLE"</code>): парсер gRPC вернет ошибку конфигурации и отклонит вызов.</p></div>
+    <div><p style="margin-bottom: 6px;">Опечатка в названии статус-кода (например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;Unavailable&quot;</code> вместо капслока <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;UNAVAILABLE&quot;</code>): парсер gRPC вернет ошибку конфигурации и отклонит вызов.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему максимальное число попыток в Service Config ограничено пятью (maxAttempts <= 5)?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Почему максимальное число попыток в Service Config ограничено пятью (maxAttempts &lt;= 5)?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Это фундаментальное архитектурное ограничение gRPC для предотвращения шторма повторных запросов (Retry Storms), способного обрушить всю инфраструктуру бэкенда при глобальных сбоях.</p></div>
   </div>
 </div>
@@ -8120,7 +8102,7 @@ func TestServiceConfigValidation(t *testing.T) {
 <li style="margin-bottom: 4px;"><strong>Синхронный вызов (gRPC):</strong> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderService</code> ждет ответа от <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NotificationService</code>. Если почтовый сервер тормозит 5 секунд, клиент интернет-магазина ждет 5 секунд на кнопке «Оплатить».</li>
 <li style="margin-bottom: 4px;"><strong>Событийная архитектура (Event-Driven):</strong></li>
 </ul>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderService</code> сохраняет заказ и публикует событие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderCreated{ID: "42", Email: "user@mail.ru"}</code> в брокер (NATS/Kafka) за 2 мс.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderService</code> сохраняет заказ и публикует событие <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderCreated{ID: &quot;42&quot;, Email: &quot;user@mail.ru&quot;}</code> в брокер (NATS/Kafka) за 2 мс.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Клиент немедленно получает ответ «Заказ принят!».</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NotificationService</code> асинхронно вычитывает событие из очереди и отправляет email.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Даже если сервис уведомлений полностью упал, сообщения копятся в брокере и будут обработаны после его подъема (Decoupling in Time).</div></div>
@@ -8240,7 +8222,7 @@ func TestEventDrivenDecoupling(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как гарантировать порядок обработки событий в Kafka при нескольких консьюмерах?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Порядок строго гарантируется <strong>только внутри одной партиции</strong>. Чтобы события конкретного заказа обрабатывались строго последовательно (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderCreated</code> -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderPaid</code> -> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderShipped</code>), в качестве ключа партиционирования (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Record Key</code>) передается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">order_id</code>. Все события с одинаковым ключом гарантированно попадают в одну и ту же партицию к одному воркеру.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Порядок строго гарантируется <strong>только внутри одной партиции</strong>. Чтобы события конкретного заказа обрабатывались строго последовательно (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderCreated</code> -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderPaid</code> -&gt; <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">OrderShipped</code>), в качестве ключа партиционирования (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Record Key</code>) передается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">order_id</code>. Все события с одинаковым ключом гарантированно попадают в одну и ту же партицию к одному воркеру.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-57">
@@ -8365,10 +8347,10 @@ func TestWaitForReadyBehavior(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Параметры объекта <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">retryPolicy</code>:</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxAttempts</code>: максимальное число попыток (включая первую).</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">initialBackoff</code>: задержка перед первой повторной попыткой (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"0.1s"</code>).</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxBackoff</code>: потолок задержки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"1s"</code>).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">initialBackoff</code>: задержка перед первой повторной попыткой (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;0.1s&quot;</code>).</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">maxBackoff</code>: потолок задержки (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;1s&quot;</code>).</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">backoffMultiplier</code>: множитель экспоненты (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">2.0</code>).</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">retryableStatusCodes</code>: массив кодов, например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">["UNAVAILABLE"]</code>.</li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">retryableStatusCodes</code>: массив кодов, например <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">[&quot;UNAVAILABLE&quot;]</code>.</li>
 <li style="margin-bottom: 4px;">Ядро gRPC автоматически перехватывает ошибки сокета и выполняет прозрачный повтор без единой строчки прикладного кода!</li>
 </ul></div>
   </div>
@@ -8615,7 +8597,7 @@ func TestThreeInstancesBalancing(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Изучите проблему "connection draining" при деплое: как корректно завершить активные RPC перед остановкой пода?</p></div>
+    <div><p style="margin-bottom: 6px;">Изучите проблему &quot;connection draining&quot; при деплое: как корректно завершить активные RPC перед остановкой пода?</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -8722,7 +8704,7 @@ func TestConnectionDraining(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>"Chaos Engineering"</strong> (упрощённый):</p>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>&quot;Chaos Engineering&quot;</strong> (упрощённый):</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">pumba</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">chaos-mesh</code> для network latency, packet loss, pod kill</li>
 <li style="margin-bottom: 4px;">Запусти нагрузку, внедри chaos</li>
@@ -9007,7 +8989,7 @@ func TestSagaChainRollback(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>CQRS (Command Query Responsibility Segregation)</strong>: Разделите сервисы на "write" (gRPC для команд) и "read" (gRPC для запросов) с разными моделями данных.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>CQRS (Command Query Responsibility Segregation)</strong>: Разделите сервисы на &quot;write&quot; (gRPC для команд) и &quot;read&quot; (gRPC для запросов) с разными моделями данных.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9159,7 +9141,7 @@ func TestCQRSMicroserviceSeparation(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Client-Side Load Balancing</strong>: Подними три экземпляра своего gRPC-сервера на портах 5001, 5002, 5003. На клиенте используй встроенный механизм DNS/Manual resolver и задай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc.WithDefaultServiceConfig(</code>{"loadBalancingPolicy":"round_robin"}<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">)</code>. Сделай 10 запросов и убедись, что нагрузка распределилась равномерно (каждый сервер получил по 3-4 запроса).</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Client-Side Load Balancing</strong>: Подними три экземпляра своего gRPC-сервера на портах 5001, 5002, 5003. На клиенте используй встроенный механизм DNS/Manual resolver и задай <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc.WithDefaultServiceConfig(</code>{&quot;loadBalancingPolicy&quot;:&quot;round_robin&quot;}<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">)</code>. Сделай 10 запросов и убедись, что нагрузка распределилась равномерно (каждый сервер получил по 3-4 запроса).</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9168,8 +9150,8 @@ func TestCQRSMicroserviceSeparation(t *testing.T) {
 <li style="margin-bottom: 4px;">Пакет <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">google.golang.org/grpc/resolver/manual</code>:</li>
 <li style="margin-bottom: 4px;">Позволяет в тестах или коде напрямую передавать статический список адресов:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rb := manual.NewBuilderWithScheme("customstatic")</code></p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rb.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: ":5001"}, {Addr: ":5002"}, {Addr: ":5003"}}})</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rb := manual.NewBuilderWithScheme(&quot;customstatic&quot;)</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">rb.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: &quot;:5001&quot;}, {Addr: &quot;:5002&quot;}, {Addr: &quot;:5003&quot;}}})</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">gRPC клиент открывает сокеты и распределяет 10 запросов:</li>
 <li style="margin-bottom: 4px;">Сервер 1: 4 запроса.</li>
@@ -9296,16 +9278,14 @@ func TestTenRequestsDistribution(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Создается <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UnaryClientInterceptor</code>:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">func CircuitBreakerClientInterceptor(cb *gobreaker.CircuitBreaker) grpc.UnaryClientInterceptor {</p>
-<p style="margin-bottom: 6px;">return func(ctx, method, req, reply, cc, invoker, opts...) error {</p>
-<p style="margin-bottom: 6px;">_, err := cb.Execute(func() (any, error) {</p>
-<p style="margin-bottom: 6px;">return nil, invoker(ctx, method, req, reply, cc, opts...)</p>
-<p style="margin-bottom: 6px;">})</p>
-<p style="margin-bottom: 6px;">return err</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">  func CircuitBreakerClientInterceptor(cb *gobreaker.CircuitBreaker) grpc.UnaryClientInterceptor {
+      return func(ctx, method, req, reply, cc, invoker, opts...) error {
+          _, err := cb.Execute(func() (any, error) {
+              return nil, invoker(ctx, method, req, reply, cc, opts...)
+          })
+          return err
+      }
+  }</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Когда <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">InventoryService</code> падает, первые $N$ запросов ждут сетевого таймаута.</li>
 <li style="margin-bottom: 4px;">Затем цепь размыкается: все последующие вызовы возвращают <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ErrOpenState</code> за <strong>0.01 мс</strong>!</li>
@@ -9431,7 +9411,7 @@ func TestGobreakerClientInterceptor(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>"Canary Deployment"</strong>:</p>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>&quot;Canary Deployment&quot;</strong>:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Istio/Flagger: 5% трафика на v2, 95% на v1</li>
 <li style="margin-bottom: 4px;">Мониторинг error rate, latency на v2</li>
@@ -9458,7 +9438,7 @@ func TestGobreakerClientInterceptor(t *testing.T) {
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Опишите манифест Flagger Canary.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Задайте метрики анализа Prometheus.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте этапы продвижения трафика (5% -> 20% -> 50% -> 100%).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте этапы продвижения трафика (5% -&gt; 20% -&gt; 50% -&gt; 100%).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Продемонстрируйте механизм автоматического отката.</div></div>
   </div>
   <div class="code-container">
@@ -9517,12 +9497,12 @@ kubectl describe canary order-service -n production
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Проводить канареечный тест при околонулевом трафике (например глубокой ночью): пара тестовых ошибок составит 50% Error Rate и вызовет ложный откат. Flagger требует настройки минимального порога запросов (например > 100 RPS).</p></div>
+    <div><p style="margin-bottom: 6px;">Проводить канареечный тест при околонулевом трафике (например глубокой ночью): пара тестовых ошибок составит 50% Error Rate и вызовет ложный откат. Flagger требует настройки минимального порога запросов (например &gt; 100 RPS).</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «В чем отличие Blue-Green Deployment от Canary Deployment?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В Blue-Green развертываются 2 полных окружения, и трафик переключается <strong>мгновенно на 100%</strong> с Blue на Green. Если в новой версии есть скрытый баг, с ним столкнутся 100% пользователей. В Canary трафик переводится <strong>плавно по процентам</strong> (1% -> 5% -> 25%), минимизируя радиус поражения (Blast Radius) в случае сбоя.</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> В Blue-Green развертываются 2 полных окружения, и трафик переключается <strong>мгновенно на 100%</strong> с Blue на Green. Если в новой версии есть скрытый баг, с ним столкнутся 100% пользователей. В Canary трафик переводится <strong>плавно по процентам</strong> (1% -&gt; 5% -&gt; 25%), минимизируя радиус поражения (Blast Radius) в случае сбоя.</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-67">
@@ -9671,7 +9651,7 @@ func TestGRPCStreamingPubSub(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Паттерн "Предохранитель" (Circuit Breaker)</strong>: Если микросервис <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserService</code> начинает сильно тормозить или падать, вызывающий его сервис <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">APIGateway</code> не должен перегружать его новыми запросами и зависать сам. Интегрируйте библиотеку Circuit Breaker (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/sony/gobreaker</code>) на стороне gRPC-клиента в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">APIGateway</code>. Напишите тест: если 5 запросов подряд завершились ошибкой, предохранитель должен "разомкнуться" и мгновенно возвращать локальную ошибку-заглушку в обход отправки реальных сетевых запросов.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Паттерн &quot;Предохранитель&quot; (Circuit Breaker)</strong>: Если микросервис <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserService</code> начинает сильно тормозить или падать, вызывающий его сервис <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">APIGateway</code> не должен перегружать его новыми запросами и зависать сам. Интегрируйте библиотеку Circuit Breaker (например, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/sony/gobreaker</code>) на стороне gRPC-клиента в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">APIGateway</code>. Напишите тест: если 5 запросов подряд завершились ошибкой, предохранитель должен &quot;разомкнуться&quot; и мгновенно возвращать локальную ошибку-заглушку в обход отправки реальных сетевых запросов.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -9793,7 +9773,7 @@ func TestGatewayCircuitBreaker(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как предотвратить ложное размыкание предохранителя при кратковременном сетевом всплеске?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать скользящее окно (Sliding Window) с процентом ошибок: размыкать цепь, только если за последние 10 секунд поступило не менее 100 запросов и доля ошибок превысила 50% (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">failure_rate >= 0.5</code>).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать скользящее окно (Sliding Window) с процентом ошибок: размыкать цепь, только если за последние 10 секунд поступило не менее 100 запросов и доля ошибок превысила 50% (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">failure_rate &gt;= 0.5</code>).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-69">
@@ -10195,7 +10175,7 @@ func TestDependencyInjectionGraph(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>"CQRS with Materialized Views"</strong>:</p>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>&quot;CQRS with Materialized Views&quot;</strong>:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Command side: PostgreSQL, normalized schema</li>
 <li style="margin-bottom: 4px;">Event sourcing: все изменения — события</li>
@@ -10325,7 +10305,7 @@ func TestCQRSMaterializedLag(t *testing.T) {
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как вычисляется Kafka Consumer Lag в Prometheus?»</p>
-<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через утилиту <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kafka-exporter</code>, собирающую метрики <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kafka_consumergroup_lag{topic="...", consumergroup="..."}</code>. На ее основе настраивается критический алерт: если лаг превышает 50 000 сообщений более 5 минут, инициируется автоскейлинг подов воркеров-консьюмеров (KEDA).</p></div>
+<p style="margin-bottom: 6px;"><strong>Ответ:</strong> Через утилиту <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kafka-exporter</code>, собирающую метрики <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kafka_consumergroup_lag{topic=&quot;...&quot;, consumergroup=&quot;...&quot;}</code>. На ее основе настраивается критический алерт: если лаг превышает 50 000 сообщений более 5 минут, инициируется автоскейлинг подов воркеров-консьюмеров (KEDA).</p></div>
   </div>
 </div>
 <div class="exercise-card" id="ex-73">
@@ -10558,20 +10538,18 @@ kubectl logs order-service-pod -c envoy-proxy | grep tls
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Параметры Service Config Retry Policy:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`json</p>
-<p style="margin-bottom: 6px;">{</p>
-<p style="margin-bottom: 6px;">"methodConfig": [{</p>
-<p style="margin-bottom: 6px;">"name": [{"service": "inventory.v1.InventoryService"}],</p>
-<p style="margin-bottom: 6px;">"retryPolicy": {</p>
-<p style="margin-bottom: 6px;">"maxAttempts": 4,</p>
-<p style="margin-bottom: 6px;">"initialBackoff": "0.1s",</p>
-<p style="margin-bottom: 6px;">"maxBackoff": "1s",</p>
-<p style="margin-bottom: 6px;">"backoffMultiplier": 2.0,</p>
-<p style="margin-bottom: 6px;">"retryableStatusCodes": ["UNAVAILABLE"]</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">}]</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-json"><code class="language-json">{
+  &quot;methodConfig&quot;: [{
+    &quot;name&quot;: [{&quot;service&quot;: &quot;inventory.v1.InventoryService&quot;}],
+    &quot;retryPolicy&quot;: {
+      &quot;maxAttempts&quot;: 4,
+      &quot;initialBackoff&quot;: &quot;0.1s&quot;,
+      &quot;maxBackoff&quot;: &quot;1s&quot;,
+      &quot;backoffMultiplier&quot;: 2.0,
+      &quot;retryableStatusCodes&quot;: [&quot;UNAVAILABLE&quot;]
+    }
+  }]
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Формула задержки между попытками:</li>
 </ul>
@@ -10683,7 +10661,7 @@ func TestRetryPolicyJSONSchema(t *testing.T) {
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">User-Service</code> не знает о существовании <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Email-Service</code>, <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Analytics-Service</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CRM-Service</code>.</li>
 <li style="margin-bottom: 4px;">Он выполняет только свою задачу: сохраняет пользователя и публикует факт в топик Kafka:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kafka.Publish("users.events", UserCreatedEvent{ID: "usr_42", Email: "alex@yandex.ru"})</code></p>
+<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">kafka.Publish(&quot;users.events&quot;, UserCreatedEvent{ID: &quot;usr_42&quot;, Email: &quot;alex@yandex.ru&quot;})</code></p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Любое количество сервисов могут независимо подписаться на этот топик:</li>
 <li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">Email-Service</code> отправляет приветственное письмо.</li>
@@ -10812,7 +10790,7 @@ func TestEventChoreography(t *testing.T) {
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
-    <div><p style="margin-bottom: 6px;">Комплексная связка двух микросервисов (Gateway -> Backend):</p>
+    <div><p style="margin-bottom: 6px;">Комплексная связка двух микросервисов (Gateway -&gt; Backend):</p>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>API Gateway (Входной шлюз):</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Принимает внешние вызовы.</li>
@@ -10942,7 +10920,7 @@ func TestMiniMicroservicesPipeline(t *testing.T) {
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
-    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Каковы ключевые метрики здоровья связки Gateway -> Backend?»</p>
+    <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Каковы ключевые метрики здоровья связки Gateway -&gt; Backend?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> 1. <strong>Client Latency</strong> (p99 на входе шлюза). 2. <strong>Backend Error Rate</strong> (доля статусов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">codes.Unavailable</code>). 3. <strong>Circuit Breaker State</strong> (Closed/Open). 4. <strong>Active Goroutines</strong> на Gateway (контроль утечек при задержках сети).</p></div>
   </div>
 </div>
@@ -10953,7 +10931,7 @@ func TestMiniMicroservicesPipeline(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Балансировка нагрузки на стороне клиента (Client-Side Load Balancing)</strong>: Запустите три экземпляра gRPC-сервера <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserService</code> на разных портах. Настройте ваш gRPC-клиент так, чтобы он использовал встроенный алгоритм балансировки Round-Robin: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc.Dial("consul://...", grpc.WithDefaultServiceConfig(</code>{"loadBalancingConfig": [{"round_robin":{}}]}<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">))</code>. Убедитесь, что клиент равномерно распределяет запросы между тремя работающими серверами.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Балансировка нагрузки на стороне клиента (Client-Side Load Balancing)</strong>: Запустите три экземпляра gRPC-сервера <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserService</code> на разных портах. Настройте ваш gRPC-клиент так, чтобы он использовал встроенный алгоритм балансировки Round-Robin: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc.Dial(&quot;consul://...&quot;, grpc.WithDefaultServiceConfig(</code>{&quot;loadBalancingConfig&quot;: [{&quot;round_robin&quot;:{}}]}<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">))</code>. Убедитесь, что клиент равномерно распределяет запросы между тремя работающими серверами.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -10961,13 +10939,11 @@ func TestMiniMicroservicesPipeline(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В gRPC Service Config поддерживается современный синтаксис:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`json</p>
-<p style="margin-bottom: 6px;">{</p>
-<p style="margin-bottom: 6px;">"loadBalancingConfig": [</p>
-<p style="margin-bottom: 6px;">{ "round_robin": {} }</p>
-<p style="margin-bottom: 6px;">]</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-json"><code class="language-json">{
+  &quot;loadBalancingConfig&quot;: [
+    { &quot;round_robin&quot;: {} }
+  ]
+}</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Клиент обращается к URI схемы Service Discovery: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">consul:///user-service</code>.</li>
 <li style="margin-bottom: 4px;">Резолвер Consul возвращает 3 адреса серверов.</li>
@@ -11066,7 +11042,7 @@ func TestConsulClientSideLoadBalancing(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать устаревший <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">loadBalancingPolicy: "round_robin"</code> параллельно с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">loadBalancingConfig</code>: при конфликте приоритет отдается новому формату массива объектов.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать устаревший <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">loadBalancingPolicy: &quot;round_robin&quot;</code> параллельно с <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">loadBalancingConfig</code>: при конфликте приоритет отдается новому формату массива объектов.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -11100,7 +11076,7 @@ func TestConsulClientSideLoadBalancing(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте модель конечного автомата состояний соединения.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверьте переход <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">READY -> TRANSIENT_FAILURE</code>.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Проверьте переход <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">READY -&gt; TRANSIENT_FAILURE</code>.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Реализуйте реакцию на разрыв связи.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Протестируйте восстановление в состояние <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">READY</code>.</div></div>
   </div>
@@ -11201,7 +11177,7 @@ func TestChannelStateTransitions(t *testing.T) {
 <li style="margin-bottom: 4px;">Сервис-посредник принимает входящий <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code>.</li>
 <li style="margin-bottom: 4px;">Проверяет наличие дедлайна через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">deadline, ok := ctx.Deadline()</code>.</li>
 <li style="margin-bottom: 4px;">Вычисляет остаток времени: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">remaining := time.Until(deadline)</code>.</li>
-<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">remaining <= 0</code>, сервис немедленно возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">codes.DeadlineExceeded</code> без отправки бесполезных сетевых запросов дальше.</li>
+<li style="margin-bottom: 4px;">Если <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">remaining &lt;= 0</code>, сервис немедленно возвращает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">codes.DeadlineExceeded</code> без отправки бесполезных сетевых запросов дальше.</li>
 <li style="margin-bottom: 4px;">Если времени достаточно, передает <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx</code> в исходящий вызов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">client.NextServiceCall(ctx, req)</code>.</li>
 </ul></div>
   </div>
@@ -11301,7 +11277,7 @@ func TestDeadlineForwardingLogic(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Вычитать дедлайн и вызывать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep()</code>: работа с контекстом должна использовать селектор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select case <-ctx.Done()</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Вычитать дедлайн и вызывать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">time.Sleep()</code>: работа с контекстом должна использовать селектор <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">select case &lt;-ctx.Done()</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -11316,7 +11292,7 @@ func TestDeadlineForwardingLogic(t *testing.T) {
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;">Реализуй <strong>"Data migration between microservices"</strong>:</p>
+    <div><p style="margin-bottom: 6px;">Реализуй <strong>&quot;Data migration between microservices&quot;</strong>:</p>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Монолит → микросервисы: strangler fig pattern</li>
 <li style="margin-bottom: 4px;">Постепенный перенос: read from new service, write to both</li>
@@ -11462,7 +11438,7 @@ func TestStranglerFigMigration(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Выполнять Cutover сразу на 100% трафика: всегда переключайте трафик постепенно (Feature Flag / Canaries: 1% -> 5% -> 25% -> 100%), сохраняя возможность мгновенного отката флажком за 1 секунду.</p></div>
+    <div><p style="margin-bottom: 6px;">Выполнять Cutover сразу на 100% трафика: всегда переключайте трафик постепенно (Feature Flag / Canaries: 1% -&gt; 5% -&gt; 25% -&gt; 100%), сохраняя возможность мгновенного отката флажком за 1 секунду.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -11867,22 +11843,20 @@ func TestSemaphoreBulkheadLimits(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Манифест пода Kubernetes:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`yaml</p>
-<p style="margin-bottom: 6px;">livenessProbe:</p>
-<p style="margin-bottom: 6px;">grpc:</p>
-<p style="margin-bottom: 6px;">port: 50051</p>
-<p style="margin-bottom: 6px;">service: "" # Пустая строка проверяет общее состояние сервера</p>
-<p style="margin-bottom: 6px;">initialDelaySeconds: 5</p>
-<p style="margin-bottom: 6px;">readinessProbe:</p>
-<p style="margin-bottom: 6px;">grpc:</p>
-<p style="margin-bottom: 6px;">port: 50051</p>
-<p style="margin-bottom: 6px;">service: "order.v1.OrderService" # Проверка готовности конкретного сервиса</p>
-<p style="margin-bottom: 6px;">initialDelaySeconds: 2</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-yaml"><code class="language-yaml">livenessProbe:
+  grpc:
+    port: 50051
+    service: &quot;&quot; # Пустая строка проверяет общее состояние сервера
+  initialDelaySeconds: 5
+readinessProbe:
+  grpc:
+    port: 50051
+    service: &quot;order.v1.OrderService&quot; # Проверка готовности конкретного сервиса
+  initialDelaySeconds: 2</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">В коде Go:</li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)</code></li>
-<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">healthServer.SetServingStatus("order.v1.OrderService", healthpb.HealthCheckResponse_SERVING)</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">healthServer.SetServingStatus(&quot;&quot;, healthpb.HealthCheckResponse_SERVING)</code></li>
+<li style="margin-bottom: 4px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">healthServer.SetServingStatus(&quot;order.v1.OrderService&quot;, healthpb.HealthCheckResponse_SERVING)</code></li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -11890,8 +11864,8 @@ func TestSemaphoreBulkheadLimits(t *testing.T) {
       <span>🔍</span> Пошаговый ход решения и ход мысли инженера
     </h4>
     <div style="color: #cbd5e1; font-size: 0.94rem;"><div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> Создайте <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">health.NewServer()</code>.</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Задайте раздельные статусы для Liveness (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">""</code>) и Readiness (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">"order.v1.OrderService"</code>).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте проверку готовности Kubelet'ом.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Задайте раздельные статусы для Liveness (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;&quot;</code>) и Readiness (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">&quot;order.v1.OrderService&quot;</code>).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Смоделируйте проверку готовности Kubelet&#x27;ом.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Протестируйте переключение статуса в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">NOT_SERVING</code>.</div></div>
   </div>
   <div class="code-container">
@@ -11991,7 +11965,7 @@ func TestK8sGRPCHealthProbes(t *testing.T) {
 <li style="margin-bottom: 4px;">Каждый сервис экспортирует метрики Prometheus и трейсы Jaeger.</li>
 <li style="margin-bottom: 4px;">Используется Kubernetes для оркестрации с health checks и graceful shutdown.</li>
 <li style="margin-bottom: 4px;">Написаны интеграционные тесты через testcontainers для каждого сервиса.</li>
-<li style="margin-bottom: 4px;">Load testing через grpcurl или k6 показывает P99 latency < 100ms при 1000 RPS.</li>
+<li style="margin-bottom: 4px;">Load testing через grpcurl или k6 показывает P99 latency &lt; 100ms при 1000 RPS.</li>
 </ul></div>
   </div>
   <div class="callout callout-theory">
@@ -12000,33 +11974,31 @@ func TestK8sGRPCHealthProbes(t *testing.T) {
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Архитектурная диаграмма взаимодействия:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
-<p style="margin-bottom: 6px;">[ Клиенты: Web / Mobile ]</p>
-<p style="margin-bottom: 6px;">|  HTTP/1.1 REST JSON + JWT Bearer</p>
-<p style="margin-bottom: 6px;">v</p>
-<p style="margin-bottom: 6px;">+-------------------------------------------------------+</p>
-<p style="margin-bottom: 6px;">|                 API GATEWAY (BFF)                     |</p>
-<p style="margin-bottom: 6px;">|  - Маршрутизация, Rate Limiter, OpenTelemetry Tracing |</p>
-<p style="margin-bottom: 6px;">|  - Параллельная агрегация errgroup, Circuit Breakers  |</p>
-<p style="margin-bottom: 6px;">+-------------------------------------------------------+</p>
-<p style="margin-bottom: 6px;">|  Внутренний gRPC HTTP/2 с mTLS 1.3</p>
-<p style="margin-bottom: 6px;">+-----+-----------------------+-----------------------+</p>
-<p style="margin-bottom: 6px;">|                             |                       |</p>
-<p style="margin-bottom: 6px;">v                             v                       v</p>
-<p style="margin-bottom: 6px;">+---------------+           +---------------+       +---------------+</p>
-<p style="margin-bottom: 6px;">| USER SERVICE  |           |PRODUCT SERVICE|       | ORDER SERVICE |</p>
-<p style="margin-bottom: 6px;">| - PostgreSQL  |           | - Redis Cache |       | - Saga Coord  |</p>
-<p style="margin-bottom: 6px;">| - JWT Issuer  |           | - Streaming   |       | - Outbox WAL  |</p>
-<p style="margin-bottom: 6px;">+---------------+           +---------------+       +-------+-------+</p>
-<p style="margin-bottom: 6px;">|</p>
-<p style="margin-bottom: 6px;">+-------------------+-------------------+</p>
-<p style="margin-bottom: 6px;">| gRPC (Saga Steps)                     | gRPC (Idempotent)</p>
-<p style="margin-bottom: 6px;">v                                       v</p>
-<p style="margin-bottom: 6px;">+---------------+                       +---------------+</p>
-<p style="margin-bottom: 6px;">|INVENTORY SVC  |                       | PAYMENT SVC   |</p>
-<p style="margin-bottom: 6px;">| - Stock locks |                       | - Bank Gateway|</p>
-<p style="margin-bottom: 6px;">+---------------+                       +---------------+</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-none"><code class="language-none">[ Клиенты: Web / Mobile ]
+            |  HTTP/1.1 REST JSON + JWT Bearer
+            v
++-------------------------------------------------------+
+|                 API GATEWAY (BFF)                     |
+|  - Маршрутизация, Rate Limiter, OpenTelemetry Tracing |
+|  - Параллельная агрегация errgroup, Circuit Breakers  |
++-------------------------------------------------------+
+            |  Внутренний gRPC HTTP/2 с mTLS 1.3
+      +-----+-----------------------+-----------------------+
+      |                             |                       |
+      v                             v                       v
++---------------+           +---------------+       +---------------+
+| USER SERVICE  |           |PRODUCT SERVICE|       | ORDER SERVICE |
+| - PostgreSQL  |           | - Redis Cache |       | - Saga Coord  |
+| - JWT Issuer  |           | - Streaming   |       | - Outbox WAL  |
++---------------+           +---------------+       +-------+-------+
+                                                            |
+                                        +-------------------+-------------------+
+                                        | gRPC (Saga Steps)                     | gRPC (Idempotent)
+                                        v                                       v
+                                +---------------+                       +---------------+
+                                |INVENTORY SVC  |                       | PAYMENT SVC   |
+                                | - Stock locks |                       | - Bank Gateway|
+                                +---------------+                       +---------------+</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Все сервисы оснащены 7 уровнями надежности: Liveness/Readiness, Graceful Shutdown, Tracing, Metrics, Idempotency, Fallback, Retries.</li>
 </ul></div>
@@ -12163,7 +12135,7 @@ func TestECommercePlatformBoss(t *testing.T) {
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
     <div><p style="margin-bottom: 6px;">Сквозная архитектура безопасности TaskService:</p>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Client Interceptor:</strong> извлекает токен и внедряет заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">authorization: Bearer <jwt></code> в исходящие метаданные gRPC.</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <strong>Client Interceptor:</strong> извлекает токен и внедряет заголовок <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">authorization: Bearer &lt;jwt&gt;</code> в исходящие метаданные gRPC.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> <strong>Server Interceptor:</strong></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">Извлекает метаданные <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">FromIncomingContext</code>.</li>
@@ -12277,19 +12249,17 @@ func TestTaskServiceAuthFlow(t *testing.T) {
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Использовать строковый ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Value("user_id")</code>: строковые ключи не защищены от коллизий между сторонними библиотеками в контексте.</p></div>
+    <div><p style="margin-bottom: 6px;">Использовать строковый ключ <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ctx.Value(&quot;user_id&quot;)</code>: строковые ключи не защищены от коллизий между сторонними библиотеками в контексте.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
     <div><p style="margin-bottom: 6px;"><strong>Вопрос с собеседования:</strong> «Как в gRPC передавать Bearer токен на клиенте автоматически на каждый вызов?»</p>
 <p style="margin-bottom: 6px;"><strong>Ответ:</strong> Использовать интерфейс <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">credentials.PerRPCCredentials</code>:</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`go</p>
-<p style="margin-bottom: 6px;">type TokenAuth struct{ Token string }</p>
-<p style="margin-bottom: 6px;">func (t TokenAuth) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {</p>
-<p style="margin-bottom: 6px;">return map[string]string{"authorization": "Bearer " + t.Token}, nil</p>
-<p style="margin-bottom: 6px;">}</p>
-<p style="margin-bottom: 6px;">func (t TokenAuth) RequireTransportSecurity() bool { return true }</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-go"><code class="language-go">type TokenAuth struct{ Token string }
+func (t TokenAuth) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
+    return map[string]string{&quot;authorization&quot;: &quot;Bearer &quot; + t.Token}, nil
+}
+func (t TokenAuth) RequireTransportSecurity() bool { return true }</code></pre></div>
 <p style="margin-bottom: 6px;">Передается при создании клиента через <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">grpc.WithPerRPCCredentials(TokenAuth{...})</code>.</p></div>
   </div>
 </div>
@@ -12314,11 +12284,11 @@ func TestTaskServiceAuthFlow(t *testing.T) {
 <li style="margin-bottom: 4px;">Требования для работы Go бинарника в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scratch</code>:</li>
 </ul>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">1.</span> <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CGO_ENABLED=0</code> (полностью статический исполняемый файл ELF).</div>
-<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Флаги линковщика <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-ldflags="-s -w"</code> (удаление символов отладки DWARF).</div>
+<div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">2.</span> Флаги линковщика <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">-ldflags=&quot;-s -w&quot;</code> (удаление символов отладки DWARF).</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">3.</span> Копирование файла корневых сертификатов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/etc/ssl/certs/ca-certificates.crt</code> для исходящего HTTPS/TLS.</div>
 <div style="margin: 6px 0;"><span style="color: #38bdf8; font-weight: 700;">4.</span> Копирование <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/etc/passwd</code> для работы от непривилегированного пользователя <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">appuser</code> (UID 10001).</div>
 <ul style="margin: 8px 0 8px 20px;">
-<li style="margin-bottom: 4px;">Итоговый образ: размер <strong>~15 МБ</strong>, время холодного старта контейнера в Kubernetes: <strong>< 50 миллисекунд</strong>!</li>
+<li style="margin-bottom: 4px;">Итоговый образ: размер <strong>~15 МБ</strong>, время холодного старта контейнера в Kubernetes: <strong>&lt; 50 миллисекунд</strong>!</li>
 </ul></div>
   </div>
   <div style="margin: 18px 0 10px;">
@@ -12399,7 +12369,7 @@ docker run --rm -p 50051:50051 company/microservice:v2.0
   </div>
   <div class="callout callout-pitfalls">
     <div class="callout-title">⚠️ Частые грабли и ошибки новичков</div>
-    <div><p style="margin-bottom: 6px;">Пытаться использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RUN</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CMD ["sh", "..."]</code> в образе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scratch</code>: в контейнере нет командного процессора shell <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/bin/sh</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ENTRYPOINT</code> обязан передаваться строго в exec-форме: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ENTRYPOINT ["/app/microservice"]</code>.</p></div>
+    <div><p style="margin-bottom: 6px;">Пытаться использовать <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">RUN</code> или <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">CMD [&quot;sh&quot;, &quot;...&quot;]</code> в образе <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">scratch</code>: в контейнере нет командного процессора shell <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">/bin/sh</code>. <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ENTRYPOINT</code> обязан передаваться строго в exec-форме: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">ENTRYPOINT [&quot;/app/microservice&quot;]</code>.</p></div>
   </div>
   <div class="callout callout-bigtech">
     <div class="callout-title">🏢 В продакшене BigTech и на собеседованиях</div>
@@ -12416,7 +12386,7 @@ docker run --rm -p 50051:50051 company/microservice:v2.0
   </div>
   <div class="callout callout-task">
     <div class="callout-title">📌 Условие задачи</div>
-    <div><p style="margin-bottom: 6px;"><strong>Организация общего репозитория контрактов</strong>: При работе с микросервисами держать файлы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.proto</code> внутри каждого сервиса неудобно. Реализуйте паттерн "Proto-репозиторий": создайте изолированный Go-модуль, содержащий только файлы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.proto</code> и сгенерированный Go-код. Опубликуйте его на GitHub или подключите локально в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go.mod</code> ваших микросервисов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">APIGateway</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserService</code> в качестве общей разделяемой зависимости.</p></div>
+    <div><p style="margin-bottom: 6px;"><strong>Организация общего репозитория контрактов</strong>: При работе с микросервисами держать файлы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.proto</code> внутри каждого сервиса неудобно. Реализуйте паттерн &quot;Proto-репозиторий&quot;: создайте изолированный Go-модуль, содержащий только файлы <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">.proto</code> и сгенерированный Go-код. Опубликуйте его на GitHub или подключите локально в <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go.mod</code> ваших микросервисов <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">APIGateway</code> и <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">UserService</code> в качестве общей разделяемой зависимости.</p></div>
   </div>
   <div class="callout callout-theory">
     <div class="callout-title">💡 Теоретический фундамент и концепция</div>
@@ -12428,16 +12398,14 @@ docker run --rm -p 50051:50051 company/microservice:v2.0
 <li style="margin-bottom: 4px;">Создается отдельный Git-репозиторий: <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">github.com/company/proto-contracts</code>.</li>
 <li style="margin-bottom: 4px;">Структура каталогов:</li>
 </ul>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`text</p>
-<p style="margin-bottom: 6px;">proto-contracts/</p>
-<p style="margin-bottom: 6px;">├── api/</p>
-<p style="margin-bottom: 6px;">│   ├── user/v1/user.proto</p>
-<p style="margin-bottom: 6px;">│   └── order/v1/order.proto</p>
-<p style="margin-bottom: 6px;">├── gen/go/</p>
-<p style="margin-bottom: 6px;">│   ├── user/v1/user.pb.go</p>
-<p style="margin-bottom: 6px;">│   └── order/v1/order.pb.go</p>
-<p style="margin-bottom: 6px;">└── go.mod</p>
-<p style="margin-bottom: 6px;"><code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;"></code>`</p>
+<div class="code-container" style="margin: 10px 0;"><pre class="language-text"><code class="language-text">    proto-contracts/
+    ├── api/
+    │   ├── user/v1/user.proto
+    │   └── order/v1/order.proto
+    ├── gen/go/
+    │   ├── user/v1/user.pb.go
+    │   └── order/v1/order.pb.go
+    └── go.mod</code></pre></div>
 <ul style="margin: 8px 0 8px 20px;">
 <li style="margin-bottom: 4px;">CI пайплайн автоматически компилирует Go-пакеты и тегирует семантические релизы (<code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">v1.2.0</code>).</li>
 <li style="margin-bottom: 4px;">Микросервисы подключают сгенерированный код через обычный <code style="background: rgba(0, 173, 216, 0.12); color: #38bdf8; padding: 2px 5px; border-radius: 4px; font-size: 0.88em;">go get github.com/company/proto-contracts@v1.2.0</code>.</li>
