@@ -127,6 +127,8 @@ with open('builder/chapter50_data.json', 'r', encoding='utf-8') as f:
     ch50_exercises = json.load(f)
 with open('builder/chapter51_data.json', 'r', encoding='utf-8') as f:
     ch51_exercises = json.load(f)
+with open('builder/chapter52_data.json', 'r', encoding='utf-8') as f:
+    ch52_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -254,6 +256,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             49: ('chapter49.html', f'{len(ch49_exercises)}/{len(ch49_exercises)}'),
             50: ('chapter50.html', f'{len(ch50_exercises)}/{len(ch50_exercises)}'),
             51: ('chapter51.html', f'{len(ch51_exercises)}/{len(ch51_exercises)}'),
+            52: ('chapter52.html', f'{len(ch52_exercises)}/{len(ch52_exercises)}'),
         }
         
         if num in status_map:
@@ -2989,12 +2992,70 @@ def build_chapter51_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter50.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 50 Garbage Collector и тюнинг памяти</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 52 Интеграция с C-кодом через CGO (Скоро) →</a>
+            <a href="chapter52.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #080d1a; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 52 Интеграция с C-кодом через CGO →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'51. Работа с unsafe и низкоуровневой памятью ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+def build_chapter52_html(chapters):
+    active_chapter_num = 52
+    current_exercises = ch52_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 52</div>
+      <h1 class="hero-title">Интеграция с C-кодом через CGO</h1>
+      <p class="hero-desc">
+        Исчерпывающее практическое и архитектурное руководство по интеграции Go с нативными библиотеками на языках C и C++ с помощью инструмента CGO. Анатомия CGO-моста: специальный псевдопакет import "C", C-преамбула и правила компиляции. Взаимное отображение типов данных: целочисленные и вещественные типы, преобразование строк через C.CString, C.GoString, C.GoStringN и обязательное освобождение памяти с C.free. Работа со сложными структурами, объединениями union, перечислениями enum, массивами и срезами через unsafe.Pointer и unsafe.Slice. Межъязыковая модель исполнения: механизм смены стека между горутинами Go и системными потоками ОС (crosscall2, asmcgocall, cgocallback), накладные расходы и бенчмаркинг. Строгие правила безопасности указателей Go 1.6+ (cgocheck): запрет передачи указателей на Go-память в C-структуры и предотвращение use-after-free. Двусторонний интероп: экспорт Go-функций в Си через //export, реализация C-коллбэков и безопасный проброс хэндлов с cgo.Handle. Управление сборкой и компоновкой: флаги компилятора #cgo CFLAGS, LDFLAGS, статическая линковка архивов .a и динамическая загрузка .so библиотек в рантайме через dlopen/dlsym. Архитектурные альтернативы и оптимизации: паттерн Zero-Allocation Shared Memory Bridge с Lock-Free Ring Buffer для High-Frequency Trading и принципы полной статической сборки с CGO_ENABLED=0.
+      </p>
+    </section>
+    """)
+    
+    # Sections (70 exercises)
+    sections = [
+        (1, 18, 'Раздел 1: Введение в CGO, C preamble, примитивные типы и базовые строки (Упр. 1–18)'),
+        (19, 36, 'Раздел 2: Управление памятью C.CString, C.free, структуры и слайсы (Упр. 19–36)'),
+        (37, 53, 'Раздел 3: C-указатели, callback-функции, //export и правила cgocheck (Упр. 37–53)'),
+        (54, 70, 'Раздел 4: Статическая и динамическая линковка, флаги CFLAGS/LDFLAGS и оптимизация накладных расходов (Упр. 54–70)')
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 52!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили интеграцию Go с C и C++ кодом: от C-преамбулы, преобразования типов и строгих правил cgocheck до экспорта коллбэков, статической компоновки и построения экстремальных zero-allocation мостов на разделяемой памяти.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter51.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 51 Работа с unsafe и низкоуровневой памятью</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 53 Системные вызовы и взаимодействие с ОС (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'52. Интеграция с C-кодом через CGO ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -3051,6 +3112,7 @@ if __name__ == '__main__':
         ('chapter49.html', build_chapter49_html),
         ('chapter50.html', build_chapter50_html),
         ('chapter51.html', build_chapter51_html),
+        ('chapter52.html', build_chapter52_html),
     ]
     
     for filename, builder_fn in pages:
