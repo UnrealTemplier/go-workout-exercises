@@ -125,6 +125,8 @@ with open('builder/chapter49_data.json', 'r', encoding='utf-8') as f:
     ch49_exercises = json.load(f)
 with open('builder/chapter50_data.json', 'r', encoding='utf-8') as f:
     ch50_exercises = json.load(f)
+with open('builder/chapter51_data.json', 'r', encoding='utf-8') as f:
+    ch51_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -251,6 +253,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             48: ('chapter48.html', f'{len(ch48_exercises)}/{len(ch48_exercises)}'),
             49: ('chapter49.html', f'{len(ch49_exercises)}/{len(ch49_exercises)}'),
             50: ('chapter50.html', f'{len(ch50_exercises)}/{len(ch50_exercises)}'),
+            51: ('chapter51.html', f'{len(ch51_exercises)}/{len(ch51_exercises)}'),
         }
         
         if num in status_map:
@@ -2928,12 +2931,70 @@ def build_chapter50_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter49.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 49 Аллокатор кучи и управление памятью</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 51 Работа с unsafe и низкоуровневой памятью (Скоро) →</a>
+            <a href="chapter51.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #080d1a; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 51 Работа с unsafe и низкоуровневой памятью →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'50. Garbage Collector и тюнинг памяти ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+def build_chapter51_html(chapters):
+    active_chapter_num = 51
+    current_exercises = ch51_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 51</div>
+      <h1 class="hero-title">Работа с unsafe и низкоуровневой памятью</h1>
+      <p class="hero-desc">
+        Исчерпывающее практическое и теоретическое руководство по пакету unsafe и прямому управлению физической памятью в Go. Фундаментальные типы и канонические правила: взаимное преобразование указателей через unsafe.Pointer, целочисленная адресная арифметика с типом uintptr, вычисление размеров и смещений полей структур с помощью unsafe.Sizeof, unsafe.Alignof и unsafe.Offsetof. Современный API Go 1.17+ и Go 1.20+: безопасное смещение указателей unsafe.Add, мгновенное конструирование срезов и строк из сырой памяти через unsafe.Slice, unsafe.SliceData, unsafe.String и unsafe.StringData. Экстремальные HighLoad паттерны: Zero-Copy сериализация бинарных протоколов, эмуляция C-union и Type Punning без битовых сдвигов, обход инкапсуляции и чтение неэкспортированных приватных полей, построение кастомных arena-аллокаторов и lock-free структур данных на атомарных CAS-указателях. Анализ критических ловушек: перемещение стека при Stack Growth, инвалидация uintptr при GC safepoints, гонки данных в обход компилятора, строгие проверки go vet -unsafeptr и гарантированное предотвращение преждевременного сбора мусора с runtime.KeepAlive.
+      </p>
+    </section>
+    """)
+    
+    # Sections (85 exercises)
+    sections = [
+        (1, 21, 'Раздел 1: Основы unsafe.Pointer, uintptr и выравнивание типов (Упр. 1–21)'),
+        (22, 42, 'Раздел 2: Арифметика указателей, доступ к приватным полям и struct offset (Упр. 22–42)'),
+        (43, 64, 'Раздел 3: Zero-Copy String/Bytes, Type Punning и reflect.SliceHeader (Упр. 43–64)'),
+        (65, 85, 'Раздел 4: Атомарные операции с unsafe, выравнивание шины памяти и правила безопасности (Упр. 65–85)')
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 51!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили низкоуровневую работу с памятью в Go: от правил адресной арифметики и выравнивания структур до экстремальных Zero-Copy техник, кастомных арен и атомарных lock-free структур данных, применяемых в ведущих HighLoad системах мира.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter50.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 50 Garbage Collector и тюнинг памяти</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 52 Интеграция с C-кодом через CGO (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'51. Работа с unsafe и низкоуровневой памятью ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2989,6 +3050,7 @@ if __name__ == '__main__':
         ('chapter48.html', build_chapter48_html),
         ('chapter49.html', build_chapter49_html),
         ('chapter50.html', build_chapter50_html),
+        ('chapter51.html', build_chapter51_html),
     ]
     
     for filename, builder_fn in pages:
