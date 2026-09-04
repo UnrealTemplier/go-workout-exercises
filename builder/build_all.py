@@ -137,6 +137,8 @@ with open('builder/chapter55_data.json', 'r', encoding='utf-8') as f:
     ch55_exercises = json.load(f)
 with open('builder/chapter56_data.json', 'r', encoding='utf-8') as f:
     ch56_exercises = json.load(f)
+with open('builder/chapter57_data.json', 'r', encoding='utf-8') as f:
+    ch57_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -269,6 +271,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             54: ('chapter54.html', f'{len(ch54_exercises)}/{len(ch54_exercises)}'),
             55: ('chapter55.html', f'{len(ch55_exercises)}/{len(ch55_exercises)}'),
             56: ('chapter56.html', f'{len(ch56_exercises)}/{len(ch56_exercises)}'),
+            57: ('chapter57.html', f'{len(ch57_exercises)}/{len(ch57_exercises)}'),
         }
         
         if num in status_map:
@@ -3292,12 +3295,70 @@ def build_chapter56_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter55.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 55 Анализ AST и статический анализ кода</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 57 Симметричное и асимметричное шифрование (Скоро) →</a>
+            <a href="chapter57.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #070d19; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 57 Симметричное и асимметричное шифрование →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'56. Кодогенерация и шаблонизация ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+def build_chapter57_html(chapters):
+    active_chapter_num = 57
+    current_exercises = ch57_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 57</div>
+      <h1 class="hero-title">Симметричное и асимметричное шифрование</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по криптографии и сетевой безопасности в Go. Криптографически стойкая энтропия (crypto/rand) против math/rand. Симметричное шифрование: блочные шифры AES-128/256 (crypto/aes), потоковые AEAD-шифры AES-GCM и ChaCha20-Poly1305. Аутентификация сообщений с помощью HMAC (SHA-256, SHA-512) и формирование ключей через HKDF. Асимметричная криптография: RSA (генерация, сериализация PKCS#1/PKCS#8 PEM, безопасное шифрование OAEP и вероятностные цифровые подписи PSS), эллиптические кривые (crypto/ecdsa, Curve25519/Ed25519, X25519 Key Exchange). Паттерн гибридного шифрования (Envelope Encryption) больших данных. Инфраструктура открытых ключей (PKI): парсинг и генерация сертификатов X.509 v3 с SAN, создание CSR и локального CA, OCSP Stapling, аудит Certificate Transparency (CT). Сетевая безопасность: эталонная конфигурация TLS 1.3/1.2 и cipher suites, Mutual TLS (mTLS) в архитектуре Zero Trust, автоматический заказ сертификатов Let's Encrypt (ACME), Certificate Pinning, Session Tickets и динамический виртуальный хостинг SNI. Низкоуровневая безопасность памяти: zeroing secrets, crypto/subtle, memory-hard KDF (Argon2id, PBKDF2) и токены PASETO v4.
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, 25, "Раздел 1: Криптографическая энтропия и симметричные шифры (AES-GCM, ChaCha20-Poly1305) (Упр. 1–25)"),
+        (26, 50, "Раздел 2: Режимы блочного шифрования, HMAC и потоковая обработка (Упр. 26–50)"),
+        (51, 75, "Раздел 3: Асимметричная криптография: RSA (OAEP, PSS) и эллиптические кривые (ECDSA, Ed25519, X25519) (Упр. 51–75)"),
+        (76, 100, "Раздел 4: Промышленная криптография: TLS 1.3, X.509, Envelope Encryption, KMS и защита памяти (Упр. 76–100)"),
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 57!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили симметричное и асимметричное шифрование в Go: от блочных и AEAD-шифров AES/ChaCha20 до RSA-OAEP, RSA-PSS, ECDSA, Ed25519, инфраструктуры открытых ключей X.509, взаимного mTLS в Zero Trust, автоматизации ACME Let's Encrypt и защиты памяти секретов.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter56.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 56 Кодогенерация и шаблонизация</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 58 Хеширование паролей и криптографическая стойкость (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'57. Симметричное и асимметричное шифрование ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -3360,6 +3421,7 @@ if __name__ == '__main__':
         ('chapter54.html', build_chapter54_html),
         ('chapter55.html', build_chapter55_html),
         ('chapter56.html', build_chapter56_html),
+        ('chapter57.html', build_chapter57_html),
     ]
     
     for filename, builder_fn in pages:
