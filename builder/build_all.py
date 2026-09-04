@@ -123,6 +123,8 @@ with open('builder/chapter48_data.json', 'r', encoding='utf-8') as f:
     ch48_exercises = json.load(f)
 with open('builder/chapter49_data.json', 'r', encoding='utf-8') as f:
     ch49_exercises = json.load(f)
+with open('builder/chapter50_data.json', 'r', encoding='utf-8') as f:
+    ch50_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -248,6 +250,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             47: ('chapter47.html', f'{len(ch47_exercises)}/{len(ch47_exercises)}'),
             48: ('chapter48.html', f'{len(ch48_exercises)}/{len(ch48_exercises)}'),
             49: ('chapter49.html', f'{len(ch49_exercises)}/{len(ch49_exercises)}'),
+            50: ('chapter50.html', f'{len(ch50_exercises)}/{len(ch50_exercises)}'),
         }
         
         if num in status_map:
@@ -2866,12 +2869,71 @@ def build_chapter49_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter48.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 48 Планировщик GMP</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 50 Garbage Collector и тюнинг памяти (Скоро) →</a>
+            <a href="chapter50.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">Глава 50 Garbage Collector и тюнинг памяти →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'49. Аллокатор кучи и управление памятью ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+def build_chapter50_html(chapters):
+    active_chapter_num = 50
+    current_exercises = ch50_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 50</div>
+      <h1 class="hero-title">Garbage Collector и тюнинг памяти</h1>
+      <p class="hero-desc">
+        Глубокое практическое и теоретическое руководство по внутреннему устройству сборщика мусора Go и экстремальному тюнингу памяти в HighLoad. Четыре фазы работы GC: микросекундные паузы Stop-The-World (Mark Setup и Mark Termination), конкурентная маркировка (Concurrent Marking) на 25% CPU и ленивая очистка (Lazy Sweeping). Математика трехцветного автомата (Tri-color Mark-and-Sweep) и защита от потери объектов с помощью Hybrid Write Barrier (Dijkstra + Yuasa). Управление темпом сборки: адаптивный контроллер mgcpacer.go, алгоритм Mark Assist, расчет HeapGoal и калибровка параметров GOGC и GOMEMLIMIT (Go 1.19+). Архитектурные паттерны снижения давления на GC: переиспользование буферов в sync.Pool, noscan типы данных, интернирование строк, работа с off-heap памятью через mmap и профилирование утечек в pprof и go tool trace.
+      </p>
+    </section>
+    """)
+    
+    # Sections (87 exercises)
+    sections = [
+        (1, 22, 'Раздел 1: Архитектура Tri-color, Фазы GC и Барьеры записи (Упр. 1–22)'),
+        (23, 44, 'Раздел 2: GC Pacing, Mark Assist и Тюнинг GOGC/GOMEMLIMIT (Упр. 23–44)'),
+        (45, 66, 'Раздел 3: Scavenger, Профилирование gctrace и Оптимизация памяти (Упр. 45–66)'),
+        (67, 87, 'Раздел 4: Deep Dive в mgcpacer.go, OOM Prevention и Архитектурный тюнинг (Упр. 67–87)')
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 50!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили механику работы сборщика мусора Go: от битовых карт gcmarkBits и ассемблерных инструкций барьера записи до тонкого тюнинга GOMEMLIMIT, предотвращения OOM в Kubernetes и устранения задержек Mark Assist в HighLoad.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter49.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 49 Аллокатор кучи и управление памятью</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 51 Работа с unsafe и низкоуровневой памятью (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'50. Garbage Collector и тюнинг памяти ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2926,6 +2988,7 @@ if __name__ == '__main__':
         ('chapter47.html', build_chapter47_html),
         ('chapter48.html', build_chapter48_html),
         ('chapter49.html', build_chapter49_html),
+        ('chapter50.html', build_chapter50_html),
     ]
     
     for filename, builder_fn in pages:
