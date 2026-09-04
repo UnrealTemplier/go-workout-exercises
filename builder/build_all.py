@@ -141,6 +141,8 @@ with open('builder/chapter57_data.json', 'r', encoding='utf-8') as f:
     ch57_exercises = json.load(f)
 with open('builder/chapter58_data.json', 'r', encoding='utf-8') as f:
     ch58_exercises = json.load(f)
+with open('builder/chapter59_data.json', 'r', encoding='utf-8') as f:
+    ch59_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -275,6 +277,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             56: ('chapter56.html', f'{len(ch56_exercises)}/{len(ch56_exercises)}'),
             57: ('chapter57.html', f'{len(ch57_exercises)}/{len(ch57_exercises)}'),
             58: ('chapter58.html', f'{len(ch58_exercises)}/{len(ch58_exercises)}'),
+            59: ('chapter59.html', f'{len(ch59_exercises)}/{len(ch59_exercises)}'),
         }
         
         if num in status_map:
@@ -3414,12 +3417,70 @@ def build_chapter58_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter57.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 57 Симметричное и асимметричное шифрование</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 59 Токены аутентификации и авторизация (Скоро) →</a>
+            <a href="chapter59.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">Глава 59 Токены аутентификации и авторизация →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'58. Хеширование паролей и криптографическая стойкость ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+def build_chapter59_html(chapters):
+    active_chapter_num = 59
+    current_exercises = ch59_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 59</div>
+      <h1 class="hero-title">Токены аутентификации и авторизация</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по архитектуре токенов аутентификации и протоколам авторизации в Go. Фундамент Base64URL без паддинга (RFC 4648) и ручная сборка JWT. Криптографические алгоритмы цифровой подписи: HMAC-SHA256 (HS256), RSA PKCS#1 v1.5 (RS256), RSA-PSS (PS256), ECDSA (ES256) и Ed25519 (EdDSA). Канонический стандарт PASETO v4 (RFC): устранение уязвимостей алгоритмической гибкости (alg: none, Algorithm Confusion), аутентифицированное шифрование v4.local (XChaCha20-Poly1305 AEAD), асимметричные подписи v4.public и Pre-Authentication Encoding (PAE). Продвинутые примитивы авторизации: Macaroons с контекстными оговорками (First-Party и Third-Party Caveats), токены Biscuit на базе Datalog-политик и оффлайн-аттенюации. Протокол OAuth 2.0 (RFC 6749) и OAuth 2.1: Authorization Code Flow с бэк-ченнел обменом, PKCE (RFC 7636, S256), защита от Login CSRF через привязку state в HttpOnly/SameSite=Lax cookie, Client Credentials Flow (M2M) с пулом кэширования, Device Authorization Grant (RFC 8628). Ротация токенов (Refresh Token Rotation) с детекцией повторного использования (Token Family / Replay Detection) и окном Grace Period, безопасное хранение SHA-256 хешей в БД. Sender-Constrained токены DPoP (RFC 9449) с криптографическим подтверждением владения. OpenID Connect (OIDC Core 1.0): динамическое обнаружение (RFC 8414 /.well-known/openid-configuration), валидация ID Token через JWKS (RFC 7517) с On-Demand Refresh и защитой от Thundering Herd. Сессионные куки со строгой изоляцией (__Host- префикс, HttpOnly, Secure, SameSite=Strict). Интроспекция (RFC 7662) и отзыв токенов (RFC 7009). Тонкости интеграции Social Login (Google, GitHub, Apple ID с динамическим ES256 секретом).
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Фундамент токенов: Base64URL, ручная сборка JWT и PASETO v4 (Упражнения 1–15)"),
+        (16, "Раздел 2: Уязвимости токенов, алгоритмические атаки и криптографическая защита (Упражнения 16–25)"),
+        (26, "Раздел 3: Продвинутая авторизация: Macaroons, Biscuit, Token Family и сессии (Упражнения 26–44)"),
+        (45, "Раздел 4: Протоколы OAuth 2.0, OpenID Connect (OIDC) и корпоративный контроль доступа (Упражнения 45–66)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 59!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили токены аутентификации и протоколы авторизации в Go: от ручной сборки JWT и PASETO v4 до PKCE, Refresh Token Rotation, DPoP, OIDC Discovery, JWKS кэширования и проектирования собственного OAuth 2.0 сервера.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter58.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 58 Хеширование паролей и криптографическая стойкость</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 60 Безопасность веб-приложений и защита API (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'59. Токены аутентификации и авторизация ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -3484,6 +3545,7 @@ if __name__ == '__main__':
         ('chapter56.html', build_chapter56_html),
         ('chapter57.html', build_chapter57_html),
         ('chapter58.html', build_chapter58_html),
+        ('chapter59.html', build_chapter59_html),
     ]
     
     for filename, builder_fn in pages:
