@@ -143,6 +143,8 @@ with open('builder/chapter58_data.json', 'r', encoding='utf-8') as f:
     ch58_exercises = json.load(f)
 with open('builder/chapter59_data.json', 'r', encoding='utf-8') as f:
     ch59_exercises = json.load(f)
+with open('builder/chapter60_data.json', 'r', encoding='utf-8') as f:
+    ch60_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -278,6 +280,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             57: ('chapter57.html', f'{len(ch57_exercises)}/{len(ch57_exercises)}'),
             58: ('chapter58.html', f'{len(ch58_exercises)}/{len(ch58_exercises)}'),
             59: ('chapter59.html', f'{len(ch59_exercises)}/{len(ch59_exercises)}'),
+            60: ('chapter60.html', f'{len(ch60_exercises)}/{len(ch60_exercises)}'),
         }
         
         if num in status_map:
@@ -3475,12 +3478,70 @@ def build_chapter59_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter58.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 58 Хеширование паролей и криптографическая стойкость</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 60 Безопасность веб-приложений и защита API (Скоро) →</a>
+            <a href="chapter60.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #0b1120; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 60 Безопасность веб-приложений и защита API →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'59. Токены аутентификации и авторизация ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+def build_chapter60_html(chapters):
+    active_chapter_num = 60
+    current_exercises = ch60_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 60</div>
+      <h1 class="hero-title">Безопасность веб-приложений и защита API</h1>
+      <p class="hero-desc">
+        Комплексное практическое руководство по безопасности веб-приложений и защите REST API в Go. Защита от DoS-атак: сетевые таймауты (ReadHeaderTimeout, ReadTimeout, WriteTimeout, IdleTimeout), лимитирование объема входящих тел запросов через http.MaxBytesReader и multipart-форм, защита от Slowloris и memory exhaustion. Полномасштабная защита от SSRF: блокировка приватных подсетей (RFC 1918, Link-Local 169.254.169.254, loopback), предотвращение атак TOCTOU и DNS Rebinding через закрепление IP (IP pinning) в кастомном DialContext, разбор альтернативных форматов IP (Decimal DWORD, Hex, Octal). Инъекционные векторы: предотвращение SQLi в динамических выражениях ORDER BY и идентификаторах через строгий Whitelist Mapping, Command Injection в os/exec (безопасный вызов без shell sh -c), XSS и контекстно-зависимое экранирование в html/template vs text/template, предотвращение Path Traversal с использованием filepath.Rel и виртуальной fs os.DirFS. Межсайтовые угрозы и безопасность браузера: Stateless HMAC и Stateful CSRF токены, Double Submit Cookie, промышленный CORS middleware со строгим Whitelist и preflight кэшированием (Max-Age), Open Redirect санитизация, Nonce-based Content Security Policy (CSP Level 3), защита от Clickjacking (X-Frame-Options и frame-ancestors). Управление секретами: интеграция с HashiCorp Vault (AppRole, динамические PostgreSQL credentials, аренда и heartbeat renewal), AWS Secrets Manager через IRSA без статичных ключей, Memory Zeroing чувствительных данных в RAM и защита от атак по времени через crypto/subtle.ConstantTimeCompare.
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Базовая сетевая защита: DoS, Payload Limit, SSRF и Timing Attacks (Упражнения 1–15)"),
+        (16, "Раздел 2: Инъекционные уязвимости: SQLi, Command Injection, XSS и Path Traversal (Упражнения 16–31)"),
+        (32, "Раздел 3: Межсайтовые угрозы и безопасность браузера: CSRF, CORS, Open Redirect и CSP (Упражнения 32–45)"),
+        (46, "Раздел 4: Корпоративная безопасность: Vault, Secrets Manager, XXE и Hardening (Упражнения 46–63)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 60!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы освоили полный стек защиты веб-приложений и API в Go: от предотвращения DoS, SSRF, SQLi, XSS, Path Traversal и CSRF до интеграции с HashiCorp Vault, AWS Secrets Manager, Strict CSP, Double Submit Cookie и создания промышленного фасада безопасности.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter59.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 59 Токены аутентификации и авторизация</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 61 Документоориентированная база данных MongoDB (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'60. Безопасность веб-приложений и защита API ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -3546,6 +3607,7 @@ if __name__ == '__main__':
         ('chapter57.html', build_chapter57_html),
         ('chapter58.html', build_chapter58_html),
         ('chapter59.html', build_chapter59_html),
+        ('chapter60.html', build_chapter60_html),
     ]
     
     for filename, builder_fn in pages:
