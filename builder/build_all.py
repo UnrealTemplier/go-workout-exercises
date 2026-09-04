@@ -149,6 +149,8 @@ with open('builder/chapter61_data.json', 'r', encoding='utf-8') as f:
     ch61_exercises = json.load(f)
 with open('builder/chapter62_data.json', 'r', encoding='utf-8') as f:
     ch62_exercises = json.load(f)
+with open('builder/chapter63_data.json', 'r', encoding='utf-8') as f:
+    ch63_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -341,6 +343,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             60: ('chapter60.html', f'{len(ch60_exercises)}/{len(ch60_exercises)}'),
             61: ('chapter61.html', f'{len(ch61_exercises)}/{len(ch61_exercises)}'),
             62: ('chapter62.html', f'{len(ch62_exercises)}/{len(ch62_exercises)}'),
+            63: ('chapter63.html', f'{len(ch63_exercises)}/{len(ch63_exercises)}'),
         }
         
         if num in status_map:
@@ -3715,12 +3718,71 @@ def build_chapter62_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter61.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 61 Документоориентированная база данных MongoDB</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 63 Поисковые движки Elasticsearch и OpenSearch (Скоро) →</a>
+            <a href="chapter63.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #0b1120; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 63 Поисковые движки Elasticsearch и OpenSearch →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'62. Аналитическая СУБД ClickHouse ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter63_html(chapters):
+    active_chapter_num = 63
+    current_exercises = ch63_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 63</div>
+      <h1 class="hero-title">Поисковые движки Elasticsearch и OpenSearch</h1>
+      <p class="hero-desc">
+        Исчерпывающее практическое руководство по распределенным поисковым и аналитическим движкам Elasticsearch и OpenSearch для Go-разработчиков высоконагруженных систем. Внутренняя архитектура Apache Lucene: инвертированный индекс (Inverted Index), префиксные автоматы FST (Finite State Transducers), иммутабельность сегментов, журнал упреждающей записи translog, колоночное хранилище doc_values и сжатые битовые карты Roaring Bitmaps. Официальные клиенты go-elasticsearch/v8 и opensearch-go: пулы HTTP/2 соединений, векторизованная пакетная индексация через esutil.NewBulkIndexer с неблокирующими очередями, стратегиями сброса и обработкой HTTP 429 Too Many Requests. Проектирование схем: принцип Mapping First, предотвращение Mapping Explosion через dynamic: strict, глубокое сравнение типов text и keyword, многопоточные анализаторы, токенизаторы, фильтры стоп-слов, синонимов и стемминга. Сложные поисковые конструкции: составные Bool-запросы (must vs filter vs should vs must_not), исключение оверхеда скоринга в Filter Context, расчет релевантности по алгоритму BM25, нечеткий поиск опечаток Fuzzy Search по расстоянию Левенштейна-Дамерау. Глубокая пагинация: ограничение max_result_window, Point in Time (PIT) со search_after. Фасетная навигация и многомерная аналитика e-commerce каталогов через агрегации terms, histogram и nested. Эксплуатация и HighLoad: политики жизненного цикла индексов (ILM) для time-series данных, data streams, скрипты Painless в UpdateByQuery, инкрементальные снапшоты, шардирование и мониторинг восстановления кластера через _cat/recovery.
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Архитектура Lucene, CRUD, маппинг и Bulk API (Упражнения 1–15)"),
+        (16, "Раздел 2: Анализаторы, полнотекстовый поиск и сложные Bool-запросы (Упражнения 16–30)"),
+        (31, "Раздел 3: Глубокая пагинация, Highlighting, Geo и вложенные структуры (Упражнения 31–45)"),
+        (46, "Раздел 4: Агрегации, ILM, отказоустойчивость и HighLoad архитектура (Упражнения 46–60)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 63!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили поисковые движки Elasticsearch и OpenSearch в Go: от физического устройства инвертированного индекса Lucene и высокопроизводительного BulkIndexer до сложных Bool-запросов, фасетных агрегаций, глубокой пагинации через PIT + search_after, скриптов Painless и time-series архитектуры с ILM.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter62.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 62 Аналитическая СУБД ClickHouse</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 64 Логическая репликация и Change Data Capture (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'63. Поисковые движки Elasticsearch и OpenSearch ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -3789,6 +3851,7 @@ if __name__ == '__main__':
         ('chapter60.html', build_chapter60_html),
         ('chapter61.html', build_chapter61_html),
         ('chapter62.html', build_chapter62_html),
+        ('chapter63.html', build_chapter63_html),
     ]
     
     for filename, builder_fn in pages:
