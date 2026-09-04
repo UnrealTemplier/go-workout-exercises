@@ -133,6 +133,8 @@ with open('builder/chapter53_data.json', 'r', encoding='utf-8') as f:
     ch53_exercises = json.load(f)
 with open('builder/chapter54_data.json', 'r', encoding='utf-8') as f:
     ch54_exercises = json.load(f)
+with open('builder/chapter55_data.json', 'r', encoding='utf-8') as f:
+    ch55_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -263,6 +265,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             52: ('chapter52.html', f'{len(ch52_exercises)}/{len(ch52_exercises)}'),
             53: ('chapter53.html', f'{len(ch53_exercises)}/{len(ch53_exercises)}'),
             54: ('chapter54.html', f'{len(ch54_exercises)}/{len(ch54_exercises)}'),
+            55: ('chapter55.html', f'{len(ch55_exercises)}/{len(ch55_exercises)}'),
         }
         
         if num in status_map:
@@ -3172,12 +3175,69 @@ def build_chapter54_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter53.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 53 Системные вызовы и взаимодействие с ОС</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 55 Анализ AST и статический анализ кода (Скоро) →</a>
+            <a href="chapter55.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #ffffff; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #00add8;">Глава 55 Анализ AST и статический анализ кода →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'54. Продвинутая рефлексия (reflect) ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+def build_chapter55_html(chapters):
+    active_chapter_num = 55
+    current_exercises = ch55_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 55</div>
+      <h1 class="hero-title">Анализ AST и статический анализ кода</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по синтаксическому и семантическому анализу исходного кода на Go: лексический анализ с go/token и go/scanner, синтаксический разбор в абстрактное синтаксическое дерево (AST) с go/parser, инспекция деклараций, операторов и выражений с ast.Inspect и ast.Walk, семантический анализ типов и областей видимости с go/types, построение графов вызовов функций (callgraph), разработка production-линтеров на базе фреймворка go/analysis, трансформация кода через astutil.Apply и интеграция проверок качества и автофиксов (SuggestedFix) в пайплайны CI/CD и golangci-lint.
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, 22, "Раздел 1: Основы синтаксического анализа: go/token, go/scanner, go/parser и структура AST (Упр. 1–22)"),
+        (23, 44, "Раздел 2: Обход и инспекция AST: ast.Inspect, ast.Walk, извлечение типов, функций и комментариев (Упр. 23–44)"),
+        (45, 66, "Раздел 3: Семантический анализ с go/types, построение графов вызовов и линтинг (Упр. 45–66)"),
+        (67, 85, "Раздел 4: Фреймворк go/analysis, трансформация AST (astutil), автофикс и интеграция в CI/CD (Упр. 67–85)"),
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 55!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили синтаксический и статический анализ кода в Go: от токенизации и обхода AST-деревьев до проверки типов в go/types, создания собственных линтеров на фреймворке go/analysis, автоисправления кода (SuggestedFixes) и интеграции в golangci-lint.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter54.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 54 Продвинутая рефлексия (reflect)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 56 Кодогенерация и шаблонизация (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'55. Анализ AST и статический анализ кода ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -3238,6 +3298,7 @@ if __name__ == '__main__':
         ('chapter52.html', build_chapter52_html),
         ('chapter53.html', build_chapter53_html),
         ('chapter54.html', build_chapter54_html),
+        ('chapter55.html', build_chapter55_html),
     ]
     
     for filename, builder_fn in pages:
