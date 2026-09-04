@@ -117,6 +117,8 @@ with open('builder/chapter45_data.json', 'r', encoding='utf-8') as f:
     ch45_exercises = json.load(f)
 with open('builder/chapter46_data.json', 'r', encoding='utf-8') as f:
     ch46_exercises = json.load(f)
+with open('builder/chapter47_data.json', 'r', encoding='utf-8') as f:
+    ch47_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -239,6 +241,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             44: ('chapter44.html', f'{len(ch44_exercises)}/{len(ch44_exercises)}'),
             45: ('chapter45.html', f'{len(ch45_exercises)}/{len(ch45_exercises)}'),
             46: ('chapter46.html', f'{len(ch46_exercises)}/{len(ch46_exercises)}'),
+            47: ('chapter47.html', f'{len(ch47_exercises)}/{len(ch47_exercises)}'),
         }
         
         if num in status_map:
@@ -2680,12 +2683,71 @@ def build_chapter46_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter45.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 45 Контейнеризация и Docker</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 47 Оркестрация в Kubernetes (Скоро) →</a>
+            <a href="chapter47.html" style="display: inline-flex; align-items: center; gap: 6px; background: #0284c7; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #38bdf8;">Глава 47 Оркестрация в Kubernetes →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'46. Автоматизация CI-CD ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+def build_chapter47_html(chapters):
+    active_chapter_num = 47
+    current_exercises = ch47_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 47</div>
+      <h1 class="hero-title">Оркестрация в Kubernetes</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по промышленной оркестрации высоконагруженных распределенных систем на Go в Kubernetes (K8s). Полный разбор базовых и продвинутых примитивов кластера: Pods, ReplicaSets, Deployments (RollingUpdate c maxSurge/maxUnavailable, Recreate), Services (ClusterIP, NodePort, LoadBalancer, Headless для gRPC) и CoreDNS Service Discovery. Управление конфигурациями и секретами: ConfigMaps (проекция томов и symlink rotation), Secrets (KMS шифрование, External Secrets Operator для синхронизации с HashiCorp Vault и AWS Secrets Manager). Персистентное хранилище: PersistentVolumes, PersistentVolumeClaims, StorageClasses с динамическим провижинингом (CSI драйверы) и StatefulSets. Механизмы надежности рантайма Go: тонкий тюнинг GOMEMLIMIT и Linux cgroups для исключения OOMKilled, Liveness/Readiness/Startup Probes и гарантированный Zero-Downtime Graceful Shutdown через связку lifecycle.preStop со sleep и signal.NotifyContext. Продвинутое планирование и автомасштабирование: Taints, Tolerations, NodeAffinity, PodAntiAffinity, TopologySpreadConstraints, Horizontal Pod Autoscaler (HPA v2 по CPU и кастомным метрикам KEDA), Vertical Pod Autoscaler (VPA), PodDisruptionBudget (PDB), Cluster Autoscaler и новое поколение Karpenter с bin-packing Spot инстансов. Пакетные менеджеры и декларативные манифесты: глубокое сравнение Helm 3 (шаблонизация Go/Sprig, субчарты, lifecycle hooks) и Kustomize (base/overlays, patches). Безопасность и комплаенс: Pod Security Standards (PSS/PSA Restricted profile), OPA Gatekeeper (Policy-as-Code на Rego), Kyverno и сетевая изоляция Zero-Trust NetworkPolicies (Calico/Cilium eBPF). Наблюдаемость (Observability): Prometheus Operator (ServiceMonitor), сбор логов Grafana Loki и Promtail, распределенная трассировка с OpenTelemetry Collector и Jaeger, runtime аудит ядра с Falco. Service Mesh: внедрение Istio (Envoy sidecar injection, mTLS STRICT, L7 AuthorizationPolicy, канареечные релизы через VirtualService и DestinationRule). GitOps и прогрессивная доставка: развертывание флота кластеров через ArgoCD (паттерны App-of-Apps и ApplicationSet Matrix Generator), автоматизация обновления образов ArgoCD Image Updater, автоматический анализ SLO в Argo Rollouts (Canary/Blue-Green) и практика Chaos Engineering с LitmusChaos.
+      </p>
+    </section>
+    """)
+    
+    # Sections (180 exercises)
+    sections = [
+        (1, 45, 'Раздел 1: Базовые примитивы Kubernetes — Pods, Deployments, Services, ConfigMaps, Secrets, Probes и лимиты ресурсов'),
+        (46, 90, 'Раздел 2: Автомасштабирование (HPA, VPA), Affinity, Taints/Tolerations, NetworkPolicies, StatefulSets и PDB'),
+        (91, 135, 'Раздел 3: Управление конфигурациями (Helm, Kustomize), безопасность RBAC, Admission Controllers и CRD/Операторы'),
+        (136, 180, 'Раздел 4: Продвинутая оркестрация, Service Mesh, Observability, прогрессивная доставка и High Availability')
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 47!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы завершили один из самых объемных и фундаментальных модулей курса! Теперь вы в совершенстве владеете полным стеком оркестрации в Kubernetes: от архитектуры базовых примитивов до создания отказоустойчивых Cloud Native платформ, GitOps автоматизации, внедрения Service Mesh и проектирования систем с надежностью 99.99%.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter46.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 46 Автоматизация CI-CD</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 48 Планировщик GMP (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'47. Оркестрация в Kubernetes ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2737,6 +2799,7 @@ if __name__ == '__main__':
         ('chapter44.html', build_chapter44_html),
         ('chapter45.html', build_chapter45_html),
         ('chapter46.html', build_chapter46_html),
+        ('chapter47.html', build_chapter47_html),
     ]
     
     for filename, builder_fn in pages:
