@@ -121,6 +121,8 @@ with open('builder/chapter47_data.json', 'r', encoding='utf-8') as f:
     ch47_exercises = json.load(f)
 with open('builder/chapter48_data.json', 'r', encoding='utf-8') as f:
     ch48_exercises = json.load(f)
+with open('builder/chapter49_data.json', 'r', encoding='utf-8') as f:
+    ch49_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -245,6 +247,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             46: ('chapter46.html', f'{len(ch46_exercises)}/{len(ch46_exercises)}'),
             47: ('chapter47.html', f'{len(ch47_exercises)}/{len(ch47_exercises)}'),
             48: ('chapter48.html', f'{len(ch48_exercises)}/{len(ch48_exercises)}'),
+            49: ('chapter49.html', f'{len(ch49_exercises)}/{len(ch49_exercises)}'),
         }
         
         if num in status_map:
@@ -2804,12 +2807,71 @@ def build_chapter48_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter47.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 47 Оркестрация в Kubernetes</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 49 Аллокатор кучи и управление памятью (Скоро) →</a>
+            <a href="chapter49.html" style="display: inline-flex; align-items: center; gap: 6px; background: #0284c7; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #38bdf8;">Глава 49 Аллокатор кучи и управление памятью →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'48. Планировщик GMP ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+def build_chapter49_html(chapters):
+    active_chapter_num = 49
+    current_exercises = ch49_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 49</div>
+      <h1 class="hero-title">Аллокатор кучи и управление памятью</h1>
+      <p class="hero-desc">
+        Исчерпывающее руководство по внутреннему устройству аллокатора кучи Go и управлению оперативной памятью. Архитектура TCMalloc: трехуровневая модель Lock-Free mcache (per-P кэш спанов), центральный пул mcentral (по 136 классам размеров scan/noscan со спинлоками) и глобальная куча mheap (страницы по 8 КБ, arenas по 64 МБ, системные вызовы mmap и madvise). Анатомия структуры mspan: квантование памяти на 67 классов размеров (Size Classes), расчет внутренней фрагментации, побитовые карты allocBits и gcmarkBits. Механика Escape Analysis: алгоритмы анализа побега компилятора Go (-gcflags="-m"), причины перемещения переменных со стека в кучу (возврат указателей, замыкания, интерфейсный боксинг, срезы динамической емкости). Оптимизация памяти: выравнивание полей структур (Memory Alignment) и устранение ложного разделения кэш-линий (False Sharing). Мониторинг и профилирование: метрики runtime.MemStats (HeapAlloc, HeapSys, HeapIdle, HeapReleased), поиск утечек в pprof heap (inuse_space vs alloc_space), тонкая настройка GOMEMLIMIT, переиспользование буферов в sync.Pool и реализация кастомного Arena Allocator.
+      </p>
+    </section>
+    """)
+    
+    # Sections (66 exercises)
+    sections = [
+        (1, 17, 'Раздел 1: Архитектура TCMalloc, mcache, mcentral и mheap (Упр. 1–17)'),
+        (18, 34, 'Раздел 2: Анализ побега (Escape Analysis), Стеки и Классы размеров (Упр. 18–34)'),
+        (35, 51, 'Раздел 3: Фрагментация, sync.Pool, Выравнивание памяти и Scavenger (Упр. 35–51)'),
+        (52, 66, 'Раздел 4: Анатомия mallocgc, Профилирование pprof и Custom Allocator (Упр. 52–66)')
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 49!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве изучили механику управления памятью в Go: от ассемблерных инструкций выделения памяти на стеке до многоуровневой архитектуры TCMalloc, профилирования утечек в pprof и создания высокоскоростных ареных аллокаторов для HighLoad.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter48.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 48 Планировщик GMP</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 50 Garbage Collector и тюнинг памяти (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'49. Аллокатор кучи и управление памятью ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2863,6 +2925,7 @@ if __name__ == '__main__':
         ('chapter46.html', build_chapter46_html),
         ('chapter47.html', build_chapter47_html),
         ('chapter48.html', build_chapter48_html),
+        ('chapter49.html', build_chapter49_html),
     ]
     
     for filename, builder_fn in pages:

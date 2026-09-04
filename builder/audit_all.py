@@ -151,6 +151,9 @@ with open('builder/chapter47_data.json', 'r', encoding='utf-8') as f:
 with open('builder/chapter48_data.json', 'r', encoding='utf-8') as f:
     ch48_exercises = json.load(f)
 
+with open('builder/chapter49_data.json', 'r', encoding='utf-8') as f:
+    ch49_exercises = json.load(f)
+
 all_ch1 = s1 + s2 + s3 + s4 + s5 + s6
 all_ch2 = ch2_exercises
 all_ch3 = ch3_exercises
@@ -199,8 +202,9 @@ all_ch45 = ch45_exercises
 all_ch46 = ch46_exercises
 all_ch47 = ch47_exercises
 all_ch48 = ch48_exercises
+all_ch49 = ch49_exercises
 
-total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11) + len(all_ch12) + len(all_ch13) + len(all_ch14) + len(all_ch15) + len(all_ch16) + len(all_ch17) + len(all_ch18) + len(all_ch19) + len(all_ch20) + len(all_ch21) + len(all_ch22) + len(all_ch23) + len(all_ch24) + len(all_ch25) + len(all_ch26) + len(all_ch27) + len(all_ch28) + len(all_ch29) + len(all_ch30) + len(all_ch31) + len(all_ch32) + len(all_ch33) + len(all_ch34) + len(all_ch35) + len(all_ch36) + len(all_ch37) + len(all_ch38) + len(all_ch39) + len(all_ch40) + len(all_ch41) + len(all_ch42) + len(all_ch43) + len(all_ch44) + len(all_ch45) + len(all_ch46) + len(all_ch47) + len(all_ch48)
+total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11) + len(all_ch12) + len(all_ch13) + len(all_ch14) + len(all_ch15) + len(all_ch16) + len(all_ch17) + len(all_ch18) + len(all_ch19) + len(all_ch20) + len(all_ch21) + len(all_ch22) + len(all_ch23) + len(all_ch24) + len(all_ch25) + len(all_ch26) + len(all_ch27) + len(all_ch28) + len(all_ch29) + len(all_ch30) + len(all_ch31) + len(all_ch32) + len(all_ch33) + len(all_ch34) + len(all_ch35) + len(all_ch36) + len(all_ch37) + len(all_ch38) + len(all_ch39) + len(all_ch40) + len(all_ch41) + len(all_ch42) + len(all_ch43) + len(all_ch44) + len(all_ch45) + len(all_ch46) + len(all_ch47) + len(all_ch48) + len(all_ch49)
 
 print("=== ТЕХНИЧЕСКИЙ АУДИТ УЧЕБНИКА GO ===")
 print(f"Глава 1:  {len(all_ch1)} упражнений")
@@ -251,6 +255,7 @@ print(f"Глава 45: {len(all_ch45)} упражнений")
 print(f"Глава 46: {len(all_ch46)} упражнений")
 print(f"Глава 47: {len(all_ch47)} упражнений")
 print(f"Глава 48: {len(all_ch48)} упражнений")
+print(f"Глава 49: {len(all_ch49)} упражнений")
 print(f"Всего упражнений в учебнике: {total_ex}")
 
 issues = []
@@ -389,6 +394,8 @@ for ex in all_ch47:
     check_exercise(47, ex)
 for ex in all_ch48:
     check_exercise(48, ex)
+for ex in all_ch49:
+    check_exercise(49, ex)
 
 # Check HTML files and anchors
 html_files = [
@@ -440,6 +447,7 @@ html_files = [
     ('chapter46.html', 46, len(all_ch46)),
     ('chapter47.html', 47, len(all_ch47)),
     ('chapter48.html', 48, len(all_ch48)),
+    ('chapter49.html', 49, len(all_ch49)),
 ]
 
 for fname, ch_num, count in html_files:
