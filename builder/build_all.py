@@ -113,6 +113,8 @@ with open('builder/chapter43_data.json', 'r', encoding='utf-8') as f:
     ch43_exercises = json.load(f)
 with open('builder/chapter44_data.json', 'r', encoding='utf-8') as f:
     ch44_exercises = json.load(f)
+with open('builder/chapter45_data.json', 'r', encoding='utf-8') as f:
+    ch45_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -233,6 +235,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             42: ('chapter42.html', f'{len(ch42_exercises)}/{len(ch42_exercises)}'),
             43: ('chapter43.html', f'{len(ch43_exercises)}/{len(ch43_exercises)}'),
             44: ('chapter44.html', f'{len(ch44_exercises)}/{len(ch44_exercises)}'),
+            45: ('chapter45.html', f'{len(ch45_exercises)}/{len(ch45_exercises)}'),
         }
         
         if num in status_map:
@@ -2558,12 +2561,70 @@ def build_chapter44_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter43.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 43 Шаблоны проектирования распределенных и enterprise-систем</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 45 Контейнеризация и Docker (Скоро) →</a>
+            <a href="chapter45.html" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 45 Контейнеризация и Docker →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'44. Проектирование высоконагруженных и отказоустойчивых систем ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+def build_chapter45_html(chapters):
+    active_chapter_num = 45
+    current_exercises = ch45_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 45</div>
+      <h1 class="hero-title">Контейнеризация и Docker</h1>
+      <p class="hero-desc">
+        Исчерпывающее практическое руководство по контейнеризации Go-микросервисов на базе Docker и экосистемы OCI: анатомия одноэтапных и многоэтапных сборок (Multi-stage build), уменьшение размера продакшн-образов с 850 МБ до 5–15 МБ на базе Alpine, Google Distroless и чистого scratch. Техники изоляции кэша зависимостей (go.mod/go.sum) и ускорения сборок в 10 раз с помощью BuildKit cache mounts, безопасная передача токенов через secret mounts, мультиплатформенные образы (Multi-Arch AMD64/ARM64) с Docker Buildx. Разбор каверзных кейсов статической линковки CGO (musl против glibc), работа с SSL-сертификатами (ca-certificates) и базой таймзон (tzdata). Комплексное развертывание многокомпонентных сред в Docker Compose (Go, PostgreSQL, Redis, Kafka, NATS, Jaeger), управление сетями, томами (Named Volumes, Bind Mounts, tmpfs), политиками перезапуска, ротацией логов и лимитами ресурсов cgroups v2. Реализация горячей перезагрузки с Air, паттерн Init Container для безопасных миграций баз данных, статический аудит слоев утилитой dive и глубокое сканирование уязвимостей (CVE) через govulncheck и Trivy в соответствии со стандартами Security by Default.
+      </p>
+    </section>
+    """)
+    
+    # Sections (75 exercises)
+    sections = [
+        (1, 19, 'Раздел 1: Основы Dockerfile, многоэтапная сборка (Multi-stage), Scratch, Distroless и кэширование слоев'),
+        (20, 38, 'Раздел 2: Безопасность образов, Non-Root, BuildKit кэш и секреты, Multi-Arch сборка и статический CGO'),
+        (39, 57, 'Раздел 3: Docker Compose, управление сетью и томами, переменные окружения, Health Checks и лимиты ресурсов'),
+        (58, 75, 'Раздел 4: Hot-reload с Air, Init-контейнеры, сканирование уязвимостей, аудит слоев и профили Compose')
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 45!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы досконально изучили технологии контейнеризации Go-микросервисов на уровне Senior/Staff инженера: от проектирования минималистичных и безопасных OCI-образов до оркестрации распределенных стеков разработки в Docker Compose, аудита безопасности DevSecOps и защиты от атак Container Escape.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter44.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 44 Проектирование высоконагруженных и отказоустойчивых систем</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 46 Автоматизация CI-CD (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'45. Контейнеризация и Docker ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2613,6 +2674,7 @@ if __name__ == '__main__':
         ('chapter42.html', build_chapter42_html),
         ('chapter43.html', build_chapter43_html),
         ('chapter44.html', build_chapter44_html),
+        ('chapter45.html', build_chapter45_html),
     ]
     
     for filename, builder_fn in pages:
