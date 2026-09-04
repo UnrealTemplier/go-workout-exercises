@@ -115,6 +115,8 @@ with open('builder/chapter44_data.json', 'r', encoding='utf-8') as f:
     ch44_exercises = json.load(f)
 with open('builder/chapter45_data.json', 'r', encoding='utf-8') as f:
     ch45_exercises = json.load(f)
+with open('builder/chapter46_data.json', 'r', encoding='utf-8') as f:
+    ch46_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -236,6 +238,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             43: ('chapter43.html', f'{len(ch43_exercises)}/{len(ch43_exercises)}'),
             44: ('chapter44.html', f'{len(ch44_exercises)}/{len(ch44_exercises)}'),
             45: ('chapter45.html', f'{len(ch45_exercises)}/{len(ch45_exercises)}'),
+            46: ('chapter46.html', f'{len(ch46_exercises)}/{len(ch46_exercises)}'),
         }
         
         if num in status_map:
@@ -2619,12 +2622,70 @@ def build_chapter45_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter44.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 44 Проектирование высоконагруженных и отказоустойчивых систем</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 46 Автоматизация CI-CD (Скоро) →</a>
+            <a href="chapter46.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #090d16; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 46 Автоматизация CI-CD →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'45. Контейнеризация и Docker ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+def build_chapter46_html(chapters):
+    active_chapter_num = 46
+    current_exercises = ch46_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 46</div>
+      <h1 class="hero-title">Автоматизация CI-CD</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по проектированию, оптимизации и защите корпоративных конвейеров Continuous Integration и Continuous Delivery (CI/CD) для микросервисов на Go. Полный разбор декларативных пайплайнов GitHub Actions, GitLab CI, Jenkinsfile и Cloud-Native фреймворка Tekton: настройка матричного тестирования кросс-платформенного кода (Go 1.21–1.24, Linux/macOS/Windows), параллелизация тест-сьютов и оптимизация DAG-графов исполнения. Углубленные техники кэширования модулей Go (GOPATH/pkg/mod, GOCACHE) и слоев OCI-образов BuildKit через GitHub Actions Cache (gha) и удаленные реестры. Безопасность цепочки поставок ПО (Software Supply Chain Security / DevSecOps): статический анализ govulncheck на базе Call Graph Reachability, мета-линтер golangci-lint с fail-fast политиками, сканирование OCI-образов утилитой Trivy, инвентаризация SBOM с Syft и криптографическая подпись артефактов через Cosign (Sigstore Keyless OIDC). Мультиплатформенная кросс-компиляция (AMD64/ARM64) с QEMU и Buildx. Продвинутые практики развертывания: автоматизация релизов GoReleaser и SemVer-версионирование, интеграционные тесты с Service Containers (Redis, PostgreSQL), GitOps-оркестрация на базе ArgoCD (Application CRD, паттерн App of Apps) и Flux CD (ImageUpdateAutomation), прогрессивная доставка Canary-релизов в Argo Rollouts с автооткатом по метрикам Prometheus, защита веток через Branch Protection Rules и принципы Platform Engineering (Self-Service IDP).
+      </p>
+    </section>
+    """)
+    
+    # Sections (57 exercises)
+    sections = [
+        (1, 14, 'Раздел 1: Базовые пайплайны GitHub Actions, матричные сборки, линтинг и кэширование зависимостей'),
+        (15, 28, 'Раздел 2: Сборка и публикация Docker-образов, GitLab CI, Jenkins, покрытие тестами и SAST аудит'),
+        (29, 43, 'Раздел 3: Сканирование образов Trivy, GitOps с ArgoCD, релизы через GoReleaser и версионирование SemVer'),
+        (44, 57, 'Раздел 4: Продвинутый CD, канареечные релизы Argo Rollouts, Flux CD, секреты и Platform Engineering')
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 46!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили проектирование промышленных CI/CD конвейеров для Go: от матричных сборок, линтинга и криптографической подписи артефактов до GitOps-доставки через ArgoCD, канареечных релизов в Argo Rollouts и платформ самообслуживания разработчиков.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter45.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 45 Контейнеризация и Docker</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 47 Оркестрация в Kubernetes (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'46. Автоматизация CI-CD ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -2675,6 +2736,7 @@ if __name__ == '__main__':
         ('chapter43.html', build_chapter43_html),
         ('chapter44.html', build_chapter44_html),
         ('chapter45.html', build_chapter45_html),
+        ('chapter46.html', build_chapter46_html),
     ]
     
     for filename, builder_fn in pages:
@@ -2683,3 +2745,4 @@ if __name__ == '__main__':
         with open(path, 'w', encoding='utf-8') as f:
             f.write(content)
         print(f"Written {path} ({os.path.getsize(path)} bytes)")
+
