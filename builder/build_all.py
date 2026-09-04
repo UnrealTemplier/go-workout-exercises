@@ -129,6 +129,8 @@ with open('builder/chapter51_data.json', 'r', encoding='utf-8') as f:
     ch51_exercises = json.load(f)
 with open('builder/chapter52_data.json', 'r', encoding='utf-8') as f:
     ch52_exercises = json.load(f)
+with open('builder/chapter53_data.json', 'r', encoding='utf-8') as f:
+    ch53_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -257,6 +259,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             50: ('chapter50.html', f'{len(ch50_exercises)}/{len(ch50_exercises)}'),
             51: ('chapter51.html', f'{len(ch51_exercises)}/{len(ch51_exercises)}'),
             52: ('chapter52.html', f'{len(ch52_exercises)}/{len(ch52_exercises)}'),
+            53: ('chapter53.html', f'{len(ch53_exercises)}/{len(ch53_exercises)}'),
         }
         
         if num in status_map:
@@ -3050,12 +3053,71 @@ def build_chapter52_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter51.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 51 Работа с unsafe и низкоуровневой памятью</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 53 Системные вызовы и взаимодействие с ОС (Скоро) →</a>
+            <a href="chapter53.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #ffffff; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #00add8;">Глава 53 Системные вызовы и взаимодействие с ОС →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'52. Интеграция с C-кодом через CGO ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+def build_chapter53_html(chapters):
+    active_chapter_num = 53
+    current_exercises = ch53_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section (БЕЗ hero-stats)
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 53</div>
+      <h1 class="hero-title">Системные вызовы и взаимодействие с ОС</h1>
+      <p class="hero-desc">
+        Исчерпывающее практическое и архитектурное руководство по прямому взаимодействию Go с ядром операционной системы через системные вызовы. Механика перехода Ring 3 → Ring 0: таблицы прерываний, инструкции SYSCALL/SYSENTER и соглашения о вызовах ABI. Работа со стандартным пакетом syscall и расширением golang.org/x/sys/unix: syscall.Syscall, RawSyscall и оптимизация накладных расходов. Файловые дескрипторы и процессная модель: открытые файлы, каналы pipe, управление процессами через fork/exec, clone, wait4 и системные лимиты rlimit. Виртуальная память ядра: отображение файлов и анонимных страниц через mmap, управление защитой памяти с mprotect, синхронизация с диском через msync и подсказки кэширования madvise. Высокопроизводительный асинхронный ввод-вывод: мультиплексирование через epoll и kqueue, устройство внутреннего Netpoller рантайма Go, режимы Level-Triggered и Edge-Triggered (EPOLLET), неблокирующий I/O и обработка EAGAIN. Расширенные механизмы ядра Linux: мониторинг файловой системы inotify, прецизионные таймеры timerfd, обработка сигналов через signalfd, разделяемая память POSIX SHM и высокопроизводительные сетевые серверы без горутин.
+      </p>
+    </section>
+    """)
+    
+    # Sections (75 exercises)
+    sections = [
+        (1, 18, 'Раздел 1: Базовые системные вызовы, дескрипторы файлов и процессная модель (Упр. 1–18)'),
+        (19, 37, 'Раздел 2: Память mmap, защита mprotect и основы сетевого ввода-вывода (Упр. 19–37)'),
+        (38, 56, 'Раздел 3: Асинхронный I/O, архитектура epoll, kqueue и Go Netpoller (Упр. 38–56)'),
+        (57, 75, 'Раздел 4: Расширенные механизмы ядра: inotify, timerfd, signalfd и zero-copy (Упр. 57–75)')
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_end, s_title = sections[current_sec_idx]
+            if num == s_start:
+                content_parts.append(f"""
+                <div class="section-separator">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 53!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили системное программирование в Go: от низкоуровневых интерфейсов ядра, файловых дескрипторов и mmap до архитектуры epoll, signalfd, timerfd и построения сверхбыстрых сетевых движков на базе неблокирующего I/O.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter52.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 52 Интеграция с C-кодом через CGO</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 54 Продвинутая рефлексия (reflect) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'53. Системные вызовы и взаимодействие с ОС ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
 
 if __name__ == '__main__':
     chapters = get_all_chapters()
@@ -3113,6 +3175,7 @@ if __name__ == '__main__':
         ('chapter50.html', build_chapter50_html),
         ('chapter51.html', build_chapter51_html),
         ('chapter52.html', build_chapter52_html),
+        ('chapter53.html', build_chapter53_html),
     ]
     
     for filename, builder_fn in pages:
