@@ -165,6 +165,8 @@ with open('builder/chapter69_data.json', 'r', encoding='utf-8') as f:
     ch69_exercises = json.load(f)
 with open('builder/chapter70_data.json', 'r', encoding='utf-8') as f:
     ch70_exercises = json.load(f)
+with open('builder/chapter71_data.json', 'r', encoding='utf-8') as f:
+    ch71_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -365,6 +367,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             68: ('chapter68.html', f'{len(ch68_exercises)}/{len(ch68_exercises)}'),
             69: ('chapter69.html', f'{len(ch69_exercises)}/{len(ch69_exercises)}'),
             70: ('chapter70.html', f'{len(ch70_exercises)}/{len(ch70_exercises)}'),
+            71: ('chapter71.html', f'{len(ch71_exercises)}/{len(ch71_exercises)}'),
         }
         
         if num in status_map:
@@ -4209,12 +4212,71 @@ def build_chapter70_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter69.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 69 Паттерны Outbox и Inbox для надежной доставки сообщений</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 71 Выборы лидера (Leader Election) в распределенных системах (Скоро) →</a>
+            <a href="chapter71.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #ffffff; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #00add8;">Глава 71 Выборы лидера (Leader Election) в распределенных системах →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'70. Проектирование идемпотентных API ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+def build_chapter71_html(chapters):
+    active_chapter_num = 71
+    current_exercises = ch71_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 71</div>
+        <h1 class="hero-title">Выборы лидера (Leader Election) в распределенных системах</h1>
+        <p class="hero-desc">
+            Фундаментальное и прикладное руководство по реализации отказоустойчивых алгоритмов выбора лидера (Leader Election) в распределенных системах на Go: координаторы etcd (v3.5+) и HashiCorp Consul. Атомарные аренды (Leases), KeepAlive heartbeat-потоки, транзакции сравнения ревизий (Txn CAS) и пакет go.etcd.io/etcd/client/v3/concurrency. Механизмы Kubernetes LeaderElector (client-go), хуки OnStartedLeading, OnStoppedLeading и OnNewLeader с fail-fast гарантией. Анализ асинхронных сетей и сетевых разделений (Network Partitions, Split-Brain), теорема о кворумах (Quorum Intersection), расчет отказоустойчивости нечетных кластеров. Предотвращение набега толпы (Thundering Herd) через детерминированные очереди CreateRevision и экспоненциальный Full Jitter backoff. Управление сессиями HashiCorp Consul (api.Session), семантика блокировок (KV Acquire / Release), Blocking Queries (WaitIndex) и параметр LockDelay. Защита хранилищ от зомби-лидеров через монотонные Fencing Tokens, глубокие проверки здоровья лидера (Deep Health Checks), graceful step down с drain активных задач и концептуальный переход к консенсусу Raft.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: etcd Leases, KeepAlive и атомарные транзакции захвата лидерства (Упражнения 1–22)"),
+        (23, "Раздел 2: Пакет concurrency.Election, Kubernetes LeaderElector и Standby-режимы (Упражнения 23–45)"),
+        (46, "Раздел 3: Network Partitions, Split-Brain, кворумы и разделение обязанностей лидера (Упражнения 46–67)"),
+        (68, "Раздел 4: Consul vs etcd, Fencing Tokens, Health Checks и мост к протоколу Raft (Упражнения 68–90)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 71!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы досконально изучили механизмы распределенного выбора лидера в HighLoad и Cloud Native архитектурах: от низкоуровневых арен etcd и сессий Consul до защиты от сетевых разделений, кворумов, предотвращения Split-Brain с помощью Fencing Tokens и бесшовного переключения при сбоях.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter70.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 70 Проектирование идемпотентных API</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 72 Протокол консенсуса Raft (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'71. Выборы лидера (Leader Election) в распределенных системах ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
 
 
 if __name__ == '__main__':
@@ -4291,6 +4353,7 @@ if __name__ == '__main__':
         ('chapter68.html', build_chapter68_html),
         ('chapter69.html', build_chapter69_html),
         ('chapter70.html', build_chapter70_html),
+        ('chapter71.html', build_chapter71_html),
     ]
     
     for filename, builder_fn in pages:
