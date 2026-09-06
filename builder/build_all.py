@@ -169,6 +169,8 @@ with open('builder/chapter71_data.json', 'r', encoding='utf-8') as f:
     ch71_exercises = json.load(f)
 with open('builder/chapter72_data.json', 'r', encoding='utf-8') as f:
     ch72_exercises = json.load(f)
+with open('builder/chapter73_data.json', 'r', encoding='utf-8') as f:
+    ch73_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -371,6 +373,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             70: ('chapter70.html', f'{len(ch70_exercises)}/{len(ch70_exercises)}'),
             71: ('chapter71.html', f'{len(ch71_exercises)}/{len(ch71_exercises)}'),
             72: ('chapter72.html', f'{len(ch72_exercises)}/{len(ch72_exercises)}'),
+            73: ('chapter73.html', f'{len(ch73_exercises)}/{len(ch73_exercises)}'),
         }
         
         if num in status_map:
@@ -4331,12 +4334,71 @@ def build_chapter72_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter71.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 71 Выборы лидера (Leader Election)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 73 Распределенные блокировки и Fencing Tokens (Скоро) →</a>
+            <a href="chapter73.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #0b1120; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 73 Распределенные блокировки и Fencing Tokens →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'72. Протокол консенсуса Raft ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter73_html(chapters):
+    active_chapter_num = 73
+    current_exercises = ch73_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 73</div>
+        <h1 class="hero-title">Распределенные блокировки и Fencing Tokens</h1>
+        <p class="hero-desc">
+            Фундаментальное и прикладное руководство по проектированию, реализации и эксплуатации распределенных блокировок (Distributed Locks) в высоконагруженных микросервисных архитектурах на Go. Анализ базового мьютекса в Redis (SET resource_name my_random_value NX PX ttl), атомарное освобождение через Lua-скрипты и фоновые процессы автоматического продления аренды (Watchdog / KeepAlive). Критический разбор алгоритма Redlock: математическая полемика Мартина Клеппмана (Martin Kleppmann) и Сальваторе Санфилиппо (antirez), проблемы асинхронной репликации, сдвига физических часов (Clock Skew) и паузы сборщика мусора (Stop-The-World GC Pause). Полнофункциональная распределенная координация через etcd (go.etcd.io/etcd/client/v3/concurrency): создание аренды (Lease), транзакции атомарного сравнения ревизий Txn (If CreateRevision == 0) и реактивное ожидание освобождения через etcd Watch API без busy-polling нагрузки. Блокировки в HashiCorp Consul на основе сессий (Session API) и параметра ModifyIndex. Концепция и реализация Fencing Tokens (ограждающих монотонных токенов): сквозная передача токена в хранилище (PostgreSQL / S3), паттерн Guard Row в реляционной СУБД (INSERT ... ON CONFLICT DO UPDATE с инкрементом токена и проверкой в WHERE), отсечение запоздалых записей зомби-воркеров и 100% защита от катастрофы Split-Brain. Архитектурные паттерны: минимизация критической секции (Lock Minimization), иерархия блокировок (Lock Ordering / Lock Hierarchy) для предотвращения распределенных дедлоков, комбинация распределенных блокировок с ключами идемпотентности (Idempotency Keys), распределенные семафоры (Distributed Semaphores на Redis ZSET), мониторинг Lock Contention в Prometheus и построение высоконадежного распределенного диспетчера задач.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Базовые Redis Lock, Lua-скрипты, Watchdog и уязвимость асинхронной репликации (Упражнения 1–17)"),
+        (18, "Раздел 2: Redlock controversy, etcd concurrency.Mutex, Consul locks и Backoff Jitter (Упражнения 18–34)"),
+        (35, "Раздел 3: Fencing Tokens, защита от GC Pause, Guard Row и распределенный планировщик (Упражнения 35–51)"),
+        (52, "Раздел 4: Распределенные семафоры, Lock Hierarchy, etcd Leases и финальный проект (Упражнения 52–68)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 73!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы глубоко и всесторонне освоили распределенные блокировки и Fencing Tokens: от Redis SET NX PX и Lua-скриптов до etcd concurrency, сессий Consul, Guard Row в PostgreSQL, защиты от Split-Brain и построения отказоустойчивых планировщиков корпоративного уровня.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter72.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 72 Протокол консенсуса Raft</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 74 Cache-friendly структуры данных и выравнивание памяти (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'73. Распределенные блокировки и Fencing Tokens ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 
@@ -4416,6 +4478,7 @@ if __name__ == '__main__':
         ('chapter70.html', build_chapter70_html),
         ('chapter71.html', build_chapter71_html),
         ('chapter72.html', build_chapter72_html),
+        ('chapter73.html', build_chapter73_html),
     ]
     
     for filename, builder_fn in pages:
