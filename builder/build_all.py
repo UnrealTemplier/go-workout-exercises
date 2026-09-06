@@ -153,6 +153,8 @@ with open('builder/chapter63_data.json', 'r', encoding='utf-8') as f:
     ch63_exercises = json.load(f)
 with open('builder/chapter64_data.json', 'r', encoding='utf-8') as f:
     ch64_exercises = json.load(f)
+with open('builder/chapter65_data.json', 'r', encoding='utf-8') as f:
+    ch65_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -347,6 +349,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             62: ('chapter62.html', f'{len(ch62_exercises)}/{len(ch62_exercises)}'),
             63: ('chapter63.html', f'{len(ch63_exercises)}/{len(ch63_exercises)}'),
             64: ('chapter64.html', f'{len(ch64_exercises)}/{len(ch64_exercises)}'),
+            65: ('chapter65.html', f'{len(ch65_exercises)}/{len(ch65_exercises)}'),
         }
         
         if num in status_map:
@@ -3839,12 +3842,71 @@ def build_chapter64_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter63.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 63 Поисковые движки Elasticsearch и OpenSearch</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 65 Вебхуки и платформы обратных вызовов (Скоро) →</a>
+            <a href="chapter65.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #0b1120; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 65 Вебхуки и платформы обратных вызовов →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'64. Логическая репликация и Change Data Capture ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter65_html(chapters):
+    active_chapter_num = 65
+    current_exercises = ch65_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 65</div>
+      <h1 class="hero-title">Вебхуки и платформы обратных вызовов</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по архитектуре, доставке и безопасности вебхуков промышленного уровня (Stripe-grade Webhook Engine) для Go-разработчиков высоконагруженных платформ. Архитектура конвертов событий (Event Envelopes), каноническая структура полезной нагрузки и эволюция схем (Payload Versioning). Криптографическая безопасность: цифровая подпись HMAC-SHA256, связывание метки времени (Timestamp + Payload), предотвращение атак повторного воспроизведения (Replay Attacks) и сравнение подписей за строго константное время (crypto/subtle.ConstantTimeCompare). Защита сетевого контура: перехват сокетов на уровне net.Dialer.Control для 100% защиты от SSRF и атак DNS Rebinding, строгая политика запрета HTTP-редиректов (CheckRedirect), сжатие gzip с пулом sync.Pool, лимитирование размеров тел (MaxBytesReader) и Claim Check паттерн с оффлоадингом в S3. Высоконагруженная доставка и планирование: пулы воркеров фиксированного размера (Worker Pool), алгоритм Full Jitter для ликвидации эффекта Thundering Herd, поклиентские и глобальные Token Bucket ограничители скорости (Rate Limiting), семафоры и изоляция аномальных клиентов (Hot Endpoint Detection). Надежность и транзакционность: гарантии At-Least-Once, паттерн Transactional Outbox без поллинга базы данных, очередь мертвых сообщений (Dead Letter Queue, DLQ) с ручным перезапуском, долговременное хранение истории в ClickHouse (TTL 90 дней) и идемпотентная обработка на стороне получателя (Receiver Idempotency). Сравнительный анализ транспортных протоколов: Webhooks vs SSE vs WebSockets vs gRPC vs JSON-RPC 2.0, тонкости CORS Preflight, сквозная трассировка W3C traceparent и сквозное бюджетирование ресурсов операционной системы.
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Конверты событий, криптографическая подпись HMAC-SHA256 и базовый диспетчер (Упражнения 1–30)"),
+        (31, "Раздел 2: Экспоненциальный Backoff, Jitter, Circuit Breakers и очереди доставки (Упражнения 31–60)"),
+        (61, "Раздел 3: Безопасность, SSRF, mTLS, Rate Limiting и защита от Replay Attacks (Упражнения 61–90)"),
+        (91, "Раздел 4: Корпоративная платформа вебхуков, Outbox-паттерн и мультипротокольная интеграция (Упражнения 91–116)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 65!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили проектирование и эксплуатацию платформ вебхуков корпоративного уровня в Go: от криптографической защиты HMAC-SHA256 и перехвата сокетов против SSRF/DNS Rebinding до построения надежного Transactional Outbox, управления очередями с Full Jitter бэкоффом, изоляции очередей DLQ и мультипротокольной интеграции с Server-Sent Events и gRPC.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter64.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 64 Логическая репликация и Change Data Capture</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 66 Server-Sent Events (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'65. Вебхуки и платформы обратных вызовов ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -3915,6 +3977,7 @@ if __name__ == '__main__':
         ('chapter62.html', build_chapter62_html),
         ('chapter63.html', build_chapter63_html),
         ('chapter64.html', build_chapter64_html),
+        ('chapter65.html', build_chapter65_html),
     ]
     
     for filename, builder_fn in pages:
