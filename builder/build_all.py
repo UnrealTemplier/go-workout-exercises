@@ -161,6 +161,8 @@ with open('builder/chapter67_data.json', 'r', encoding='utf-8') as f:
     ch67_exercises = json.load(f)
 with open('builder/chapter68_data.json', 'r', encoding='utf-8') as f:
     ch68_exercises = json.load(f)
+with open('builder/chapter69_data.json', 'r', encoding='utf-8') as f:
+    ch69_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -359,6 +361,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             66: ('chapter66.html', f'{len(ch66_exercises)}/{len(ch66_exercises)}'),
             67: ('chapter67.html', f'{len(ch67_exercises)}/{len(ch67_exercises)}'),
             68: ('chapter68.html', f'{len(ch68_exercises)}/{len(ch68_exercises)}'),
+            69: ('chapter69.html', f'{len(ch69_exercises)}/{len(ch69_exercises)}'),
         }
         
         if num in status_map:
@@ -4087,12 +4090,70 @@ def build_chapter68_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter67.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 67 Альтернативные RPC-протоколы</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 69 Паттерны Outbox и Inbox для надежной доставки сообщений (Скоро) →</a>
+            <a href="chapter69.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #ffffff; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #00add8;">Глава 69 Паттерны Outbox и Inbox для надежной доставки сообщений →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'68. Паттерн Saga и компенсационные транзакции ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+def build_chapter69_html(chapters):
+    active_chapter_num = 69
+    current_exercises = ch69_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 69</div>
+      <h1 class="hero-title">Паттерны Outbox и Inbox для надежной доставки сообщений</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по проектированию надежных событийно-ориентированных систем на Go: гарантированная доставка сообщений без распределенных двухфазных транзакций (2PC). Проблема Dual Write (одновременная несогласованная запись в БД и брокер) и ее математическая неизбежность в ненадежных сетях. Паттерн Transactional Outbox на стороне Producer: единая локальная ACID-транзакция сохранения бизнес-сущности и события, DDL-схемы таблицы outbox, разделение aggregate_id и partition_key, частичные индексы WHERE sent_at IS NULL. Способы ретрансляции: Outbox Poller с SELECT FOR UPDATE SKIP LOCKED, Push-модель на базе PostgreSQL LISTEN/NOTIFY и реактивный CDC (Change Data Capture) через чтение журнала упреждающей записи WAL (библиотека pglogrepl и Debezium Event Router). Надежная публикация: экспоненциальный бэкофф (Exponential Backoff), Dead Letter Queue (DLQ) для ядовитых сообщений и Publisher Confirms в RabbitMQ с групповым подтверждением (Multiple Ack). Паттерн Transactional Inbox на стороне Consumer: гарантии At-Least-Once брокера и достижение семантики Effectively Exactly-Once через локальную транзакцию дедупликации, составные ключи UNIQUE(event_id, consumer_name), семантика ON CONFLICT DO NOTHING и подавление ошибок нарушения уникальности со своевременным подтверждением смещения (Ack / CommitOffset). Сравнение стратегий дедупликации: надежный реляционный Inbox в PostgreSQL против высокопроизводительного SET NX EX в Redis. Эволюция схем сообщений (Schema Evolution), сквозная трассировка OpenTelemetry (W3C Traceparent), цепочки микросервисов (Listen-to-Yourself), интеграция через прямой HTTP без брокера и сборка мусора (Garbage Collection / Pruning Daemon) с проверкой Watermark потребителей.
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Проблема Dual Write и основы Transactional Outbox (Упражнения 1–18)"),
+        (19, "Раздел 2: Outbox Poller, CDC Debezium и версионирование событий (Упражнения 19–36)"),
+        (37, "Раздел 3: Transactional Inbox, идемпотентное потребление и дедупликация (Упражнения 37–54)"),
+        (55, "Раздел 4: Промышленная архитектура, RabbitMQ/Kafka, Observability и E2E надежность (Упражнения 55–72)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 69!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы досконально освоили фундаментальные стандарты надежности распределенных систем: искоренение Dual Write, Transactional Outbox и Inbox, чтение PostgreSQL WAL через CDC, групповые подтверждения брокеров, а также построение надежных сквозных пайплайнов с семантикой Effectively Exactly-Once.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter68.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 68 Паттерн Saga и компенсационные транзакции</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 70 Проектирование идемпотентных API (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'69. Паттерны Outbox и Inbox для надежной доставки сообщений ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -4167,6 +4228,7 @@ if __name__ == '__main__':
         ('chapter66.html', build_chapter66_html),
         ('chapter67.html', build_chapter67_html),
         ('chapter68.html', build_chapter68_html),
+        ('chapter69.html', build_chapter69_html),
     ]
     
     for filename, builder_fn in pages:
