@@ -151,6 +151,8 @@ with open('builder/chapter62_data.json', 'r', encoding='utf-8') as f:
     ch62_exercises = json.load(f)
 with open('builder/chapter63_data.json', 'r', encoding='utf-8') as f:
     ch63_exercises = json.load(f)
+with open('builder/chapter64_data.json', 'r', encoding='utf-8') as f:
+    ch64_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -344,6 +346,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             61: ('chapter61.html', f'{len(ch61_exercises)}/{len(ch61_exercises)}'),
             62: ('chapter62.html', f'{len(ch62_exercises)}/{len(ch62_exercises)}'),
             63: ('chapter63.html', f'{len(ch63_exercises)}/{len(ch63_exercises)}'),
+            64: ('chapter64.html', f'{len(ch64_exercises)}/{len(ch64_exercises)}'),
         }
         
         if num in status_map:
@@ -3777,12 +3780,71 @@ def build_chapter63_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter62.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 62 Аналитическая СУБД ClickHouse</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 64 Логическая репликация и Change Data Capture (Скоро) →</a>
+            <a href="chapter64.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #0b1120; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 64 Логическая репликация и Change Data Capture →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'63. Поисковые движки Elasticsearch и OpenSearch ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter64_html(chapters):
+    active_chapter_num = 64
+    current_exercises = ch64_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 64</div>
+      <h1 class="hero-title">Логическая репликация и Change Data Capture</h1>
+      <p class="hero-desc">
+        Исчерпывающее практическое руководство по логической репликации и Change Data Capture (CDC) для Go-разработчиков высоконагруженных распределенных систем. Внутренняя архитектура PostgreSQL Write-Ahead Log (WAL): сегменты, контрольные точки (checkpoints), порядковые номера LSN (Log Sequence Number) и плагины логического декодирования (pgoutput, test_decoding, wal2json). Репликационные слоты (Replication Slots): предотвращение удаления несчитанных WAL-сегментов, управление lag, мониторинг pg_stat_replication и системные процедуры pg_replication_slot_advance. Реализация CDC-клиента на чистом Go с использованием pglogrepl и pgx/v5: протокол потоковой передачи данных (streaming replication protocol), декодирование бинарных сообщений XLogData, обработка транзакционных границ (Begin, Commit, Relation, Insert, Update, Delete, Type). Обработка эволюции схем и топология типов: REPLICA IDENTITY (DEFAULT, NOTHING, FULL, INDEX), сопоставление OID системного каталога pg_type, разбор TOAST-значений (unchanged toast columns) и миграции таблиц без потери консистентности. Гарантии доставки сообщений: расчет и отправка Standby Status Update (WriteLSN, FlushLSN, ApplyLSN) для предотвращения разрастания WAL на мастере, семантика At-Least-Once, дедупликация и сохранение чекпоинтов в распределенном хранилище. Архитектурные паттерны: транзакционный Outbox без опроса БД (Polling publisher vs CDC tailer), организация репликации в реальном времени из PostgreSQL в Apache Kafka (debezium-совместимые события JSON/Avro), ClickHouse и Elasticsearch. Эксплуатация и отказоустойчивость: безопасный реконнект с последнего подтвержденного LSN, мониторинг replication delay/lag в Prometheus, обработка аварийных ситуаций, предотвращение переполнения дискового пространства и HighLoad-оптимизация пропускной способности стриминга.
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Архитектура WAL, слоты репликации и плагин pgoutput (Упражнения 1–15)"),
+        (16, "Раздел 2: Протокол потоковой передачи, типизация и эволюция схем (Упражнения 16–30)"),
+        (31, "Раздел 3: CDC в распределенных системах: Kafka, Elasticsearch и ClickHouse (Упражнения 31–45)"),
+        (46, "Раздел 4: Промышленный CDC-пайплайн, отказоустойчивость и мониторинг (Упражнения 46–57)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 64!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили логическую репликацию и Change Data Capture в Go: от физического устройства WAL и репликационных слотов PostgreSQL до низкоуровневого парсинга протокола pgoutput, построения надежного CDC-пайплайна с At-Least-Once семантикой и стриминга изменений в Kafka, ClickHouse и Elasticsearch без оверхеда опроса базы данных.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter63.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 63 Поисковые движки Elasticsearch и OpenSearch</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 65 Вебхуки и платформы обратных вызовов (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'64. Логическая репликация и Change Data Capture ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -3852,6 +3914,7 @@ if __name__ == '__main__':
         ('chapter61.html', build_chapter61_html),
         ('chapter62.html', build_chapter62_html),
         ('chapter63.html', build_chapter63_html),
+        ('chapter64.html', build_chapter64_html),
     ]
     
     for filename, builder_fn in pages:
