@@ -155,6 +155,8 @@ with open('builder/chapter64_data.json', 'r', encoding='utf-8') as f:
     ch64_exercises = json.load(f)
 with open('builder/chapter65_data.json', 'r', encoding='utf-8') as f:
     ch65_exercises = json.load(f)
+with open('builder/chapter66_data.json', 'r', encoding='utf-8') as f:
+    ch66_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -350,6 +352,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             63: ('chapter63.html', f'{len(ch63_exercises)}/{len(ch63_exercises)}'),
             64: ('chapter64.html', f'{len(ch64_exercises)}/{len(ch64_exercises)}'),
             65: ('chapter65.html', f'{len(ch65_exercises)}/{len(ch65_exercises)}'),
+            66: ('chapter66.html', f'{len(ch66_exercises)}/{len(ch66_exercises)}'),
         }
         
         if num in status_map:
@@ -3901,12 +3904,71 @@ def build_chapter65_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter64.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 64 Логическая репликация и Change Data Capture</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 66 Server-Sent Events (Скоро) →</a>
+            <a href="chapter66.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #0b1120; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 66 Server-Sent Events →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'65. Вебхуки и платформы обратных вызовов ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter66_html(chapters):
+    active_chapter_num = 66
+    current_exercises = ch66_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 66</div>
+      <h1 class="hero-title">Server-Sent Events (SSE)</h1>
+      <p class="hero-desc">
+        Глубокое инженерное руководство по архитектуре, реализации и масштабированию потоковой передачи данных в реальном времени с использованием протокола Server-Sent Events (SSE) на языке Go. Спецификация W3C SSE и анатомия текстового кадрирования: разметка полей event, id, retry, data, обработка многострочных полезных нагрузок и служебных комментариев keep-alive. Низкоуровневое управление буферизацией в сетевом стеке: интерфейс http.Flusher и современный http.ResponseController (Go 1.20+), сокетные опции TCP_NODELAY, заголовок X-Accel-Buffering: no для обхода прокси-буферов Nginx, Envoy и CDN (Cloudflare). Гарантии надежности и отказоустойчивости: сквозное возобновление сессий с заголовком Last-Event-ID, кольцевые replay-буферы в оперативной памяти и Redis Streams, алгоритмы Exponential Backoff с Full Jitter и детекция разрыва связи через Context. Проектирование высоконагруженных многопользовательских брокеров (Hub/Broker): шардированные мьютексы, паттерн Single Writer per Connection для гарантии порядка доставки (In-Order Delivery), неблокирующая отправка сообщений и защита от медленных клиентов (Backpressure, Drop Oldest и Slow Consumer Eviction). Горизонтальное масштабирование через распределенную шину Redis Pub/Sub, мультиплексирование потоков поверх единого соединения HTTP/2 и HTTP/3, ChatGPT-style потоковая генерация токенов для LLM и клиентская координация вкладок через BroadcastChannel API.
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Протокол SSE, Event ID, Flusher и именованные события (Упражнения 1–18)"),
+        (19, "Раздел 2: Мультиплексирование, брокеры сообщений и устойчивый реконнект (Упражнения 19–35)"),
+        (36, "Раздел 3: HighLoad масштабирование, Netpoller, Redis Streams и сжатие (Упражнения 36–52)"),
+        (53, "Раздел 4: Промышленная платформа стриминга, безопасность и мониторинг (Упражнения 53–69)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 66!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили проектирование высоконагруженных платформ потоковой передачи данных на Server-Sent Events в Go: от спецификации W3C текстового кадрирования и низкоуровневого управления буферизацией через ResponseController до проектирования брокеров с защитой от медленных клиентов, организации бесшовного возобновления связи по Last-Event-ID и стриминга ответов LLM в стиле ChatGPT.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter65.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 65 Вебхуки и платформы обратных вызовов</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 67 Альтернативные RPC-протоколы (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'66. Server-Sent Events ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -3978,6 +4040,7 @@ if __name__ == '__main__':
         ('chapter63.html', build_chapter63_html),
         ('chapter64.html', build_chapter64_html),
         ('chapter65.html', build_chapter65_html),
+        ('chapter66.html', build_chapter66_html),
     ]
     
     for filename, builder_fn in pages:
