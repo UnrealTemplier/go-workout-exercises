@@ -163,6 +163,8 @@ with open('builder/chapter68_data.json', 'r', encoding='utf-8') as f:
     ch68_exercises = json.load(f)
 with open('builder/chapter69_data.json', 'r', encoding='utf-8') as f:
     ch69_exercises = json.load(f)
+with open('builder/chapter70_data.json', 'r', encoding='utf-8') as f:
+    ch70_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -362,6 +364,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             67: ('chapter67.html', f'{len(ch67_exercises)}/{len(ch67_exercises)}'),
             68: ('chapter68.html', f'{len(ch68_exercises)}/{len(ch68_exercises)}'),
             69: ('chapter69.html', f'{len(ch69_exercises)}/{len(ch69_exercises)}'),
+            70: ('chapter70.html', f'{len(ch70_exercises)}/{len(ch70_exercises)}'),
         }
         
         if num in status_map:
@@ -4148,12 +4151,70 @@ def build_chapter69_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter68.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 68 Паттерн Saga и компенсационные транзакции</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 70 Проектирование идемпотентных API (Скоро) →</a>
+            <a href="chapter70.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #ffffff; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #00add8;">Глава 70 Проектирование идемпотентных API →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'69. Паттерны Outbox и Inbox для надежной доставки сообщений ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+def build_chapter70_html(chapters):
+    active_chapter_num = 70
+    current_exercises = ch70_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 70</div>
+        <h1 class="hero-title">Проектирование идемпотентных API</h1>
+        <p class="hero-desc">
+            Полное академическое и промышленное руководство по проектированию надежных, строго идемпотентных распределенных API и микросервисов на Go: теория и международные спецификации IETF (The Idempotency-Key HTTP Header Field), RFC 7231 и RFC 7232. Механика обнаружения параллельных запросов (In-Flight Detection) с возвратом кодов 409 Conflict и заголовка Retry-After, распределенные блокировки на базе Redis SET NX EX и строчные транзакционные замки PostgreSQL (SELECT FOR UPDATE NOWAIT / pg_try_advisory_xact_lock). Криптографическая защита от подмены полезной нагрузки (Request Fingerprinting) с вычислением SHA-256 хэша тела и детекцией Payload Mismatch (код 422 Unprocessable Entity). Перехват и воспроизведение ответов через кастомные обертки http.ResponseWriter (Response Capturer) с сохранением кодов, заголовков и тел, возврат заголовка Idempotent-Replay: true. Управление жизненным циклом и дифференцированный TTL (24 часа для финансовых операций, 5 минут для безопасных методов), батчевая фоновая очистка (Batched GC Job) и секционирование таблиц (pg_partman). Идемпотентность длительных асинхронных операций со статусом Processing (202 Accepted + Polling), интерцепторы gRPC с извлечением ключа из context metadata, семантика PATCH и частичная идемпотентность, композитный скоупинг ключей по тенантам и пользователям (tenant:user:key), приоритет Rate Limiting над кэшированием для отражения DoS-атак, интеграция с Saga Orchestrator, Transactional Outbox, Transactional Inbox и построение эталонного шлюза платежей (Payment Gateway).
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Теория идемпотентности, Redis Store и Response Recorder (Упражнения 1–18)"),
+        (19, "Раздел 2: TTL, Request Fingerprinting и конкурентный In-Progress Lock (Упражнения 19–37)"),
+        (38, "Раздел 3: Реляционная СУБД, Stripe-like Charges и асинхронные операции (Упражнения 38–55)"),
+        (56, "Раздел 4: gRPC Interceptors, ETag, Observability и End-to-End шлюз платежей (Упражнения 56–74)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 70!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили проектирование идемпотентных API на уровне архитектуры HighLoad и Tier-1 BigTech: дедупликацию запросов, защиту от гонок и подмены данных, транзакционную фиксацию в СУБД, перехват ответов и сквозную надежность в распределенных системах.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter69.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 69 Паттерны Outbox и Inbox для надежной доставки сообщений</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 71 Выборы лидера (Leader Election) в распределенных системах (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'70. Проектирование идемпотентных API ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -4229,6 +4290,7 @@ if __name__ == '__main__':
         ('chapter67.html', build_chapter67_html),
         ('chapter68.html', build_chapter68_html),
         ('chapter69.html', build_chapter69_html),
+        ('chapter70.html', build_chapter70_html),
     ]
     
     for filename, builder_fn in pages:
