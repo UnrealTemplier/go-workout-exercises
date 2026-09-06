@@ -167,6 +167,8 @@ with open('builder/chapter70_data.json', 'r', encoding='utf-8') as f:
     ch70_exercises = json.load(f)
 with open('builder/chapter71_data.json', 'r', encoding='utf-8') as f:
     ch71_exercises = json.load(f)
+with open('builder/chapter72_data.json', 'r', encoding='utf-8') as f:
+    ch72_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -368,6 +370,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             69: ('chapter69.html', f'{len(ch69_exercises)}/{len(ch69_exercises)}'),
             70: ('chapter70.html', f'{len(ch70_exercises)}/{len(ch70_exercises)}'),
             71: ('chapter71.html', f'{len(ch71_exercises)}/{len(ch71_exercises)}'),
+            72: ('chapter72.html', f'{len(ch72_exercises)}/{len(ch72_exercises)}'),
         }
         
         if num in status_map:
@@ -4270,12 +4273,70 @@ def build_chapter71_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter70.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 70 Проектирование идемпотентных API</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 72 Протокол консенсуса Raft (Скоро) →</a>
+            <a href="chapter72.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #0b1120; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 72 Протокол консенсуса Raft →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'71. Выборы лидера (Leader Election) в распределенных системах ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+def build_chapter72_html(chapters):
+    active_chapter_num = 72
+    current_exercises = ch72_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 72</div>
+        <h1 class="hero-title">Протокол консенсуса Raft</h1>
+        <p class="hero-desc">
+            Исчерпывающее практическое руководство по алгоритму распределенного консенсуса Raft на Go: от математической спецификации Диего Онгаро до высоконагруженных промышленных реализаций (hashicorp/raft и etcd/raft). Архитектурные роли (Leader, Follower, Candidate), жизненный цикл Term и рандомизированный ElectionTimeout. Структура RPC-сообщений RequestVote и AppendEntries, инварианты Election Safety, Leader Append-Only и Log Matching Property. Репликация конечного автомата (FSM), тотальный порядок логов (Total Order), commitIndex и lastApplied. Усечение логов (Log Compaction), автоматические снапшоты (SnapshotThreshold) и потоковая передача InstallSnapshot. Расширения протокола: Pre-Vote для нейтрализации Disruptive Servers, ReadIndex и Lease Read для линеаризуемого чтения без записи на диск, Single-Server Membership Changes (AddVoter, DemoteVoter, RemoveServer). Архитектура Multi-Raft и шардирование (CockroachDB, TiKV), детерминированное тестирование консенсуса и концептуальный переход к распределенным блокировкам.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Фундамент Raft, конечные автоматы FSM и роли узлов (Упражнения 1–20)"),
+        (21, "Раздел 2: Репликация логов, CommitIndex, сетевой транспорт и бутстрап (Упражнения 21–41)"),
+        (42, "Раздел 3: Продвинутые оптимизации: Pre-Vote, ReadIndex, Multi-Raft и Снапшоты (Упражнения 42–62)"),
+        (63, "Раздел 4: Отказоустойчивость, Chaos Testing, Fencing и сетевой перенос (Упражнения 63–83)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 72!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы досконально освоили устройство протокола Raft: от математических инвариантов консенсуса, репликации логов и конечных автоматов до создания снапшотов, Pre-Vote фазы, линейного чтения ReadIndex и построения отказоустойчивых кластеров высокой доступности.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter71.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 71 Выборы лидера (Leader Election)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 73 Распределенные блокировки и Fencing Tokens (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'72. Протокол консенсуса Raft ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 
@@ -4354,6 +4415,7 @@ if __name__ == '__main__':
         ('chapter69.html', build_chapter69_html),
         ('chapter70.html', build_chapter70_html),
         ('chapter71.html', build_chapter71_html),
+        ('chapter72.html', build_chapter72_html),
     ]
     
     for filename, builder_fn in pages:
