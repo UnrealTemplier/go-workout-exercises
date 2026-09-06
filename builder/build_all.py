@@ -157,6 +157,8 @@ with open('builder/chapter65_data.json', 'r', encoding='utf-8') as f:
     ch65_exercises = json.load(f)
 with open('builder/chapter66_data.json', 'r', encoding='utf-8') as f:
     ch66_exercises = json.load(f)
+with open('builder/chapter67_data.json', 'r', encoding='utf-8') as f:
+    ch67_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -353,6 +355,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             64: ('chapter64.html', f'{len(ch64_exercises)}/{len(ch64_exercises)}'),
             65: ('chapter65.html', f'{len(ch65_exercises)}/{len(ch65_exercises)}'),
             66: ('chapter66.html', f'{len(ch66_exercises)}/{len(ch66_exercises)}'),
+            67: ('chapter67.html', f'{len(ch67_exercises)}/{len(ch67_exercises)}'),
         }
         
         if num in status_map:
@@ -3963,12 +3966,71 @@ def build_chapter66_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter65.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 65 Вебхуки и платформы обратных вызовов</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 67 Альтернативные RPC-протоколы (Скоро) →</a>
+            <a href="chapter67.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #0b1120; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 67 Альтернативные RPC-протоколы →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'66. Server-Sent Events ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter67_html(chapters):
+    active_chapter_num = 67
+    current_exercises = ch67_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+      <div class="hero-tag">Глава 67</div>
+      <h1 class="hero-title">Альтернативные RPC-протоколы (JSON-RPC 2.0, gRPC-Web, ConnectRPC)</h1>
+      <p class="hero-desc">
+        Исчерпывающее инженерное руководство по архитектуре, спецификациям и реализации альтернативных протоколов удаленного вызова процедур (RPC) в экосистеме Go. Спецификация JSON-RPC 2.0: семантика 4 типов сообщений (Request, Response success, Response error, Notification), канонические коды системных ошибок (-32700..-32600), пакетные запросы (Batching) для устранения проблемы N+1 сетевых вызовов, транзакционные батчи и полнодуплексный транспорт поверх WebSocket с управлением состоянием клиентских сессий и защитой от Slow Consumer. Архитектура и спецификация gRPC-Web: фундаментальное ограничение браузерного Fetch API в работе с HTTP/2 Trailers, кадрирование данных и трейлеров (флаги 0x00 и 0x80), развертывание и тюнинг Envoy Proxy (фильтры grpc_web, cors, router, circuit breakers) и встраиваемая in-process обертка на чистом Go (improbable-eng/grpc-web). Фреймворк нового поколения ConnectRPC (connect-go): zero-proxy архитектура, нативная поддержка браузеров без Envoy, мультипротокольные эндпоинты (gRPC, gRPC-Web, Connect на едином порту), интеграция с HTTP/2 Cleartext (h2c), потоковые обработчики Server/Client/Bidi streaming и фронтенд-интеграция с TanStack Query. Protobuf-first подход, кодогенерация SDK через Buf CLI, автоматическая генерация документации через Protobuf Reflection и системный сравнительный анализ протоколов REST, gRPC, Connect, JSON-RPC, SSE и GraphQL в HighLoad архитектуре BigTech.
+      </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Спецификация JSON-RPC 2.0, диспетчеризация и пакетные запросы (Упражнения 1–23)"),
+        (24, "Раздел 2: Двунаправленный сокет, OpenRPC, архитектура gRPC-Web и Envoy (Упражнения 24–46)"),
+        (47, "Раздел 3: Connect-go, мультипротокольные эндпоинты, интерцепторы и CORS (Упражнения 47–69)"),
+        (70, "Раздел 4: Промышленная RPC-платформа, кодогенерация, трейсинг и бенчмарки (Упражнения 70–92)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 67!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы глубоко освоили весь спектр современных RPC-технологий на Go: от чистого JSON-RPC 2.0 с пакетным батчингом и сокетными нотификациями до промышленной настройки Envoy Proxy для gRPC-Web, сквозной разработки сервисов на ConnectRPC без сторонних прокси и построения контрактов по методологии Protobuf-first.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter66.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 66 Server-Sent Events</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 68 Паттерн Saga и компенсационные транзакции (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'67. Альтернативные RPC-протоколы ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 if __name__ == '__main__':
@@ -4041,6 +4103,7 @@ if __name__ == '__main__':
         ('chapter64.html', build_chapter64_html),
         ('chapter65.html', build_chapter65_html),
         ('chapter66.html', build_chapter66_html),
+        ('chapter67.html', build_chapter67_html),
     ]
     
     for filename, builder_fn in pages:
