@@ -177,10 +177,14 @@ with open('builder/chapter75_data.json', 'r', encoding='utf-8') as f:
     ch75_exercises = json.load(f)
 with open('builder/chapter76_data.json', 'r', encoding='utf-8') as f:
     ch76_exercises = json.load(f)
+with open('builder/chapter77_data.json', 'r', encoding='utf-8') as f:
+    ch77_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
         return ""
+    if isinstance(txt, list):
+        txt = "\n".join(txt)
     lines = txt.strip().split('\n')
     out_lines = []
     in_list = False
@@ -383,6 +387,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             74: ('chapter74.html', f'{len(ch74_exercises)}/{len(ch74_exercises)}'),
             75: ('chapter75.html', f'{len(ch75_exercises)}/{len(ch75_exercises)}'),
             76: ('chapter76.html', f'{len(ch76_exercises)}/{len(ch76_exercises)}'),
+            77: ('chapter77.html', f'{len(ch77_exercises)}/{len(ch77_exercises)}'),
         }
         
         if num in status_map:
@@ -4578,12 +4583,70 @@ def build_chapter76_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter75.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 75 Lock-free структуры данных</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 77 Высокопроизводительные сетевые фреймворки (gnet, evio) (Скоро) →</a>
+            <a href="chapter77.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #040d21; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 77 Высокопроизводительные сетевые фреймворки (gnet, evio) →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'76. Ассемблер Go (Plan 9 Assembly) и SIMD ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter77_html(chapters):
+    active_chapter_num = 77
+    current_exercises = ch77_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 77</div>
+        <h1 class="hero-title">Высокопроизводительные сетевые фреймворки (gnet, evio)</h1>
+        <p class="hero-desc">
+            Глубокое инженерное руководство по проектированию и эксплуатации ультравысокопроизводительных сетевых сервисов на базе событийно-ориентированных движков gnet и evio в обход стандартной модели Go goroutine-per-connection. Анатомия барьера C10M и системные вызовы Linux epoll (Edge-Triggered vs Level-Triggered). Архитектурный паттерн Multi-Reactor: разделение на Main Reactor (Acceptor Loop) и Sub-Reactors (Worker Loops), жесткая привязка потоков ОС к ядрам CPU (LockOSThread, CPU Affinity) и подавление конкуренции за сокет через SO_REUSEPORT. Технологии Zero-Copy и Zero-Allocation: работа с эластичным кольцевым буфером RingBuffer, векторный ввод-вывод writev (Scatter-Gather I/O), прямая передача данных через sendfile и повторное использование памяти через sync.Pool. Проектирование бинарных протоколов с префиксом длины (Length-Prefixed Framing) и потокобезопасная разгрузка бизнес-логики в Worker Pool через неблокирующий AsyncWrite. Защита от перегрузок: реализация паттернов Backpressure, Load Shedding и TCP Flow Control. Разработка собственного сервера баз данных класса Redis с поддержкой протокола RESP под нагрузку 100 000 одновременных соединений при расходе памяти всего 15–20 МБ.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Реакторы, сокетные вызовы и основы gnet/evio (Упражнения 1–10)"),
+        (11, "Раздел 2: Многопоточность, C10K бенчмарки и Worker Pools (Упражнения 11–21)"),
+        (22, "Раздел 3: Продвинутые протоколы, Zero-Copy и Финальный HFT шлюз (Упражнения 22–32)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 77!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили событийно-ориентированную сетевую разработку: от системных вызовов epoll и многопоточного Multi-Reactor gnet до протоколов кадрирования, Worker Pools, Zero-Copy парсинга RESP и проектирования сверхбыстрого HFT шлюза.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter76.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 76 Ассемблер Go (Plan 9 Assembly) и SIMD</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 78 Облачные хранилища, Envelope Encryption и KMS (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'77. Высокопроизводительные сетевые фреймворки (gnet, evio) ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 
@@ -4667,6 +4730,7 @@ if __name__ == '__main__':
         ('chapter74.html', build_chapter74_html),
         ('chapter75.html', build_chapter75_html),
         ('chapter76.html', build_chapter76_html),
+        ('chapter77.html', build_chapter77_html),
     ]
     
     for filename, builder_fn in pages:
