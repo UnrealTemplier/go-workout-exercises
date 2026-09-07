@@ -639,7 +639,7 @@ for ex in all_ch83:
 
 # Check HTML files and anchors
 html_files = [
-    ('index.html', 1, len(all_ch1)),
+    ('chapter1.html', 1, len(all_ch1)),
     ('chapter2.html', 2, len(all_ch2)),
     ('chapter3.html', 3, len(all_ch3)),
     ('chapter4.html', 4, len(all_ch4)),
@@ -749,6 +749,19 @@ for fname, ch_num, count in html_files:
     # Check HTML closure
     if not content.endswith('</html>\n') and not content.endswith('</html>'):
         issues.append(f"Файл {fname} некорректно завершен (нет </html>)!")
+
+# Check portal page index.html
+if not os.path.exists('index.html'):
+    issues.append("Файл портала index.html не найден на диске!")
+else:
+    with open('index.html', 'r', encoding='utf-8') as f:
+        portal_content = f.read()
+    if 'chapter1.html' not in portal_content:
+        issues.append("В файле портала index.html отсутствует ссылка на chapter1.html!")
+    if 'chapter83.html' not in portal_content:
+        issues.append("В файле портала index.html отсутствует ссылка на chapter83.html!")
+    if not portal_content.endswith('</html>\n') and not portal_content.endswith('</html>'):
+        issues.append("Файл index.html некорректно завершен (нет </html>)!")
 
 if issues:
     print(f"\n❌ Обнаружено {len(issues)} проблем:")

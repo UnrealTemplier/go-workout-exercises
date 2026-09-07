@@ -306,7 +306,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
     sb = []
     sb.append('<aside class="sidebar">')
     sb.append('  <div class="sidebar-header">')
-    sb.append('    <a href="#top" class="logo-badge">')
+    sb.append('    <a href="index.html" class="logo-badge" title="Главная страница и треки">')
     sb.append('      <span class="go-logo-icon">GO</span>')
     sb.append('      <span>Backend Workout</span>')
     sb.append('    </a>')
@@ -316,14 +316,24 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
     sb.append('    </div>')
     sb.append('  </div>')
     sb.append('  <nav class="sidebar-nav">')
-    sb.append('    <div class="nav-group-title">Оглавление курса (83 модуля)</div>')
+    if active_chapter_num == 0 or active_chapter_num is None:
+        sb.append('    <a href="index.html" class="chapter-link active portal-nav-link" style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; margin-bottom: 12px; border-radius: 8px;" title="Главная страница курса и образовательные треки">')
+        sb.append('      <span style="color: #38bdf8; font-weight: 700;">🏠 Главная / Треки</span>')
+        sb.append('      <span class="status-badge" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; font-weight: 700;">100 тем</span>')
+        sb.append('    </a>')
+    else:
+        sb.append('    <a href="index.html" class="chapter-link portal-nav-link" style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); margin-bottom: 12px; border-radius: 8px;" title="Главная страница курса и образовательные треки">')
+        sb.append('      <span style="color: #38bdf8; font-weight: 700;">🏠 Главная / Треки</span>')
+        sb.append('      <span class="status-badge" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; font-weight: 700;">100 тем</span>')
+        sb.append('    </a>')
+    sb.append('    <div class="nav-group-title">Оглавление курса (100 модулей)</div>')
     
     for ch in chapters:
         num = ch['num']
         title = ch['title']
         
         status_map = {
-            1: ('index.html', '91/91'),
+            1: ('chapter1.html', '91/91'),
             2: ('chapter2.html', '25/25'),
             3: ('chapter3.html', '65/65'),
             4: ('chapter4.html', '111/111'),
@@ -592,7 +602,7 @@ def build_chapter2_html(chapters):
     <section style="margin-top: 60px; padding: 32px; background: #0f172a; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
         <h3 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 12px;">🎉 Поздравляем! Глава 02 полностью завершена!</h3>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 01 Пакеты и модули</a>
+            <a href="chapter1.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 01 Пакеты и модули</a>
             <a href="chapter3.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00ADD8; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 03 fmt и ввод-вывод →</a>
         </div>
     </section>
@@ -5013,7 +5023,8 @@ def build_chapter83_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter82.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 82 Защита сетевых сокетов и противодействие DoS-атакам</a>
-            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #ffffff; font-weight: 700; padding: 12px 24px; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">🎓 В начало учебника (Глава 1) →</a>
+            <a href="chapter1.html" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #ffffff; font-weight: 700; padding: 12px 24px; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">🎓 К Главе 01 (Пакеты и модули) →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
         </div>
     </section>
     """)
@@ -5023,11 +5034,443 @@ def build_chapter83_html(chapters):
 
 
 
+
+
+# All 100 chapters metadata
+all_100_chapters = [
+    (1, "Пакеты и модули", "chapter1.html", 91, True, "Модули, go.mod, SemVer, Cobra CLI, internal, vendor"),
+    (2, "Компиляция, сборка и запуск", "chapter2.html", 25, True, "go build, флаги линкера, кросс-компиляция, race detector, Scratch Docker"),
+    (3, "Пакет fmt и консольный ввод-вывод", "chapter3.html", 65, True, "Форматирование, сканирование, буферизация, кастомные стрингеры"),
+    (4, "Базовые типы, переменные и константы", "chapter4.html", 111, True, "Числа, переполнения, iota, битовые маски, типизация, кастинг"),
+    (5, "Условные конструкции", "chapter5.html", 64, True, "if/else с инициализатором, switch, type switch, fallthrough"),
+    (6, "Циклы", "chapter6.html", 64, True, "for, range, итераторы, оптимизации компилятора, метки break/continue"),
+    (7, "Массивы", "chapter7.html", 32, True, "Фиксированные массивы, передача по значению, память на стеке"),
+    (8, "Слайсы", "chapter8.html", 74, True, "SliceHeader, len vs cap, append, подслайсирование, утечки памяти"),
+    (9, "Мапы", "chapter9.html", 62, True, "hmap, bmap, эвакуация бакетов, коллизии, конкурентная запись"),
+    (10, "Функции", "chapter10.html", 100, True, "Именованные возвраты, замыкания, defer хронология, рекурсия"),
+    (11, "Указатели", "chapter11.html", 49, True, "Разыменование, адресная арифметика, escape analysis, стек vs куча"),
+    (12, "Передача аргументов", "chapter12.html", 67, True, "Семантика передачи по значению, мутации, стоимость копирования"),
+    (13, "Структуры", "chapter13.html", 71, True, "Теги json/db, выравнивание полей (padding), анонимные структуры"),
+    (14, "Интерфейсы", "chapter14.html", 77, True, "iface, eface, dynamic dispatch, nil-interface ловушка, io.Reader/Writer"),
+    (15, "ООП в Go", "chapter15.html", 127, True, "Композиция vs наследование, эмбеддинг, полиморфизм, SOLID на Go"),
+    (16, "Дженерики", "chapter16.html", 131, True, "Параметрический полиморфизм, constraints, comparable, мономорфизация"),
+    (17, "Обработка ошибок", "chapter17.html", 58, True, "errors.Is, errors.As, wrapping %w, кастомные типы ошибок"),
+    (18, "Работа с файлами", "chapter18.html", 100, True, "os.File, bufio, ioutil/io, потоковое чтение, временные файлы"),
+    (19, "Логирование", "chapter19.html", 84, True, "log/slog, структурированные логи, лог-уровни, JSONHandler"),
+    (20, "Горутины и синхронизация", "chapter20.html", 124, True, "go routine, sync.WaitGroup, sync.Mutex, sync.RWMutex, sync.Once, atomic"),
+    (21, "Каналы и select", "chapter21.html", 95, True, "Буферизованные каналы, fan-out, fan-in, pipeline, закрытие каналов"),
+    (22, "Контекст", "chapter22.html", 52, True, "context.WithTimeout, WithCancel, WithValue, propagation, graceful stop"),
+    (23, "Паттерны конкурентности", "chapter23.html", 132, True, "Worker Pool, Semaphore, Or-Done, ErrGroup, Singleflight, Rate Limiting"),
+    (24, "Низкоуровневая сеть", "chapter24.html", 63, True, "net.TCPConn, net.UDPConn, таймауты сокетов, deadliness, буферы"),
+    (25, "HTTP-клиент", "chapter25.html", 45, True, "http.Client, Transport, Keep-Alive, connection pooling, retries"),
+    (26, "HTTP-сервер, REST API и Middleware", "chapter26.html", 158, True, "http.Handler, Chi/Gin/Fiber, CORS, Auth, Recovery, Rate Limiter"),
+    (27, "Реляционные базы данных (SQL и PostgreSQL)", "chapter27.html", 163, True, "database/sql, jackc/pgx, connection pool, ACID, транзакции, индексы"),
+    (28, "Базы данных NoSQL и кэширование (Redis)", "chapter28.html", 115, True, "go-redis, Strings, Hashes, Pub/Sub, Streams, Redis Cluster"),
+    (29, "Модульное тестирование (Unit Testing) и Assertions", "chapter29.html", 96, True, "testing.T, testify/assert, табличные тесты, TestMain"),
+    (30, "Мокирование и интеграционное тестирование", "chapter30.html", 107, True, "testcontainers-go, gomock, mockery, PostgreSQL/Redis в Docker"),
+    (31, "Бенчмарки, фаззинг и продвинутые методы тестирования", "chapter31.html", 120, True, "testing.B, testing.F, mem/allocs profiling, фаззинг парсеров"),
+    (32, "Protocol Buffers и gRPC", "chapter32.html", 189, True, "proto3, protoc-gen-go, Unary, Streaming, Interceptors, Metadata"),
+    (33, "Микросервисная архитектура и паттерны", "chapter33.html", 89, True, "Service Discovery, Circuit Breaker, Service-to-Service auth"),
+    (34, "GraphQL", "chapter34.html", 78, True, "graphql-go, gqlgen, Resolvers, Schema First, DataLoaders"),
+    (35, "WebSockets и Real-time", "chapter35.html", 78, True, "gorilla/websocket, coder/websocket, hub/room broadcast, ping/pong"),
+    (36, "RabbitMQ", "chapter36.html", 130, True, "amqp091-go, Exchanges (direct/topic/fanout), Queues, ACKs, DLQ"),
+    (37, "Apache Kafka", "chapter37.html", 88, True, "segmentio/kafka-go, Consumer Groups, Partitions, Rebalance, Offsets"),
+    (38, "NATS и NATS JetStream", "chapter38.html", 77, True, "nats.go, Core NATS, JetStream, At-Least-Once, Key-Value Store"),
+    (39, "Метрики и мониторинг (Prometheus)", "chapter39.html", 114, True, "prometheus/client_golang, Counter, Gauge, Histogram, Summary"),
+    (40, "Распределенная трассировка (OpenTelemetry)", "chapter40.html", 79, True, "OTel Go SDK, Tracers, Spans, Context Propagation, Jaeger/Otlp"),
+    (41, "Профилирование и рантайм-диагностика", "chapter41.html", 24, True, "net/http/pprof, CPU, Heap, Goroutine, Block/Mutex profile"),
+    (42, "Проектирование чистой архитектуры и DDD", "chapter42.html", 98, True, "Domain, UseCases, Repositories, Aggregates, Value Objects"),
+    (43, "Шаблоны проектирования распределенных и enterprise-систем", "chapter43.html", 112, True, "Factory, Strategy, Adapter, Unit of Work, Specification"),
+    (44, "Проектирование высоконагруженных и отказоустойчивых систем", "chapter44.html", 64, True, "Bulkhead, Sharding, Read Replicas, Backoff, Graceful Degradation"),
+    (45, "Контейнеризация и Docker", "chapter45.html", 75, True, "Multi-stage Dockerfile, Scratch/Alpine, non-root, Docker Compose"),
+    (46, "Автоматизация CI-CD", "chapter46.html", 57, True, "GitHub Actions, GitLab CI, линтинг, тесты, сборка и пуш образов"),
+    (47, "Оркестрация в Kubernetes", "chapter47.html", 180, True, "Pods, Deployments, Services, ConfigMaps, Secrets, Ingress, HPA, Probes"),
+    (48, "Планировщик GMP", "chapter48.html", 93, True, "G, M, P, Runqueues, Work Stealing, Sysmon, Preemption в Go"),
+    (49, "Аллокатор кучи и управление памятью", "chapter49.html", 66, True, "TCMalloc, mcache, mcentral, mheap, size classes, span"),
+    (50, "Garbage Collector и тюнинг памяти", "chapter50.html", 87, True, "Триколор марк-энд-свип, GOGC, GOMEMLIMIT, Write Barrier"),
+    (51, "Работа с unsafe и низкоуровневой памятью", "chapter51.html", 85, True, "unsafe.Pointer, uintptr, string-to-bytes no-alloc, struct offset"),
+    (52, "Интеграция с C-кодом через CGO", "chapter52.html", 70, True, "import \"C\", cgo types, накладные расходы CGO, call overhead"),
+    (53, "Системные вызовы и взаимодействие с ОС", "chapter53.html", 75, True, "syscall, golang.org/x/sys/unix, dup2, pipe, signals, fork/exec"),
+    (54, "Продвинутая рефлексия (reflect)", "chapter54.html", 114, True, "reflect.Type, reflect.Value, интроспекция полей, динамический вызов"),
+    (55, "Анализ AST и статический анализ кода", "chapter55.html", 85, True, "go/parser, go/ast, ast.Walk, инспекция синтаксических деревьев"),
+    (56, "Кодогенерация и шаблонизация", "chapter56.html", 77, True, "go:generate, text/template, stringer, генерация структур"),
+    (57, "Симметричное и асимметричное шифрование", "chapter57.html", 100, True, "AES-GCM, ChaCha20, RSA, ECDSA, Ed25519, crypto/rand"),
+    (58, "Хеширование паролей и криптографическая стойкость", "chapter58.html", 56, True, "bcrypt, Argon2id, scrypt, PBKDF2, соль, тайминг-атаки"),
+    (59, "Токены аутентификации и авторизация", "chapter59.html", 66, True, "JWT (golang-jwt), PASETO, OAuth2, RBAC, Claims validation"),
+    (60, "Безопасность веб-приложений и защита API", "chapter60.html", 63, True, "CSRF, XSS, SQLi защита, Secure Headers, Rate Limiting, CORS"),
+    (61, "Документоориентированная база данных MongoDB", "chapter61.html", 113, True, "mongo-go-driver, BSON, Aggregation Pipelines, Indexes, Transactions"),
+    (62, "Аналитическая СУБД ClickHouse", "chapter62.html", 71, True, "ClickHouse-go, MergeTree, батчинг вставок, OLAP аналитика"),
+    (63, "Поисковые движки Elasticsearch и OpenSearch", "chapter63.html", 60, True, "elastic/go-elasticsearch, Full-text Search, Aggregations, Indexing"),
+    (64, "Логическая репликация и Change Data Capture", "chapter64.html", 57, True, "PostgreSQL WAL, Debezium, pglogrepl, потоковая репликация событий"),
+    (65, "Вебхуки и платформы обратных вызовов", "chapter65.html", 116, True, "HMAC-SHA256 подписи, идемпотентность, очереди доставки, повторы"),
+    (66, "Server-Sent Events", "chapter66.html", 69, True, "text/event-stream, HTTP/1.1 и HTTP/2 стриминг, reconnect, event IDs"),
+    (67, "Альтернативные RPC-протоколы", "chapter67.html", 92, True, "Twirp, JSON-RPC 2.0, Cap'n Proto, FlatBuffers, производительность"),
+    (68, "Паттерн Saga и компенсационные транзакции", "chapter68.html", 104, True, "Оркестрация и хореография саг, компенсации, state machine"),
+    (69, "Паттерны Outbox и Inbox для надежной доставки сообщений", "chapter69.html", 72, True, "Transactional Outbox, De-duplication Inbox, At-Least-Once"),
+    (70, "Проектирование идемпотентных API", "chapter70.html", 74, True, "Idempotency-Key заголовок, Redis блокировки, кэш ответов"),
+    (71, "Выборы лидера (Leader Election) в распределенных системах", "chapter71.html", 90, True, "PostgreSQL advisory locks, Redis Redlock, Consul/K8s leases"),
+    (72, "Протокол консенсуса Raft", "chapter72.html", 83, True, "hashicorp/raft, Leader, Follower, Candidate, Log Replication, Quorum"),
+    (73, "Распределенные блокировки и Fencing Tokens", "chapter73.html", 68, True, "Redlock, Distributed Mutex, Fencing Tokens против pause"),
+    (74, "Cache-friendly структуры данных и выравнивание памяти", "chapter74.html", 99, True, "Кэш-линии L1/L2/L3, ложное разделение (false sharing), struct padding"),
+    (75, "Lock-free структуры данных", "chapter75.html", 75, True, "CAS, atomic.Value, Treiber Stack, Michael-Scott Queue"),
+    (76, "Ассемблер Go (Plan 9 Assembly) и SIMD", "chapter76.html", 35, True, "Plan 9 псевдорегистры (FP, SP, SB), SIMD AVX2 инструкции"),
+    (77, "Высокопроизводительные сетевые фреймворки (gnet, evio)", "chapter77.html", 32, True, "Reactor паттерн, non-blocking epoll, нулевые аллокации сокетов"),
+    (78, "Облачные хранилища, Envelope Encryption и KMS", "chapter78.html", 95, True, "AWS S3/MinIO, Envelope Encryption (DEK/KEK), HashiCorp Vault"),
+    (79, "Интеграция с Service Mesh (Istio, Linkerd) и mTLS", "chapter79.html", 80, True, "Envoy sidecar, взаимный TLS (mTLS), Spiffe/Spire идентификация"),
+    (80, "Контекст трассировки (W3C Trace Context, B3) и gRPC Keepalive", "chapter80.html", 76, True, "traceparent, tracestate, gRPC Keepalive пинги, HTTP/2 GOAWAY"),
+    (81, "Безопасность цепочки поставок (Supply Chain Security) и SBOM", "chapter81.html", 136, True, "govulncheck, Syft SBOM (SPDX/CycloneDX), Cosign криптоподпись"),
+    (82, "Защита сетевых сокетов и противодействие DoS-атакам", "chapter82.html", 55, True, "Slowloris, SYN flood, TCP SYN cookies, TCP keepalive, SO_REUSEPORT"),
+    (83, "Системная изоляция, Seccomp и Linux Capabilities", "chapter83.html", 28, True, "seccomp bpf фильтры, libseccomp, CAP_NET_BIND_SERVICE, drop privs"),
+    
+    # 17 Planned Chapters (84-100)
+    (84, "CQRS и Event Sourcing на Go", "chapter84.html", 30, False, "Агрегаты, оптимистическая блокировка версий, Snapshots, проекции в Postgres/Elastic"),
+    (85, "Многоуровневое кэширование (L1/L2) и распределенная когерентность", "chapter85.html", 30, False, "In-memory TinyLFU/Ristretto, Redis RESP3 BCAST, алгоритм XFetch, Write-Behind"),
+    (86, "Масштабируемые распределенные планировщики и очереди задач", "chapter86.html", 30, False, "Фоновые очереди Asynq/River, SKIP LOCKED, периодические задачи, кластерный Cron"),
+    (87, "Оркестрация распределенных процессов (Durable Execution) на Temporal.io", "chapter87.html", 30, False, "Temporal Workflows, Activities, Replay детерминизм, Signals, Queries, Long Timers"),
+    (88, "Потоковая обработка данных в реальном времени (Stream Processing)", "chapter88.html", 30, False, "Tumbling/Sliding/Session окна, Watermarks, Late Data, Exactly-Once Checkpoints"),
+    (89, "Хаос-инженерия и нагрузочное тестирование на Go", "chapter89.html", 30, False, "Инъекция сбоев Toxiproxy, fasthttp генератор нагрузки, HDRHistogram, p99.9 задержки"),
+    (90, "Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI", "chapter90.html", 30, False, "google.api.http аннотации, grpc-gateway, OpenAPI v3, Swagger UI в embed.FS"),
+    (91, "Разработка собственных Kubernetes Operators и CRD на Go", "chapter91.html", 30, False, "Kubebuilder, Custom Resources, Reconcile Loop, Informers, Workqueues, Webhooks"),
+    (92, "Расширяемость систем: Plugins, IPC и WebAssembly (Wazero)", "chapter92.html", 30, False, "plugin.Open, HashiCorp go-plugin (gRPC IPC), Wazero Wasm песочницы, Fuel metering"),
+    (93, "Высокопроизводительные API Gateway и Reverse Proxy на чистом Go", "chapter93.html", 30, False, "httputil.ReverseProxy, динамическая маршрутизация, Peak-EWMA, Request Hedging"),
+    (94, "Enterprise Release Engineering: Feature Flags, динамический конфиг и Canary Routing", "chapter94.html", 30, False, "OpenFeature SDK, Canary rollouts, Kill Switch за 50 мс, fsnotify Hot Reload"),
+    (95, "Распределенная координация и хранилище метаданных etcd v3", "chapter95.html", 30, False, "clientv3 Watchers, Leases с автопродлением, атомарные транзакции Txn, Service Discovery"),
+    (96, "Zero-Downtime миграции баз данных и паттерн Expand/Contract на Go", "chapter96.html", 30, False, "Expand/Migrate/Contract, Shadow Writing, Backfill воркеры, защита от AccessExclusiveLock"),
+    (97, "Time-Series СУБД, сжатие Gorilla и IoT-телеметрия на Go", "chapter97.html", 30, False, "Прием сотен тысяч метрик/сек, Gorilla Delta-of-Delta и XOR компрессия, TimescaleDB"),
+    (98, "Архитектурный контроль: Разработка корпоративных линтеров для golangci-lint", "chapter98.html", 30, False, "go/analysis фреймворк, семантика типов go/types, AST-инспекция, Suggested Fixes"),
+    (99, "Интеграция с ИИ, LLM-оркестрация и векторный поиск на Go", "chapter99.html", 30, False, "Ollama, OpenAI SDK, SSE токены, Function Calling, pgvector, Qdrant, RAG конвейер"),
+    (100, "Архитектурный Capstone: Проектирование и сквозной запуск отказоустойчивой HighLoad-платформы", "chapter100.html", 35, False, "Финальный проект: gRPC-Gateway, DDD, Event Sourcing, Temporal, L1/L2 кэш, OTel, Seccomp, AI")
+]
+
+learning_paths = [
+    {
+        "id": "core-go",
+        "title": "Core Go & Idiomatic Engineering",
+        "badge": "Junior → Middle",
+        "color": "#38bdf8",
+        "icon": "🔷",
+        "desc": "Синтаксис, система модулей, структуры данных, полиморфизм интерфейсов, дженерики, идиоматичная обработка ошибок и файловые операции.",
+        "tags": ["go.mod", "slices", "maps", "interfaces", "generics", "errors", "slog"],
+        "chapters": list(range(1, 20)),
+        "start_url": "chapter1.html"
+    },
+    {
+        "id": "concurrency-network",
+        "title": "High-Concurrency & Low-Latency Network",
+        "badge": "Middle+ → Senior",
+        "color": "#10b981",
+        "icon": "⚡",
+        "desc": "Многопоточность без гонок данных, каналы и select, context, низкоуровневые сокеты TCP/UDP, event-loop gnet, lock-free и DoS-защита.",
+        "tags": ["goroutines", "channels", "sync", "TCP/UDP", "gnet", "lock-free", "SO_REUSEPORT"],
+        "chapters": [20, 21, 22, 23, 24, 25, 26, 74, 75, 76, 77, 82],
+        "start_url": "chapter20.html"
+    },
+    {
+        "id": "storage-consistency",
+        "title": "Storage, Caching & Data Consistency",
+        "badge": "Middle+ → Senior+",
+        "color": "#f59e0b",
+        "icon": "💾",
+        "desc": "Реляционные и NoSQL хранилища: пул pgx, Redis, ClickHouse, Mongo, CDC репликация, двухуровневый L1/L2 кэш с XFetch и Zero-Downtime миграции.",
+        "tags": ["PostgreSQL", "pgx", "Redis", "ClickHouse", "Elasticsearch", "CDC", "XFetch"],
+        "chapters": [27, 28, 61, 62, 63, 64, 85, 96, 97],
+        "start_url": "chapter27.html"
+    },
+    {
+        "id": "distributed-systems",
+        "title": "Distributed Systems & Event-Driven Architecture",
+        "badge": "Senior → Staff/Principal",
+        "color": "#a855f7",
+        "icon": "🌐",
+        "desc": "Распределенные платформы: gRPC, Kafka, RabbitMQ, Saga, Outbox, консенсус Raft, etcd, CQRS/ES, очереди River/Asynq и Temporal.io.",
+        "tags": ["gRPC", "Kafka", "RabbitMQ", "NATS", "Raft", "Temporal", "etcd", "CQRS"],
+        "chapters": [32, 33, 34, 35, 36, 37, 38, 68, 69, 70, 71, 72, 73, 84, 86, 87, 95],
+        "start_url": "chapter32.html"
+    },
+    {
+        "id": "observability-reliability",
+        "title": "Enterprise Observability & Reliability Engineering",
+        "badge": "Senior → Tech Lead",
+        "color": "#f43f5e",
+        "icon": "📊",
+        "desc": "Полный стек надежности: Testcontainers, фаззинг, метрики Prometheus, OTel трассировка, pprof профилирование, Чистая архитектура, хаос-инженерия Toxiproxy.",
+        "tags": ["testcontainers", "fuzzing", "Prometheus", "OpenTelemetry", "pprof", "Toxiproxy", "OpenFeature"],
+        "chapters": [29, 30, 31, 39, 40, 41, 42, 43, 44, 80, 89, 94],
+        "start_url": "chapter29.html"
+    },
+    {
+        "id": "cloud-platform",
+        "title": "Cloud-Native, DevOps & Platform Security",
+        "badge": "Senior → Platform Lead",
+        "color": "#06b6d4",
+        "icon": "🛡️",
+        "desc": "Инфраструктура и безопасность: Docker, Kubernetes, K8s Operators/CRD, Service Mesh, gRPC-Gateway, Reverse Proxy, Cloud KMS, SBOM, Seccomp.",
+        "tags": ["Docker", "Kubernetes", "Kubebuilder", "Service Mesh", "KMS", "SBOM", "Seccomp"],
+        "chapters": [45, 46, 47, 78, 79, 81, 83, 90, 91, 93],
+        "start_url": "chapter45.html"
+    },
+    {
+        "id": "internals-ai",
+        "title": "Go Internals, Compilers, Tooling & AI",
+        "badge": "Staff / Principal Engineer",
+        "color": "#ec4899",
+        "icon": "🧠",
+        "desc": "Элитный рантайм: планировщик GMP, аллокатор mcache/mheap, GC, unsafe, CGO, AST, WebAssembly Wazero, корпоративные линтеры `go/analysis`, LLM RAG и Capstone.",
+        "tags": ["GMP", "Heap Allocator", "GC", "unsafe", "AST", "Wazero Wasm", "go/analysis", "Ollama/pgvector"],
+        "chapters": [48, 49, 50, 51, 52, 53, 54, 55, 56, 92, 98, 99, 100],
+        "start_url": "chapter48.html"
+    }
+]
+
+def build_portal_html(chapters):
+    # Sidebar for portal has active_chapter_num=0 (highlight portal link)
+    sidebar_html = build_sidebar(chapters, active_chapter_num=0, current_exercises=[])
+    
+    p = []
+    p.append('<main class="main-content" id="top">')
+    
+    # 1. Hero Section
+    p.append("""
+    <section style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(24, 36, 64, 0.95) 100%); border: 1px solid #1e293b; border-radius: 16px; padding: 40px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; margin-bottom: 16px; border: 1px solid rgba(56, 189, 248, 0.3);">
+            🚀 Профессиональный тренажер • 100 глав • 7 000+ практических задач • BigTech Standards
+        </div>
+        <h1 style="font-size: 2.6rem; font-weight: 800; color: #f8fafc; line-height: 1.25; margin-bottom: 16px;">
+            Go Backend Engineering <span style="background: linear-gradient(90deg, #00ADD8, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Workout</span>
+        </h1>
+        <p style="font-size: 1.15rem; color: #94a3b8; max-width: 920px; line-height: 1.7; margin-bottom: 28px;">
+            Интерактивный русскоязычный учебник-тренажер для бэкенд-инженеров, 
+            нацеленных на позиции Middle, Senior и Staff Go Developer в ведущих технологических компаниях 
+            (Яндекс, Ozon, Авито, Т-Банк, VK, Wildberries). 
+            Глубокое практическое погружение в компилятор, рантайм Go (GMP, GC триколор, epoll/netpoller), 
+            распределенные протоколы (Raft, Saga, Outbox, CDC), сетевую оптимизацию сокетов и системную изоляцию Linux.
+        </p>
+        
+        <!-- Metrics Counter Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
+            <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: center;">
+                <div style="font-size: 2.2rem; font-weight: 800; color: #38bdf8;">100</div>
+                <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 4px; font-weight: 500;">Глав курса (83 готовы + 17 в плане)</div>
+            </div>
+            <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: center;">
+                <div style="font-size: 2.2rem; font-weight: 800; color: #10b981;">7 071+</div>
+                <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 4px; font-weight: 500;">Задач с эталонными решениями</div>
+            </div>
+            <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: center;">
+                <div style="font-size: 2.2rem; font-weight: 800; color: #a855f7;">7</div>
+                <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 4px; font-weight: 500;">Сквозных образовательных траекторий</div>
+            </div>
+            <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: center;">
+                <div style="font-size: 2.2rem; font-weight: 800; color: #f59e0b;">22</div>
+                <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 4px; font-weight: 500;">Тематических кластера знаний</div>
+            </div>
+        </div>
+
+        <!-- Quick CTA Buttons -->
+        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+            <a href="chapter1.html" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #00ADD8); color: #fff; font-weight: 700; padding: 12px 24px; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4); transition: transform 0.2s;">
+                <span>🚀 Начать обучение (Глава 01)</span> →
+            </a>
+            <a href="#learning-paths" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155;">
+                <span>🗺️ Образовательные треки</span>
+            </a>
+            <a href="#curriculum" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155;">
+                <span>📚 Каталог 100 модулей</span>
+            </a>
+        </div>
+    </section>
+    """)
+    
+    # 2. Section: 7 Learning Paths
+    p.append("""
+    <section id="learning-paths" style="margin-bottom: 50px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h2 style="font-size: 1.8rem; font-weight: 800; color: #f8fafc;">Сквозные образовательные траектории (Learning Paths)</h2>
+                <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 4px;">Выберите специализацию под ваши карьерные цели и грейд</p>
+            </div>
+            <span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-size: 0.85rem; font-weight: 700; padding: 4px 12px; border-radius: 20px;">7 специализаций</span>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px;">
+    """)
+    
+    for lp in learning_paths:
+        tags_html = "".join([f'<span style="background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; color: #94a3b8; font-size: 0.75rem; padding: 2px 8px; border-radius: 6px; font-family: monospace;">#{t}</span>' for t in lp["tags"]])
+        
+        ch_links = []
+        for cnum in lp["chapters"]:
+            found = next((c for c in all_100_chapters if c[0] == cnum), None)
+            if found:
+                if found[4]: # Ready
+                    ch_links.append(f'<a href="{found[2]}" style="display: inline-block; padding: 2px 8px; background: rgba(30, 41, 59, 0.8); border: 1px solid #334155; border-radius: 6px; color: #38bdf8; text-decoration: none; font-size: 0.78rem; font-weight: 600;" title="{html.escape(found[1])}">{cnum}</a>')
+                else:
+                    ch_links.append(f'<span style="display: inline-block; padding: 2px 8px; background: rgba(30, 41, 59, 0.4); border: 1px dashed #475569; border-radius: 6px; color: #94a3b8; font-size: 0.78rem;" title="{html.escape(found[1])} (В плане)">{cnum}</span>')
+        ch_links_html = " ".join(ch_links)
+        
+        p.append(f"""
+        <div style="background: #131d33; border: 1px solid #1e293b; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: border-color 0.2s, transform 0.2s;">
+            <div>
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px;">
+                    <span style="font-size: 1.8rem;">{lp["icon"]}</span>
+                    <span style="background: rgba(56, 189, 248, 0.1); color: {lp["color"]}; font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(56, 189, 248, 0.2);">{lp["badge"]}</span>
+                </div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: #f8fafc; margin-bottom: 8px;">{lp["title"]}</h3>
+                <p style="font-size: 0.9rem; color: #94a3b8; line-height: 1.6; margin-bottom: 16px;">{lp["desc"]}</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px;">
+                    {tags_html}
+                </div>
+            </div>
+            <div>
+                <div style="font-size: 0.78rem; color: #64748b; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Главы трека:</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px;">
+                    {ch_links_html}
+                </div>
+                <a href="{lp["start_url"]}" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px; border-radius: 8px; text-decoration: none; border: 1px solid #334155; font-size: 0.9rem; transition: background 0.2s;">
+                    <span>Перейти к треку</span> →
+                </a>
+            </div>
+        </div>
+        """)
+        
+    p.append("""
+        </div>
+    </section>
+    """)
+
+    # 3. Section: 100 Chapters Interactive Curriculum
+    p.append("""
+    <section id="curriculum" style="margin-bottom: 60px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+            <div>
+                <h2 style="font-size: 1.8rem; font-weight: 800; color: #f8fafc;">Полный каталог курса (100 модулей)</h2>
+                <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 4px;">Интерактивная матрица всех глав от синтаксиса до Staff Capstone</p>
+            </div>
+            
+            <!-- Quick Filter Tabs -->
+            <div style="display: flex; gap: 8px; background: #0f172a; padding: 4px; border-radius: 10px; border: 1px solid #1e293b;">
+                <button class="filter-btn active" data-filter="all" style="background: #1e293b; color: #38bdf8; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Все (100)</button>
+                <button class="filter-btn" data-filter="done" style="background: transparent; color: #94a3b8; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">✅ Готово (83)</button>
+                <button class="filter-btn" data-filter="plan" style="background: transparent; color: #94a3b8; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">📋 В плане (17)</button>
+            </div>
+        </div>
+        
+        <!-- Live Search Bar -->
+        <div style="position: relative; margin-bottom: 24px;">
+            <input type="text" id="curriculum-search" placeholder="Быстрый поиск темы, ключевого слова или номера главы..." style="width: 100%; background: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 14px 20px 14px 44px; color: #f8fafc; font-size: 1rem; outline: none; transition: border-color 0.2s;" autocomplete="off">
+            <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 1.1rem;">🔍</span>
+        </div>
+
+        <!-- Curriculum Grid -->
+        <div id="curriculum-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+    """)
+    
+    for num, title, fname, ex_count, is_ready, keywords in all_100_chapters:
+        status_attr = "done" if is_ready else "plan"
+        card_class = "curriculum-card"
+        
+        if is_ready:
+            badge_html = f'<span style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 700; font-size: 0.78rem; padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(16, 185, 129, 0.3);">✅ Готово ({ex_count}/{ex_count})</span>'
+            link_start = f'<a href="{fname}" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">'
+            link_end = '</a>'
+            card_border = "#1e293b"
+            card_cursor = "pointer"
+        else:
+            badge_html = f'<span style="background: rgba(168, 85, 247, 0.15); color: #c084fc; font-weight: 700; font-size: 0.78rem; padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(168, 85, 247, 0.3);">📋 В плане (~{ex_count} упр.)</span>'
+            link_start = '<div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%; opacity: 0.85;">'
+            link_end = '</div>'
+            card_border = "#2a2238"
+            card_cursor = "default"
+
+        p.append(f"""
+        <div class="{card_class}" data-num="{num}" data-title="{html.escape(title.lower())}" data-status="{status_attr}" style="background: #131d33; border: 1px solid {card_border}; border-radius: 12px; padding: 20px; cursor: {card_cursor}; transition: border-color 0.2s, transform 0.15s; position: relative;">
+            {link_start}
+                <div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px;">
+                        <span style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; font-weight: 800; font-size: 0.85rem; padding: 3px 8px; border-radius: 6px; font-family: monospace;">#{num:02d}</span>
+                        {badge_html}
+                    </div>
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: #f8fafc; margin-bottom: 6px; line-height: 1.35;">{html.escape(title)}</h4>
+                    <p style="font-size: 0.82rem; color: #94a3b8; line-height: 1.5; margin-bottom: 12px;">{html.escape(keywords)}</p>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; pt: 8px; border-top: 1px solid #1e293b; margin-top: 8px; padding-top: 8px;">
+                    <span style="font-size: 0.78rem; color: #64748b;">{'Открыть главу →' if is_ready else 'Дорожная карта'}</span>
+                    <span style="font-size: 0.78rem; color: #38bdf8; font-weight: 600;">{ex_count} упражнений</span>
+                </div>
+            {link_end}
+        </div>
+        """)
+        
+    p.append("""
+        </div>
+    </section>
+    """)
+
+    # 4. Filter and Search Client-Side Script
+    p.append("""
+    <script>
+        // curriculum-toggle-filter-client-script
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('curriculum-search');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const cards = document.querySelectorAll('.curriculum-card');
+            
+            let activeFilter = 'all';
+            
+            function applyFilters() {
+                const query = (searchInput ? searchInput.value.toLowerCase().trim() : '');
+                
+                cards.forEach(card => {
+                    const title = card.getAttribute('data-title') || '';
+                    const num = card.getAttribute('data-num') || '';
+                    const status = card.getAttribute('data-status') || '';
+                    
+                    const matchesSearch = !query || title.includes(query) || num.includes(query);
+                    const matchesFilter = (activeFilter === 'all') || (activeFilter === status);
+                    
+                    if (matchesSearch && matchesFilter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', applyFilters);
+            }
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => {
+                        b.style.background = 'transparent';
+                        b.style.color = '#94a3b8';
+                        b.style.fontWeight = '600';
+                    });
+                    btn.style.background = '#1e293b';
+                    btn.style.color = '#38bdf8';
+                    btn.style.fontWeight = '700';
+                    
+                    activeFilter = btn.getAttribute('data-filter');
+                    applyFilters();
+                });
+            });
+        });
+    </script>
+    """)
+
+    p.append('</main>')
+    
+    title_replaced_head = HTML_HEAD.replace('01. Пакеты и модули (91/91)', 'Главная — Портал курса и Образовательные треки (100 модулей)')
+    return title_replaced_head + '\n' + sidebar_html + '\n' + '\n'.join(p) + '\n' + HTML_FOOTER
+
+
 if __name__ == '__main__':
     chapters = get_all_chapters()
     
     pages = [
-        ('index.html', build_chapter1_html),
+        ('index.html', build_portal_html),
+        ('chapter1.html', build_chapter1_html),
         ('chapter2.html', build_chapter2_html),
         ('chapter3.html', build_chapter3_html),
         ('chapter4.html', build_chapter4_html),
