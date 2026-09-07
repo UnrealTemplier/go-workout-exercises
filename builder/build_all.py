@@ -175,6 +175,8 @@ with open('builder/chapter74_data.json', 'r', encoding='utf-8') as f:
     ch74_exercises = json.load(f)
 with open('builder/chapter75_data.json', 'r', encoding='utf-8') as f:
     ch75_exercises = json.load(f)
+with open('builder/chapter76_data.json', 'r', encoding='utf-8') as f:
+    ch76_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -380,6 +382,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             73: ('chapter73.html', f'{len(ch73_exercises)}/{len(ch73_exercises)}'),
             74: ('chapter74.html', f'{len(ch74_exercises)}/{len(ch74_exercises)}'),
             75: ('chapter75.html', f'{len(ch75_exercises)}/{len(ch75_exercises)}'),
+            76: ('chapter76.html', f'{len(ch76_exercises)}/{len(ch76_exercises)}'),
         }
         
         if num in status_map:
@@ -4517,12 +4520,70 @@ def build_chapter75_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter74.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 74 Cache-friendly структуры данных и выравнивание памяти</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 76 Ассемблер Go (Plan 9 Assembly) и SIMD (Скоро) →</a>
+            <a href="chapter76.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #040d21; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 76 Ассемблер Go (Plan 9 Assembly) и SIMD →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'75. Lock-free структуры данных ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter76_html(chapters):
+    active_chapter_num = 76
+    current_exercises = ch76_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 76</div>
+        <h1 class="hero-title">Ассемблер Go (Plan 9 Assembly) и SIMD</h1>
+        <p class="hero-desc">
+            Глубокое инженерное погружение в низкоуровневую разработку на диалекте Plan 9 Assembly и аппаратную векторизацию SIMD (SSE, AVX2, AVX-512, ARM NEON) в среде Go. Анатомия машинного кода и анализ ассемблерных листингов с помощью go build -gcflags="-S", go tool objdump и флагов компилятора SSA. Эволюция соглашений о вызовах: стек ABI0 против регистровой модели ABIInternal (Go 1.17+), ABI Wrappers и зарезервированные регистры (R14 для горутины *g). Оптимизация устранения проверок границ срезов (Bounds Check Elimination — BCE). Правила оформления ассемблерных файлов .s: псевдорегистры SB, FP, SP, фреймы $locals-args, прагмы //go:noescape и //go:nosplit, заголовочные файлы textflag.h и go_asm.h. Векторные расширения процессора: 128-битные регистры XMM и 256-битные YMM. Векторная арифметика VMOVUPS, VADDPS, VPADDD, Fused Multiply-Add (VFMADD231PS) и горизонтальная редукция через VEXTRACTF128 и VHADDPS. Обязательная очистка состояния VZEROUPPER для предотвращения штрафа перехода AVX-SSE. Branchless программирование (инструкции CMOV, битовые трюки SARQ + XORQ). Промышленная кодогенерация через avo: распределение виртуальных регистров, расчет стека и устранение человеческих ошибок. Архитектура сверхбыстрого векторного парсинга simdjson и оптимизация TLB через Huge Pages (2 МБ / 1 ГБ).
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Основы Plan 9 Assembly, ABI и соглашения о вызовах (Упражнения 1–12)"),
+        (13, "Раздел 2: Векторизация SIMD (SSE, AVX2) и Fused Multiply-Add (Упражнения 13–24)"),
+        (25, "Раздел 3: Инструменты генерации avo, JIT, Huge Pages и Профилирование perf (Упражнения 25–35)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 76!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы освоили Plan 9 Assembly и SIMD-векторизацию в Go: от соглашений ABI0/ABIInternal и псевдорегистров до инструкций AVX2/FMA, кодогенерации с библиотекой avo, Branchless-алгоритмов и оптимизации Huge Pages.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter75.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 75 Lock-free структуры данных</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 77 Высокопроизводительные сетевые фреймворки (gnet, evio) (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'76. Ассемблер Go (Plan 9 Assembly) и SIMD ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 
@@ -4605,6 +4666,7 @@ if __name__ == '__main__':
         ('chapter73.html', build_chapter73_html),
         ('chapter74.html', build_chapter74_html),
         ('chapter75.html', build_chapter75_html),
+        ('chapter76.html', build_chapter76_html),
     ]
     
     for filename, builder_fn in pages:
