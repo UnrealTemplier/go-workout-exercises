@@ -181,6 +181,8 @@ with open('builder/chapter77_data.json', 'r', encoding='utf-8') as f:
     ch77_exercises = json.load(f)
 with open('builder/chapter78_data.json', 'r', encoding='utf-8') as f:
     ch78_exercises = json.load(f)
+with open('builder/chapter79_data.json', 'r', encoding='utf-8') as f:
+    ch79_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -391,6 +393,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             76: ('chapter76.html', f'{len(ch76_exercises)}/{len(ch76_exercises)}'),
             77: ('chapter77.html', f'{len(ch77_exercises)}/{len(ch77_exercises)}'),
             78: ('chapter78.html', f'{len(ch78_exercises)}/{len(ch78_exercises)}'),
+            79: ('chapter79.html', f'{len(ch79_exercises)}/{len(ch79_exercises)}'),
         }
         
         if num in status_map:
@@ -4703,12 +4706,71 @@ def build_chapter78_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter77.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 77 Высокопроизводительные сетевые фреймворки (gnet, evio)</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 79 Интеграция с Service Mesh (Istio, Linkerd) и mTLS (Скоро) →</a>
+            <a href="chapter79.html" style="display: inline-flex; align-items: center; gap: 6px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #0284c7;">Глава 79 Интеграция с Service Mesh (Istio, Linkerd) и mTLS →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'78. Облачные хранилища, Envelope Encryption и KMS ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter79_html(chapters):
+    active_chapter_num = 79
+    current_exercises = ch79_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 79</div>
+        <h1 class="hero-title">Интеграция с Service Mesh (Istio, Linkerd) и mTLS</h1>
+        <p class="hero-desc">
+            Исчерпывающее инженерное руководство по интеграции Go-микросервисов с Service Mesh (Istio, Linkerd) и реализации распределенной архитектуры Zero Trust. Data Plane под микроскопом: механизмы перехвата сокетов через сетевые таблицы Linux iptables (цепочки PREROUTING и OUTPUT, getsockopt с SO_ORIGINAL_DST) и сокетные eBPF программы ядра. Архитектурное сравнение Envoy Sidecar (C++) и Linkerd micro-proxy (Rust): неблокирующие event loops epoll, HTTP/2 мультиплексирование, EWMA балансировка и динамическая xDS/SDS синхронизация с istiod. Тотальный взаимный TLS (mTLS) в режиме STRICT: стандарт SPIFFE/SPIRE, валидация SAN URI сертификатов SVID и автоматическая ротация ключей через Citadel/Linkerd Identity без даунтайма. L7 Traffic Management: декларативные правила VirtualService и DestinationRule, весовые канареечные релизы (Canary Deployments), маршрутизация по HTTP-заголовкам (X-Canary, X-Beta-User), Traffic Mirroring (Shadowing), Egress Gateway с TLS Origination и Multi-Cluster сетка через East-West Gateway. Отказоустойчивость: автоматические ретраи с экспоненциальным бэкоффом и Full Jitter, предотвращение Retry Amplification и штормов повторов, пассивный Circuit Breaker (Outlier Detection) с исключением сбойных подов, gRPC Client Keepalive и серверная EnforcementPolicy. Распределенный Rate Limiting через Envoy RLS gRPC, WASM-фильтры на TinyGo и сквозная трассировка OpenTelemetry с контекстами W3C (traceparent, tracestate) и B3 (Zipkin).
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Архитектура Sidecar, iptables, mTLS и проброс контекста трассировки (Упражнения 1–20)"),
+        (21, "Раздел 2: Управление L7-трафиком, Egress, gRPC Keepalive и WASM фильтры (Упражнения 21–40)"),
+        (41, "Раздел 3: JWT, телеметрия, архитектура Linkerd и SPIFFE авторизация (Упражнения 41–60)"),
+        (61, "Раздел 4: Производительность, бенчмаркинг, Disaster Recovery и Capstone Master Service (Упражнения 61–80)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 79!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы освоили полный стек облачной интеграции с Service Mesh: от архитектуры Sidecar, iptables перехвата и Zero Trust mTLS до канареечной маршрутизации VirtualService, Outlier Detection, Envoy RLS, WASM-фильтров на TinyGo и сквозного проброса трейсов W3C/B3.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter78.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 78 Облачные хранилища, Envelope Encryption и KMS</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 80 Контекст трассировки (W3C Trace Context, B3) и gRPC Keepalive (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'79. Интеграция с Service Mesh (Istio, Linkerd) и mTLS ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 
@@ -4794,6 +4856,7 @@ if __name__ == '__main__':
         ('chapter76.html', build_chapter76_html),
         ('chapter77.html', build_chapter77_html),
         ('chapter78.html', build_chapter78_html),
+        ('chapter79.html', build_chapter79_html),
     ]
     
     for filename, builder_fn in pages:
