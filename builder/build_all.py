@@ -187,6 +187,8 @@ with open('builder/chapter80_data.json', 'r', encoding='utf-8') as f:
     ch80_exercises = json.load(f)
 with open('builder/chapter81_data.json', 'r', encoding='utf-8') as f:
     ch81_exercises = json.load(f)
+with open('builder/chapter82_data.json', 'r', encoding='utf-8') as f:
+    ch82_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -400,6 +402,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             79: ('chapter79.html', f'{len(ch79_exercises)}/{len(ch79_exercises)}'),
             80: ('chapter80.html', f'{len(ch80_exercises)}/{len(ch80_exercises)}'),
             81: ('chapter81.html', f'{len(ch81_exercises)}/{len(ch81_exercises)}'),
+            82: ('chapter82.html', f'{len(ch82_exercises)}/{len(ch82_exercises)}'),
         }
         
         if num in status_map:
@@ -4896,6 +4899,64 @@ def build_chapter81_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'81. Безопасность цепочки поставок (Supply Chain Security) и SBOM ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+def build_chapter82_html(chapters):
+    active_chapter_num = 82
+    current_exercises = ch82_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 82</div>
+        <h1 class="hero-title">Защита сетевых сокетов и противодействие DoS-атакам</h1>
+        <p class="hero-desc">
+            Глубокое практическое руководство по низкоуровневой защите сетевых сокетов, отражению DoS/DDoS-атак и тюнингу сетевого стека Linux в приложениях на Go. Анатомия асимметричных атак исчерпания ресурсов: механика Slowloris (удержание медленных соединений), Slow Read / Tarpit (медленное чтение ответов) и Header Bombing (атака гигантскими заголовками). Построение эшелонированной защиты прикладного уровня: обязательная конфигурация таймаутов http.Server (ReadHeaderTimeout, ReadTimeout, WriteTimeout, IdleTimeout), разделение лимитов для файловых загрузчиков и использование http.MaxBytesReader для предотвращения OOM. Харденинг сетевых сокетов ядра через net.ListenConfig: шардирование сокетов SO_REUSEPORT для параллелизации Accept по ядрам CPU, задержка пробуждения Go через TCP_DEFER_ACCEPT, ускорение рукопожатий TCP Fast Open (TFO) и быстрое обнаружение сетевых сбоев через TCP_USER_TIMEOUT и TCP Keep-Alive. Отражение объемных атак на уровне ядра: криптографические SYN Cookies (sysctl net.ipv4.tcp_syncookies), тюнинг somaxconn и tcp_max_syn_backlog, обход переполнения conntrack через правила NOTRACK в iptables. Ограничение скорости (Rate Limiting on Accept) и семафоры конкурентности со сбросом нагрузки (Load Shedding HTTP 503). Изоляция системных вызовов через Seccomp (блокировка ptrace и network egress), мандатный контроль доступа AppArmor, анализ профилей ядра через strace и запуск на стандартном порту 80 без прав root через Linux Capabilities (cap_net_bind_service).
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Механика DoS-атак Slowloris, тайм-ауты http.Server и защита от медленных клиентов (Упражнения 1–14)"),
+        (15, "Раздел 2: Ограничение соединений (netutil, atomic), TLS-харденинг и тюнинг Keep-Alive (Упражнения 15–28)"),
+        (29, "Раздел 3: Низкоуровневые оптимизации ядра: SO_REUSEPORT, SYN Cookies, TCP Fast Open и TCP_DEFER_ACCEPT (Упражнения 29–41)"),
+        (42, "Раздел 4: Системная изоляция Seccomp, защита от перегрузок (Load Shedding), AppArmor и The Unbreakable Server (Упражнения 42–55)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 82!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили низкоуровневую защиту сокетов, парирование атак Slowloris и SYN Flood, тонкий тюнинг сетевых параметров ядра Linux, шардирование портов через SO_REUSEPORT и проектирование неуязвимых HighLoad-серверов на Go.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter81.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 81 Безопасность цепочки поставок (Supply Chain Security) и SBOM</a>
+            <a href="chapter83.html" style="display: inline-flex; align-items: center; gap: 6px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #0284c7;">Глава 83 Системная изоляция, Seccomp и Linux Capabilities →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'82. Защита сетевых сокетов и противодействие DoS-атакам ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 
 
 if __name__ == '__main__':
@@ -4983,6 +5044,7 @@ if __name__ == '__main__':
         ('chapter79.html', build_chapter79_html),
         ('chapter80.html', build_chapter80_html),
         ('chapter81.html', build_chapter81_html),
+        ('chapter82.html', build_chapter82_html),
     ]
     
     for filename, builder_fn in pages:
