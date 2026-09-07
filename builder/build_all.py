@@ -173,6 +173,8 @@ with open('builder/chapter73_data.json', 'r', encoding='utf-8') as f:
     ch73_exercises = json.load(f)
 with open('builder/chapter74_data.json', 'r', encoding='utf-8') as f:
     ch74_exercises = json.load(f)
+with open('builder/chapter75_data.json', 'r', encoding='utf-8') as f:
+    ch75_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -377,6 +379,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             72: ('chapter72.html', f'{len(ch72_exercises)}/{len(ch72_exercises)}'),
             73: ('chapter73.html', f'{len(ch73_exercises)}/{len(ch73_exercises)}'),
             74: ('chapter74.html', f'{len(ch74_exercises)}/{len(ch74_exercises)}'),
+            75: ('chapter75.html', f'{len(ch75_exercises)}/{len(ch75_exercises)}'),
         }
         
         if num in status_map:
@@ -4455,12 +4458,71 @@ def build_chapter74_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter73.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 73 Распределенные блокировки и Fencing Tokens</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 75 Lock-free структуры данных (Скоро) →</a>
+            <a href="chapter75.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #040d21; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 75 Lock-free структуры данных →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'74. Cache-friendly структуры данных и выравнивание памяти ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter75_html(chapters):
+    active_chapter_num = 75
+    current_exercises = ch75_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 75</div>
+        <h1 class="hero-title">Lock-free структуры данных</h1>
+        <p class="hero-desc">
+            Исчерпывающее инженерное руководство по проектированию и реализации неблокирующих (Lock-Free и Wait-Free) структур данных в Go на базе пакета sync/atomic и низкоуровневой модели памяти (Go Memory Model). Атомарные примитивы современного процессора: Compare-And-Swap (CAS), Fetch-And-Add (XADD), Atomic Load/Store и семантика Sequential Consistency. Разработка неблокирующего стека Трейбера (Treiber Stack) и структуры очереди Майкла-Скотта (Michael-Scott Queue / MS-Queue) с фиктивным головным узлом (Dummy Sentinel Node). Глубокий анализ классической проблемы ABA: механизмы разрушения структур данных при возврате узлов, решения через версионированные ссылки (Tagged Pointers), упакованные дескрипторы и сопоставление со сборщиком мусора Go. Принципы безопасного управления памятью: Epoch-Based Reclamation (EBR), Hazard Pointers и Read-Copy-Update (RCU) через atomic.Pointer[T]. Архитектура кольцевых буферов (Ring Buffers): ультрабыстрый Single-Producer Single-Consumer (SPSC) буфер без CAS, подавление паразитного разделения кэш-линий (False Sharing) через 64-байтный Cache Line Padding, локальное кэширование индексов (Cached Head/Tail) и побитовая адресация степени двойки (Power-of-2). Промышленная реализация многопоточной очереди Дмитрия Вьюкова (Vyukov Bounded MPMC Queue) с монотонными Sequence Numbers для каждого слота. Шаблон LMAX Disruptor: предварительно аллоцированные кольца, курсоры последовательностей и пакетная обработка (Batch Operations). Политики противодавления (Backpressure): Block, Drop Oldest (кольцевая перезапись) и Drop Newest. Профилирование динамики CAS-циклов: лавины повторов (CAS Retry Storms), адаптивный экспоненциальный откат (Exponential Backoff with Jitter), бенчмаркинг против sync.Mutex и финальный High-Performance Message Passing Framework.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Базовые атомики, Spinlock и Treiber Stack (Упражнения 1–19)"),
+        (20, "Раздел 2: Проблема ABA, Tagged Pointers и SPSC Ring Buffer (Упражнения 20–38)"),
+        (39, "Раздел 3: Memory Ordering, MS-Queue и MPMC Ring Buffer (Упражнения 39–57)"),
+        (58, "Раздел 4: Продвинутые паттерны: RCU, Hazard Pointers, Backpressure и Финальный фреймворк (Упражнения 58–75)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 75!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили проектирование Lock-free структур данных: от атомиков, модели памяти Go и Treiber Stack до устранения проблемы ABA, SPSC и MPMC очередей Вьюкова, LMAX Disruptor, стратегий Backpressure и финального фреймворка передачи сообщений.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter74.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 74 Cache-friendly структуры данных и выравнивание памяти</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 76 Ассемблер Go (Plan 9 Assembly) и SIMD (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'75. Lock-free структуры данных ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 
@@ -4542,6 +4604,7 @@ if __name__ == '__main__':
         ('chapter72.html', build_chapter72_html),
         ('chapter73.html', build_chapter73_html),
         ('chapter74.html', build_chapter74_html),
+        ('chapter75.html', build_chapter75_html),
     ]
     
     for filename, builder_fn in pages:
