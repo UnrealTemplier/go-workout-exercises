@@ -189,6 +189,8 @@ with open('builder/chapter81_data.json', 'r', encoding='utf-8') as f:
     ch81_exercises = json.load(f)
 with open('builder/chapter82_data.json', 'r', encoding='utf-8') as f:
     ch82_exercises = json.load(f)
+with open('builder/chapter83_data.json', 'r', encoding='utf-8') as f:
+    ch83_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -403,6 +405,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             80: ('chapter80.html', f'{len(ch80_exercises)}/{len(ch80_exercises)}'),
             81: ('chapter81.html', f'{len(ch81_exercises)}/{len(ch81_exercises)}'),
             82: ('chapter82.html', f'{len(ch82_exercises)}/{len(ch82_exercises)}'),
+            83: ('chapter83.html', f'{len(ch83_exercises)}/{len(ch83_exercises)}'),
         }
         
         if num in status_map:
@@ -4957,6 +4960,67 @@ def build_chapter82_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'82. Защита сетевых сокетов и противодействие DoS-атакам ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+def build_chapter83_html(chapters):
+    active_chapter_num = 83
+    current_exercises = ch83_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 83 • Финал курса</div>
+        <h1 class="hero-title">Системная изоляция, Seccomp и Linux Capabilities</h1>
+        <p class="hero-desc">
+            Фундаментальное практическое руководство по низкоуровневой системной изоляции процессов, ограничению полномочий ядра и безопасной архитектуре контейнеризации в Go. Управление системными ресурсами: аудит файловых дескрипторов (ulimit NOFILE) и отражение атак исчерпания ресурсов (EMFILE DoS). Дискретные возможности ядра (Linux Capabilities): привязка к привилегированным портам без прав root через CAP_NET_BIND_SERVICE, низкоуровневое манипулирование масками Permitted, Effective, Inheritable, Bounding и Ambient через capset и prctl, сброс избыточных прав (Drop Privileges) до непривилегированного пользователя с использованием syscall.AllThreadsSyscall. Системный файрвол Seccomp (Secure Computing Mode): построение бескомпромиссных белых списков (Zero Trust Whitelist) через libseccomp-golang и ручной байткод cBPF (unix.SockFilter) без CGO, перехват и блокировка векторов RCE (запрет execve/execveat с фатальным сигналом SIGSYS), перехват сисколлов в пространстве пользователя через seccomp_unotify в ядре Linux 5.0+. Профилирование системных вызовов Go Runtime (futex, clone3, mmap, epoll_pwait, sigaltstack) с помощью strace и генерация декларативных OCI Seccomp JSON-профилей для Docker и Kubernetes. Мандатный контроль доступа (MAC) AppArmor: ограничение файловой системы в режиме Enforce и сетевой изоляции egress. Неизменяемая инфраструктура: запуск контейнеров с Read-Only Root Filesystem и безопасной tmpfs. Изоляция файловых пространств: классический chroot против атомарного pivot_root. Управление ресурсами ядра: изоляция сетевых пространств имен (Network Namespaces) и контрольные группы cgroup v2 (memory.max, cpu.max, защита от Fork Bomb через pids.max). Запуск в Kubernetes в профиле Restricted (PodSecurityContext, drop ALL). Мониторинг безопасности ядра в реальном времени через eBPF (bpf2go, ring buffer, трассировка sys_enter_connect). Аппаратная виртуализация и песочница Google gVisor (runsc): эмуляция системных вызовов ядром Sentry на Go и предотвращение Container Escape. Реактивная защита от атак перебора с динамическим баном в iptables через Fail2Ban.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Лимиты ресурсов (ulimit), привилегия CAP_NET_BIND_SERVICE и основы Seccomp (Упражнения 1–7)"),
+        (8, "Раздел 2: Профилирование сисколлов (strace), генерация OCI-профилей и отбрасывание прав (Упражнения 8–14)"),
+        (15, "Раздел 3: Минимальные capabilities, профили AppArmor, изоляция chroot и cgroup v2 (Упражнения 15–21)"),
+        (22, "Раздел 4: Zero Trust в Kubernetes, рантайм eBPF, песочница gVisor и интеграция с Fail2Ban (Упражнения 22–28)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer (Final chapter congratulations!)
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">🎉 Грандиозный финал • Все 83 главы пройдены!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с полным освоением всего учебника Go!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы преодолели грандиозный путь от базовых пакетов, синтаксиса и слайсов до сложнейших глубин рантайма Go (GMP, GC триколор, Netpoller), высоконагруженных распределенных систем (Raft, Saga, Outbox, CDC), сетевой оптимизации сокетов (SO_REUSEPORT, TCP Fast Open) и системной изоляции ядра Linux (Seccomp, Linux Capabilities, cgroups v2, eBPF и gVisor).
+            <br><br>
+            <strong>Все 7 071 практическое упражнение</strong> вооружили вас инженерными знаниями уровня <strong>Lead / Principal Go Engineer</strong> в ведущих технологических компаниях!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter82.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 82 Защита сетевых сокетов и противодействие DoS-атакам</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #ffffff; font-weight: 700; padding: 12px 24px; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">🎓 В начало учебника (Глава 1) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'83. Системная изоляция, Seccomp и Linux Capabilities ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 
 
 if __name__ == '__main__':
@@ -5045,6 +5109,7 @@ if __name__ == '__main__':
         ('chapter80.html', build_chapter80_html),
         ('chapter81.html', build_chapter81_html),
         ('chapter82.html', build_chapter82_html),
+        ('chapter83.html', build_chapter83_html),
     ]
     
     for filename, builder_fn in pages:
