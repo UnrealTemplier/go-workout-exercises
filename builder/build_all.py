@@ -185,6 +185,8 @@ with open('builder/chapter79_data.json', 'r', encoding='utf-8') as f:
     ch79_exercises = json.load(f)
 with open('builder/chapter80_data.json', 'r', encoding='utf-8') as f:
     ch80_exercises = json.load(f)
+with open('builder/chapter81_data.json', 'r', encoding='utf-8') as f:
+    ch81_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -397,6 +399,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             78: ('chapter78.html', f'{len(ch78_exercises)}/{len(ch78_exercises)}'),
             79: ('chapter79.html', f'{len(ch79_exercises)}/{len(ch79_exercises)}'),
             80: ('chapter80.html', f'{len(ch80_exercises)}/{len(ch80_exercises)}'),
+            81: ('chapter81.html', f'{len(ch81_exercises)}/{len(ch81_exercises)}'),
         }
         
         if num in status_map:
@@ -4827,12 +4830,71 @@ def build_chapter80_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter79.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 79 Интеграция с Service Mesh (Istio, Linkerd) и mTLS</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 81 Безопасность цепочки поставок (Supply Chain Security) и SBOM (Скоро) →</a>
+            <a href="chapter81.html" style="display: inline-flex; align-items: center; gap: 6px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #0284c7;">Глава 81 Безопасность цепочки поставок (Supply Chain Security) и SBOM →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'80. Контекст трассировки (W3C Trace Context, B3) и gRPC Keepalive ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+def build_chapter81_html(chapters):
+    active_chapter_num = 81
+    current_exercises = ch81_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 81</div>
+        <h1 class="hero-title">Безопасность цепочки поставок (Supply Chain Security) и SBOM</h1>
+        <p class="hero-desc">
+            Фундаментальное инженерное руководство по безопасности цепочки поставок программного обеспечения (Supply Chain Security) и паспортизации артефактов (SBOM) в экосистеме Go. Анатомия защиты дерева зависимостей: криптографическая база контрольных сумм sum.golang.org (GOSUMDB), аудит go.sum, изоляция приватных модулей через GOPRIVATE и GONOSUMDB, предотвращение атак Dependency Confusion и тайпосквоттинга. Практика полного вендоринга (go mod vendor) для автономных Air-Gapped контуров, семантический версионинг (MVS) и автоматический аудит лицензионной чистоты (go-licenses, защита от вирусных GPL-лицензий). Глубокий анализ уязвимостей с учетом достижимости в графе вызовов (reachability analysis) через официальный инструмент govulncheck. Генерация машиночитаемых паспортов ПО (SBOM) в международных стандартах CycloneDX 1.5 и SPDX 2.3 утилитой Anchore Syft с соблюдением требований директивы NTIA. Криптографическое подписание контейнерных образов, бинарников и документов SBOM через Sigstore Cosign, аттестации in-toto, верификация в Kubernetes через Policy Controller и достижение стандартов герметичности сборок SLSA Level 3. Развертывание и тюнинг корпоративных прокси-серверов Athens и JFrog Artifactory, безопасная очистка кэша модулей, харденинг сборочных раннеров CI/CD и безопасное удаление конфиденциальных данных из оперативной памяти процесса.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Защита зависимостей, go.sum, GOPRIVATE и сканирование уязвимостей (Упражнения 1–34)"),
+        (35, "Раздел 2: Воспроизводимые сборки, стандарты SBOM (SPDX/CycloneDX) и утилита Syft (Упражнения 35–68)"),
+        (69, "Раздел 3: Подписание образов через Cosign, аттестации in-toto и SLSA Level 3 (Упражнения 69–102)"),
+        (103, "Раздел 4: Корпоративные прокси (Athens/Artifactory), вендоринг и рантайм-харднинг (Упражнения 103–136)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 81!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили защиту цепочки поставок ПО, контроль контрольных сумм и изоляцию приватных репозиториев, генерацию спецификаций SBOM, подписание образов утилитой Cosign и построение надежного защищенного конвейера DevSecOps.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter80.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 80 Контекст трассировки (W3C Trace Context, B3) и gRPC Keepalive</a>
+            <a href="chapter82.html" style="display: inline-flex; align-items: center; gap: 6px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #0284c7;">Глава 82 Защита сетевых сокетов и противодействие DoS-атакам →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'81. Безопасность цепочки поставок (Supply Chain Security) и SBOM ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
 
 
 
@@ -4920,6 +4982,7 @@ if __name__ == '__main__':
         ('chapter78.html', build_chapter78_html),
         ('chapter79.html', build_chapter79_html),
         ('chapter80.html', build_chapter80_html),
+        ('chapter81.html', build_chapter81_html),
     ]
     
     for filename, builder_fn in pages:
