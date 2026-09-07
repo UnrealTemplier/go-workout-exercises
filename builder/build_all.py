@@ -183,6 +183,8 @@ with open('builder/chapter78_data.json', 'r', encoding='utf-8') as f:
     ch78_exercises = json.load(f)
 with open('builder/chapter79_data.json', 'r', encoding='utf-8') as f:
     ch79_exercises = json.load(f)
+with open('builder/chapter80_data.json', 'r', encoding='utf-8') as f:
+    ch80_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -394,6 +396,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             77: ('chapter77.html', f'{len(ch77_exercises)}/{len(ch77_exercises)}'),
             78: ('chapter78.html', f'{len(ch78_exercises)}/{len(ch78_exercises)}'),
             79: ('chapter79.html', f'{len(ch79_exercises)}/{len(ch79_exercises)}'),
+            80: ('chapter80.html', f'{len(ch80_exercises)}/{len(ch80_exercises)}'),
         }
         
         if num in status_map:
@@ -4765,12 +4768,71 @@ def build_chapter79_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter78.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 78 Облачные хранилища, Envelope Encryption и KMS</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 80 Контекст трассировки (W3C Trace Context, B3) и gRPC Keepalive (Скоро) →</a>
+            <a href="chapter80.html" style="display: inline-flex; align-items: center; gap: 6px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #0284c7;">Глава 80 Контекст трассировки (W3C Trace Context, B3) и gRPC Keepalive →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'79. Интеграция с Service Mesh (Istio, Linkerd) и mTLS ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter80_html(chapters):
+    active_chapter_num = 80
+    current_exercises = ch80_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 80</div>
+        <h1 class="hero-title">Контекст трассировки (W3C Trace Context, B3) и gRPC Keepalive</h1>
+        <p class="hero-desc">
+            Глубокое инженерное руководство по сквозной распределенной трассировке (Distributed Tracing) и сетевой надежности gRPC в высоконагруженных Cloud-Native микросервисах. Анатомия стандартов W3C Trace Context (RFC 9421) и Zipkin B3: побайтовый разбор и валидация 55-байтного заголовка traceparent (version, trace_id, parent_id, trace_flags), управление упорядоченным списком пар tracestate и передача сквозных метаданных W3C Baggage. Мультипротокольная контекстная пропагация (OpenTelemetry Propagators) через любые архитектурные границы: HTTP/1.1 заголовки, gRPC metadata (HTTP/2 HEADERS), брокеры сообщений Apache Kafka (Record Headers) и NATS (Msg Headers). Решение фундаментальной проблемы балансировки gRPC за L4 балансировщиками (K8s Service ClusterIP, AWS NLB): залипание постоянных мультиплексированных соединений, клиентский Round Robin через Headless Service и L7 проксирование через Envoy Service Mesh. Внутреннее устройство gRPC Keepalive: активное зондирование сокетов 8-байтными HTTP/2 PING-фреймами (ClientParameters: Time, Timeout, PermitWithoutStream), мгновенное распознавание полуоткрытых сокетов (dead connections) в обход 15-минутных таймаутов Linux TCP (tcp_retries2), серверная политика защиты от DoS-атак (EnforcementPolicy: MinTime, PermitWithoutStream, штрафные страйки) и плавная ротация сокетов через MaxConnectionAge, MaxConnectionAgeGrace и кадры GOAWAY с добавлением Jitter. Искусство Cloud-Native Graceful Draining в Kubernetes: устранение ошибок 502/RST и Envoy 503 UC, синхронизация удаления из EndpointSlice и обновления правил iptables/IPVS, координация lifecycle.preStop хука, разделение LivenessProbe (только рантайм) и ReadinessProbe (503 при дренаже), а также безопасная остановка серверов (GracefulStop с жестким дедлайном Stop) и долгоживущих стримов по EOF.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: W3C Trace Context, форматы заголовков и основы gRPC Keepalive (Упражнения 1–20)"),
+        (21, "Раздел 2: Kubernetes Lifecycle, Graceful Draining, PreStop и контекстная передача (Упражнения 21–38)"),
+        (39, "Раздел 3: Multi-Format Propagation, Service Mesh, SPIFFE Zero-Trust и Channelz (Упражнения 39–58)"),
+        (59, "Раздел 4: Rate Limiting, Cache Stampede Shield, Chaos Engineering и Capstone Service (Упражнения 59–76)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 80!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы в совершенстве освоили протоколы распределенной трассировки W3C Trace Context и Zipkin B3, клиентские и серверные политики gRPC Keepalive, ликвидацию сетевых гонок в Kubernetes с помощью Graceful Draining и PreStop хуков, а также построение надежных микросервисных архитектур.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter79.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 79 Интеграция с Service Mesh (Istio, Linkerd) и mTLS</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 81 Безопасность цепочки поставок (Supply Chain Security) и SBOM (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'80. Контекст трассировки (W3C Trace Context, B3) и gRPC Keepalive ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 
@@ -4857,6 +4919,7 @@ if __name__ == '__main__':
         ('chapter77.html', build_chapter77_html),
         ('chapter78.html', build_chapter78_html),
         ('chapter79.html', build_chapter79_html),
+        ('chapter80.html', build_chapter80_html),
     ]
     
     for filename, builder_fn in pages:
