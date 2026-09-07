@@ -179,6 +179,8 @@ with open('builder/chapter76_data.json', 'r', encoding='utf-8') as f:
     ch76_exercises = json.load(f)
 with open('builder/chapter77_data.json', 'r', encoding='utf-8') as f:
     ch77_exercises = json.load(f)
+with open('builder/chapter78_data.json', 'r', encoding='utf-8') as f:
+    ch78_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -388,6 +390,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             75: ('chapter75.html', f'{len(ch75_exercises)}/{len(ch75_exercises)}'),
             76: ('chapter76.html', f'{len(ch76_exercises)}/{len(ch76_exercises)}'),
             77: ('chapter77.html', f'{len(ch77_exercises)}/{len(ch77_exercises)}'),
+            78: ('chapter78.html', f'{len(ch78_exercises)}/{len(ch78_exercises)}'),
         }
         
         if num in status_map:
@@ -4641,12 +4644,71 @@ def build_chapter77_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter76.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 76 Ассемблер Go (Plan 9 Assembly) и SIMD</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 78 Облачные хранилища, Envelope Encryption и KMS (Скоро) →</a>
+            <a href="chapter78.html" style="display: inline-flex; align-items: center; gap: 6px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #0284c7;">Глава 78 Облачные хранилища, Envelope Encryption и KMS →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'77. Высокопроизводительные сетевые фреймворки (gnet, evio) ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter78_html(chapters):
+    active_chapter_num = 78
+    current_exercises = ch78_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 78</div>
+        <h1 class="hero-title">Облачные хранилища, Envelope Encryption и KMS</h1>
+        <p class="hero-desc">
+            Исчерпывающее инженерное руководство по криптографической защите данных в распределенных объектных хранилищах (AWS S3, MinIO, Ceph, Google Cloud Storage, Azure Blob). Архитектурный паттерн Envelope Encryption: разделение ключей шифрования данных (DEK) и мастер-ключей (KEK), исключение вендорных блокировок и преодоление лимита 4 КБ в облачных KMS (AWS KMS, GCP Cloud KMS, Azure Key Vault, HashiCorp Vault Transit). Механика аппаратных модулей безопасности (HSM / CloudHSM, FIPS 140-2 Level 3). Сквозной протокол S3 Multipart Upload: параллельная передача гигабайтных файлов через семафорные воркер-пулы и errgroup, вычисление аппаратных контрольных сумм CRC32C и SHA-256, отказоустойчивый Resume и гарантированная очистка брошенных частей через AbortMultipartUpload и S3 Lifecycle Rules. Безопасная временная раздача через Presigned URLs без публичного доступа к бакетам. Неизменяемые WORM хранилища (S3 Object Lock Compliance Mode), автоматическая ежегодная ротация ключей с сохранением обратной совместимости, GDPR Crypto-shredding (Право на забвение) и сквозная трассировка OpenTelemetry с контекстом W3C.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Основы S3, Envelope Encryption и интеграция с KMS (Упражнения 1–24)"),
+        (25, "Раздел 2: Multipart Upload, Streaming Encryption и Presigned URLs (Упражнения 25–50)"),
+        (51, "Раздел 3: Продвинутые политики KMS, ротация ключей и WORM Object Lock (Упражнения 51–72)"),
+        (73, "Раздел 4: Cloud-Native архитектура, Crypto-shredding и Итоговый сервис (Упражнения 73–95)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 78!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы освоили полный стек облачной безопасности данных: от Envelope Encryption и AWS/GCP KMS до параллельного Multipart Upload, S3 Lifecycle, Presigned URLs, WORM Object Lock и паттерна Crypto-shredding.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter77.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 77 Высокопроизводительные сетевые фреймворки (gnet, evio)</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 79 Интеграция с Service Mesh (Istio, Linkerd) и mTLS (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'78. Облачные хранилища, Envelope Encryption и KMS ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 
@@ -4731,6 +4793,7 @@ if __name__ == '__main__':
         ('chapter75.html', build_chapter75_html),
         ('chapter76.html', build_chapter76_html),
         ('chapter77.html', build_chapter77_html),
+        ('chapter78.html', build_chapter78_html),
     ]
     
     for filename, builder_fn in pages:
