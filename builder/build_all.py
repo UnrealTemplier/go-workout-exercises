@@ -171,6 +171,8 @@ with open('builder/chapter72_data.json', 'r', encoding='utf-8') as f:
     ch72_exercises = json.load(f)
 with open('builder/chapter73_data.json', 'r', encoding='utf-8') as f:
     ch73_exercises = json.load(f)
+with open('builder/chapter74_data.json', 'r', encoding='utf-8') as f:
+    ch74_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -374,6 +376,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             71: ('chapter71.html', f'{len(ch71_exercises)}/{len(ch71_exercises)}'),
             72: ('chapter72.html', f'{len(ch72_exercises)}/{len(ch72_exercises)}'),
             73: ('chapter73.html', f'{len(ch73_exercises)}/{len(ch73_exercises)}'),
+            74: ('chapter74.html', f'{len(ch74_exercises)}/{len(ch74_exercises)}'),
         }
         
         if num in status_map:
@@ -4393,12 +4396,71 @@ def build_chapter73_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter72.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 72 Протокол консенсуса Raft</a>
-            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 74 Cache-friendly структуры данных и выравнивание памяти (Скоро) →</a>
+            <a href="chapter74.html" style="display: inline-flex; align-items: center; gap: 6px; background: #00add8; color: #0b1120; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none;">Глава 74 Cache-friendly структуры данных и выравнивание памяти →</a>
         </div>
     </section>
     """)
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'73. Распределенные блокировки и Fencing Tokens ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
+
+def build_chapter74_html(chapters):
+    active_chapter_num = 74
+    current_exercises = ch74_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content">')
+    
+    # Hero Section
+    content_parts.append(f"""
+    <section class="hero-section">
+        <div class="hero-tag">Глава 74</div>
+        <h1 class="hero-title">Cache-friendly структуры данных и выравнивание памяти</h1>
+        <p class="hero-desc">
+            Исчерпывающее практическое и теоретическое руководство по микроархитектурной оптимизации структур данных в Go под современные иерархии кэш-памяти процессоров (L1, L2, L3, TLB). Анатомия 64-байтной кэш-линии ЦПУ и механика выравнивания полей структур (Memory Alignment & Padding). Устранение катастрофического феномена False Sharing (паразитного разделения строк кэша) и межъядерных инвалидаций (Cache Line Bouncing) в протоколах когерентности MESI/MOESI. Профилирование промахов кэша и метрики HITM с помощью низкоуровневой утилиты Linux perf c2c и perf stat. Data-Oriented Design (DOD): всестороннее сравнение Array of Structures (AoS), Struct of Arrays (SoA) и гибридного подхода AoSoA (Chunked Tiling) для аппаратной SIMD-векторизации (AVX2/Neon). Оптимизация многомерных массивов: физическая природа деградации Column-Major обхода, разрушение TLB и работа аппаратного потокового префетчера (Stream Prefetcher). Сравнение кэш-локальности B-деревьев против бинарных деревьев поиска (BST) и устранение задержек Pointer Chasing. Продвинутые кэш-эффективные структуры: хэш-таблицы с открытой адресацией (Open Addressing), алгоритм Robin Hood Hashing и революционная архитектура Swiss Tables (Google Abseil / Go 1.24+ swissmap). Раскладка Эйтзингера (Eytzinger / BFS layout) и кэш-независимые структуры ван Эмде Боаса (van Emde Boas layout). Hot/Cold Splitting, String Arenas, сжатие указателей (Pointer Compression до 32-bit offset) и Zero-Copy плоская бинарная сериализация (FlatBuffers / SBE). Оптимизация пауз сборщика мусора через структуры без указателей (Pointer-Free noscan spans). Учет топологии NUMA на многосокетных серверах, модель Roofline (Memory-Bound vs Compute-Bound), строгое статистическое тестирование через benchstat и проектирование высокопроизводительных сетевых сокетов в стиле gnet/evio.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Выравнивание памяти, Padding и анатомия структур (Упражнения 1–25)"),
+        (26, "Раздел 2: Кэш-линии процессора, False Sharing и Data-Oriented Design (AoS vs SoA) (Упражнения 26–50)"),
+        (51, "Раздел 3: Аппаратный Prefetcher, ассоциативность кэша и SIMD-выравнивание (Упражнения 51–75)"),
+        (76, "Раздел 4: Cache-friendly алгоритмы, NUMA-оптимизация и профилирование perf (Упражнения 76–99)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 32px; background: #131d33; border: 1px solid #1e293b; border-radius: 12px; text-align: center;">
+        <h3 style="color: #38bdf8; font-size: 20px; margin-bottom: 12px;">Поздравляем с освоением главы 74!</h3>
+        <p style="color: #94a3b8; font-size: 15px; max-width: 650px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Вы глубоко изучили микроархитектуру современных процессоров и принципы построения Cache-friendly систем: от выравнивания структур и устранения False Sharing до Data-Oriented Design, Swiss Tables, лейаута Эйтзингера, String Arenas, NUMA-топологии и модели Roofline.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter73.html" style="display: inline-flex; align-items: center; gap: 6px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid #334155;">← Глава 73 Распределенные блокировки и Fencing Tokens</a>
+            <a href="javascript:void(0)" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 173, 216, 0.2); color: #38bdf8; font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; border: 1px solid rgba(0, 173, 216, 0.4);">Глава 75 Lock-free структуры данных (Скоро) →</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'74. Cache-friendly структуры данных и выравнивание памяти ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 
@@ -4479,6 +4541,7 @@ if __name__ == '__main__':
         ('chapter71.html', build_chapter71_html),
         ('chapter72.html', build_chapter72_html),
         ('chapter73.html', build_chapter73_html),
+        ('chapter74.html', build_chapter74_html),
     ]
     
     for filename, builder_fn in pages:
