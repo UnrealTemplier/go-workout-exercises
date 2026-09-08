@@ -223,6 +223,8 @@ with open('builder/chapter98_data.json', 'r', encoding='utf-8') as f:
     ch98_exercises = json.load(f)
 with open('builder/chapter99_data.json', 'r', encoding='utf-8') as f:
     ch99_exercises = json.load(f)
+with open('builder/chapter100_data.json', 'r', encoding='utf-8') as f:
+    ch100_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -464,6 +466,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             97: ('chapter97.html', f'{len(ch97_exercises)}/{len(ch97_exercises)}'),
             98: ('chapter98.html', f'{len(ch98_exercises)}/{len(ch98_exercises)}'),
             99: ('chapter99.html', f'{len(ch99_exercises)}/{len(ch99_exercises)}'),
+            100: ('chapter100.html', f'{len(ch100_exercises)}/{len(ch100_exercises)}'),
         }
         
         if num in status_map:
@@ -6035,6 +6038,65 @@ def build_chapter99_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'99. Интеграция с ИИ, LLM-оркестрация и векторный поиск на Go ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+
+def build_chapter100_html(chapters):
+    active_chapter_num = 100
+    current_exercises = ch100_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero" style="background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 50%, #172554 100%); border: 2px solid #6366f1;">
+        <div class="hero-badge" style="background: #6366f1; color: #ffffff;">Глава 100 • Grand Finale Capstone • Staff / Principal Engineer</div>
+        <h1 class="hero-title" style="background: linear-gradient(90deg, #a5b4fc, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Архитектурный Capstone: Проектирование и сквозной запуск отказоустойчивой HighLoad-платформы</h1>
+        <p class="hero-desc">
+            Грандиозный выпускной архитектурный проект уровня Staff / Principal Software Engineer: сквозное проектирование, реализация и запуск распределенной отказоустойчивой финансово-торговой HighLoad-платформы (FinTech Core) на Go. Целевые метрики SLA: пиковая пропускная способность 100 000+ RPS, задержка p99 &lt; 50 мс, доступность 99.99% (Four Nines), нулевая потеря финансовых данных RPO=0 и автоматическое восстановление RTO &lt; 30 секунд. Декомпозиция по Domain-Driven Design (DDD Bounded Contexts) и каноническая Clean Architecture. Финансовое ядро: строгие типы данных без ошибок округления, CQRS и Event Sourcing с оптимистическими блокировками версий, периодические снимки Snapshots и кэширование L1. Гарантированная публикация в Apache Kafka через Transactional Outbox (SKIP LOCKED) и идемпотентное потребление через Transactional Inbox. Распределенная транзакция оформления заказа: Saga Orchestrator с компенсирующими транзакциями. Двухуровневое кэширование L1/L2 (In-Memory Ristretto + Redis Cluster) с мгновенной инвалидацией через Redis Pub/Sub и защитой от Cache Stampede через singleflight. Контракт-ориентированный API-шлюз (gRPC-Gateway + Protovalidate), централизованная JWT/RBAC авторизация и Sliding Window Rate Limiting. Отказоустойчивость: Circuit Breaker, координация etcd v3 (Raft Leader Election), отложенные очереди River/Asynq, потоковый антифрод и ИИ-ассистент поддержки с RAG и Function Calling. Экстремальная оптимизация: struct padding против False Sharing, тюнинг сокетов и рантайма (SO_REUSEPORT, GOMEMLIMIT). Полная наблюдаемость: Prometheus RED, OpenTelemetry W3C трейсинг, JSON slog с TraceID, собственный Kubernetes Operator на Kubebuilder, безопасные Distroless контейнеры, Service Mesh mTLS, Envelope Encryption, Zero-Downtime миграции Expand-Contract, OpenFeature фиче-флаги, хаос-тестирование Toxiproxy, нагрузка 100k RPS и триумфальная защита перед Техническим советом.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: ТЗ Capstone, DDD контексты, Clean Architecture, Event Sourcing и Саги (Упражнения 1–17)"),
+        (18, "Раздел 2: etcd Raft, очереди River, антифрод, L1/L2, тюнинг ядра, OTel и K8s Operator (Упражнения 18–34)"),
+        (35, "Раздел 3: Финальная защита, Runbook, дашборды Grafana, хаос-тесты, 100k RPS и Grand Finale (Упражнения 35–50)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #6366f1;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer (Grand Finale)
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 42px; background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border: 3px solid #6366f1; border-radius: 20px; text-align: center; box-shadow: 0 15px 40px rgba(99, 102, 241, 0.3);">
+        <div style="display: inline-block; padding: 10px 22px; background: linear-gradient(90deg, #6366f1, #8b5cf6); color: white; border-radius: 24px; font-weight: 800; font-size: 15px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.08em;">🎉 КУРС ПОЛНОСТЬЮ ЗАВЕРШЕН! (100 ИЗ 100 ГЛАВ)</div>
+        <h3 style="color: #a5b4fc; font-size: 32px; margin-bottom: 18px; font-weight: 900;">Поздравляем с триумфальным завершением полного курса Go Workout!</h3>
+        <p style="color: #cbd5e1; font-size: 17px; max-width: 820px; margin: 0 auto 32px auto; line-height: 1.8;">
+            Вы совершили грандиозный инженерный подвиг, пройдя все 100 глав и решив 7 666 сложнейших практических задач на Go! Вы овладели полным спектром технологий: от низкоуровневого ассемблера Plan 9, планировщика GMP и GC аллокатора до построения распределенных систем мирового уровня, надежных финансовых ядер, Kubernetes операторов и ИИ-агентов. Добро пожаловать в элиту мирового Go-сообщества!
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter99.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 14px 26px; border-radius: 12px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 99 Интеграция с ИИ, LLM-оркестрация и векторный поиск на Go</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #6366f1; color: #ffffff; font-weight: 700; padding: 14px 28px; border-radius: 12px; text-decoration: none; border: 1px solid #818cf8; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);">🏠 Главная портала курса (Специализации и сертификация)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'100. Архитектурный Capstone: Проектирование и сквозной запуск отказоустойчивой HighLoad-платформы ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 # All 100 chapters metadata
 all_100_chapters = [
     (1, "Пакеты и модули", "chapter1.html", 91, True, "Модули, go.mod, SemVer, Cobra CLI, internal, vendor"),
@@ -6138,7 +6200,7 @@ all_100_chapters = [
     (97, "Time-Series СУБД, сжатие Gorilla и IoT-телеметрия на Go", "chapter97.html", len(ch97_exercises), True, "Прием сотен тысяч метрик/сек, Gorilla Delta-of-Delta и XOR компрессия, TimescaleDB"),
     (98, "Архитектурный контроль: Разработка корпоративных линтеров для golangci-lint", "chapter98.html", len(ch98_exercises), True, "go/analysis фреймворк, семантика типов go/types, AST-инспекция, Suggested Fixes"),
     (99, "Интеграция с ИИ, LLM-оркестрация и векторный поиск на Go", "chapter99.html", len(ch99_exercises), True, "Ollama, OpenAI SDK, SSE токены, Function Calling, pgvector, Qdrant, RAG конвейер"),
-    (100, "Архитектурный Capstone: Проектирование и сквозной запуск отказоустойчивой HighLoad-платформы", "chapter100.html", 35, False, "Финальный проект: gRPC-Gateway, DDD, Event Sourcing, Temporal, L1/L2 кэш, OTel, Seccomp, AI")
+    (100, "Архитектурный Capstone: Проектирование и сквозной запуск отказоустойчивой HighLoad-платформы", "chapter100.html", len(ch100_exercises), True, "Финальный проект: gRPC-Gateway, DDD, Event Sourcing, Temporal, L1/L2 кэш, OTel, Seccomp, AI")
 ]
 
 learning_paths = [
@@ -6568,6 +6630,7 @@ if __name__ == '__main__':
         ('chapter97.html', build_chapter97_html),
         ('chapter98.html', build_chapter98_html),
         ('chapter99.html', build_chapter99_html),
+        ('chapter100.html', build_chapter100_html),
     ]
     
     for filename, builder_fn in pages:
