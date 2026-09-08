@@ -201,6 +201,8 @@ with open('builder/chapter87_data.json', 'r', encoding='utf-8') as f:
     ch87_exercises = json.load(f)
 with open('builder/chapter88_data.json', 'r', encoding='utf-8') as f:
     ch88_exercises = json.load(f)
+with open('builder/chapter89_data.json', 'r', encoding='utf-8') as f:
+    ch89_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -431,6 +433,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             86: ('chapter86.html', f'{len(ch86_exercises)}/{len(ch86_exercises)}'),
             87: ('chapter87.html', f'{len(ch87_exercises)}/{len(ch87_exercises)}'),
             88: ('chapter88.html', f'{len(ch88_exercises)}/{len(ch88_exercises)}'),
+            89: ('chapter89.html', f'{len(ch89_exercises)}/{len(ch89_exercises)}'),
         }
         
         if num in status_map:
@@ -5348,6 +5351,66 @@ def build_chapter88_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'88. Потоковая обработка данных в реальном времени (Stream Processing) ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+def build_chapter89_html(chapters):
+    active_chapter_num = 89
+    current_exercises = ch89_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 89 • Enterprise Reliability Engineering, Chaos Testing & HighLoad Workloads</div>
+        <h1 class="hero-title">Хаос-инженерия и нагрузочное тестирование на Go</h1>
+        <p class="hero-desc">
+            Полное инженерное руководство по исследованию устойчивости распределенных систем, стресс-тестированию и непрерывной хаос-инженерии на языке Go. Фундаментальные основы: формулирование гипотез Steady State, ограничение радиуса поражения (Blast Radius) и архитектура Toxiproxy. Программное управление сетевыми искажениями в автоматизированных тестах: инъекция сетевой задержки (Latency), джиттера (Jitter), ограничение полосы пропускания (Bandwidth), нарезка пакетов (Slicer), полузакрытые сокеты (Slow Close) и экстренные разрывы соединений (Reset Peer / RST). Паттерны защиты: хаос-тестирование Circuit Breaker (gobreaker) и интеграционные тесты с Testcontainers-Go. Моделирование нагрузки и математическая строгость: сравнительный анализ Closed vs Open Workload (закон Литтла, Пуассоновский процесс), феномен скоординированного пропуска (Coordinated Omission) Гила Тене и точный расчет перцентилей задержки (p50, p90, p99, p99.9) через логарифмические структуры HdrHistogram. Разработка собственного высокоскоростного открытого генератора нагрузки на чистом Go: экстремальный тюнинг пула виртуальных пользователей (VUs), переиспользование Keep-Alive сокетов в http.Transport и профили нагрузки Step-Up, Spike и многочасовой Soak Test. Архитектурная надежность корпоративного масштаба: симуляция сетевого разделения (Split-Brain / Network Partition в Raft-кворуме), прикладной middleware Chaos Monkey с таргетингом по заголовкам, изоляция каскадных сбоев через паттерн Bulkhead, эмуляция зависания дискового ввода-вывода (I/O Hang), хаос-тестирование под лимитами Linux cgroups v2 (memory.max, cpu.max, GOMEMLIMIT), устойчивость gRPC-интерцепторов к системным кодам ошибок, стресс-тестирование Transactional Outbox при падении брокера Apache Kafka, поведение распределенных блокировок Redis при крахе узла, автоматическая верификация алертов Prometheus, декларативные сценарии аварийных учений Game Day, профилирование пауз сборщика мусора (GC STW, GOGC, Mark Assist), регрессионный Quality Gate в CI/CD пайплайнах и сквозная платформа хаос-инженерии Capstone.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Принципы хаоса, Toxiproxy, сетевые токсики и Circuit Breaker (Упражнения 1–10)"),
+        (11, "Раздел 2: Testcontainers, модели нагрузки, Coordinated Omission и открытый генератор (Упражнения 11–15)"),
+        (16, "Раздел 3: HdrHistogram, профили Step-Up/Spike, Split-Brain, Chaos Monkey и Bulkhead (Упражнения 16–20)"),
+        (21, "Раздел 4: Деградация I/O, cgroups v2, gRPC интерцепторы, Outbox и Capstone-платформа (Упражнения 21–30)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 89 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением хаос-инженерии и нагрузочного тестирования!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы полностью овладели методологией проактивной надежности: инъекцией сетевых сбоев Toxiproxy, открытыми пуассоновскими моделями нагрузки, устранением скоординированного пропуска, точным расчетом перцентилей HdrHistogram, изоляцией Bulkhead, стресс-тестированием рантайма Go и автоматизацией Game Day.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter88.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 88 Потоковая обработка данных в реальном времени (Stream Processing)</a>
+            <a href="chapter90.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 90 Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'89. Хаос-инженерия и нагрузочное тестирование на Go ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 
 
 
@@ -5443,7 +5506,7 @@ all_100_chapters = [
     (86, "Масштабируемые распределенные планировщики и очереди задач", "chapter86.html", len(ch86_exercises), True, "Фоновые очереди Asynq/River, SKIP LOCKED, периодические задачи, кластерный Cron"),
     (87, "Оркестрация распределенных процессов (Durable Execution) на Temporal.io", "chapter87.html", len(ch87_exercises), True, "Temporal Workflows, Activities, Replay детерминизм, Signals, Queries, Long Timers"),
     (88, "Потоковая обработка данных в реальном времени (Stream Processing)", "chapter88.html", len(ch88_exercises), True, "Tumbling/Sliding/Session окна, Watermarks, Late Data, Exactly-Once Checkpoints"),
-    (89, "Хаос-инженерия и нагрузочное тестирование на Go", "chapter89.html", 30, False, "Инъекция сбоев Toxiproxy, fasthttp генератор нагрузки, HDRHistogram, p99.9 задержки"),
+    (89, "Хаос-инженерия и нагрузочное тестирование на Go", "chapter89.html", len(ch89_exercises), True, "Инъекция сбоев Toxiproxy, открытая модель нагрузки, HdrHistogram, p99.9 задержки"),
     (90, "Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI", "chapter90.html", 30, False, "google.api.http аннотации, grpc-gateway, OpenAPI v3, Swagger UI в embed.FS"),
     (91, "Разработка собственных Kubernetes Operators и CRD на Go", "chapter91.html", 30, False, "Kubebuilder, Custom Resources, Reconcile Loop, Informers, Workqueues, Webhooks"),
     (92, "Расширяемость систем: Plugins, IPC и WebAssembly (Wazero)", "chapter92.html", 30, False, "plugin.Open, HashiCorp go-plugin (gRPC IPC), Wazero Wasm песочницы, Fuel metering"),
@@ -5873,6 +5936,7 @@ if __name__ == '__main__':
         ('chapter86.html', build_chapter86_html),
         ('chapter87.html', build_chapter87_html),
         ('chapter88.html', build_chapter88_html),
+        ('chapter89.html', build_chapter89_html),
     ]
     
     for filename, builder_fn in pages:
