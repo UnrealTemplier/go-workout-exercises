@@ -205,6 +205,8 @@ with open('builder/chapter89_data.json', 'r', encoding='utf-8') as f:
     ch89_exercises = json.load(f)
 with open('builder/chapter90_data.json', 'r', encoding='utf-8') as f:
     ch90_exercises = json.load(f)
+with open('builder/chapter91_data.json', 'r', encoding='utf-8') as f:
+    ch91_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -437,6 +439,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             88: ('chapter88.html', f'{len(ch88_exercises)}/{len(ch88_exercises)}'),
             89: ('chapter89.html', f'{len(ch89_exercises)}/{len(ch89_exercises)}'),
             90: ('chapter90.html', f'{len(ch90_exercises)}/{len(ch90_exercises)}'),
+            91: ('chapter91.html', f'{len(ch91_exercises)}/{len(ch91_exercises)}'),
         }
         
         if num in status_map:
@@ -5474,6 +5477,66 @@ def build_chapter90_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'90. Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+def build_chapter91_html(chapters):
+    active_chapter_num = 91
+    current_exercises = ch91_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 91 • Cloud-Native Platform Engineering & Kubernetes Internals</div>
+        <h1 class="hero-title">Разработка собственных Kubernetes Operators и CRD на Go</h1>
+        <p class="hero-desc">
+            Исчерпывающее практическое руководство по созданию промышленных операторов Kubernetes (Kubernetes Operators) и расширению API платформы через Custom Resource Definitions (CRD) на языке Go. Концептуальные основы: переход от императивного управления к декларативному (Desired State vs Observed State), паттерн Operator как способ кодификации человеческой SRE-экспертизы и математическая строгость контрольного цикла (Reconciliation Loop: Observe -> Analyze -> Act). Проектирование контрактов API: строгое разделение .spec и подресурса /status, разметка Go-структур маркерами генератора Kubebuilder (+kubebuilder:validation, +kubebuilder:subresource:status, +kubebuilder:printcolumn) и генерация методов глубокого клонирования zz_generated.deepcopy.go. Анатомия фреймворка controller-runtime: разбор метода Reconcile, сигнатура Request с NamespacedName, дедупликация событий (Event Coalescing) и принцип абсолютной идемпотентности контроллера. Архитектура кэширования: внутреннее устройство Informer Cache, очереди Delta FIFO, Indexer в оперативной памяти процесса, проблема Read-After-Write Consistency и предикаты фильтрации событий (GenerationChangedPredicate). Управление жизненным циклом и целостность данных: каскадная сборка мусора через OwnerReferences, стандартизация состояний через срез условий metav1.Condition (паттерн Ready, Progressing, Degraded), перехват удаления через Finalizers и безопасная очистка внешней инфраструктуры. Продвинутые механизмы платформы: валидационные (Validating) и мутационные (Mutating Defaulting) Admission Webhooks, автоматический выпуск и ротация TLS-сертификатов с cert-manager, наблюдение за дочерними объектами через Watches/Owns и реакция на внешние шины через source.Channel. Высокая доступность и устойчивость: выборы лидера (Leader Election на Kubernetes Leases), Server-Side Apply (SSA) с управлением полями Field Management, бесконфликтная миграция версий через Conversion Webhooks (Hub & Spoke), Quorum-Aware Rolling Updates для распределенных СУБД с консенсусом, хаос-инженерия контроллеров и финальный Capstone-оператор распределенного кэширования.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Контрольный цикл, CRD Spec/Status, Kubebuilder и DeepCopy (Упражнения 1–10)"),
+        (11, "Раздел 2: Event Predicates, OwnerReferences, Conditions, Finalizers и Webhooks (Упражнения 11–20)"),
+        (21, "Раздел 3: Watches/Owns, Conflict Retry, envtest, Ginkgo, RBAC и Leader Election (Упражнения 21–30)"),
+        (31, "Раздел 4: Conversion Webhooks, SSA, Quorum Updates, Multi-Tenancy и Capstone (Упражнения 31–45)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 91 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением разработки Kubernetes Operators на Go!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы в совершенстве овладели элитной компетенцией Cloud-Native инженерии: разработкой собственных операторов Kubernetes с использованием Kubebuilder, controller-runtime, Admission Webhooks, Server-Side Apply, Leader Election, хаос-тестирования и паттернов надежности распределенных систем.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter90.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 90 Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI</a>
+            <a href="chapter92.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 92 Расширяемость систем: Plugins, IPC и WebAssembly (Wazero) →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'91. Разработка собственных Kubernetes Operators и CRD на Go ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 
 
 
@@ -5571,7 +5634,7 @@ all_100_chapters = [
     (88, "Потоковая обработка данных в реальном времени (Stream Processing)", "chapter88.html", len(ch88_exercises), True, "Tumbling/Sliding/Session окна, Watermarks, Late Data, Exactly-Once Checkpoints"),
     (89, "Хаос-инженерия и нагрузочное тестирование на Go", "chapter89.html", len(ch89_exercises), True, "Инъекция сбоев Toxiproxy, открытая модель нагрузки, HdrHistogram, p99.9 задержки"),
     (90, "Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI", "chapter90.html", len(ch90_exercises), True, "Contract-First, buf, gRPC-Gateway, gRPC-Web, OpenAPI v3, protovalidate"),
-    (91, "Разработка собственных Kubernetes Operators и CRD на Go", "chapter91.html", 45, False, "Kubebuilder, Custom Resources, Reconcile Loop, Informers, Workqueues, Webhooks"),
+    (91, "Разработка собственных Kubernetes Operators и CRD на Go", "chapter91.html", len(ch91_exercises), True, "Kubebuilder, Custom Resources, Reconcile Loop, Informers, Workqueues, Webhooks, SSA"),
     (92, "Расширяемость систем: Plugins, IPC и WebAssembly (Wazero)", "chapter92.html", 30, False, "plugin.Open, HashiCorp go-plugin (gRPC IPC), Wazero Wasm песочницы, Fuel metering"),
     (93, "Высокопроизводительные API Gateway и Reverse Proxy на чистом Go", "chapter93.html", 30, False, "httputil.ReverseProxy, динамическая маршрутизация, Peak-EWMA, Request Hedging"),
     (94, "Enterprise Release Engineering: Feature Flags, динамический конфиг и Canary Routing", "chapter94.html", 30, False, "OpenFeature SDK, Canary rollouts, Kill Switch за 50 мс, fsnotify Hot Reload"),
@@ -6001,6 +6064,7 @@ if __name__ == '__main__':
         ('chapter88.html', build_chapter88_html),
         ('chapter89.html', build_chapter89_html),
         ('chapter90.html', build_chapter90_html),
+        ('chapter91.html', build_chapter91_html),
     ]
     
     for filename, builder_fn in pages:
