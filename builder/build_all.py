@@ -191,6 +191,8 @@ with open('builder/chapter82_data.json', 'r', encoding='utf-8') as f:
     ch82_exercises = json.load(f)
 with open('builder/chapter83_data.json', 'r', encoding='utf-8') as f:
     ch83_exercises = json.load(f)
+with open('builder/chapter84_data.json', 'r', encoding='utf-8') as f:
+    ch84_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -416,6 +418,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             81: ('chapter81.html', f'{len(ch81_exercises)}/{len(ch81_exercises)}'),
             82: ('chapter82.html', f'{len(ch82_exercises)}/{len(ch82_exercises)}'),
             83: ('chapter83.html', f'{len(ch83_exercises)}/{len(ch83_exercises)}'),
+            84: ('chapter84.html', f'{len(ch84_exercises)}/{len(ch84_exercises)}'),
         }
         
         if num in status_map:
@@ -5023,7 +5026,7 @@ def build_chapter83_html(chapters):
         </p>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <a href="chapter82.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 82 Защита сетевых сокетов и противодействие DoS-атакам</a>
-            <a href="chapter1.html" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #ffffff; font-weight: 700; padding: 12px 24px; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">🎓 К Главе 01 (Пакеты и модули) →</a>
+            <a href="chapter84.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 84 CQRS и Event Sourcing на Go →</a>
             <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
         </div>
     </section>
@@ -5031,6 +5034,66 @@ def build_chapter83_html(chapters):
     content_parts.append('</main>')
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'83. Системная изоляция, Seccomp и Linux Capabilities ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
+
+
+def build_chapter84_html(chapters):
+    active_chapter_num = 84
+    current_exercises = ch84_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 84 • Advanced Distributed Systems & Event-Driven Architecture</div>
+        <h1 class="hero-title">CQRS и Event Sourcing на Go</h1>
+        <p class="hero-desc">
+            Глубокое практическое руководство по проектированию систем на основе Command Query Responsibility Segregation (CQRS) и Event Sourcing на языке Go. Архитектура доменных агрегатов и неизменяемых логов событий (Append-Only Event Store) на PostgreSQL с оптимистической блокировкой версий и защитой от конфликтов конкурентной записи. Высокопроизводительная регидрация состояния агрегатов, создание и инвалидация снимков (Snapshots) для ускорения загрузки длинных потоков событий. Построение синхронных и асинхронных проекций (Read Models), отслеживание смещений (Checkpoints), гарантии доставки At-Least-Once и идемпотентное обновление материализованных представлений в PostgreSQL и полнотекстовом поисковом движке Elasticsearch. Управление эволюцией схемы событий (Schema Evolution, Event Upcasting на лету) без деградации исторических данных. Надежная интеграция с транзакционным Outbox-паттерном, оркестрация распределенных транзакций и саг с компенсирующими транзакциями при сбоях. Комплаенс с требованиями приватности GDPR/CCPA через криптографическое уничтожение ключей (Crypto-shredding), CDC-репликация событий через Debezium, распределенная трассировка W3C/OpenTelemetry через границы команд и проекций, а также боевой аудит производительности и устойчивости систем под экстремальной нагрузкой.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Фундамент CQRS, агрегаты, регидрация и персистентность Event Store в PostgreSQL (Упражнения 1–11)"),
+        (12, "Раздел 2: Проекции Read Model, чекпоинты, эволюция схем (Upcasting) и транзакционный Outbox (Упражнения 12–22)"),
+        (23, "Раздел 3: Конкурентный доступ, оптимистические блокировки, партиционирование и саги с компенсациями (Упражнения 23–34)"),
+        (35, "Раздел 4: GDPR/Crypto-shredding, распределенное реплицирование, Observability и BigTech Production (Упражнения 35–45)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 84 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением CQRS и Event Sourcing на Go!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы глубоко освоили доменные агрегаты, архитектуру событийных хранилищ с защитой от гонок версий, снапшоты, асинхронные и синхронные проекции в PostgreSQL и Elasticsearch, эволюцию схем без миграций и криптографическое удаление персональных данных.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter83.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 83 Системная изоляция, Seccomp и Linux Capabilities</a>
+            <a href="chapter85.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 85 Многоуровневое кэширование (L1/L2) и распределенная когерентность →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'84. CQRS и Event Sourcing на Go ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 
@@ -5123,7 +5186,7 @@ all_100_chapters = [
     (83, "Системная изоляция, Seccomp и Linux Capabilities", "chapter83.html", 28, True, "seccomp bpf фильтры, libseccomp, CAP_NET_BIND_SERVICE, drop privs"),
     
     # 17 Planned Chapters (84-100)
-    (84, "CQRS и Event Sourcing на Go", "chapter84.html", 30, False, "Агрегаты, оптимистическая блокировка версий, Snapshots, проекции в Postgres/Elastic"),
+    (84, "CQRS и Event Sourcing на Go", "chapter84.html", len(ch84_exercises), True, "Агрегаты, оптимистическая блокировка версий, Snapshots, проекции в Postgres/Elastic"),
     (85, "Многоуровневое кэширование (L1/L2) и распределенная когерентность", "chapter85.html", 30, False, "In-memory TinyLFU/Ristretto, Redis RESP3 BCAST, алгоритм XFetch, Write-Behind"),
     (86, "Масштабируемые распределенные планировщики и очереди задач", "chapter86.html", 30, False, "Фоновые очереди Asynq/River, SKIP LOCKED, периодические задачи, кластерный Cron"),
     (87, "Оркестрация распределенных процессов (Durable Execution) на Temporal.io", "chapter87.html", 30, False, "Temporal Workflows, Activities, Replay детерминизм, Signals, Queries, Long Timers"),
@@ -5553,6 +5616,7 @@ if __name__ == '__main__':
         ('chapter81.html', build_chapter81_html),
         ('chapter82.html', build_chapter82_html),
         ('chapter83.html', build_chapter83_html),
+        ('chapter84.html', build_chapter84_html),
     ]
     
     for filename, builder_fn in pages:
