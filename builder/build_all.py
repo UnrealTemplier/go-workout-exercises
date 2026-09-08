@@ -221,6 +221,8 @@ with open('builder/chapter97_data.json', 'r', encoding='utf-8') as f:
     ch97_exercises = json.load(f)
 with open('builder/chapter98_data.json', 'r', encoding='utf-8') as f:
     ch98_exercises = json.load(f)
+with open('builder/chapter99_data.json', 'r', encoding='utf-8') as f:
+    ch99_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -461,6 +463,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             96: ('chapter96.html', f'{len(ch96_exercises)}/{len(ch96_exercises)}'),
             97: ('chapter97.html', f'{len(ch97_exercises)}/{len(ch97_exercises)}'),
             98: ('chapter98.html', f'{len(ch98_exercises)}/{len(ch98_exercises)}'),
+            99: ('chapter99.html', f'{len(ch99_exercises)}/{len(ch99_exercises)}'),
         }
         
         if num in status_map:
@@ -5972,6 +5975,66 @@ def build_chapter98_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'98. Архитектурный контроль: Разработка корпоративных линтеров для golangci-lint ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+
+def build_chapter99_html(chapters):
+    active_chapter_num = 99
+    current_exercises = ch99_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 99 • Go Internals, Compilers, Tooling & AI</div>
+        <h1 class="hero-title">Интеграция с ИИ, LLM-оркестрация и векторный поиск на Go</h1>
+        <p class="hero-desc">
+            Исчерпывающее практическое руководство по созданию высокопроизводительных ИИ-шлюзов, RAG-платформ и оркестрации LLM на Go. Преимущества Go: обработка десятков тысяч одновременных SSE-соединений (Server-Sent Events) с субмикросекундным GMP-планировщиком и стеком горутин 2 КБ. Интеграция с OpenAI-совместимыми API (vLLM, Ollama, Triton) на чистом net/http с контролем дедлайнов context.Context. Векторные эмбеддинги (Dense Vectors): геометрия евклидовых пространств, косинусное сходство (Cosine Similarity), SIMD и Loop Unrolling. Полноценная интеграция с PostgreSQL pgvector: миграции схемы, операторы расстояния (&lt;=&gt;, &lt;-&gt;, &lt;#&gt;), индексы HNSW (m=16, ef_construction=64) и IVFFlat. Архитектура Retrieval-Augmented Generation (RAG): чанкование документов (Semantic, Overlap, Parent-Child), пакетный конвейер индексации Ingestion Pipeline с pgx.CopyFrom, гибридный поиск (Hybrid Search) с ранжированием Reciprocal Rank Fusion (RRF) и кросс-энкодеры (Cross-Encoder Re-ranking). Паттерн Function Calling (Tool Use): ToolRegistry, схемы параметров JSON Schema, параллельный вызов инструментов и ReAct-агенты (Reasoning + Acting). Семантическое кэширование в Redis, управление бюджетом токенов (Token Bucket Rate Limiting), структурированный вывод (Structured Outputs), защита от Prompt Injection (Guardrails), экспорт метрик в Prometheus и интеграция с локальными моделями Ollama.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: HTTP API, SSE стриминг токенов, эмбеддинги и математика векторов (Упражнения 1–15)"),
+        (16, "Раздел 2: Function Calling, мульти-агенты, семантический кэш, промпты и Ollama (Упражнения 16–30)"),
+        (31, "Раздел 3: ReAct, мультимодальность, HyDE, Parent-Child, Reranking, Guardrails и SRE-агент (Упражнения 31–45)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 99 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением LLM-оркестрации и векторного поиска на Go!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы в совершенстве овладели передовыми технологиями искусственного интеллекта на Go: потоковой передачей токенов SSE, векторным поиском pgvector HNSW, гибридным ранжированием RRF, автономными ReAct-агентами, Function Calling и созданием надежных высокопроизводительных RAG-платформ.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter98.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 98 Архитектурный контроль: Разработка корпоративных линтеров для golangci-lint</a>
+            <a href="chapter100.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 100 Архитектурный Capstone: Проектирование и сквозной запуск отказоустойчивой HighLoad-платформы →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'99. Интеграция с ИИ, LLM-оркестрация и векторный поиск на Go ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 # All 100 chapters metadata
 all_100_chapters = [
     (1, "Пакеты и модули", "chapter1.html", 91, True, "Модули, go.mod, SemVer, Cobra CLI, internal, vendor"),
@@ -6074,7 +6137,7 @@ all_100_chapters = [
     (96, "Zero-Downtime миграции баз данных и паттерн Expand-Contract на Go", "chapter96.html", len(ch96_exercises), True, "Expand/Migrate/Contract, Shadow Writing, Backfill воркеры, защита от AccessExclusiveLock"),
     (97, "Time-Series СУБД, сжатие Gorilla и IoT-телеметрия на Go", "chapter97.html", len(ch97_exercises), True, "Прием сотен тысяч метрик/сек, Gorilla Delta-of-Delta и XOR компрессия, TimescaleDB"),
     (98, "Архитектурный контроль: Разработка корпоративных линтеров для golangci-lint", "chapter98.html", len(ch98_exercises), True, "go/analysis фреймворк, семантика типов go/types, AST-инспекция, Suggested Fixes"),
-    (99, "Интеграция с ИИ, LLM-оркестрация и векторный поиск на Go", "chapter99.html", 30, False, "Ollama, OpenAI SDK, SSE токены, Function Calling, pgvector, Qdrant, RAG конвейер"),
+    (99, "Интеграция с ИИ, LLM-оркестрация и векторный поиск на Go", "chapter99.html", len(ch99_exercises), True, "Ollama, OpenAI SDK, SSE токены, Function Calling, pgvector, Qdrant, RAG конвейер"),
     (100, "Архитектурный Capstone: Проектирование и сквозной запуск отказоустойчивой HighLoad-платформы", "chapter100.html", 35, False, "Финальный проект: gRPC-Gateway, DDD, Event Sourcing, Temporal, L1/L2 кэш, OTel, Seccomp, AI")
 ]
 
@@ -6504,6 +6567,7 @@ if __name__ == '__main__':
         ('chapter96.html', build_chapter96_html),
         ('chapter97.html', build_chapter97_html),
         ('chapter98.html', build_chapter98_html),
+        ('chapter99.html', build_chapter99_html),
     ]
     
     for filename, builder_fn in pages:
