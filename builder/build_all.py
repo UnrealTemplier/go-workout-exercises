@@ -211,6 +211,8 @@ with open('builder/chapter92_data.json', 'r', encoding='utf-8') as f:
     ch92_exercises = json.load(f)
 with open('builder/chapter93_data.json', 'r', encoding='utf-8') as f:
     ch93_exercises = json.load(f)
+with open('builder/chapter94_data.json', 'r', encoding='utf-8') as f:
+    ch94_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -446,6 +448,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             91: ('chapter91.html', f'{len(ch91_exercises)}/{len(ch91_exercises)}'),
             92: ('chapter92.html', f'{len(ch92_exercises)}/{len(ch92_exercises)}'),
             93: ('chapter93.html', f'{len(ch93_exercises)}/{len(ch93_exercises)}'),
+            94: ('chapter94.html', f'{len(ch94_exercises)}/{len(ch94_exercises)}'),
         }
         
         if num in status_map:
@@ -5661,7 +5664,63 @@ def build_chapter93_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'93. Высокопроизводительные API Gateway и Reverse Proxy на чистом Go ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
-
+def build_chapter94_html(chapters):
+    active_chapter_num = 94
+    current_exercises = ch94_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 94 • Enterprise Release Engineering, Dynamic Config & Canary Routing</div>
+        <h1 class="hero-title">Enterprise Release Engineering: Feature Flags, динамический конфиг и Canary Routing</h1>
+        <p class="hero-desc">
+            Исчерпывающее инженерное руководство по современной прогрессивной доставке (Progressive Delivery), разделению деплоя и релиза (Deploy != Release), фиче-флагам (Feature Flags / Toggles) и динамической конфигурации на Go. Архитектурная философия Trunk-Based Development и классификация флагов по Мартину Фаулеру (Release, Experiment, Ops, Permission Toggles). Внедрение открытого отраслевого стандарта CNCF OpenFeature: провайдеры, клиенты, хуки жизненного цикла (Before, After, Error, Finally), контекст вычисления (Evaluation Context) и сбор Prometheus-метрик. Продвинутый таргетинг: сегментация пользователей, SemVer правила, консистентное хэширование CRC32 для процентных раскаток (Percentage Rollouts) и детерминированных A/B-тестов. Экстренное управление надежностью: аварийные рубильники (Kill Switches) с реакцией за десятки миллисекунд, локальный L1-кэш с синхронизацией через Redis Pub/Sub и безопасный оффлайн-режим (Graceful Fallback). Динамическая перезагрузка конфигурации (Hot Reload) на базе ядра Linux (inotify/fsnotify) и spf13/viper, двухфазная валидация инвариантов перед применением и сверхбыстрое lock-free чтение на atomic.Pointer (Go 1.19+). Канареечная маршрутизация на уровне HTTP Middleware, автоматический откат релизов (Auto-Rollback по 5xx rate в Prometheus), аудит изменений по принципу Four-Eyes, борьба с техническим долгом устаревших флагов с помощью AST-анализа (go/ast) и финальная комплексная корпоративная платформа релиз-инженерии на Go.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Философия флагов, OpenFeature SDK, таргетинг и Kill Switches (Упражнения 1–10)"),
+        (11, "Раздел 2: Flipt, Redis Pub/Sub, Canary Middleware, AST-анализ и fsnotify Hot Reload (Упражнения 11–20)"),
+        (21, "Раздел 3: Viper, atomic.Pointer, SaaS мульти-тенантность, Auto-Rollback и Capstone платформа (Упражнения 21–30)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 94 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением Enterprise Release Engineering на Go!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы освоили элитные практики управления релизами и конфигурацией: открытый стандарт OpenFeature, потокобезопасные рубильники безопасности (Kill Switches), горячую перезагрузку файлов с fsnotify/viper, lock-free архитектуру конфигурации на atomic.Pointer, процентные раскатки по хэшу CRC32 и автоматический откат релизов по метрикам Prometheus.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter93.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 93 Высокопроизводительные API Gateway и Reverse Proxy на чистом Go</a>
+            <a href="chapter95.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 95 Распределенная координация и хранилище метаданных etcd v3 →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'94. Enterprise Release Engineering: Feature Flags, динамический конфиг и Canary Routing ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
 # All 100 chapters metadata
@@ -5761,7 +5820,7 @@ all_100_chapters = [
     (91, "Разработка собственных Kubernetes Operators и CRD на Go", "chapter91.html", len(ch91_exercises), True, "Kubebuilder, Custom Resources, Reconcile Loop, Informers, Workqueues, Webhooks, SSA"),
     (92, "Расширяемость систем: Plugins, IPC и WebAssembly (Wazero)", "chapter92.html", len(ch92_exercises), True, "plugin.Open, HashiCorp go-plugin (gRPC IPC), Wazero Wasm песочницы, Fuel metering"),
     (93, "Высокопроизводительные API Gateway и Reverse Proxy на чистом Go", "chapter93.html", len(ch93_exercises), True, "httputil.ReverseProxy, динамическая маршрутизация, Peak-EWMA, Request Hedging"),
-    (94, "Enterprise Release Engineering: Feature Flags, динамический конфиг и Canary Routing", "chapter94.html", 30, False, "OpenFeature SDK, Canary rollouts, Kill Switch за 50 мс, fsnotify Hot Reload"),
+    (94, "Enterprise Release Engineering: Feature Flags, динамический конфиг и Canary Routing", "chapter94.html", len(ch94_exercises), True, "OpenFeature SDK, Canary rollouts, Kill Switch за 50 мс, fsnotify Hot Reload"),
     (95, "Распределенная координация и хранилище метаданных etcd v3", "chapter95.html", 30, False, "clientv3 Watchers, Leases с автопродлением, атомарные транзакции Txn, Service Discovery"),
     (96, "Zero-Downtime миграции баз данных и паттерн Expand/Contract на Go", "chapter96.html", 30, False, "Expand/Migrate/Contract, Shadow Writing, Backfill воркеры, защита от AccessExclusiveLock"),
     (97, "Time-Series СУБД, сжатие Gorilla и IoT-телеметрия на Go", "chapter97.html", 30, False, "Прием сотен тысяч метрик/сек, Gorilla Delta-of-Delta и XOR компрессия, TimescaleDB"),
@@ -6191,6 +6250,7 @@ if __name__ == '__main__':
         ('chapter91.html', build_chapter91_html),
         ('chapter92.html', build_chapter92_html),
         ('chapter93.html', build_chapter93_html),
+        ('chapter94.html', build_chapter94_html),
     ]
     
     for filename, builder_fn in pages:
