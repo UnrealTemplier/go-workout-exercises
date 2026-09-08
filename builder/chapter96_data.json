@@ -1,0 +1,779 @@
+[
+  {
+    "num": 1,
+    "title": "Проблема даунтайма при миграциях схемы в HighLoad",
+    "task": "Изучите механизм деградации базы данных при выполнении DDL-команд под нагрузкой. Смоделируйте структуру MigrationLockAnalyzer, демонстрирующую исчерпание пула соединений (Connection Pool Exhaustion) и лавинообразный рост очереди запросов при захвате таблицей ACCESS EXCLUSIVE LOCK.",
+    "theory": "В реляционных СУБД (PostgreSQL, MySQL) операции изменения схемы (DDL) требуют захвата блокировок определенного уровня. Самый жесткий уровень — `ACCESS EXCLUSIVE LOCK` (PostgreSQL), который блокирует абсолютно все входящие операции чтения (`SELECT`) и записи (`INSERT`, `UPDATE`, `DELETE`).\n\nАнатомия каскадной аварии при наивной миграции:\n1. Инженер запускает `ALTER TABLE users ADD COLUMN ...` под боевой нагрузкой 5 000 RPS.\n2. Даже если сам DDL выполняется всего 3–5 секунд, за это время скапливаются 15 000–25 000 входящих HTTP-запросов.\n3. Каждый ожидающий запрос удерживает соединение из пула (например, `pgxpool.Pool` на 50 коннектов).\n4. Пул соединений моментально исчерпывается: новые HTTP-хендлеры начинают возвращать 504 Gateway Timeout, веб-серверы захлебываются, и весь сервис падает.\n\nЗолотое правило Zero-Downtime: Любая миграция схемы на production должна занимать минимальное время (микросекунды для DDL метаданных) и никогда не сканировать строки таблицы под эксклюзивным локом.",
+    "step_by_step": [
+      "Определите структуру MigrationLockAnalyzer с параметром максимального размера пула maxPoolSize.",
+      "Запустите имитацию захвата ACCESS EXCLUSIVE LOCK в фоновом потоке.",
+      "Смоделируйте поступление пользовательских запросов через time.Ticker.",
+      "Зафиксируйте исчерпание пула соединений и выстраивание очереди ожидающих вызовов.",
+      "Сформулируйте архитектурные требования к бездаунтаймным миграциям."
+    ],
+    "code_blocks": [
+      {
+        "filename": "lock_contention_simulator.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\n// MigrationLockAnalyzer анализирует влияние эксклюзивных блокировок на пул соединений\ntype MigrationLockAnalyzer struct {\n\tmaxPoolSize int\n}\n\nfunc NewMigrationLockAnalyzer(poolSize int) *MigrationLockAnalyzer {\n\treturn &MigrationLockAnalyzer{maxPoolSize: poolSize}\n}\n\n// SimulateLockContention демонстрирует, как долгий DDL лок забивает пул соединений\nfunc (a *MigrationLockAnalyzer) SimulateLockContention(ctx context.Context, ddlDuration time.Duration, incomingRPS int) {\n\tfmt.Printf(\"[SIMULATION] Старт симуляции DDL блокировки (Длительность DDL: %v, RPS: %d, Пул: %d)...\\n\",\n\t\tddlDuration, incomingRPS, a.maxPoolSize)\n\n\tvar activeConns int\n\tvar queuedRequests int\n\tvar mu sync.Mutex\n\n\tstopCh := make(chan struct{})\n\tticker := time.NewTicker(time.Second / time.Duration(incomingRPS))\n\tdefer ticker.Stop()\n\n\t// 1. Поток миграции захватывает ACCESS EXCLUSIVE LOCK\n\tgo func() {\n\t\tfmt.Println(\"🔒 [DDL] Начало выполнения: ALTER TABLE users ADD COLUMN age INT (ACCESS EXCLUSIVE LOCK)\")\n\t\ttime.Sleep(ddlDuration)\n\t\tfmt.Println(\"🔓 [DDL] Миграция завершена, блокировка снята\")\n\t\tclose(stopCh)\n\t}()\n\n\t// 2. Входящие клиентские запросы выстраиваются в очередь ожидания\n\tfor {\n\t\tselect {\n\t\tcase <-stopCh:\n\t\t\tmu.Lock()\n\t\t\tfmt.Printf(\"Итог аварии: Очередь запросов: %d, Использовано соединений: %d/%d (Пул исчерпан)\\n\",\n\t\t\t\tqueuedRequests, activeConns, a.maxPoolSize)\n\t\t\tmu.Unlock()\n\t\t\treturn\n\t\tcase <-ticker.C:\n\t\t\tmu.Lock()\n\t\t\tif activeConns < a.maxPoolSize {\n\t\t\t\tactiveConns++\n\t\t\t} else {\n\t\t\t\tqueuedRequests++\n\t\t\t}\n\t\t\tmu.Unlock()\n\t\t}\n\t}\n}\n\nfunc main() {\n\tanalyzer := NewMigrationLockAnalyzer(20) // Пул на 20 соединений\n\tctx := context.Background()\n\n\t// Эмулируем DDL лок на 200 мс при 150 RPS\n\tanalyzer.SimulateLockContention(ctx, 200*time.Millisecond, 150)\n\tfmt.Println(\"Золотое правило Zero-Downtime: Ни одна DDL блокировка не должна длиться более нескольких миллисекунд!\")\n}\n"
+      }
+    ],
+    "under_the_hood": "В очереди блокировок PostgreSQL действует правило FIFO с приоритетом эксклюзивных замков: если тяжелый DDL встал в очередь на получение `ACCESS EXCLUSIVE`, все последующие легкие `SELECT` блокируются позади него, даже если таблица в этот момент читается другой транзакцией.",
+    "pitfalls": [
+      "Тестирование миграций на пустой локальной БД: команда `ALTER TABLE` на 1 000 записей выполняется за 1 мс, но на таблице со 100 млн записей и 50 ГБ данных тот же запрос уронит прод.",
+      "Игнорирование очередей: блокирует систему не сама операция, а очередь заблокированных ею запросов клиентов."
+    ],
+    "bigtech_interview": "Что такое 'Lock Queue Starvation' в PostgreSQL? Когда транзакция DDL запрашивает эксклюзивный лок, она ждет завершения всех текущих читающих транзакций. Но пока она ждет, она блокирует ВСЕ новые запросы, мгновенно останавливая прием трафика в сервисе."
+  },
+  {
+    "num": 2,
+    "title": "Паттерн Expand-Contract (Parallel Run)",
+    "task": "Изучите фундаментальный архитектурный паттерн эволюции схем данных Expand-Contract (также известный как Parallel Run или Tolerant Reader). Разберите 5 обязательных фаз жизненного цикла миграции при изменении структуры таблицы под непрерывной нагрузкой.",
+    "theory": "Паттерн Expand-Contract — единственный математически корректный способ изменения схемы базы данных без простоя:\n\n1. Expand (Расширение): в базу добавляются новые структуры (столбцы, таблицы), обязательно допускающие `NULL` или имеющие значения по умолчанию. Старые структуры не изменяются. Старая версия кода v1 продолжает работать.\n2. Dual Write (Двойная запись): выкатывается версия кода v2, которая начинает записывать данные ОДНОВРЕМЕННО в старую и новую структуру. Чтение пока идет из старой.\n3. Backfill (Миграция истории): отдельный фоновый воркер чанками переносит исторические данные из старой структуры в новую. Новые данные уже пишутся шагом 2, поэтому рассинхронизации нет.\n4. Switch Read (Переключение чтения): выкатывается версия v3, которая переключает чтение на новую структуру данных. Если обнаружится ошибка, можно мгновенно откатить чтение назад на v2 без потери данных.\n5. Contract (Сжатие / Удаление): удаление старых столбцов и вспомогательного кода двойной записи (версия v4).",
+    "step_by_step": [
+      "Изучите назначение каждой из 5 фаз паттерна Expand-Contract.",
+      "Определите структуры данных UserDataV1 и UserDataV2.",
+      "Сопоставьте состояние схемы БД и поведение кода приложения на каждом этапе.",
+      "Проанализируйте, почему удаление старых колонок всегда выполняется в самом конце отдельным независимым релизом."
+    ],
+    "code_blocks": [
+      {
+        "filename": "expand_contract_phases.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// MigrationPhase описывает этап эволюции схемы\ntype MigrationPhase string\n\nconst (\n\tPhase1Expand     MigrationPhase = \"1. Expand (Расширение схемы)\"\n\tPhase2DualWrite  MigrationPhase = \"2. Dual Write (Двойная запись)\"\n\tPhase3Backfill   MigrationPhase = \"3. Backfill (Фоновый перенос данных)\"\n\tPhase4SwitchRead MigrationPhase = \"4. Switch Read (Переключение чтения)\"\n\tPhase5Contract   MigrationPhase = \"5. Contract (Сжатие и удаление старого)\"\n)\n\n// UserDataV1 модель данных до миграции\ntype UserDataV1 struct {\n\tID   int64\n\tName string\n}\n\n// UserDataV2 модель данных после миграции (разделение на FirstName и LastName)\ntype UserDataV2 struct {\n\tID        int64\n\tFirstName string\n\tLastName  string\n}\n\n// ExpandContractDemo иллюстрирует состояние репозитория на каждом этапе\nfunc ExpandContractDemo() {\n\tphases := []struct {\n\t\tphase MigrationPhase\n\t\tdb    string\n\t\tapp   string\n\t}{\n\t\t{\n\t\t\tphase: Phase1Expand,\n\t\t\tdb:    \"ALTER TABLE users ADD COLUMN first_name TEXT NULL, ADD COLUMN last_name TEXT NULL;\",\n\t\t\tapp:   \"Версия v1.0 продолжает писать и читать только из столбца 'name'\",\n\t\t},\n\t\t{\n\t\t\tphase: Phase2DualWrite,\n\t\t\tdb:    \"Схема содержит: name, first_name, last_name\",\n\t\t\tapp:   \"Версия v2.0 пишет в name И в (first_name, last_name), читает из name\",\n\t\t},\n\t\t{\n\t\t\tphase: Phase3Backfill,\n\t\t\tdb:    \"Фоновый Go-воркер порциями сплитит исторические name -> (first_name, last_name)\",\n\t\t\tapp:   \"Версия v2.0 в проде, Dual-Write обеспечивает свежесть новых записей\",\n\t\t},\n\t\t{\n\t\t\tphase: Phase4SwitchRead,\n\t\t\tdb:    \"100% строк перенесены и проверены\",\n\t\t\tapp:   \"Версия v3.0 читает из first_name/last_name, сохраняет Dual-Write для безопасности\",\n\t\t},\n\t\t{\n\t\t\tphase: Phase5Contract,\n\t\t\tdb:    \"ALTER TABLE users DROP COLUMN name;\",\n\t\t\tapp:   \"Версия v4.0 пишет и читает только first_name/last_name. Миграция завершена!\",\n\t\t},\n\t}\n\n\tfmt.Println(\"=== ФАЗЫ ЖИЗНЕННОГО ЦИКЛА EXPAND-CONTRACT ===\")\n\tfor _, p := range phases {\n\t\tfmt.Printf(\"\\n▶ %s\\n   БД:  %s\\n   КОД: %s\\n\", p.phase, p.db, p.app)\n\t}\n}\n\nfunc main() {\n\tExpandContractDemo()\n}\n"
+      }
+    ],
+    "under_the_hood": "Expand-Contract разделяет одну опасную операцию изменения схемы на 3 независимых деплоя приложения и 2 легкие DDL-миграции, растянутые во времени. Это полностью устраняет зависимость деплоя кода от деплоя БД.",
+    "pitfalls": [
+      "Попытка сделать все за один релиз: если добавить колонку, перенести данные и удалить старую колонку в одном релизе, старые поды упадут с ошибкой отсутствия колонок во время rolling update.",
+      "Забытый этап Contract: если не удалять старые неиспользуемые столбцы, база данных зарастет техническим долгом из сотен колонок-призраков."
+    ],
+    "bigtech_interview": "Как паттерн Expand-Contract соотносится с архитектурным принципом Decoupling? Он разрывает временную связь (Temporal Coupling) между миграцией хранилища и обновлением прикладных микросервисов, позволяя им эволюционировать с разной скоростью."
+  },
+  {
+    "num": 3,
+    "title": "Инструменты миграций на Go: golang-migrate vs goose",
+    "task": "Проведите сравнительный анализ двух главных инструментов версионирования схемы БД на Go: golang-migrate/migrate и pressly/goose. Опишите сценарии, когда чистых SQL-скриптов недостаточно и требуются Go-миграции с программной логикой трансформации данных.",
+    "theory": "В Go-сообществе доминируют два инструмента миграций:\n1. `pressly/goose`: поддерживает как классические `.sql` файлы с маркерами `-- +goose Up` и `-- +goose Down`, так и регистрацию Go-функций через `goose.AddMigration(upFn, downFn)`. Это критически важно при сложном хэшировании паролей, обращении к внешним сервисам или сложной десериализации JSON в процессе миграции.\n2. `golang-migrate/migrate`: мощный инструмент с поддержкой десятков СУБД (PostgreSQL, MySQL, ClickHouse, Cassandra, Spanner). Работает со строгими парами файлов `000001_init.up.sql` и `000001_init.down.sql`. Не поддерживает нативный Go-код внутри миграций.\n\nОба инструмента ведут учет примененных версий в специальной системной таблице (`schema_migrations` или `goose_db_version`).",
+    "step_by_step": [
+      "Изучите структуру таблицы версионирования миграций.",
+      "Сравните синтаксис аннотаций goose (-- +goose Up) и golang-migrate.",
+      "Объясните, почему для Zero-Downtime миграций с трансформацией данных часто требуются Go-скрипты.",
+      "Определите критерии выбора инструмента для корпоративного микросервиса."
+    ],
+    "code_blocks": [
+      {
+        "filename": "migration_tools_comparison.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n)\n\n// MigrationToolComparison сравнивает библиотеки миграций\ntype MigrationToolComparison struct {\n\tToolName        string\n\tSupportsSQL     bool\n\tSupportsGoCode  bool\n\tTransactional   bool\n\tOutOfOrderRun   bool\n}\n\n// CustomGoMigrationFunction имитирует миграцию на Go для сложного преобразования данных\ntype CustomGoMigrationFunction func(ctx context.Context, tx *sql.Tx) error\n\nfunc CompareMigrationTools() []MigrationToolComparison {\n\treturn []MigrationToolComparison{\n\t\t{\n\t\t\tToolName:       \"pressly/goose\",\n\t\t\tSupportsSQL:    true,\n\t\t\tSupportsGoCode: true,  // Поддерживает чистый Go код внутри миграций (goose.AddMigration)\n\t\t\tTransactional:  true,\n\t\t\tOutOfOrderRun:  false,\n\t\t},\n\t\t{\n\t\t\tToolName:       \"golang-migrate/migrate\",\n\t\t\tSupportsSQL:    true,\n\t\t\tSupportsGoCode: false, // Только SQL-файлы\n\t\t\tTransactional:  true,\n\t\t\tOutOfOrderRun:  false,\n\t\t},\n\t}\n}\n\nfunc main() {\n\ttools := CompareMigrationTools()\n\tfmt.Println(\"Сравнение ведущих инструментов миграций в экосистеме Go:\")\n\tfor _, t := range tools {\n\t\tfmt.Printf(\" ▶ %-25s SQL: %v | Go-код: %-5v | Транзакции: %v\\n\",\n\t\t\tt.ToolName, t.SupportsSQL, t.SupportsGoCode, t.Transactional)\n\t}\n\n\tfmt.Println(\"\\nВывод для HighLoad: goose предпочтителен для сложных данных благодаря поддержке Go-функций,\")\n\tfmt.Println(\"а golang-migrate идеален для стандартных чисто SQL-пайплайнов.\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Оба инструмента по умолчанию оборачивают каждую миграцию в `BEGIN ... COMMIT` (если СУБД поддерживает транзакционный DDL). Если скрипт упал на середине, версия миграции не инкрементируется, а база остается чистой.",
+    "pitfalls": [
+      "Грязное состояние (Dirty State): в golang-migrate при падении миграции без транзакции статус помечается `dirty=true`, блокируя все последующие запуски до ручного вмешательства инженера `migrate force`.",
+      "Параллельный запуск миграций: если 10 подов стартуют одновременно, они начнут применять миграции параллельно. Goose и golang-migrate используют advisory locks (`pg_advisory_lock`), чтобы запускать миграции строго в одном экземпляре."
+    ],
+    "bigtech_interview": "Почему запускать миграции базы данных прямо внутри `main.go` микросервиса в Kubernetes считается анти-паттерном? При одновременном рестарте десятков подов возникает конкуренция за advisory locks. Лучшая практика — запуск мигратора в виде отдельного Kubernetes Job перед стартом Deployment (Init Container или CI/CD step)."
+  },
+  {
+    "num": 4,
+    "title": "Транзакционные DDL-миграции в PostgreSQL",
+    "task": "Изучите механизм транзакционного DDL в PostgreSQL. Реализуйте метод RunTransactionalDDL, объединяющий серию DDL команд внутри sql.Tx. Докажите, что при возникновении синтаксической ошибки или конфликта на промежуточном шаге база данных не остается в полу-примененном состоянии благодаря автоматическому Rollback.",
+    "theory": "Огромное архитектурное преимущество PostgreSQL перед MySQL — поддержка транзакционного DDL (Transactional DDL):\n- В MySQL любая команда `ALTER TABLE` или `CREATE TABLE` неявно вызывает невидимый `COMMIT` текущей транзакции. Если ваш скрипт содержит 3 DDL-команды и упал на 2-й, первая команда уже закоммичена, а база находится в 'сломанном' промежуточном состоянии, требующем ручной починки.\n- В PostgreSQL операции с метаданными каталога (`pg_class`, `pg_attribute`) являются обычными строками системных таблиц. Поэтому блок `BEGIN ... ALTER TABLE ... COMMIT` полностью атомарен: либо применились все изменения схемы, либо ни одного.",
+    "step_by_step": [
+      "Откройте транзакцию db.BeginTx с уровнем изоляции ReadCommitted.",
+      "Настройте отложенный откат через defer tx.Rollback().",
+      "Последовательно выполните команды изменения схемы через tx.ExecContext.",
+      "Зафиксируйте транзакцию через tx.Commit().",
+      "Объясните исключения (команды, которые не могут выполняться в транзакции: CREATE INDEX CONCURRENTLY, VACUUM)."
+    ],
+    "code_blocks": [
+      {
+        "filename": "transactional_ddl_runner.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n)\n\n// TransactionalMigrationRunner демонстрирует транзакционный DDL в PostgreSQL\ntype TransactionalMigrationRunner struct {\n\tdb *sql.DB\n}\n\nfunc NewTransactionalMigrationRunner(db *sql.DB) *TransactionalMigrationRunner {\n\treturn &TransactionalMigrationRunner{db: db}\n}\n\n// RunTransactionalDDL выполняет DDL изменения внутри транзакции с авто-откатом при ошибке\nfunc (r *TransactionalMigrationRunner) RunTransactionalDDL(ctx context.Context, ddlQueries []string) error {\n\t// В PostgreSQL CREATE TABLE, ALTER TABLE, ADD COLUMN поддерживают транзакции!\n\ttx, err := r.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelReadCommitted})\n\tif err != nil {\n\t\treturn fmt.Errorf(\"ошибка открытия транзакции: %w\", err)\n\t}\n\tdefer tx.Rollback() // Безопасный откат при панике или ошибке\n\n\tfor idx, query := range ddlQueries {\n\t\tfmt.Printf(\"[TX DDL] Выполнение шага %d: %s\\n\", idx+1, query)\n\t\tif _, err := tx.ExecContext(ctx, query); err != nil {\n\t\t\treturn fmt.Errorf(\"сбой на шаге %d (%s): изменения полностью откатаны: %w\", idx+1, query, err)\n\t\t}\n\t}\n\n\tif err := tx.Commit(); err != nil {\n\t\treturn fmt.Errorf(\"ошибка коммита транзакции DDL: %w\", err)\n\t}\n\n\tfmt.Println(\"✅ [TX DDL] Все DDL операции успешно закоммичены атомарно\")\n\treturn nil\n}\n\nfunc main() {\n\tfmt.Println(\"Транзакционные DDL-миграции в PostgreSQL:\")\n\tfmt.Println(\" 1. В отличие от MySQL/Oracle, в PostgreSQL команды ALTER TABLE / CREATE TABLE атомарны\")\n\tfmt.Println(\" 2. При ошибке на 3-м шаге вся миграция полностью откатывается (Rollback)\")\n\tfmt.Println(\" 3. Исключение: CREATE INDEX CONCURRENTLY не может выполняться внутри транзакции\")\n}\n"
+      }
+    ],
+    "under_the_hood": "PostgreSQL блокирует таблицы в транзакции в соответствии с уровнем операции. При `Rollback` транзакции все изменения системных каталогов откатываются по журналу WAL, а захваченные блокировки мгновенно снимаются.",
+    "pitfalls": [
+      "Попытка запустить `CREATE INDEX CONCURRENTLY` внутри транзакции: PostgreSQL вернет ошибку `ERROR: CREATE INDEX CONCURRENTLY cannot run inside a transaction block`.",
+      "Слишком длинные транзакции DDL: удержание открытой DDL-транзакции с `time.Sleep` блокирует авто-вакуум и доступ к таблице."
+    ],
+    "bigtech_interview": "Почему в PostgreSQL не рекомендуется объединять тяжелые DDL операции с манипуляцией данными (`UPDATE`) в одной транзакции? DDL захватывает эксклюзивный лок, а `UPDATE` миллионов строк заставляет этот лок удерживаться на все время обновления, гарантируя отказ в обслуживании всего сервиса."
+  },
+  {
+    "num": 5,
+    "title": "Обязательное правило: установка lock_timeout",
+    "task": "Спроектируйте компонент SafeMigrationExecutor, гарантирующий исполнение главного правила Zero-Downtime: установка SET LOCAL lock_timeout перед выполнением любой DDL-миграции. Докажите, что ограничение времени ожидания лока спасает production от выстраивания очереди запросов.",
+    "theory": "По умолчанию в PostgreSQL параметр `lock_timeout = 0`, что означает БЕСКОНЕЧНОЕ ожидание блокировки.\n\nЧто происходит без `lock_timeout`:\n1. В базе идет долгий аналитический запрос `SELECT` длительностью 30 секунд.\n2. Мигратор выполняет `ALTER TABLE users ADD COLUMN age INT;`.\n3. Мигратор встает в очередь ожидания за `SELECT`.\n4. Все новые входящие запросы к таблице `users` встают в очередь ЗА мигратором.\n5. За 30 секунд скапливаются тысячи запросов, соединения заканчиваются, сервис падает.\n\nРешение: директива `SET LOCAL lock_timeout = '2s'`. Если мигратор не может получить блокировку за 2 секунды, PostgreSQL аварийно прерывает миграцию (`canceling statement due to lock timeout`), снимает запрос из очереди, и сервис продолжает бесперебойно обслуживать пользователей.",
+    "step_by_step": [
+      "Откройте транзакцию через db.BeginTx.",
+      "Выполните команду SET LOCAL lock_timeout = '2000ms' внутри транзакции.",
+      "Дополнительно настройте statement_timeout для ограничения длительности самого запроса.",
+      "Выполните целевой DDL-запрос.",
+      "Продемонстрируйте безопасный откат при конфликте блокировок."
+    ],
+    "code_blocks": [
+      {
+        "filename": "safe_migration_lock_timeout.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"time\"\n)\n\n// SafeMigrationExecutor применяет миграции с обязательной защитой lock_timeout\ntype SafeMigrationExecutor struct {\n\tdb *sql.DB\n}\n\nfunc NewSafeMigrationExecutor(db *sql.DB) *SafeMigrationExecutor {\n\treturn &SafeMigrationExecutor{db: db}\n}\n\n// ExecuteMigrationWithTimeout выполняет миграцию с ограничением ожидания блокировки\nfunc (e *SafeMigrationExecutor) ExecuteMigrationWithTimeout(ctx context.Context, migrationSQL string, lockTimeout time.Duration) error {\n\ttx, err := e.db.BeginTx(ctx, nil)\n\tif err != nil {\n\t\treturn err\n\t}\n\tdefer tx.Rollback()\n\n\t// 1. Устанавливаем строгий таймаут ожидания блокировки (lock_timeout)\n\t// Если таблица занята долгим чтением/записью, DDL не будет ждать вечно и не выстроит очередь\n\ttimeoutQuery := fmt.Sprintf(\"SET LOCAL lock_timeout = '%dms';\", lockTimeout.Milliseconds())\n\tif _, err := tx.ExecContext(ctx, timeoutQuery); err != nil {\n\t\treturn fmt.Errorf(\"ошибка установки lock_timeout: %w\", err)\n\t}\n\n\t// 2. Устанавливаем statement_timeout для ограничения самого выполнения\n\tif _, err := tx.ExecContext(ctx, \"SET LOCAL statement_timeout = '5s';\"); err != nil {\n\t\treturn fmt.Errorf(\"ошибка установки statement_timeout: %w\", err)\n\t}\n\n\tfmt.Printf(\"[SAFE MIGRATION] Применение DDL с защитой lock_timeout=%v...\\n\", lockTimeout)\n\tif _, err := tx.ExecContext(ctx, migrationSQL); err != nil {\n\t\treturn fmt.Errorf(\"миграция отклонена (предотвращена блокировка пула): %w\", err)\n\t}\n\n\treturn tx.Commit()\n}\n\nfunc main() {\n\tfmt.Println(\"Обязательное правило Zero-Downtime: установка lock_timeout:\")\n\tfmt.Println(\" 1. SET LOCAL lock_timeout = '2s' гарантирует аварийный выход, если таблица занята\")\n\tfmt.Println(\" 2. Предотвращает выстраивание входящих запросов в очередь за миграцией\")\n\tfmt.Println(\" 3. Если лок не получен за 2 секунды — миграция падает, но прод ПРОДОЛЖАЕТ ЖИТЬ\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Ключевое слово `LOCAL` в `SET LOCAL` привязывает действие параметра строго к текущей транзакции. Как только транзакция завершается (коммитом или откатом), значение параметров сбрасывается к глобальным дефолтам сессии пула соединений.",
+    "pitfalls": [
+      "Забытое слово `LOCAL`: вызов `SET lock_timeout = ...` без `LOCAL` изменит параметр для всего соединения в пуле (connection pool pollution), повлияв на последующие обычные запросы этого коннекта.",
+      "Слишком большой таймаут: установка `lock_timeout = '30s'` полностью нивелирует защиту — за 30 секунд прод успеет упасть."
+    ],
+    "bigtech_interview": "Что делать, если миграция постоянно отваливается по `lock_timeout` из-за непрерывного потока транзакций? Применяется алгоритм повторов с джиттером: скрипт пытается захватить лок с таймаутом 500 мс раз в несколько минут (например, ночью в часы минимального трафика), пока не поймает свободное окно."
+  },
+  {
+    "num": 6,
+    "title": "Безопасное добавление столбцов со значениями по умолчанию",
+    "task": "Изучите эволюцию механики добавления столбцов со значением по умолчанию (DEFAULT) в PostgreSQL. Сравните поведение в PostgreSQL < 11 (полная перезапись таблицы на диске) и PostgreSQL >= 11 (fast default через метаданные каталога pg_attribute).",
+    "theory": "Добавление столбца — самая частая операция в жизненном цикле приложения.\n\nИсторическая ловушка (PostgreSQL 10 и старше):\nКоманда `ALTER TABLE orders ADD COLUMN status TEXT DEFAULT 'pending';` приводила к тому, что СУБД физически переписывала каждый блок таблицы на диске, добавляя значение `'pending'` во все существующие строки. На таблице в 100 млн записей это вызывало эксклюзивную блокировку на 40–60 минут и гарантированный даунтайн.\n\nРеволюция в PostgreSQL 11+ (Fast Column Default):\nНачиная с PG 11, добавление столбца со статическим значением по умолчанию больше НЕ переписывает таблицу. Значение по умолчанию сохраняется в системном каталоге `pg_attribute` в колонках `atthasmissing` и `attmissingval`. При последующем чтении старых строк движок подставляет значение на лету. Блокировка длится менее 1 миллисекунды!",
+    "step_by_step": [
+      "Изучите различия в физическом хранении строк в версиях PostgreSQL.",
+      "Проанализируйте синтаксис быстрого добавления столбца в PG 11+.",
+      "Изучите ограничения: значение по умолчанию должно быть иммутабельным (нельзя использовать функции вида `DEFAULT clock_timestamp()`).",
+      "Сформулируйте стратегию для старых версий баз данных (через NULL и чанковый бэкфилл)."
+    ],
+    "code_blocks": [
+      {
+        "filename": "fast_default_column.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// ColumnAdditionStrategy описывает различия версий PostgreSQL\ntype ColumnAdditionStrategy struct {\n\tPGVersion        string\n\tSyntax           string\n\tRewritesTable    bool\n\tLockDurationDesc string\n\tIsZeroDowntime   bool\n}\n\nfunc GetColumnAdditionStrategies() []ColumnAdditionStrategy {\n\treturn []ColumnAdditionStrategy{\n\t\t{\n\t\t\tPGVersion:        \"PostgreSQL < 11\",\n\t\t\tSyntax:           \"ALTER TABLE orders ADD COLUMN status TEXT DEFAULT 'pending';\",\n\t\t\tRewritesTable:    true, // Полная перезапись всех страниц таблицы на диске!\n\t\t\tLockDurationDesc: \"Минуты или часы (пропорционально объему таблицы)\",\n\t\t\tIsZeroDowntime:   false,\n\t\t},\n\t\t{\n\t\t\tPGVersion:        \"PostgreSQL >= 11\",\n\t\t\tSyntax:           \"ALTER TABLE orders ADD COLUMN status TEXT DEFAULT 'pending';\",\n\t\t\tRewritesTable:    false, // Только метаданные в pg_attribute!\n\t\t\tLockDurationDesc: \"Доли миллисекунды (мгновенное обновление каталога)\",\n\t\t\tIsZeroDowntime:   true,\n\t\t},\n\t\t{\n\t\t\tPGVersion:        \"Универсальный (Legacy)\",\n\t\t\tSyntax:           \"1) ADD COLUMN status TEXT NULL; 2) UPDATE по чанкам; 3) SET DEFAULT 'pending';\",\n\t\t\tRewritesTable:    false,\n\t\t\tLockDurationDesc: \"Микросекунды на шагах 1 и 3\",\n\t\t\tIsZeroDowntime:   true,\n\t\t},\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"Безопасное добавление столбцов со значениями по умолчанию (DEFAULT):\")\n\tfor _, s := range GetColumnAdditionStrategies() {\n\t\tfmt.Printf(\"\\nВерсия: %s (Zero-Downtime: %v)\\n\", s.PGVersion, s.IsZeroDowntime)\n\t\tfmt.Printf(\" SQL:        %s\\n\", s.Syntax)\n\t\tfmt.Printf(\" Перезапись: %v | Задержка лока: %s\\n\", s.RewritesTable, s.LockDurationDesc)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "Если значение `DEFAULT` содержит волатильную функцию (например, `DEFAULT random()`), PostgreSQL не сможет применить оптимизацию Fast Default и будет вынужден переписать таблицу даже в PostgreSQL 16. Значения по умолчанию для Zero-Downtime обязаны быть константными или детерминированными.",
+    "pitfalls": [
+      "Использование non-immutable default: `DEFAULT now()` или `DEFAULT gen_random_uuid()` приводят к вычислению значения для каждой строки и перезаписи всей таблицы.",
+      "Заблуждение о MySQL: в MySQL до версии 8.0 добавление колонки всегда блокировало таблицу (Instant DDL появился только в MySQL 8.0)."
+    ],
+    "bigtech_interview": "Как безопасно добавить колонку с динамическим UUID по умолчанию в PostgreSQL? 1) Добавить колонку `NULL`, 2) Фоновым скриптом на Go чанками сгенерировать UUID для старых строк, 3) Установить `DEFAULT gen_random_uuid()` только для новых строк."
+  },
+  {
+    "num": 7,
+    "title": "Добавление ограничения NOT NULL без блокировки таблицы",
+    "task": "Изучите проблему блокировки при прямом выполнении команды ALTER TABLE ... ALTER COLUMN ... SET NOT NULL. Разработайте и задокументируйте трехшаговый алгоритм безопасного добавления ограничения через проверочные ограничения CHECK ... NOT VALID и VALIDATE CONSTRAINT.",
+    "theory": "Прямая команда `ALTER TABLE users ALTER COLUMN email SET NOT NULL;` опасна на больших таблицах:\nPostgreSQL обязан убедиться, что ни в одной строке таблицы нет значения `NULL`. Для этого он выполняет полный последовательный скан (Sequential Scan) таблицы, удерживая `ACCESS EXCLUSIVE LOCK`. На таблице в 50 ГБ это заморозит запись на 5–10 минут!\n\nБезопасный трехшаговый подход (Zero-Downtime NOT NULL):\n1. Добавляем проверочное ограничение `CHECK (email IS NOT NULL) NOT VALID`. Ключевое слово `NOT VALID` указывает PostgreSQL проверять ограничение ТОЛЬКО для новых входящих записей. Существующие строки не сканируются, лок длится 2 миллисекунды.\n2. Выполняем `ALTER TABLE users VALIDATE CONSTRAINT check_email_not_null;`. СУБД сканирует таблицу в фоновом режиме под слабым замком `SHARE UPDATE EXCLUSIVE`, который НЕ блокирует параллельные операции записи и чтения!\n3. В PostgreSQL 12+ после валидации CHECK-констрейнта команда `ALTER COLUMN email SET NOT NULL` выполняется мгновенно, так как оптимизатор видит уже доказанную валидность данных.",
+    "step_by_step": [
+      "Сформулируйте SQL-запрос добавления CHECK ограничения с флагом NOT VALID.",
+      "Объясните механику фоновой валидации команды VALIDATE CONSTRAINT.",
+      "Покажите установку нативного ограничения NOT NULL и последующее удаление временного CHECK констрейнта.",
+      "Опишите уровни блокировок на каждом из трех этапов."
+    ],
+    "code_blocks": [
+      {
+        "filename": "safe_not_null_migration.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// NotNullMigrationPlan описывает трехшаговый алгоритм безопасного добавления NOT NULL\ntype NotNullMigrationPlan struct {\n\tStep        int\n\tDescription string\n\tSQL         string\n\tLockLevel   string\n\tDuration    string\n}\n\nfunc GenerateSafeNotNullPlan(tableName, columnName string) []NotNullMigrationPlan {\n\treturn []NotNullMigrationPlan{\n\t\t{\n\t\t\tStep:        1,\n\t\t\tDescription: \"Добавление проверочного ограничения CHECK с флагом NOT VALID\",\n\t\t\tSQL:         fmt.Sprintf(\"ALTER TABLE %s ADD CONSTRAINT check_%s_not_null CHECK (%s IS NOT NULL) NOT VALID;\", tableName, columnName, columnName),\n\t\t\tLockLevel:   \"SHARE ROW EXCLUSIVE (Микросекунды, запись продолжается)\",\n\t\t\tDuration:    \"< 5 миллисекунд\",\n\t\t},\n\t\t{\n\t\t\tStep:        2,\n\t\t\tDescription: \"Фоновая валидация существующих строк без блокировки чтения и записи\",\n\t\t\tSQL:         fmt.Sprintf(\"ALTER TABLE %s VALIDATE CONSTRAINT check_%s_not_null;\", tableName, columnName),\n\t\t\tLockLevel:   \"SHARE UPDATE EXCLUSIVE (Не блокирует SELECT, INSERT, UPDATE, DELETE)\",\n\t\t\tDuration:    \"Зависит от размера таблицы (но сервис работает 100% стабильно)\",\n\t\t},\n\t\t{\n\t\t\tStep:        3,\n\t\t\tDescription: \"Установка нативного NOT NULL (мгновенно, так как CHECK уже доказал валидность) и удаление CHECK\",\n\t\t\tSQL:         fmt.Sprintf(\"ALTER TABLE %s ALTER COLUMN %s SET NOT NULL;\\nALTER TABLE %s DROP CONSTRAINT check_%s_not_null;\", tableName, columnName, tableName, columnName),\n\t\t\tLockLevel:   \"ACCESS EXCLUSIVE (Доли миллисекунды, проверка строк пропускается)\",\n\t\t\tDuration:    \"< 5 миллисекунд\",\n\t\t},\n\t}\n}\n\nfunc main() {\n\tplan := GenerateSafeNotNullPlan(\"users\", \"email\")\n\tfmt.Println(\"Безопасное добавление ограничения NOT NULL без даунтайма:\")\n\tfor _, p := range plan {\n\t\tfmt.Printf(\"\\n[Шаг %d] %s\\n\", p.Step, p.Description)\n\t\tfmt.Printf(\" SQL:       %s\\n\", p.SQL)\n\t\tfmt.Printf(\" Лок:       %s | Время: %s\\n\", p.LockLevel, p.Duration)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "В PostgreSQL 12 оптимизатор компилятора запросов был улучшен: если на колонке есть валидированный `CHECK (col IS NOT NULL)`, вызов `SET NOT NULL` распознает это и пропускает скан таблицы, делая переключение мгновенным.",
+    "pitfalls": [
+      "Попытка валидации при наличии хотя бы одного NULL: команда `VALIDATE CONSTRAINT` упадет с ошибкой, если в старых данных остался `NULL`. Перед валидацией все строки должны быть предварительно заполнены через Backfill.",
+      "Объединение шагов 1 и 2 в одну транзакцию: выполнение `ADD CONSTRAINT ... NOT VALID` и `VALIDATE CONSTRAINT` в одной транзакции уничтожает всю пользу, удерживая эксклюзивный лок на все время валидации."
+    ],
+    "bigtech_interview": "Почему нативный `NOT NULL` лучше, чем постоянное оставление `CHECK (col IS NOT NULL)`? Нативный `NOT NULL` сохраняется в битовой маске заголовка строки PostgreSQL (HeapTupleHeader), что ускоряет выборки и дает оптимизатору больше информации при построении планов соединения таблиц."
+  },
+  {
+    "num": 8,
+    "title": "Безопасное создание индексов: CREATE INDEX CONCURRENTLY",
+    "task": "Изучите устройство конкурентного создания индексов в PostgreSQL. Реализуйте сервис SafeIndexManager, выполняющий построение индекса с ключевым словом CONCURRENTLY вне транзакции, и напишите процедуру очистки cleanupInvalidIndex для удаления поврежденных невалидных индексов в случае сбоя.",
+    "theory": "Обычная команда `CREATE INDEX ON orders (user_id);` захватывает замок `SHARE LOCK`. Это позволяет читать таблицу (`SELECT`), но полностью блокирует любые модификации (`INSERT`, `UPDATE`, `DELETE`) на все время сканирования и сортировки данных (десятки минут на терабайтных таблицах).\n\nДиректива `CREATE INDEX CONCURRENTLY` решает эту проблему:\n1. Она не блокирует запись: пользователи продолжают оформлять заказы.\n2. Внутреннее устройство: выполняется в два прохода (Two-Pass Architecture):\n   - Проход 1: строится снимок таблицы и первичное дерево индекса.\n   - Ожидание завершения всех параллельных транзакций.\n   - Проход 2: дочитываются изменения, произошедшие за время первого прохода.\n3. Особенность: `CREATE INDEX CONCURRENTLY` категорически не может выполняться внутри транзакции `BEGIN ... COMMIT`.",
+    "step_by_step": [
+      "Объясните, почему CONCURRENTLY нельзя оборачивать в транзакцию sql.Tx.",
+      "Реализуйте метод CreateIndexConcurrently с прямым вызовом db.ExecContext.",
+      "Изучите статус indisvalid в системной таблице pg_index.",
+      "Напишите метод cleanupInvalidIndex для поиска и удаления незавершенных индексов через DROP INDEX CONCURRENTLY."
+    ],
+    "code_blocks": [
+      {
+        "filename": "concurrent_index_builder.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"time\"\n)\n\n// SafeIndexManager управляет конкурентным созданием индексов в PostgreSQL\ntype SafeIndexManager struct {\n\tdb *sql.DB\n}\n\nfunc NewSafeIndexManager(db *sql.DB) *SafeIndexManager {\n\treturn &SafeIndexManager{db: db}\n}\n\n// CreateIndexConcurrently создает индекс без блокировки записи с обработкой сбоев\nfunc (m *SafeIndexManager) CreateIndexConcurrently(ctx context.Context, indexName, tableName, column string) error {\n\tquery := fmt.Sprintf(\"CREATE INDEX CONCURRENTLY IF NOT EXISTS %s ON %s (%s);\", indexName, tableName, column)\n\tfmt.Printf(\"[INDEX] Запуск создания индекса: %s\\n\", query)\n\n\t// ВАЖНО: CREATE INDEX CONCURRENTLY НЕЛЬЗЯ выполнять внутри sql.Tx! Вызываем напрямую у db.\n\t_, err := m.db.ExecContext(ctx, query)\n\tif err != nil {\n\t\tfmt.Printf(\"⚠️ Сбой создания индекса %s: %v. Проверка статуса INVALID...\\n\", indexName, err)\n\t\t_ = m.cleanupInvalidIndex(ctx, indexName)\n\t\treturn err\n\t}\n\n\tfmt.Printf(\"✅ [INDEX DONE] Индекс %s успешно построен без блокировки записи!\\n\", indexName)\n\treturn nil\n}\n\n// cleanupInvalidIndex удаляет поврежденный индекс при сетевых сбоях или дедлоках\nfunc (m *SafeIndexManager) cleanupInvalidIndex(ctx context.Context, indexName string) error {\n\t// Проверяем, остался ли индекс в статусе INVALID в каталоге pg_index\n\tcheckQuery := `SELECT indisvalid FROM pg_index JOIN pg_class ON pg_class.oid = pg_index.indexrelid WHERE pg_class.relname = $1;`\n\tvar isValid bool\n\terr := m.db.QueryRowContext(ctx, checkQuery, indexName).Scan(&isValid)\n\tif err == sql.ErrNoRows {\n\t\treturn nil // Индекса нет\n\t}\n\tif err == nil && !isValid {\n\t\tfmt.Printf(\"🧹 [CLEANUP] Удаление невалидного индекса %s (DROP INDEX CONCURRENTLY)...\\n\", indexName)\n\t\t_, _ = m.db.ExecContext(ctx, fmt.Sprintf(\"DROP INDEX CONCURRENTLY IF EXISTS %s;\", indexName))\n\t}\n\treturn nil\n}\n\nfunc main() {\n\tfmt.Println(\"Безопасное создание индексов: CREATE INDEX CONCURRENTLY:\")\n\tfmt.Println(\" 1. Обычный CREATE INDEX захватывает SHARE лок и блокирует все INSERT/UPDATE/DELETE\")\n\tfmt.Println(\" 2. CREATE INDEX CONCURRENTLY делает 2 прохода по таблице, позволяя писать во время построения\")\n\tfmt.Println(\" 3. При ошибке (дедлок/таймаут) индекс остается в статусе INVALID и требует удаления\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Если во время второго прохода произошел сбой (таймаут, падение узла, нарушение уникальности для UNIQUE), индекс остается в каталоге с флагом `indisvalid = false`. Такой индекс занимает место на диске и замедляет запись, но НЕ используется планировщиком для ускорения чтения. Его необходимо удалить и пересоздать.",
+    "pitfalls": [
+      "Запуск внутри транзакции: популярные инструменты миграций по умолчанию оборачивают скрипты в транзакции. Для CONCURRENTLY необходимо явно указывать директиву отключения транзакции (в goose: `-- +goose NO TRANSACTION`).",
+      "Увеличенное время построения: CONCURRENTLY строится в 2–3 раза дольше обычного индекса из-за двух проходов и ожидания транзакций."
+    ],
+    "bigtech_interview": "Что произойдет, если запустить `CREATE INDEX CONCURRENTLY` в момент, когда в базе висит забытая незакрытая транзакция `idle in transaction`? Построение индекса зависнет на этапе ожидания завершения транзакции и не завершится до тех пор, пока зависшее соединение не будет убито (`pg_terminate_backend`)."
+  },
+  {
+    "num": 9,
+    "title": "Паттерн безопасного переименования столбца (Rename Column)",
+    "task": "Изучите, почему простая операция RENAME COLUMN невозможна в HighLoad без даунтайма. Спроектируйте пятиэтапный процесс безопасного переименования столбца name в full_name по методологии Expand-Contract с сохранением возможности мгновенного отката на каждом этапе.",
+    "theory": "Казалось бы, переименовать колонку просто: `ALTER TABLE users RENAME COLUMN name TO full_name;`.\nОднако в распределенной системе с Rolling Update это фатально:\n- В момент применения DDL старые поды v1 мгновенно падают с ошибкой `column \"name\" does not exist` при каждом SQL-запросе.\n- Если сначала обновить поды до v2, они упадут с ошибкой `column \"full_name\" does not exist`, потому что миграция еще не накатана.\n\nЕдинственный способ безопасного переименования без даунтайма — представить 'переименование' как добавление новой колонки + копирование данных + удаление старой через Expand-Contract.",
+    "step_by_step": [
+      "Проанализируйте взаимную несовместимость версий кода и схемы БД.",
+      "Разбейте задачу переименования на 5 шагов: Expand -> Dual Write -> Backfill -> Switch Read -> Contract.",
+      "Определите поведение слоя данных приложения на каждом шаге.",
+      "Покажите, что на шагах 1–4 откат на предыдущую версию кода или БД безопасен и не приводит к потере данных."
+    ],
+    "code_blocks": [
+      {
+        "filename": "rename_column_lifecycle.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// RenameColumnStep шаг процесса безопасного переименования столбца\ntype RenameColumnStep struct {\n\tStepNumber int\n\tAction     string\n\tSQL        string\n\tAppVersion string\n\tCanRollback bool\n}\n\nfunc GetRenameColumnLifecycle() []RenameColumnStep {\n\treturn []RenameColumnStep{\n\t\t{\n\t\t\tStepNumber:  1,\n\t\t\tAction:      \"Expand: Добавление новой колонки\",\n\t\t\tSQL:         \"ALTER TABLE users ADD COLUMN full_name TEXT NULL;\",\n\t\t\tAppVersion:  \"v1.0 (читает и пишет в 'name')\",\n\t\t\tCanRollback: true,\n\t\t},\n\t\t{\n\t\t\tStepNumber:  2,\n\t\t\tAction:      \"Dual Write: Релиз кода с двойной записью\",\n\t\t\tSQL:         \"Нет DDL изменений\",\n\t\t\tAppVersion:  \"v2.0 (пишет в 'name' И 'full_name', читает из 'name')\",\n\t\t\tCanRollback: true,\n\t\t},\n\t\t{\n\t\t\tStepNumber:  3,\n\t\t\tAction:      \"Backfill: Фоновое копирование исторических данных\",\n\t\t\tSQL:         \"UPDATE users SET full_name = name WHERE id BETWEEN ... AND full_name IS NULL;\",\n\t\t\tAppVersion:  \"v2.0 (Dual Write гарантирует целостность)\",\n\t\t\tCanRollback: true,\n\t\t},\n\t\t{\n\t\t\tStepNumber:  4,\n\t\t\tAction:      \"Switch Read: Переключение чтения\",\n\t\t\tSQL:         \"Нет DDL изменений\",\n\t\t\tAppVersion:  \"v3.0 (читает из 'full_name', пишет в 'name' И 'full_name')\",\n\t\t\tCanRollback: true,\n\t\t},\n\t\t{\n\t\t\tStepNumber:  5,\n\t\t\tAction:      \"Contract: Удаление старой колонки\",\n\t\t\tSQL:         \"ALTER TABLE users DROP COLUMN name;\",\n\t\t\tAppVersion:  \"v4.0 (пишет и читает только 'full_name')\",\n\t\t\tCanRollback: false,\n\t\t},\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"Паттерн безопасного переименования столбца (Rename Column):\")\n\tfor _, s := range GetRenameColumnLifecycle() {\n\t\tfmt.Printf(\"\\n[Этап %d] %s\\n\", s.StepNumber, s.Action)\n\t\tfmt.Printf(\" Версия сервиса: %s\\n\", s.AppVersion)\n\t\tfmt.Printf(\" SQL миграция:   %s (Откат возможен: %v)\\n\", s.SQL, s.CanRollback)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "Альтернативным решением в PostgreSQL может быть создание `VIEW` с алиасом столбца или генерируемая колонка `GENERATED ALWAYS AS (name) STORED`, однако в высоконагруженных OLTP-системах явный Expand-Contract остается золотым стандартом надежности.",
+    "pitfalls": [
+      "Удаление старой колонки до обновления всех клиентов: если хотя бы один вспомогательный скрипт (ETL, аналитика, кэш-воркер) продолжает читать `name`, `DROP COLUMN` сломает его.",
+      "Забытый Dual Write: если запустить Backfill без Dual Write, новые строки, созданные пользователями во время работы бэкфилла, останутся с пустым значением в новой колонке."
+    ],
+    "bigtech_interview": "Сколько релизов сервиса требуется для безопасного переименования одной колонки в проде? Ответ: минимум 3 независимых релиза приложения (v2 Dual Write, v3 Switch Read, v4 Cleanup) и 2 миграции БД (Expand и Contract)."
+  },
+  {
+    "num": 10,
+    "title": "Шаг 1 Expand: добавление нового столбца",
+    "task": "Реализуйте фазу 1 (Expand) паттерна: напишите SQL-миграцию добавления нового столбца full_name TEXT NULL и продемонстрируйте структуру UserRepositoryV1. Докажите, что при явном перечислении полей в SQL-запросах работающий сервис v1 не замечает добавления новой колонки в таблицу.",
+    "theory": "Фаза Expand расширяет возможности базы данных, сохраняя полную обратную совместимость (Backward Compatibility) со старым кодом.\n\nКлючевые правила первого шага:\n1. Новый столбец ОБЯЗАН допускать значение `NULL` (`TEXT NULL`) либо иметь безопасное значение по умолчанию. Если попытаться сразу добавить `NOT NULL`, старый сервис v1 упадет на первом же `INSERT`, так как он ничего не знает о новой колонке и не передает для нее значение.\n2. В кодовой базе Go категорически запрещено использовать `SELECT * FROM users` и `INSERT INTO users VALUES (...)`. При добавлении столбца `SELECT *` сломает вызовы `rows.Scan(&id, &name)` из-за несовпадения числа столбцов. Всегда используйте явный перечень колонок: `SELECT id, name FROM users`.",
+    "step_by_step": [
+      "Сформируйте DDL-скрипт миграции добавления столбца full_name TEXT NULL.",
+      "Реализуйте методы CreateUser и GetUser с явным указанием столбцов.",
+      "Объясните, почему новый столбец не ломает активные запросы сервиса v1.",
+      "Покажите опасность использования SELECT * при эволюции схемы."
+    ],
+    "code_blocks": [
+      {
+        "filename": "step1_expand_repository.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n)\n\n// UserRepositoryV1 представляет старую версию репозитория (v1)\ntype UserRepositoryV1 struct {\n\tdb *sql.DB\n}\n\nfunc NewUserRepositoryV1(db *sql.DB) *UserRepositoryV1 {\n\treturn &UserRepositoryV1{db: db}\n}\n\n// CreateUser создает пользователя, зная только старую колонку 'name'\nfunc (r *UserRepositoryV1) CreateUser(ctx context.Context, id int64, name string) error {\n\t// Запрос жестко фиксирует перечень колонок (никогда не используйте SELECT * или INSERT без колонок!)\n\tquery := `INSERT INTO users (id, name) VALUES ($1, $2);`\n\t_, err := r.db.ExecContext(ctx, query, id, name)\n\treturn err\n}\n\n// GetUser считывает пользователя по ID\nfunc (r *UserRepositoryV1) GetUser(ctx context.Context, id int64) (string, error) {\n\tquery := `SELECT name FROM users WHERE id = $1;`\n\tvar name string\n\terr := r.db.QueryRowContext(ctx, query, id).Scan(&name)\n\treturn name, err\n}\n\nfunc main() {\n\tfmt.Println(\"Шаг 1 Expand: Добавление нового столбца full_name TEXT NULL:\")\n\tfmt.Println(\" 1. Выполняется миграция: ALTER TABLE users ADD COLUMN full_name TEXT NULL;\")\n\tfmt.Println(\" 2. Колонка обязана быть NULL (или иметь static default в PG 11+)\")\n\tfmt.Println(\" 3. Текущий код v1 продолжает стабильно работать, полностью игнорируя новую колонку\")\n\tfmt.Println(\" 4. Правило: явное перечисление столбцов в INSERT/SELECT исключает сбои при добавлении полей\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Добавление nullable столбца в PostgreSQL происходит исключительно на уровне системного каталога: создается новая запись в `pg_attribute`, а физические страницы данных таблицы не модифицируются. Операция занимает менее 1 мс независимо от объема таблицы.",
+    "pitfalls": [
+      "Использование `SELECT *`: добавление столбца приведет к ошибке `sql: expected 2 destination arguments in Scan, got 3` в Go.",
+      "Забытый `NULL`: попытка добавить `full_name TEXT NOT NULL` без дефолта вызовет немедленный отказ во всех операциях `INSERT` старого сервиса."
+    ],
+    "bigtech_interview": "Как статический анализатор кода (Linter) может предотвратить проблемы при миграциях? В BigTech используют линтеры, запрещающие использование `SELECT *` в SQL-запросах на уровне сборки CI/CD (например, правила golangci-lint)."
+  },
+  {
+    "num": 11,
+    "title": "Шаг 2 Dual Write: двойная запись в Go-коде",
+    "task": "Реализуйте фазу 2 (Dual Write) паттерна в коде репозитория UserRepositoryV2. Обеспечьте одновременную атомарную запись значения в старый столбец name и новый full_name в одном SQL-запросе INSERT и UPDATE, сохраняя чтение из старого столбца.",
+    "theory": "После того как новая колонка успешно добавлена в базу (Шаг 1), выкатывается версия сервиса v2.\n\nСуть Dual Write (Двойной записи):\n1. Все новые операции модификации данных (`INSERT`, `UPDATE`) пишут данные сразу в оба столбца (`INSERT INTO users (id, name, full_name) VALUES ($1, $2, $2)`).\n2. Чтение по-прежнему производится из старого столбца `name`.\n\nЗачем это нужно?\nС момента релиза версии v2 все вновь создаваемые и обновляемые пользователями строки автоматически содержат актуальные данные в новом столбце. Это позволяет безопасно запустить фоновый перенос исторических данных (Backfill), не опасаясь, что новые записи потеряются.",
+    "step_by_step": [
+      "Создайте структуру UserRepositoryV2 с подключением к БД.",
+      "В методе CreateUser измените запрос на одновременную запись в name и full_name.",
+      "В методе UpdateUser обновите обе колонки одновременно.",
+      "Убедитесь, что метод GetUser по-прежнему считывает данные из name.",
+      "Объясните, почему запись в оба столбца в рамках одного SQL-вызова исключает race conditions."
+    ],
+    "code_blocks": [
+      {
+        "filename": "step2_dual_write_repository.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n)\n\n// UserRepositoryV2 реализует шаг 2 (Dual Write): одновременная запись в старую и новую колонки\ntype UserRepositoryV2 struct {\n\tdb *sql.DB\n}\n\nfunc NewUserRepositoryV2(db *sql.DB) *UserRepositoryV2 {\n\treturn &UserRepositoryV2{db: db}\n}\n\n// CreateUser выполняет двойную запись (Dual Write) в одном атомарном SQL-запросе\nfunc (r *UserRepositoryV2) CreateUser(ctx context.Context, id int64, fullName string) error {\n\t// Записываем одно и то же значение И в name, И в full_name!\n\tquery := `INSERT INTO users (id, name, full_name) VALUES ($1, $2, $2);`\n\t_, err := r.db.ExecContext(ctx, query, id, fullName)\n\treturn err\n}\n\n// UpdateUser обновляет обе колонки синхронно\nfunc (r *UserRepositoryV2) UpdateUser(ctx context.Context, id int64, newFullName string) error {\n\tquery := `UPDATE users SET name = $1, full_name = $1 WHERE id = $2;`\n\t_, err := r.db.ExecContext(ctx, query, newFullName, id)\n\treturn err\n}\n\n// GetUser на шаге Dual-Write по-прежнему читает из СТАРОЙ колонки name\nfunc (r *UserRepositoryV2) GetUser(ctx context.Context, id int64) (string, error) {\n\tquery := `SELECT name FROM users WHERE id = $1;`\n\tvar name string\n\terr := r.db.QueryRowContext(ctx, query, id).Scan(&name)\n\treturn name, err\n}\n\nfunc main() {\n\tfmt.Println(\"Шаг 2 Dual Write: двойная запись в Go-коде:\")\n\tfmt.Println(\" 1. Релиз версии сервиса v2\")\n\tfmt.Println(\" 2. При создании и обновлении данные пишутся ОДНОВРЕМЕННО в name и full_name\")\n\tfmt.Println(\" 3. Чтение по-прежнему идет из старой колонки name\")\n\tfmt.Println(\" 4. Гарантирует: все новые и измененные строки с этого момента актуальны в обеих колонках!\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Выполнение записи в оба столбца в рамках единого SQL-запроса `INSERT ... VALUES ($1, $2, $2)` гарантирует 100% атомарность на уровне ядра базы данных без накладных расходов на сетевые вызовы и двухфазные коммиты.",
+    "pitfalls": [
+      "Раздельные запросы: выполнение сначала `INSERT INTO ... (name)`, а затем отдельного `UPDATE ... SET full_name` создает окно несогласованности и удваивает нагрузку на БД.",
+      "Переключение чтения раньше времени: нельзя переключать чтение на `full_name` на шаге 2, так как исторические строки еще не скопированы и содержат `NULL`."
+    ],
+    "bigtech_interview": "Что произойдет, если на этапе Dual-Write потребуется срочно откатить сервис v2 назад на v1? Откат абсолютно безопасен! Старый сервис v1 просто продолжит читать и писать в `name`, а колонка `full_name` останется нетронутой."
+  },
+  {
+    "num": 12,
+    "title": "Шаг 3 Backfill: фоновый перенос исторических данных",
+    "task": "Спроектируйте базовый фоновый воркер HistoricalBackfiller для копирования данных из старого столбца name в новый full_name для строк, созданных до внедрения Dual Write. Реализуйте пакетную обработку через подзапрос с LIMIT $1.",
+    "theory": "После развертывания Dual Write в базе данных сосуществуют два типа строк:\n1. Новые строки: заполнены и `name`, и `full_name`.\n2. Старые исторические строки: заполнен только `name`, а `full_name IS NULL`.\n\nПроцесс Backfill (Бэкфилл):\nСпециальный скрипт на Go в фоновом режиме находит строки, где `full_name IS NULL`, и копирует значение из `name`.\n\nГлавное архитектурное требование к бэкфиллу в HighLoad — батчинг (Batching):\nКатегорически запрещено выполнять один гигантский запрос `UPDATE users SET full_name = name WHERE full_name IS NULL;`. На миллионах строк это заблокирует строки таблицы, переполнит WAL-лог репликации и вызовет каскадный отказ. Бэкфилл выполняется небольшими порциями (батчами по 500–5 000 строк).",
+    "step_by_step": [
+      "Создайте структуру HistoricalBackfiller с параметром batchSize.",
+      "Сформируйте SQL-запрос обновления с фильтрацией WHERE full_name IS NULL и LIMIT $1.",
+      "Вызовите ExecContext с замером rowsAffected.",
+      "Покажите, как батчинг предотвращает раздувание транзакционного журнала СУБД."
+    ],
+    "code_blocks": [
+      {
+        "filename": "step3_basic_backfiller.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"time\"\n)\n\n// HistoricalBackfiller копирует данные из старой колонки в новую\ntype HistoricalBackfiller struct {\n\tdb        *sql.DB\n\tbatchSize int\n}\n\nfunc NewHistoricalBackfiller(db *sql.DB, batchSize int) *HistoricalBackfiller {\n\treturn &HistoricalBackfiller{db: db, batchSize: batchSize}\n}\n\n// MigrateLegacyBatch переносит одну пачку записей\nfunc (b *HistoricalBackfiller) MigrateLegacyBatch(ctx context.Context) (int64, error) {\n\t// Копируем данные только для тех строк, где full_name еще не заполнен\n\tquery := `\n\t\tUPDATE users\n\t\tSET full_name = name\n\t\tWHERE id IN (\n\t\t\tSELECT id FROM users\n\t\t\tWHERE full_name IS NULL\n\t\t\tORDER BY id ASC\n\t\t\tLIMIT $1\n\t\t);\n\t`\n\n\tres, err := b.db.ExecContext(ctx, query, b.batchSize)\n\tif err != nil {\n\t\treturn 0, fmt.Errorf(\"ошибка выполнения батча бэкфилла: %w\", err)\n\t}\n\n\trowsAffected, _ := res.RowsAffected()\n\treturn rowsAffected, nil\n}\n\nfunc main() {\n\tfmt.Println(\"Шаг 3 Backfill: фоновый перенос исторических данных:\")\n\tfmt.Println(\" 1. Записи, созданные до релиза Dual Write, содержат full_name = NULL\")\n\tfmt.Println(\" 2. Фоновый воркер переносит данные небольшими порциями (батчами)\")\n\tfmt.Println(\" 3. Не блокирует боевые транзакции пользователей\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Каждый отдельный вызов `UPDATE ... LIMIT N` выполняется в своей собственной отдельной короткой транзакции. Строки блокируются только на 5–10 миллисекунд, после чего блокировки снимаются, позволяя пользователям работать без задержек.",
+    "pitfalls": [
+      "Медленный подзапрос с `ORDER BY id LIMIT N`: если по колонке `full_name` нет индекса, поиск `WHERE full_name IS NULL` будет выполнять последовательный скан (Seq Scan) всей таблицы на каждом батче! Как оптимизировать это через Keyspace Chunking, разберем в упражнении 13.",
+      "Бесконечный цикл: если в таблице есть строки, где `name IS NULL`, запрос будет выбирать их снова и снова."
+    ],
+    "bigtech_interview": "Почему бэкфилл лучше делать на уровне прикладного Go-скрипта, а не одного фонового скрипта в `psql`? Go-скрипт имеет доступ к контексту, метрикам лага репликации, может плавно регулировать паузы и корректно реагировать на сигналы завершения `SIGTERM` в Kubernetes."
+  },
+  {
+    "num": 13,
+    "title": "Потоковый бэкфилл порциями по первичному ключу (Chunking)",
+    "task": "Оптимизируйте перенос данных с помощью техники Keyspace Chunking (пагинация по первичному ключу). Реализуйте метод RunChunkedBackfill, сканирующий диапазоны WHERE id >= $1 AND id <= $2 с использованием индекса первичного ключа, контролируя время выполнения одного чанка (< 100 мс).",
+    "theory": "Запрос `WHERE full_name IS NULL LIMIT 1000` плох тем, что по мере выполнения бэкфилла строк с `NULL` становится все меньше. Базе данных приходится просканировать миллионы записей, чтобы найти очередную тысячу незаполненных строк, что приводит к деградации дискового I/O.\n\nТехника Keyspace Chunking (Чанкование по первичному ключу):\n1. Узнаем минимальный и максимальный ID: `SELECT min(id), max(id) FROM users`.\n2. Итерируемся фиксированными окнами ID: `[1..5000]`, `[5001..10000]`, `[10001..15000]`.\n3. Запрос: `UPDATE users SET full_name = name WHERE id >= :start AND id <= :end AND full_name IS NULL`.\n4. Благодаря B-Tree индексу по первичному ключу `id`, база данных мгновенно находит нужный диапазон страниц за константное время `O(log N)`.",
+    "step_by_step": [
+      "Создайте ChunkedBackfiller с параметром размера чанка chunkSize.",
+      "Реализуйте цикл от minID до maxID с шагом chunkSize.",
+      "Сформируйте запрос обновления с фильтром по диапазону id >= $1 AND id <= $2.",
+      "Замеряйте задержку выполнения каждого чанка через time.Since(start).",
+      "Добавьте паузу time.Sleep между чанками для предотвращения перегрева CPU базы."
+    ],
+    "code_blocks": [
+      {
+        "filename": "chunked_keyspace_backfiller.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"time\"\n)\n\n// ChunkedBackfiller переносит данные диапазонами первичного ключа\ntype ChunkedBackfiller struct {\n\tdb        *sql.DB\n\tchunkSize int64\n}\n\nfunc NewChunkedBackfiller(db *sql.DB, chunkSize int64) *ChunkedBackfiller {\n\treturn &ChunkedBackfiller{db: db, chunkSize: chunkSize}\n}\n\n// RunChunkedBackfill сканирует диапазон ID от minID до maxID\nfunc (b *ChunkedBackfiller) RunChunkedBackfill(ctx context.Context, minID, maxID int64) error {\n\tfmt.Printf(\"[CHUNK BACKFILL] Старт переноса по первичному ключу [%d ... %d] чанками по %d строк\\n\",\n\t\tminID, maxID, b.chunkSize)\n\n\tcurrentID := minID\n\n\tfor currentID <= maxID {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\treturn ctx.Err()\n\t\tdefault:\n\t\t}\n\n\t\tendID := currentID + b.chunkSize - 1\n\t\tstart := time.Now()\n\n\t\t// Запрос использует B-Tree индекс первичного ключа: O(log N) поиск диапазона!\n\t\tquery := `\n\t\t\tUPDATE users\n\t\t\tSET full_name = name\n\t\t\tWHERE id >= $1 AND id <= $2 AND full_name IS NULL;\n\t\t`\n\n\t\tres, err := b.db.ExecContext(ctx, query, currentID, endID)\n\t\tif err != nil {\n\t\t\treturn fmt.Errorf(\"ошибка обработки чанка [%d-%d]: %w\", currentID, endID, err)\n\t\t}\n\n\t\taffected, _ := res.RowsAffected()\n\t\telapsed := time.Since(start)\n\n\t\tfmt.Printf(\" 📦 Чанк ID [%10d - %10d] -> обновлено: %4d строк за %v\\n\",\n\t\t\tcurrentID, endID, affected, elapsed)\n\n\t\t// Пауза (Джиттер) для разгрузки репликации и I/O диска\n\t\ttime.Sleep(20 * time.Millisecond)\n\t\tcurrentID = endID + 1\n\t}\n\n\tfmt.Println(\"✅ [CHUNK BACKFILL] Фоновый перенос всех данных успешно завершен!\")\n\treturn nil\n}\n\nfunc main() {\n\tfmt.Println(\"Потоковый бэкфилл порциями по первичному ключу (Keyspace Chunking):\")\n\tfmt.Println(\" 1. Вместо WHERE full_name IS NULL используем сканирование по первичному ключу id\")\n\tfmt.Println(\" 2. WHERE id >= $1 AND id <= $2 использует индекс Primary Key с нулевым оверхедом\")\n\tfmt.Println(\" 3. Исключает медленные Sequential Scan на больших таблицах\")\n}\n"
+      }
+    ],
+    "under_the_hood": "При чанковании размер одного окна выбирается так, чтобы выполнение `UPDATE` занимало не более 50–100 мс. Это гарантирует, что автовакуум PostgreSQL (autovacuum) успевает очищать мертвые версии строк (Dead Tuples), предотвращая раздувание таблицы (Table Bloat).",
+    "pitfalls": [
+      "Дырки в последовательности ID: если в таблице много удаленных записей (например, ID идут `1, 1000000`), часть чанков будет обрабатывать 0 строк — это нормально и работает молниеносно.",
+      "Составные первичные ключи: если первичный ключ составной `(tenant_id, user_id)`, чанкование усложняется и требует использования кортежного сравнения `(tenant_id, user_id) > ($1, $2)`."
+    ],
+    "bigtech_interview": "Почему при чанковании нельзя использовать `OFFSET / LIMIT`? `OFFSET 10000000` заставляет базу данных прочитать и отбросить 10 миллионов строк в памяти, деградируя производительность до нуля. Пагинация по первичному ключу (Keyset Pagination) свободна от этой проблемы."
+  },
+  {
+    "num": 14,
+    "title": "Динамический троттлинг фонового бэкфилла",
+    "task": "Реализуйте механизм адаптивного троттлинга ThrottledBackfiller. Перед обработкой каждого чанка сервис опрашивает число активных соединений и лаг репликации (pg_stat_replication). При превышении порогов задержка между батчами экспоненциально увеличивается, защищая прод от деградации.",
+    "theory": "Фоновый перенос данных не должен конкурировать с пользовательским трафиком за ресурсы процессора, диска и сети репликации.\n\nДва главных фактора риска при бэкфилле:\n1. Конкуренция за I/O диска: при всплеске дневного трафика бэкфилл может забить диск, увеличив p99 latency пользовательских запросов.\n2. Отставание реплик (Replication Lag): активная генерация WAL-логов при массовых `UPDATE` приводит к тому, что read-реплики начинают отставать от мастера на десятки секунд. Пользователи видят устаревшие данные.\n\nАдаптивный троттлинг (Adaptive Throttling):\nБэкфиллер непрерывно опрашивает телеметрию БД. Если лаг репликации превышает 1 секунду, скрипт автоматически увеличивает задержку `time.Sleep` с 20 мс до 2 секунд, давая репликам догнать мастер.",
+    "step_by_step": [
+      "Определите интерфейс DBHealthChecker с методами проверки соединений и лага репликации.",
+      "Создайте ThrottledBackfiller с базовым и текущим временем задержки currentSleep.",
+      "Реализуйте метод Throttle: при превышении порогов удваивайте задержку (до 2 секунд).",
+      "При нормализации метрик плавно уменьшайте задержку до baseSleep.",
+      "Вызывайте Throttle между обработкой соседних чанков."
+    ],
+    "code_blocks": [
+      {
+        "filename": "adaptive_throttling_backfill.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"time\"\n)\n\n// DBHealthChecker опрашивает метрики нагрузки СУБД\ntype DBHealthChecker interface {\n\tGetActiveConnections(ctx context.Context) (int, error)\n\tGetReplicationLagSeconds(ctx context.Context) (float64, error)\n}\n\n// ThrottledBackfiller адаптирует скорость работы к нагрузке базы данных\ntype ThrottledBackfiller struct {\n\tdb           *sql.DB\n\thealth       DBHealthChecker\n\tmaxConns     int\n\tmaxReplLag   float64\n\tbaseSleep    time.Duration\n\tcurrentSleep time.Duration\n}\n\nfunc NewThrottledBackfiller(db *sql.DB, health DBHealthChecker) *ThrottledBackfiller {\n\treturn &ThrottledBackfiller{\n\t\tdb:           db,\n\t\thealth:       health,\n\t\tmaxConns:     80,  // Порог активных соединений\n\t\tmaxReplLag:   1.0, // Максимальный лаг репликации: 1 секунда\n\t\tbaseSleep:    20 * time.Millisecond,\n\t\tcurrentSleep: 20 * time.Millisecond,\n\t}\n}\n\n// Throttle проверяет метрики и динамически регулирует задержку\nfunc (b *ThrottledBackfiller) Throttle(ctx context.Context) {\n\tconns, err := b.health.GetActiveConnections(ctx)\n\tif err != nil {\n\t\treturn\n\t}\n\n\tlag, err := b.health.GetReplicationLagSeconds(ctx)\n\tif err != nil {\n\t\treturn\n\t}\n\n\t// Если нагрузка или отставание реплик растет — замедляем бэкфилл\n\tif conns > b.maxConns || lag > b.maxReplLag {\n\t\tb.currentSleep = min(b.currentSleep*2, 2*time.Second)\n\t\tfmt.Printf(\"⚠️ [THROTTLE ON] Нагрузка высока (Conns=%d, Lag=%.2fs)! Пауза увеличена до %v\\n\",\n\t\t\tconns, lag, b.currentSleep)\n\t} else if b.currentSleep > b.baseSleep {\n\t\t// Постепенное ускорение при нормализации метрик\n\t\tb.currentSleep = max(b.currentSleep/2, b.baseSleep)\n\t}\n\n\ttime.Sleep(b.currentSleep)\n}\n\nfunc min(a, b time.Duration) time.Duration {\n\tif a < b {\n\t\treturn a\n\t}\n\treturn b\n}\n\nfunc max(a, b time.Duration) time.Duration {\n\tif a > b {\n\t\treturn a\n\t}\n\treturn b\n}\n\nfunc main() {\n\tfmt.Println(\"Динамический троттлинг фонового бэкфилла (Adaptive Throttling):\")\n\tfmt.Println(\" 1. Перед каждым чанком опрашиваются метрики pg_stat_activity и pg_stat_replication\")\n\tfmt.Println(\" 2. При росте лага репликации > 1.0s скорость бэкфилла автоматически снижается\")\n\tfmt.Println(\" 3. Фоновая миграция НИКОГДА не конкурирует с реальными покупками пользователей\")\n}\n"
+      }
+    ],
+    "under_the_hood": "В PostgreSQL запрос к представлению `pg_stat_replication` возвращает поле `replay_lag` — точное физическое отставание применения WAL-блоков на реплике. Опрос занимает доли миллисекунды и безопасен для вызова в цикле.",
+    "pitfalls": [
+      "Слишком агрессивный троттлинг: если порог лага выставлен в `10ms`, скрипт может встать на паузу навсегда. Порог должен учитывать естественный сетевой джиттер (обычно 0.5–2 секунды).",
+      "Отсутствие проверки контекста: во время долгого сна `time.Sleep(2*time.Second)` скрипт должен проверять `ctx.Done()`, чтобы корректно останавливаться при `SIGTERM`."
+    ],
+    "bigtech_interview": "Как в GitHub и Shopify автоматизируют бэкфиллы петабайтных баз данных? Используются инструменты вроде `gh-ost` или `pt-online-schema-change`, которые имеют встроенный адаптивный throttling по метрикам `Threads_running` и replication delay."
+  },
+  {
+    "num": 15,
+    "title": "Шаг 4 Switch Read: переключение чтения на новую колонку",
+    "task": "Реализуйте фазу 4 (Switch Read) в репозитории UserRepositoryV3. Переключите чтение метода GetUser на новый столбец full_name, обязательно сохранив двойную запись (Dual Write) в методы CreateUser и UpdateUser для обеспечения мгновенного отката в случае выявления скрытых дефектов.",
+    "theory": "После того как фоновый Backfill завершился и проверка целостности показала 0 строк с `full_name IS NULL`, наступает момент переключения чтения (Switch Read):\n\n1. Выкатывается версия приложения v3.\n2. Все операции `SELECT` переключаются на чтение из нового столбца `full_name`.\n3. КРИТИЧЕСКИ ВАЖНО: операции записи (`INSERT`, `UPDATE`) ПО-ПРЕЖНЕМУ пишут в ОБА столбца (`name` и `full_name`)!\n\nПочему нельзя сразу отключить запись в старый столбец?\nЕсли в коде версии v3 обнаружится критический баг (например, некорректная логика в другом месте) и дежурный инженер откатит сервис назад на v2, старый сервис начнет читать из `name`. Если бы мы отключили запись в `name`, все данные, созданные за время работы v3, были бы потеряны для v2!",
+    "step_by_step": [
+      "Создайте структуру UserRepositoryV3.",
+      "В методе GetUser замените запрос на SELECT full_name FROM users WHERE id = $1.",
+      "В методах CreateUser и UpdateUser оставьте двойную запись без изменений.",
+      "Объясните концепцию симметричной готовности к откату (Rollback Readiness)."
+    ],
+    "code_blocks": [
+      {
+        "filename": "step4_switch_read_repository.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n)\n\n// UserRepositoryV3 реализует шаг 4 (Switch Read): чтение из нового столбца, сохранение Dual Write\ntype UserRepositoryV3 struct {\n\tdb *sql.DB\n}\n\nfunc NewUserRepositoryV3(db *sql.DB) *UserRepositoryV3 {\n\treturn &UserRepositoryV3{db: db}\n}\n\n// GetUser ТЕПЕРЬ ЧИТАЕТ ИЗ НОВОГО СТОЛБЦА full_name!\nfunc (r *UserRepositoryV3) GetUser(ctx context.Context, id int64) (string, error) {\n\t// Переключение чтения: данные на 100% скопированы и проверены\n\tquery := `SELECT full_name FROM users WHERE id = $1;`\n\tvar fullName string\n\terr := r.db.QueryRowContext(ctx, query, id).Scan(&fullName)\n\treturn fullName, err\n}\n\n// CreateUser по-прежнему пишет в ОБА столбца для безопасного отката\nfunc (r *UserRepositoryV3) CreateUser(ctx context.Context, id int64, fullName string) error {\n\tquery := `INSERT INTO users (id, name, full_name) VALUES ($1, $2, $2);`\n\t_, err := r.db.ExecContext(ctx, query, id, fullName)\n\treturn err\n}\n\n// UpdateUser также сохраняет двойную запись\nfunc (r *UserRepositoryV3) UpdateUser(ctx context.Context, id int64, newFullName string) error {\n\tquery := `UPDATE users SET name = $1, full_name = $1 WHERE id = $2;`\n\t_, err := r.db.ExecContext(ctx, query, newFullName, id)\n\treturn err\n}\n\nfunc main() {\n\tfmt.Println(\"Шаг 4 Switch Read: переключение чтения на новую колонку:\")\n\tfmt.Println(\" 1. Релиз версии сервиса v3\")\n\tfmt.Println(\" 2. Метод GetUser переключен на чтение из full_name\")\n\tfmt.Println(\" 3. Двойная запись (Dual Write) СОХРАНЯЕТСЯ в коде!\")\n\tfmt.Println(\" 4. Если в v3 обнаружится баг, мгновенный откат на v2 безопасен (колонка name актуальна)\")\n}\n"
+      }
+    ],
+    "under_the_hood": "На этапе Switch Read база данных работает под минимальной нагрузкой: чтение идет из нового столбца, план запроса использует те же B-Tree индексы, а запись остается полностью симметричной.",
+    "pitfalls": [
+      "Отключение Dual Write одновременно со Switch Read: самая частая ошибка. При аварийном откате новые записи не будут видны старой версии сервиса, вызвав повреждение целостности бизнес-данных.",
+      "Отсутствие верификации перед переключением: если запустить Switch Read, пока Backfill дошел только до 95%, оставшиеся 5% пользователей получат пустые имена."
+    ],
+    "bigtech_interview": "Сколько времени рекомендуется выдерживать систему в состоянии Switch Read с активным Dual Write перед переходом к Contract? В ведущих компаниях (Ozon, Stripe) этот период составляет от 3 до 7 дней, чтобы убедиться в стабильности на всех типах недельной нагрузки."
+  },
+  {
+    "num": 16,
+    "title": "Шаг 5 Contract: удаление старой колонки",
+    "task": "Реализуйте финальный шаг паттерна Expand-Contract (Contract). Продемонстрируйте проверку готовности всех работающих инстансов сервиса к прекращению использования старого поля, безопасное удаление колонки с SET LOCAL lock_timeout = '2s' и объясните, почему перед удалением колонки выдерживается карантин в несколько дней.",
+    "theory": "Фаза Contract — завершающий этап жизненного цикла Expand-Contract. До ее наступления должны успешно завершиться все предыдущие шаги: добавление новой колонки (Expand), параллельная запись в обе колонки (Dual Write), полный перенос исторических данных (Backfill) и полное переключение чтения на новую колонку (Switch Read).\n\nНа этапе Contract удаляется код приложения, пишущий в старую колонку, и деплоится релиз v4. После того как 100% подов в Kubernetes переведены на v4 и отработали под нагрузкой несколько дней (карантинный период для гарантии отсутствия скрытых зависимостей и необходимости отката), на базу данных накатывается финальная миграция ALTER TABLE users DROP COLUMN name. Обязательным требованием остается указание SET LOCAL lock_timeout = '2s', поскольку удаление колонки требует кратковременного ACCESS EXCLUSIVE LOCK.",
+    "step_by_step": [
+      "Убедиться, что 100% подов в кластере переведены на версию v4, которая не использует старую колонку ни на чтение, ни на запись.",
+      "Выдержать карантинный интервал (обычно от 3 до 7 дней) для гарантии стабильности релиза.",
+      "Создать транзакционную DDL-миграцию с обязательным SET LOCAL lock_timeout = '2s'.",
+      "Выполнить ALTER TABLE users DROP COLUMN IF EXISTS name.",
+      "Убедиться в отсутствии ошибок блокировок и зафиксировать завершение миграции схемы."
+    ],
+    "code_blocks": [
+      {
+        "filename": "contract.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"time\"\n)\n\n// ContractStepExecutor управляет завершающей фазой Contract\ntype ContractStepExecutor struct {\n\tdb *sql.DB\n}\n\nfunc NewContractStepExecutor(db *sql.DB) *ContractStepExecutor {\n\treturn &ContractStepExecutor{db: db}\n}\n\n// VerifyAllReplicasUpdated проверяет готовность кластера к фазе сжатия\nfunc (e *ContractStepExecutor) VerifyAllReplicasUpdated(ctx context.Context, minVersion string) error {\n\tfmt.Printf(\"[CONTRACT] Проверка версий инстансов... Все поды должны быть не ниже %s\\n\", minVersion)\n\t// В реальном кластере проверяется consul, k8s deployments или таблица инстансов в БД\n\treturn nil\n}\n\n// DropOldColumn выполняет безопасное удаление колонки с жестким lock_timeout\nfunc (e *ContractStepExecutor) DropOldColumn(ctx context.Context, table, column string) error {\n\ttx, err := e.db.BeginTx(ctx, nil)\n\tif err != nil {\n\t\treturn fmt.Errorf(\"begin tx: %w\", err)\n\t}\n\tdefer tx.Rollback()\n\n\t// Установка жесткого lock_timeout, чтобы не выстроить очередь запросов\n\tif _, err := tx.ExecContext(ctx, \"SET LOCAL lock_timeout = '2s'\"); err != nil {\n\t\treturn fmt.Errorf(\"set lock_timeout: %w\", err)\n\t}\n\n\tquery := fmt.Sprintf(\"ALTER TABLE %s DROP COLUMN IF EXISTS %s\", table, column)\n\tfmt.Printf(\"[CONTRACT] Выполнение DDL: %s (lock_timeout=2s)...\\n\", query)\n\tif _, err := tx.ExecContext(ctx, query); err != nil {\n\t\treturn fmt.Errorf(\"drop column failed: %w\", err)\n\t}\n\n\treturn tx.Commit()\n}\n\nfunc main() {\n\tfmt.Println(\"=== Фаза Contract: Безопасное удаление устаревшей колонки ===\")\n\texecutor := NewContractStepExecutor(nil)\n\tctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)\n\tdefer cancel()\n\n\tif err := executor.VerifyAllReplicasUpdated(ctx, \"v4.0.0\"); err != nil {\n\t\tfmt.Println(\"Ошибка готовности:\", err)\n\t\treturn\n\t}\n\tfmt.Println(\"Фаза сжатия: Все сервисы переведены на чтение и запись только full_name.\")\n\tfmt.Println(\"Старая колонка name готова к удалению.\")\n}\n"
+      }
+    ],
+    "under_the_hood": "В PostgreSQL операция ALTER TABLE ... DROP COLUMN не удаляет физические байты данных с диска немедленно. Она лишь помечает атрибут в системном каталоге pg_attribute как удаленный (attisdropped = true), что занимает миллисекунды. Физическое освобождение дискового пространства происходит постепенно при перезаписи строк (MVCC updates) или при выполнении VACUUM FULL. Однако для изменения pg_attribute требуется захват ACCESS EXCLUSIVE LOCK, поэтому установка lock_timeout строго обязательна.",
+    "pitfalls": [
+      "Удаление колонки до того, как все старые поды v3 были полностью завершены в Kubernetes (приведет к падению запросов с ошибкой 'column name does not exist').",
+      "Выполнение DROP COLUMN без SET LOCAL lock_timeout, что может вызвать зависание DDL за долгой транзакцией аналитики и заблокировать весь входящий трафик.",
+      "Отсутствие предварительного аудита аналитических дашбордов, ETL-пайплайнов и BI-инструментов, которые могли обращаться к старой колонке напрямую."
+    ],
+    "bigtech_interview": "В чем опасность выполнения DROP COLUMN сразу после Switch Read? Ответ: Если в новой логике чтения обнаружится критический баг (например, повреждение формата данных при конвертации) и потребуется срочный откат на версию v2, отсутствие старой колонки сделает быстрый откат невозможным. Карантин в несколько дней оставляет старую колонку в актуальном состоянии (благодаря Dual Write), позволяя мгновенно откатить трафик без потери данных."
+  },
+  {
+    "num": 17,
+    "title": "Безопасное изменение типа данных столбца (int32 -> int64)",
+    "task": "Поле id в высоконагруженной таблице transactions приближается к пределу 32-битного integer (2.1 миллиарда). Прямой ALTER TABLE ALTER COLUMN id TYPE BIGINT блокирует таблицу на запись на часы. Реализуйте миграцию типа по паттерну Expand-Contract: добавление колонки id_big, синхронизирующий триггер, фоновый бэкфилл порциями и финальную атомарную подмену первичного ключа.",
+    "theory": "Изменение типа данных столбца в реляционных базах данных (например, INT в BIGINT или VARCHAR(50) в TEXT) часто требует полной физической перезаписи каждого кортежа таблицы на диске с удержанием ACCESS EXCLUSIVE LOCK. Для таблицы с миллиардами строк это означает гарантированный даунтайм сервиса на многие часы.\n\nБезопасная стратегия состоит в применении Expand-Contract: 1) Добавляется колонка id_big BIGINT (без блокировки); 2) Создается триггер BEFORE INSERT, копирующий id в id_big для новых строк; 3) Фоновый Go-воркер порциями заполняет id_big для исторических строк; 4) Создается уникальный индекс на id_big через CONCURRENTLY; 5) В короткой транзакции с lock_timeout подменяются ограничения первичного ключа (PRIMARY KEY) и имена колонок.",
+    "step_by_step": [
+      "Добавить колонку id_big BIGINT NULL без блокировки.",
+      "Установить PL/pgSQL триггер на уровне БД для автозаполнения id_big при вставках и обновлениях.",
+      "Запустить фоновый воркер на Go, который чанками переносит значения id в id_big для старых строк.",
+      "Создать уникальный индекс CREATE UNIQUE INDEX CONCURRENTLY idx_transactions_id_big ON transactions (id_big).",
+      "В короткой транзакции с lock_timeout сбросить старый PK, назначить id_big новым PK, удалить старую колонку и переименовать id_big в id."
+    ],
+    "code_blocks": [
+      {
+        "filename": "type_migration.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"time\"\n)\n\n// BigIDMigrationManager оркестрирует миграцию первичного ключа int32 -> int64\ntype BigIDMigrationManager struct {\n\tdb *sql.DB\n}\n\nfunc NewBigIDMigrationManager(db *sql.DB) *BigIDMigrationManager {\n\treturn &BigIDMigrationManager{db: db}\n}\n\n// Step1_AddBigColumn создает новую колонку BIGINT\nfunc (m *BigIDMigrationManager) Step1_AddBigColumn(ctx context.Context) string {\n\treturn `\n-- 1. Добавляем новую колонку BIGINT\nALTER TABLE transactions ADD COLUMN id_big BIGINT;\n`\n}\n\n// Step2_CreateTriggerSQL создает триггер автоматической синхронизации новых вставок\nfunc (m *BigIDMigrationManager) Step2_CreateTriggerSQL() string {\n\treturn `\nCREATE OR REPLACE FUNCTION sync_transactions_id()\nRETURNS TRIGGER AS $$\nBEGIN\n    NEW.id_big := NEW.id;\n    RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;\n\nCREATE TRIGGER trg_sync_id_big\nBEFORE INSERT OR UPDATE ON transactions\nFOR EACH ROW EXECUTE FUNCTION sync_transactions_id();\n`\n}\n\n// Step3_BackfillChunk копирует исторические данные пачками\nfunc (m *BigIDMigrationManager) Step3_BackfillChunk(ctx context.Context, startID, endID int) string {\n\treturn fmt.Sprintf(`\nUPDATE transactions \nSET id_big = id \nWHERE id BETWEEN %d AND %d AND id_big IS NULL;`, startID, endID)\n}\n\n// Step4_SwapPrimaryKey выполняет атомарную подмену первичного ключа\nfunc (m *BigIDMigrationManager) Step4_SwapPrimaryKey() string {\n\treturn `\n-- Выполняется в транзакции с lock_timeout\nSET LOCAL lock_timeout = '2s';\nALTER TABLE transactions ALTER COLUMN id_big SET NOT NULL;\nALTER TABLE transactions DROP CONSTRAINT transactions_pkey;\nALTER TABLE transactions ADD CONSTRAINT transactions_pkey PRIMARY KEY (id_big);\nALTER TABLE transactions DROP COLUMN id;\nALTER TABLE transactions RENAME COLUMN id_big TO id;\n`\n}\n\nfunc main() {\n\tfmt.Println(\"=== Миграция типа данных: int32 -> int64 (BIGINT) ===\")\n\tmgr := NewBigIDMigrationManager(nil)\n\tfmt.Println(\"SQL Шаг 1:\", mgr.Step1_AddBigColumn(context.Background()))\n\tfmt.Println(\"SQL Шаг 2 (Триггер):\", mgr.Step2_CreateTriggerSQL())\n\tfmt.Println(\"SQL Шаг 3 (Чанк 1-1000):\", mgr.Step3_BackfillChunk(context.Background(), 1, 1000))\n\tfmt.Println(\"SQL Шаг 4 (Swap PK):\", mgr.Step4_SwapPrimaryKey())\n}\n"
+      }
+    ],
+    "under_the_hood": "Когда выполняется ALTER TABLE transactions ALTER COLUMN id TYPE BIGINT, PostgreSQL должен преобразовать 4-байтовое бинарное представление каждого поля в 8-байтовое. Так как размер кортежа на странице памяти (8 KB page) увеличивается, СУБД вынуждена переписать таблицу целиком во временный файл и перестроить все индексы. Разделение процесса на фоновый бэкфилл и мгновенный swap переносит тяжелую дисковую работу в фон без удержания блокировок.",
+    "pitfalls": [
+      "Попытка обновить миллионы строк id_big одним запросом UPDATE, что переполнит буфер WAL и заблокирует транзакции пользователей.",
+      "Забытый CREATE UNIQUE INDEX CONCURRENTLY перед подменой PK: добавление PRIMARY KEY без готового индекса приведет к полному сканированию таблицы под эксклюзивной блокировкой.",
+      "Наличие внешних ключей (Foreign Keys), ссылающихся на этот id: их также потребуется пересоздать через NOT VALID."
+    ],
+    "bigtech_interview": "Как безопасно перевести первичный ключ int в bigint на таблице размером 500 ГБ в PostgreSQL? Ответ: Использовать Expand-Contract с добавлением колонки new_id bigint, триггером дублирования, пакетным фоновым бэкфиллом по PK с паузами, созданием уникального индекса через CONCURRENTLY и финальным атомарным переключением ограничений в транзакции с lock_timeout не более 2 секунд."
+  },
+  {
+    "num": 18,
+    "title": "Паттерн View-based Abstraction для мгновенной подмены схемы",
+    "task": "Скройте физическую структуру таблицы за представлением PostgreSQL: переименуйте таблицу в users_storage и создайте View с именем users. Напишите триггеры INSTEAD OF INSERT/UPDATE для сохранения совместимости со старым кодом. Покажите, как это позволяет прозрачно трансформировать структуру хранения без правки Go-клиентов.",
+    "theory": "Паттерн View-based Abstraction позволяет полностью развязать логическую схему данных, которую ожидает приложение, и физическую раскладку таблиц на диске. Вместо того чтобы заставлять приложение писать в новые колонки или адаптироваться к разделению таблиц, таблица переименовывается в users_storage, а на ее месте создается представление (VIEW) users.\n\nДля обеспечения полной функциональности записи создаются триггеры INSTEAD OF INSERT, UPDATE, DELETE на представлении. Любые запросы INSERT INTO users (...) перехватываются триггером и направляются в физическую таблицу с необходимой трансформацией данных. Это дает возможность провести масштабный рефакторинг хранения (например, вертикальное разделение таблицы на users и user_profiles) абсолютно незаметно для работающего приложения.",
+    "step_by_step": [
+      "Переименовать исходную таблицу users в users_storage в транзакции.",
+      "Создать представление CREATE VIEW users с тем же набором колонок, который ожидает приложение v1.",
+      "Реализовать функции триггеров INSTEAD OF INSERT/UPDATE/DELETE для прозрачного маппинга данных в users_storage.",
+      "Проверить работу старых запросов SELECT, INSERT и UPDATE через созданное представление.",
+      "После завершения перехода всех клиентов на новую архитектуру перевести клиентов на прямую работу с физическими таблицами и удалить View."
+    ],
+    "code_blocks": [
+      {
+        "filename": "view_abstraction.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n)\n\n// ViewMigrationManager демонстрирует абстрагирование схемы через представления\ntype ViewMigrationManager struct {\n\tdb *sql.DB\n}\n\nfunc (m *ViewMigrationManager) GenerateViewDDL() string {\n\treturn `\n-- 1. Переименование физической таблицы\nALTER TABLE users RENAME TO users_storage;\n\n-- 2. Создание представления с обратной совместимостью для старого Go-кода\nCREATE OR REPLACE VIEW users AS\nSELECT \n    id,\n    COALESCE(full_name, name) AS name,\n    full_name,\n    email\nFROM users_storage;\n\n-- 3. INSTEAD OF триггер для поддержки INSERT через представление\nCREATE OR REPLACE FUNCTION trg_users_view_insert()\nRETURNS TRIGGER AS $$\nBEGIN\n    INSERT INTO users_storage (id, name, full_name, email)\n    VALUES (NEW.id, NEW.name, COALESCE(NEW.full_name, NEW.name), NEW.email);\n    RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;\n\nCREATE TRIGGER trg_users_insert\nINSTEAD OF INSERT ON users\nFOR EACH ROW EXECUTE FUNCTION trg_users_view_insert();\n`\n}\n\nfunc main() {\n\tfmt.Println(\"=== View-Based Abstraction для прозрачной трансформации схемы ===\")\n\tmgr := &ViewMigrationManager{}\n\tfmt.Println(\"Сгенерированный DDL:\")\n\tfmt.Println(mgr.GenerateViewDDL())\n\tfmt.Println(\"Преимущество: Старое Go-приложение продолжает выполнять 'SELECT id, name FROM users',\")\n\tfmt.Println(\"не подозревая, что под капотом данные берутся из users_storage.full_name.\")\n}\n"
+      }
+    ],
+    "under_the_hood": "В PostgreSQL представления являются макросами над запросами (за исключением MATERIALIZED VIEW). Когда запрос обращается к представлению, планировщик выполняет операцию Query Rewrite, подставляя тело представления в AST запроса. Триггеры INSTEAD OF на представлениях компилируются в правила перезаписи операций модификации, позволяя виртуальной сущности вести себя как полноценная таблица.",
+    "pitfalls": [
+      "Накладные расходы триггеров INSTEAD OF на CPU при экстремальном объеме операций INSERT/UPDATE.",
+      "Ограничения оптимизатора запросов: сложные условия фильтрации могут хуже использовать индексы базовой таблицы через представление, если нарушена пушдаун-предикация.",
+      "Забытый грант прав (GRANT SELECT, INSERT ON users TO app_role): после создания представления права со старой таблицы автоматически не переносятся."
+    ],
+    "bigtech_interview": "Когда стоит использовать View-based Abstraction вместо классического Dual Write в Go? Ответ: Когда к базе данных обращаются десятки независимых сервисов, команд или аналитических инструментов, и синхронно обновить их код до деплоя новой схемы невозможно. Представление с INSTEAD OF триггерами изолирует изменение схемы внутри базы данных, предоставляя старым клиентам стабильный виртуальный интерфейс."
+  },
+  {
+    "num": 19,
+    "title": "Триггеры базы данных vs Двойная запись в Go: компромиссы",
+    "task": "Сравните два подхода к синхронизации старой и новой колонок при миграциях: использование триггеров СУБД (BEFORE/AFTER INSERT) и двойную запись в коде Go-приложения (Dual Write). Напишите пример слоя репозитория Go с Dual Write и сформируйте матрицу архитектурных компромиссов.",
+    "theory": "При реализации паттерна Expand-Contract ключевым вопросом является место синхронизации данных между старой и новой структурами: внутри СУБД через триггеры или на уровне приложения через Go-код.\n\nТриггеры СУБД гарантируют абсолютную консистентность: любая запись (даже выполненная вручную через psql или сторонним сервисом) автоматически продублируется. Однако в HighLoad системах первичный узел СУБД (Primary) является самым дорогим и трудномасштабируемым ресурсом. Выполнение триггеров на каждую вставку увеличивает задержку транзакций и нагрузку на CPU базы.\n\nДвойная запись в Go (Dual Write) переносит нагрузку на горизонтально масштабируемые поды приложения. Если запись выполняется в рамках одного SQL-запроса (INSERT INTO t (col1, col2) VALUES ($1, $1)), она остается полностью атомарной без накладных расходов на триггеры.",
+    "step_by_step": [
+      "Спроектировать репозиторий Go, дублирующий запись в обе колонки в едином SQL-выражении.",
+      "Оценить риски рассинхронизации при выполнении двойной записи двумя отдельными запросами.",
+      "Проанализировать влияние триггеров на CPU базы данных при профилировании pg_stat_statements.",
+      "Составить матрицу принятия решений в зависимости от характера нагрузки и количества сервисов."
+    ],
+    "code_blocks": [
+      {
+        "filename": "tradeoffs.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"log\"\n\t\"sync\"\n\t\"time\"\n)\n\n// UserRepoDualWrite реализует двойную запись на уровне Go-сервиса\ntype UserRepoDualWrite struct {\n\tdb *sql.DB\n}\n\ntype User struct {\n\tID       int64\n\tName     string\n\tFullName string\n\tEmail    string\n}\n\n// CreateUser выполняет запись в обе колонки в одном SQL-запросе (атомарно)\nfunc (r *UserRepoDualWrite) CreateUser(ctx context.Context, u *User) error {\n\tquery := `\n\t\tINSERT INTO users (name, full_name, email)\n\t\tVALUES ($1, $2, $3)\n\t\tRETURNING id`\n\t// Приложение гарантирует, что full_name содержит то же значение, что и name\n\tif u.FullName == \"\" {\n\t\tu.FullName = u.Name\n\t}\n\n\treturn r.db.QueryRowContext(ctx, query, u.Name, u.FullName, u.Email).Scan(&u.ID)\n}\n\n// BenchmarkComparison иллюстрирует компромиссы подходов\nfunc PrintTradeoffs() {\n\tfmt.Println(\"=== Сравнение: Триггеры БД vs Dual-Write в Go ===\")\n\tfmt.Printf(\"%-20s | %-35s | %-35s\\n\", \"Критерий\", \"DB Triggers (PL/pgSQL)\", \"Dual-Write в Go\")\n\tfmt.Println(\"-----------------------------------------------------------------------------------------\")\n\tfmt.Printf(\"%-20s | %-35s | %-35s\\n\", \"Атомарность\", \"100% гарантирована СУБД\", \"Требует одной транзакции/запроса\")\n\tfmt.Printf(\"%-20s | %-35s | %-35s\\n\", \"Нагрузка на CPU\", \"Ложится на Primary DB (бутылочное горло)\", \"Распределяется по подам Go (дешево)\")\n\tfmt.Printf(\"%-20s | %-35s | %-35s\\n\", \"Скрытая логика\", \"Да (поведение 'спрятано' в СУБД)\", \"Нет (логика явно видна в коде/тестах)\")\n\tfmt.Printf(\"%-20s | %-35s | %-35s\\n\", \"Откат миграции\", \"DROP TRIGGER мгновенно отключает\", \"Требуется повторный деплой подов\")\n}\n\nfunc main() {\n\tPrintTradeoffs()\n}\n"
+      }
+    ],
+    "under_the_hood": "Триггеры в PostgreSQL выполняются синхронно в контексте пользовательской транзакции. Для каждого затронутого кортежа вызывается функция PL/pgSQL, что требует создания контекста интерпретатора и аллокации памяти в памяти процесса Postgres Backend. При тысячах RPS это приводит к существенному росту латентности p99 и деградации производительности пула соединений.",
+    "pitfalls": [
+      "Реализация Dual Write двумя последовательными запросами без транзакции: при сбое сети между запросами база окажется в рассинхронизированном состоянии.",
+      "Оставленные навечно забытые триггеры в БД после завершения миграции схемы.",
+      "Зацикливание триггеров при взаимной синхронизации нескольких колонок."
+    ],
+    "bigtech_interview": "Что вы выберете для синхронизации колонок в сервисе с 100,000 RPS: триггер PostgreSQL или Dual Write в Go? Ответ: Dual Write в Go, причем с передачей обоих полей в одном SQL-запросе INSERT/UPDATE. На 100k RPS триггер перегрузит CPU мастера базы данных и приведет к отказу кластера, тогда как Go-приложение распределит CPU-нагрузку по сотням подов в Kubernetes без дополнительных транзакционных издержек."
+  },
+  {
+    "num": 20,
+    "title": "Миграции схемы в процессе Rolling Update в Kubernetes",
+    "task": "Смоделируйте процесс постепенного обновления сервиса (RollingUpdate) в Kubernetes: в кластере на протяжении нескольких минут одновременно функционируют поды старой версии v1 и новой v2. Сформулируйте требование одновременной двусторонней совместимости базы данных и напишите код, демонстрирующий параллельную работу обоих версий без сбоев.",
+    "theory": "При развертывании в Kubernetes стандартная стратегия RollingUpdate заменяет поды старой версии новыми постепенно (например, maxSurge: 25%, maxUnavailable: 0). Это означает, что в течение всего окна обновления (от 2 до 15 минут) трафик балансировщика случайным образом распределяется между подами v1 и подами v2.\n\nОтсюда вытекает фундаментальное правило облачных архитектур: Схема базы данных всегда должна быть совместима одновременно с версией N и версией N+1 приложения. Ни в коем случае нельзя применять деструктивные миграции (удаление колонок, переименование, жесткие констрейнты) до того, как абсолютно все поды старой версии прекратят свое существование.",
+    "step_by_step": [
+      "Определить жизненный цикл развертывания подов в Kubernetes при RollingUpdate.",
+      "Сформулировать правило обратной и прямой совместимости SQL-запросов.",
+      "Написать симулятор параллельных запросов от подов v1 (старая схема) и v2 (расширенная схема).",
+      "Проверить корректность обработки ошибок и убедиться в отсутствии 500 ошибок в процессе миграции."
+    ],
+    "code_blocks": [
+      {
+        "filename": "rolling_update.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"log\"\n\t\"sync\"\n\t\"time\"\n)\n\n// RollingUpdateSimulator симулирует окно деплоя в k8s, когда работают v1 и v2 поды\ntype RollingUpdateSimulator struct {\n\tdb *sql.DB\n}\n\nfunc (s *RollingUpdateSimulator) RunPodV1(ctx context.Context, id int, wg *sync.WaitGroup) {\n\tdefer wg.Done()\n\t// Старая версия v1: знает только колонку 'name'\n\tticker := time.NewTicker(200 * time.Millisecond)\n\tdefer ticker.Stop()\n\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\tfmt.Printf(\"[Pod V1 #%d] Грациозно остановлен\\n\", id)\n\t\t\treturn\n\t\tcase <-ticker.C:\n\t\t\t// Запрос старого сервиса: SELECT id, name FROM users\n\t\t\tfmt.Printf(\"[Pod V1 #%d] Успешный запрос: SELECT id, name FROM users\\n\", id)\n\t\t}\n\t}\n}\n\nfunc (s *RollingUpdateSimulator) RunPodV2(ctx context.Context, id int, wg *sync.WaitGroup) {\n\tdefer wg.Done()\n\t// Новая версия v2: пишет в 'name' и 'full_name'\n\tticker := time.NewTicker(200 * time.Millisecond)\n\tdefer ticker.Stop()\n\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\tfmt.Printf(\"[Pod V2 #%d] Грациозно остановлен\\n\", id)\n\t\t\treturn\n\t\tcase <-ticker.C:\n\t\t\t// Запрос нового сервиса: INSERT INTO users (name, full_name) VALUES (...)\n\t\t\tfmt.Printf(\"[Pod V2 #%d] Успешный запрос: INSERT INTO users (name, full_name)...\\n\", id)\n\t\t}\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"=== Симуляция Kubernetes Rolling Update с миграцией схемы ===\")\n\tctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)\n\tdefer cancel()\n\n\tsim := &RollingUpdateSimulator{}\n\tvar wg sync.WaitGroup\n\n\t// В процессе RollingUpdate одновременно работают поды v1 и v2\n\twg.Add(2)\n\tgo sim.RunPodV1(ctx, 1, &wg)\n\tgo sim.RunPodV2(ctx, 2, &wg)\n\n\twg.Wait()\n\tfmt.Println(\"Успех: База данных поддерживала запросы v1 и v2 одновременно без ошибок!\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Когда k8s запускает новый ReplicaSet, старый ReplicaSet продолжает обслуживать входящие соединения, пока новые поды не пройдут проверку readinessProbe. Если миграция схемы выполнила RENAME COLUMN до старта RollingUpdate, работающие старые поды мгновенно начнут отдавать 500 Internal Server Error на каждый входящий запрос. Поэтому миграция схемы всегда разделяется на независимые фазы Expand и Contract с отдельными деплоями.",
+    "pitfalls": [
+      "Запуск миграций схемы в качестве k8s postStart хука каждого пода (гонка за применение миграций между подами).",
+      "Использование SELECT * в коде Go-приложения: при добавлении новой колонки через Expand старый код v1 может упасть при сканировании колонок в структуру (sql: expected 3 destination arguments in Scan, got 4).",
+      "Удаление старых полей до завершения дренажа трафика со старых подов."
+    ],
+    "bigtech_interview": "Почему антипаттерн `SELECT *` смертельно опасен для Zero-Downtime миграций в Go? Ответ: Стандартный метод sql.Rows.Scan требует точного соответствия количества запрашиваемых колонок количеству целевых переменных. Если старый код выполняет SELECT *, а миграция Expand добавила новую колонку, Scan вернет фатальную ошибку несоответствия числа аргументов, и все работающие поды старой версии выйдут из строя."
+  },
+  {
+    "num": 21,
+    "title": "Автоматическое тестирование совместимости схемы в CI/CD",
+    "task": "Напишите автоматический тест совместимости схемы для пайплайна CI/CD: тест разворачивает чистую базу данных, применяет новую миграцию v2, а затем прогоняет сквозной тестовый набор предыдущей версии приложения v1. Если старый код дает сбой при работе с новой схемой, пайплайн прерывается, блокируя релиз.",
+    "theory": "Тестирование обратной совместимости схемы (Backward Compatibility Testing) — ключевой элемент безопасности в CI/CD высоконагруженных систем. Человеческий фактор часто приводит к тому, что разработчик добавляет в миграцию колонку с ограничением NOT NULL без значения по умолчанию, либо переименовывает поле.\n\nВ автоматизированном пайплайне CI/CD создается шаг 'Schema Contract Test': 1) Поднимается эфемерная база данных в Testcontainers; 2) Применяются все миграции текущей ветки (схема N+1); 3) Скачивается бинарник или тестовый сьют стабильной версии master (код N); 4) Прогоняются все интеграционные тесты мастера. Если хотя бы один тест падает — PR блокируется к слиянию.",
+    "step_by_step": [
+      "Настроить тестовый сценарий развертывания тестовой базы с целевой схемой N+1.",
+      "Выполнить проверку выполнения стандартных операций чтения и записи старого сервиса N.",
+      "Проверить, что новые колонки имеют DEFAULT либо допускают NULL, исключая отказ старых INSERT.",
+      "Интегрировать проверку в пайплайн автоматического тестирования PR."
+    ],
+    "code_blocks": [
+      {
+        "filename": "schema_compat_test.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"log\"\n\t\"testing\"\n)\n\n// SchemaCompatibilityTester проверяет совместимость старого кода с новой схемой\ntype SchemaCompatibilityTester struct {\n\tdb *sql.DB\n}\n\nfunc NewSchemaCompatibilityTester(db *sql.DB) *SchemaCompatibilityTester {\n\treturn &SchemaCompatibilityTester{db: db}\n}\n\n// TestV1QueriesOnNewSchema имитирует запуск тестового набора v1 на мигрированной БД\nfunc (t *SchemaCompatibilityTester) TestV1QueriesOnNewSchema(ctx context.Context) error {\n\tfmt.Println(\"[CI/CD TEST] Запуск набора регрессионных тестов v1 на схеме v2...\")\n\n\t// 1. Старый запрос выборки пользователя (явное перечисление полей)\n\tqueryV1Read := \"SELECT id, name, email FROM users LIMIT 1\"\n\tfmt.Printf(\"[CI/CD TEST] Проверка чтения v1: %s -> OK\\n\", queryV1Read)\n\n\t// 2. Старый запрос вставки (не должен требовать NOT NULL для новых колонок)\n\tqueryV1Insert := \"INSERT INTO users (name, email) VALUES ('Alice', 'alice@test.com')\"\n\tfmt.Printf(\"[CI/CD TEST] Проверка вставки v1: %s -> OK\\n\", queryV1Insert)\n\n\t// 3. Проверка отсутствия опасных SELECT *\n\tif err := t.checkNoSelectStar(); err != nil {\n\t\treturn fmt.Errorf(\"обнаружен SELECT * в кодовой базе: %w\", err)\n\t}\n\n\tfmt.Println(\"✅ [CI/CD TEST] Схема v2 полностью совместима со старым кодом v1!\")\n\treturn nil\n}\n\nfunc (t *SchemaCompatibilityTester) checkNoSelectStar() error {\n\t// Линтер статического анализа проверяет SQL-запросы в коде\n\treturn nil\n}\n\nfunc main() {\n\ttester := NewSchemaCompatibilityTester(nil)\n\tif err := tester.TestV1QueriesOnNewSchema(context.Background()); err != nil {\n\t\tlog.Fatalf(\"CI/CD pipeline failed: %v\", err)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "Автоматизированные инструменты (такие как pg-query-go или линтеры схемы sqldef/squawk) анализируют AST SQL-миграций. Они автоматически выявляют опасные операции: переименование таблиц и колонок, добавление NOT NULL без DEFAULT, изменение типов с блокировкой и падение обратной совместимости.",
+    "pitfalls": [
+      "Тестирование миграций только на пустой базе данных (многие проблемы блокировок и дефолтов проявляются только при наличии данных).",
+      "Пропуск проверки поведения генераторов запросов (ORM / sqlc / squirrel) старой версии.",
+      "Игнорирование проверки триггеров и внешних ключей в тестах совместимости."
+    ],
+    "bigtech_interview": "Как организовать процесс релиза схемы БД в команде из 100 разработчиков без даунтаймов? Ответ: 1) Статический линтинг миграций в CI (запрет DROP, RENAME, NOT NULL без DEFAULT, CREATE INDEX без CONCURRENTLY); 2) Автоматический тест обратной совместимости (прогон тестов версии N на схеме N+1); 3) Разделение релиза схемы и релиза сервиса на независимые пайплайны."
+  },
+  {
+    "num": 22,
+    "title": "Симуляция и поиск зависших блокировок в тестах",
+    "task": "Напишите код для обнаружения и анализа конфликтов блокировок в PostgreSQL с использованием системных представлений pg_locks и pg_stat_activity. Смоделируйте ситуацию: долгая транзакция удерживает блокировку на чтение, миграция пытается захватить ACCESS EXCLUSIVE LOCK, а настроенный lock_timeout предотвращает каскадный коллапс базы данных.",
+    "theory": "В PostgreSQL существует строгая иерархия блокировок. Когда операция DDL (например, ALTER TABLE) пытается получить ACCESS EXCLUSIVE LOCK, она встает в очередь ожидания за всеми активными транзакциями чтения (которые удерживают ACCESS SHARE LOCK).\n\nСамое опасное свойство планировщика блокировок PostgreSQL: любая операция, ждущая ACCESS EXCLUSIVE LOCK, блокирует ВСЕ последующие входящие запросы чтения! Даже если запрос чтения выполняется 1 миллисекунду, он встает в очередь за миграцией. В результате за несколько секунд вся очередь соединений переполняется, и база перестает отвечать. Решением является запрос pg_locks для алертинга и обязательный SET lock_timeout.",
+    "step_by_step": [
+      "Изучить иерархию взаимоисключающих блокировок PostgreSQL (таблица совместимости lock modes).",
+      "Сформировать диагностический запрос к pg_locks и pg_stat_activity для выявления дерева блокировок.",
+      "Смоделировать долгую транзакцию чтения и показать, как lock_timeout прерывает миграцию до исчерпания пула соединений.",
+      "Реализовать обработку ошибки 55P03 (lock_not_available) в миграционном скрипте Go с экспоненциальным backoff."
+    ],
+    "code_blocks": [
+      {
+        "filename": "lock_inspector.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"time\"\n)\n\n// LockInspector анализирует активные блокировки в PostgreSQL\ntype LockInspector struct {\n\tdb *sql.DB\n}\n\ntype BlockedQueryInfo struct {\n\tBlockedPID   int    `json:\"blocked_pid\"`\n\tBlockingPID  int    `json:\"blocking_pid\"`\n\tBlockedQuery string `json:\"blocked_query\"`\n\tLockDuration string `json:\"lock_duration\"`\n}\n\n// FindBlockedQueriesSQL возвращает запрос для диагностики очереди блокировок\nfunc (li *LockInspector) FindBlockedQueriesSQL() string {\n\treturn `\nSELECT \n    blocked.pid AS blocked_pid,\n    blocking.pid AS blocking_pid,\n    blocked.query AS blocked_query,\n    now() - blocked.query_start AS lock_duration\nFROM pg_stat_activity blocked\nJOIN pg_locks bl ON bl.pid = blocked.pid AND NOT bl.granted\nJOIN pg_locks bll ON bll.locktype = bl.locktype\n    AND bll.database IS NOT DISTINCT FROM bl.database\n    AND bll.relation IS NOT DISTINCT FROM bl.relation\n    AND bll.page IS NOT DISTINCT FROM bl.page\n    AND bll.tuple IS NOT DISTINCT FROM bl.tuple\n    AND bll.virtualxid IS NOT DISTINCT FROM bl.virtualxid\n    AND bll.transactionid IS NOT DISTINCT FROM bl.transactionid\n    AND bll.classid IS NOT DISTINCT FROM bl.classid\n    AND bll.objid IS NOT DISTINCT FROM bl.objid\n    AND bll.objsubid IS NOT DISTINCT FROM bl.objsubid\n    AND bll.pid != bl.pid\nJOIN pg_stat_activity blocking ON blocking.pid = bll.pid\nWHERE NOT blocked.granted;\n`\n}\n\nfunc main() {\n\tfmt.Println(\"=== Мониторинг и поиск зависших блокировок в pg_locks ===\")\n\tinspector := &LockInspector{}\n\tfmt.Println(\"SQL-диагностика конфликтов блокировок:\")\n\tfmt.Println(inspector.FindBlockedQueriesSQL())\n\tfmt.Println(\"Принцип: Если миграция ждет lock более 2 секунд, lock_timeout аварийно завершает ее,\")\n\tfmt.Println(\"не позволяя заблокировать остальные запросы в pg_stat_activity.\")\n}\n"
+      }
+    ],
+    "under_the_hood": "В ядре PostgreSQL менеджер блокировок (Lock Manager) использует хеш-таблицу в разделяемой памяти (Shared Memory). Каждая блокировка имеет список ждущих процессов wait-queue. Когда DDL встает в очередь ожидания эксклюзивного лока, он устанавливает флаг ожидания, который не позволяет новым запросам чтения проскочить вперед, вызывая резкий всплеск активных соединений (connection pool exhaustion).",
+    "pitfalls": [
+      "Отсутствие statement_timeout и lock_timeout на аналитических запросах (долгий SELECT держит блокировку часами).",
+      "Попытка принудительного убийства процессов через pg_terminate_backend без предварительного анализа их транзакционного состояния.",
+      "Игнорирование алертов о дедлоках (deadlock detected) в логах СУБД."
+    ],
+    "bigtech_interview": "Почему запрос DDL может обрушить приложение, даже если он еще не начал выполняться, а просто ждет своей очереди? Ответ: Потому что ожидающий ACCESS EXCLUSIVE LOCK блокирует все последующие запросы на чтение и запись. Новые HTTP-запросы накапливаются в очереди пула соединений, за секунды исчерпывая лимит max_connections, в результате чего весь кластер перестает обслуживать трафик."
+  },
+  {
+    "num": 23,
+    "title": "Секционирование больших таблиц (Partitioning) без даунтайма",
+    "task": "Таблица событий events выросла до сотен гигабайт, и прямая конвертация через ALTER TABLE невозможна. Реализуйте стратегию бесшовного перевода таблицы на декларативное секционирование (Declarative Partitioning) по диапазону дат без даунтайма: создание новой структуры, параллельная запись, поэтапный бэкфилл партиций и мгновенная подмена имен таблиц.",
+    "theory": "Секционирование (Partitioning) позволяет разделить монолитную таблицу на физически изолированные сегменты, ускоряя запросы благодаря отсечению партиций (Partition Pruning) и мгновенному удалению старых данных через DROP TABLE partition вместо тяжелого DELETE.\n\nВ PostgreSQL невозможно сконвертировать существующую обычную таблицу в секционированную 'на лету'. Единственный способ без простоя: 1) Создать новую секционированную таблицу с суффиксом _partitioned; 2) Настроить параллельную запись новых данных; 3) Фоновым процессом перенести исторические данные за прошлые месяцы; 4) В короткой транзакции с lock_timeout поменять таблицы местами через ALTER TABLE RENAME.",
+    "step_by_step": [
+      "Создать секционированную таблицу events_partitioned с нужным ключом партиционирования.",
+      "Создать партиции для будущих и текущих периодов, а также дефолтную партицию.",
+      "Переключить запись новых данных в новую таблицу (Dual Write или View).",
+      "Фоновым скриптом порциями перенести исторические данные из старой таблицы в новые секции.",
+      "В транзакции с lock_timeout выполнить переименование таблиц (SWAP) и удалить старую таблицу после карантина."
+    ],
+    "code_blocks": [
+      {
+        "filename": "partitioning.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n)\n\n// PartitioningManager демонстрирует бесшовный перевод таблицы на декларативное партиционирование\ntype PartitioningManager struct {\n\tdb *sql.DB\n}\n\nfunc (p *PartitioningManager) GeneratePartitioningPlanSQL() string {\n\treturn `\n-- 1. Создание новой секционированной таблицы\nCREATE TABLE events_partitioned (\n    id BIGSERIAL,\n    event_time TIMESTAMPTZ NOT NULL,\n    payload JSONB,\n    PRIMARY KEY (event_time, id)\n) PARTITION BY RANGE (event_time);\n\n-- 2. Создание партиций по месяцам\nCREATE TABLE events_2026_01 PARTITION OF events_partitioned\n    FOR VALUES FROM ('2026-01-01') TO ('2026-02-01');\nCREATE TABLE events_2026_02 PARTITION OF events_partitioned\n    FOR VALUES FROM ('2026-02-01') TO ('2026-03-01');\nCREATE TABLE events_default PARTITION OF events_partitioned DEFAULT;\n\n-- 3. Настройка View и INSTEAD OF триггера для Dual-Write или переключение в коде Go\n\n-- 4. Перенос исторических данных порциями (фоновый бэкфилл)\n-- INSERT INTO events_partitioned SELECT * FROM events WHERE event_time >= ...\n\n-- 5. Мгновенная подмена таблиц в транзакции с lock_timeout\n-- BEGIN;\n-- SET LOCAL lock_timeout = '2s';\n-- ALTER TABLE events RENAME TO events_old;\n-- ALTER TABLE events_partitioned RENAME TO events;\n-- COMMIT;\n`\n}\n\nfunc main() {\n\tfmt.Println(\"=== Секционирование больших таблиц (Declarative Partitioning) ===\")\n\tpm := &PartitioningManager{}\n\tfmt.Println(pm.GeneratePartitioningPlanSQL())\n\tfmt.Println(\"Результат: Таблица переведена на Range Partitioning без остановки сервиса!\")\n}\n"
+      }
+    ],
+    "under_the_hood": "В PostgreSQL при декларативном партиционировании мастер-таблица является виртуальной точкой входа. Планировщик использует механизм Constraint Exclusion и Run-Time Partition Pruning: если запрос содержит условие WHERE event_time >= '2026-02-01' AND event_time < '2026-03-01', сканируется только одна соответствующая партиция, остальные исключаются из плана выполнения, что снижает дисковый I/O в десятки раз.",
+    "pitfalls": [
+      "Первичный ключ в партиционированной таблице обязан включать в себя колонку секционирования (composite primary key).",
+      "Создание слишком мелких партиций (например, по часам): тысячи партиций перегрузят каталог метаданных и замедлят планировщик запросов.",
+      "Отсутствие дефолтной секции (DEFAULT partition): вставка записи с датой вне существующих диапазонов завершится фатальной ошибкой."
+    ],
+    "bigtech_interview": "Как удалить 1 миллиард старых логов из PostgreSQL без нагрузки на базу данных? Ответ: Если таблица секционирована по месяцам, удаление месяца выполняется командой DROP TABLE events_2025_01. Это операция изменения метаданных, занимающая 5 миллисекунд и мгновенно освобождающая терабайты диска без генерации WAL и без блокировки других секций, в отличие от катастрофически тяжелого DELETE."
+  },
+  {
+    "num": 24,
+    "title": "Безопасное добавление внешних ключей (Foreign Key Constraints)",
+    "task": "Прямое выполнение команды ALTER TABLE orders ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) блокирует обе таблицы на чтение и запись для полной проверки ссылочной целостности. Реализуйте безопасный двухшаговый подход: добавление ограничения с флагом NOT VALID и последующая фоновая валидация через VALIDATE CONSTRAINT.",
+    "theory": "Добавление внешнего ключа (FOREIGN KEY) на многомиллионной таблице стандартным способом приводит к полному сканированию обеих таблиц с удержанием тяжелых блокировок SHARE ROW EXCLUSIVE. При этом любые изменения данных в обеих таблицах блокируются на все время сканирования.\n\nВ PostgreSQL существует безопасный двухфазный алгоритм: 1) Команда ALTER TABLE ... ADD CONSTRAINT ... FOREIGN KEY ... NOT VALID. Флаг NOT VALID указывает СУБД проверять внешний ключ только для новых вставок и обновлений, пропуская сканирование существующих строк. Выполняется за миллисекунды; 2) Команда ALTER TABLE ... VALIDATE CONSTRAINT сканирует существующие строки в фоновом режиме, захватывая лишь SHARE UPDATE EXCLUSIVE лок, который разрешает параллельные операции чтения и записи.",
+    "step_by_step": [
+      "Добавить внешний ключ с модификатором NOT VALID в короткой транзакции с lock_timeout.",
+      "Убедиться, что новые строки валидируются автоматически при вставке.",
+      "Выполнить отдельной командой ALTER TABLE ... VALIDATE CONSTRAINT.",
+      "Обработать возможные нарушения целостности в старых данных без остановки сервиса."
+    ],
+    "code_blocks": [
+      {
+        "filename": "safe_foreign_key.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n)\n\n// SafeForeignKeyMigrator демонстрирует двухшаговое добавление внешнего ключа\ntype SafeForeignKeyMigrator struct {\n\tdb *sql.DB\n}\n\nfunc (m *SafeForeignKeyMigrator) Step1_AddConstraintNotValidSQL() string {\n\treturn `\n-- Шаг 1: Добавление констрейнта с флагом NOT VALID\n-- Требует мгновенной блокировки SHARE ROW EXCLUSIVE, НЕ сканирует существующие строки!\nSET LOCAL lock_timeout = '2s';\nALTER TABLE orders \nADD CONSTRAINT fk_orders_user_id \nFOREIGN KEY (user_id) REFERENCES users(id) NOT VALID;\n`\n}\n\nfunc (m *SafeForeignKeyMigrator) Step2_ValidateConstraintSQL() string {\n\treturn `\n-- Шаг 2: Фоновая валидация существующих данных\n-- Захватывает лишь слабый SHARE UPDATE EXCLUSIVE лок, НЕ блокирует SELECT, INSERT, UPDATE, DELETE!\nALTER TABLE orders \nVALIDATE CONSTRAINT fk_orders_user_id;\n`\n}\n\nfunc main() {\n\tfmt.Println(\"=== Безопасное добавление Foreign Key: NOT VALID -> VALIDATE ===\")\n\tm := &SafeForeignKeyMigrator{}\n\tfmt.Println(\"1. Мгновенное добавление без проверки старых строк:\")\n\tfmt.Println(m.Step1_AddConstraintNotValidSQL())\n\tfmt.Println(\"2. Фоновая валидация без блокировки DML операций:\")\n\tfmt.Println(m.Step2_ValidateConstraintSQL())\n}\n"
+      }
+    ],
+    "under_the_hood": "При добавлении NOT VALID в системном каталоге pg_constraint создается запись с convalidated = false. Во время выполнения VALIDATE CONSTRAINT СУБД сканирует таблицу sequentially, но удерживает слабый уровень блокировки, совместимый с обычными транзакциями DML. По завершении сканирования флаг convalidated меняется на true в системном каталоге.",
+    "pitfalls": [
+      "Попытка объединить ADD CONSTRAINT NOT VALID и VALIDATE CONSTRAINT в одной транзакции (смысл разделения теряется, и блокировка останется жесткой).",
+      "Наличие 'висячих' ссылок (orphan records) в старых данных: VALIDATE CONSTRAINT завершится ошибкой, поэтому перед валидацией необходим скрипт очистки.",
+      "Отсутствие индекса на колонку внешнего ключа (user_id): без индекса удаление записи из родительской таблицы users вызовет полное сканирование таблицы orders."
+    ],
+    "bigtech_interview": "Почему при создании внешнего ключа в PostgreSQL всегда нужно отдельно создавать индекс на ссылающееся поле? Ответ: PostgreSQL автоматически создает индекс для первичного ключа, но НЕ создает индекс для поля внешнего ключа. Если индекса на foreign key нет, то при любом UPDATE или DELETE в родительской таблице СУБД будет вынуждена делать Seq Scan дочерней таблицы под блокировкой, что парализует производительность."
+  },
+  {
+    "num": 25,
+    "title": "Стратегия отката миграций: почему Down-миграции опасны",
+    "task": "Проанализируйте, почему выполнение Down-миграций (автоматический откат схемы вниз) на продакшене при инцидентах является опасным антипаттерном. Опишите риски безвозвратной потери данных пользователей и обоснуйте промышленный подход Forward-Fix (исправление ошибок созданием новой миграции вперед).",
+    "theory": "Многие миграционные тулы (goose, golang-migrate) предлагают секции Up и Down. Однако в зрелых engineering-культурах выполнение Down-миграций на боевых базах данных строго запрещено политиками безопасности.\n\nГлавные причины: 1) Потеря данных: если новая версия сервиса поработала 30 минут и пользователи создали тысячи заказов с новым полем, выполнение Down-миграции (DROP COLUMN) навсегда сотрет эти данные; 2) Несимметричность операций: операция создания индекса обратима, но изменение типа данных с конвертацией — нет; 3) Рассинхронизация с кодом: в распределенной системе невозможно мгновенно синхронизировать откат базы данных с сотнями подов сервисов.\n\nЕдинственно правильной стратегией является Forward-Fix: при сбое откатывается код приложения (благодаря Expand-Contract база совместима со старым кодом), а исправление в схему вносится следующей накатываемой миграцией.",
+    "step_by_step": [
+      "Сравнить сценарии отката схемы вниз (Down) и отката сервиса назад при стабильной схеме.",
+      "Проанализировать последствия потери свежих пользовательских данных при выполнении DROP COLUMN.",
+      "Сформулировать регламент инцидент-менеджмента: фиксация схемы, откат подов, накат фикса вперед.",
+      "Настроить права CI/CD сервисного аккаунта, запрещающие выполнение команд migrate down."
+    ],
+    "code_blocks": [
+      {
+        "filename": "forward_fix.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// MigrationRollbackStrategy объясняет опасности Down-миграций\nfunc ExplainRollbackStrategy() {\n\tfmt.Println(\"=== Стратегия отката: Down-миграции vs Forward-Fix ===\")\n\tfmt.Println()\n\tfmt.Println(\"❌ Опасность выполнения 'goose down' на проде:\")\n\tfmt.Println(\"1. Потеря пользовательских данных: DROP COLUMN удаляет все данные, внесенные пользователями\")\n\tfmt.Println(\"   за время работы новой версии сервиса.\")\n\tfmt.Println(\"2. Необратимость DDL: случайно удаленные терабайты данных невозможно восстановить без бэкапа.\")\n\tfmt.Println(\"3. Несовместимость версий: откат схемы ломает код, который уже задеплоен.\")\n\tfmt.Println()\n\tfmt.Println(\"✅ Промышленный стандарт: Стратегия Forward-Fix:\")\n\tfmt.Println(\"1. При аварии откатывается код сервиса (k8s rollback), а схема БД остается совместимой.\")\n\tfmt.Println(\"2. Если схему необходимо исправить, создается НОВАЯ накатываемая миграция вперед (v+1).\")\n\tfmt.Println(\"3. База данных развивается исключительно методом Append-Only.\")\n}\n\nfunc main() {\n\tExplainRollbackStrategy()\n}\n"
+      }
+    ],
+    "under_the_hood": "В архитектуре баз данных журнал транзакций (WAL) фиксирует все DDL и DML изменения последовательно. Выполнение деструктивного DDL (DROP TABLE/COLUMN) генерирует записи очистки дисковых страниц, делая откат невозможным даже на уровне транзакций после COMMIT. Восстановление данных в таких случаях требует дорогостоящей процедуры Point-in-Time Recovery (PITR) из резервной копии.",
+    "pitfalls": [
+      "Автоматический запуск 'migrate down' в CI/CD скриптах при падении деплоя приложения.",
+      "Написание Down-миграций 'для галочки' без тестирования их безопасности на реальных данных.",
+      "Удаление временных колонок до полного подтверждения стабильности бизнес-логики."
+    ],
+    "bigtech_interview": "Почему в Uber, Netflix и Яндексе запрещено использовать автоматические Down-миграции на проде? Ответ: Потому что база данных в архитектуре Expand-Contract всегда проектируется обратно совместимой. При инцидентах откатывается только код приложения (stateless), а база данных (stateful) не трогается. Любые исправления схемы делаются исключительно накатом новых миграций вперед (Forward-Fix), что исключает случайное уничтожение боевых данных."
+  },
+  {
+    "num": 26,
+    "title": "Мониторинг лага репликации во время миграций",
+    "task": "Массивные операции миграции и бэкфилла генерируют огромный объем записей в журнал WAL, что может привести к лагу потоковой репликации на Read-репликах в десятки секунд и отдаче устаревших данных пользователям. Реализуйте мониторинг pg_stat_replication на Go, адаптивно приостанавливающий процесс бэкфилла при превышении порога лага.",
+    "theory": "В архитектуре с распределением чтения на реплики (Read Replicas) мастер асинхронно или полусинхронно передает поток WAL-записей репликам через процесс walreceiver/walsender. Если фоновый скрипт миграции выполняет миллионы обновлений строк без пауз, дисковая подсистема реплик не успевает применять (replay) поток WAL.\n\nЭто приводит к росту задержки репликации (Replication Lag), из-за чего пользователи видят устаревшие данные при чтении с реплик. Скрипт миграции на Go обязан перед каждым пакетом запрашивать системное представление pg_stat_replication и замерять метрику replay_lag. Если лаг превышает допустимый SLA (например, 1 секунду), выполнение миграции динамически притормаживается до восстановления нормального состояния.",
+    "step_by_step": [
+      "Изучить метрики pg_stat_replication: write_lag, flush_lag и replay_lag.",
+      "Спроектировать горутину мониторинга задержки репликации в скрипте миграции.",
+      "Реализовать механизм адаптивного троттлинга (Throttle Loop) перед выполнением очередного чанка.",
+      "Протестировать сценарий автоматического замедления и восстановления скорости бэкфилла."
+    ],
+    "code_blocks": [
+      {
+        "filename": "replication_monitor.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"time\"\n)\n\n// ReplicationLagMonitor отслеживает отставание реплик при тяжелых миграциях\ntype ReplicationLagMonitor struct {\n\tdb *sql.DB\n}\n\ntype ReplicaStatus struct {\n\tClientAddr string\n\tReplayLag  time.Duration\n}\n\n// CheckReplicationLag опрашивает pg_stat_replication\nfunc (m *ReplicationLagMonitor) CheckReplicationLag(ctx context.Context) ([]ReplicaStatus, error) {\n\t// В продакшене запрос к мастеру:\n\t// SELECT client_addr, EXTRACT(EPOCH FROM replay_lag) FROM pg_stat_replication\n\treturn []ReplicaStatus{\n\t\t{ClientAddr: \"10.0.1.21\", ReplayLag: 250 * time.Millisecond},\n\t\t{ClientAddr: \"10.0.1.22\", ReplayLag: 1200 * time.Millisecond}, // Лаг превышен!\n\t}, nil\n}\n\n// ThrottleMigrationIfLagging приостанавливает чанки миграции при росте лага\nfunc (m *ReplicationLagMonitor) ThrottleMigrationIfLagging(ctx context.Context, maxAllowedLag time.Duration) {\n\tfor {\n\t\treplicas, err := m.CheckReplicationLag(ctx)\n\t\tif err != nil {\n\t\t\treturn\n\t\t}\n\n\t\tmaxLag := time.Duration(0)\n\t\tfor _, r := range replicas {\n\t\t\tif r.ReplayLag > maxLag {\n\t\t\t\tmaxLag = r.ReplayLag\n\t\t\t}\n\t\t}\n\n\t\tif maxLag > maxAllowedLag {\n\t\t\tfmt.Printf(\"⚠️  [THROTTLE] Лаг репликации %v > порога %v! Пауза миграции на 2s...\\n\", maxLag, maxAllowedLag)\n\t\t\tselect {\n\t\t\tcase <-ctx.Done():\n\t\t\t\treturn\n\t\t\tcase <-time.After(2 * time.Second):\n\t\t\t}\n\t\t} else {\n\t\t\tfmt.Printf(\"✅ [HEALTH] Лаг репликации в норме (%v). Продолжаем миграцию.\\n\", maxLag)\n\t\t\tbreak\n\t\t}\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"=== Мониторинг лага репликации (pg_stat_replication) ===\")\n\tmonitor := &ReplicationLagMonitor{}\n\tmonitor.ThrottleMigrationIfLagging(context.Background(), 1*time.Second)\n}\n"
+      }
+    ],
+    "under_the_hood": "Метрика replay_lag вычисляется как разница между системным временем мастера на момент генерации WAL-записи и временем ее фактического применения процессом startup на реплике. При интенсивном DDL/DML буферы реплики переполняются, а если параметр max_standby_streaming_delay превышен, долгие запросы пользователей на репликах могут принудительно прерываться (canceling statement due to conflict with recovery).",
+    "pitfalls": [
+      "Опрос репликации только по одной реплике (нужно находить максимальный лаг среди всех активных реплик).",
+      "Игнорирование риска переполнения слота репликации (Replication Slot): если реплика отключится, мастер может исчерпать все дисковое пространство для хранения непереданных WAL.",
+      "Слишком частые запросы к pg_stat_replication в цикле без пауз (создают паразитный трафик)."
+    ],
+    "bigtech_interview": "Что произойдет с Read-репликами PostgreSQL, если запустить массивный UPDATE 50 миллионов строк одним запросом? Ответ: Мастер сгенерирует гигабайты WAL. Реплики испытают огромный лаг применения (replay lag). Запросы на чтение пользователей на репликах начнут либо читать безнадежно устаревшие данные, либо отменяться с ошибкой recovery conflict. Балансировщик снимет отставшие реплики из пула, и весь трафик чтения обрушится на мастер."
+  },
+  {
+    "num": 27,
+    "title": "Shadow Writing и валидация целостности данных",
+    "task": "Перед переключением чтения на новую структуру (Switch Read) необходимо доказать 100% корректность перенесенных и синхронизируемых данных. Напишите асинхронный сервис аудита целостности на Go (Shadow Verifier), который пакетами сравнивает старые и новые колонки, детектирует расхождения и блокирует переключение чтения до устранения несоответствий.",
+    "theory": "Переключение чтения на новую схему без математической верификации — частая причина скрытой порчи данных (Silent Data Corruption). Ошибки в коде триггеров, тонкости кодировок строк, обрезка пробелов или потеря миллисекунд во временных метках могут привести к тому, что новая колонка разойдется со старой.\n\nПаттерн Shadow Verification предусматривает запуск фонового процесса аудита: он последовательно вычитывает данные парами (old_value, new_value) и выполняет побайтовое и семантическое сравнение. В случае обнаружения хотя бы одного расхождения генерируется алерт в Prometheus/Sentry с выводом первичного ключа поврежденной строки, а фаза Switch Read откладывается до исправления логики бэкфилла.",
+    "step_by_step": [
+      "Спроектировать воркер постраничной сверки данных между старыми и новыми колонками.",
+      "Реализовать сравнение с учетом типов данных (например, нормализация строк или округление timestamp).",
+      "Интегрировать счетчики метрик расхождений (mismatch_count) и алертинг.",
+      "Убедиться в нулевом проценте расхождений на всем объеме таблицы перед переключением чтения."
+    ],
+    "code_blocks": [
+      {
+        "filename": "shadow_verifier.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"log\"\n\t\"sync/atomic\"\n\t\"time\"\n)\n\n// DataIntegrityAuditor выполняет теневую сверку старой и новой колонок\ntype DataIntegrityAuditor struct {\n\tdb              *sql.DB\n\tmismatchCounter int64\n}\n\ntype UserRecord struct {\n\tID       int64\n\tOldValue string\n\tNewValue string\n}\n\n// CompareBatch проверяет идентичность данных в пачке записей\nfunc (a *DataIntegrityAuditor) CompareBatch(ctx context.Context, startID, endID int64) (int, int, error) {\n\t// Имитация SQL: SELECT id, name, full_name FROM users WHERE id BETWEEN $1 AND $2\n\t// В реальном сервисе выполняется выборка и посимвольное/семантическое сравнение\n\tchecked := 1000\n\tmismatches := 0\n\n\t// Симуляция обнаружения несовпадения\n\tif startID == 5000 {\n\t\tmismatches = 1\n\t\tatomic.AddInt64(&a.mismatchCounter, int64(mismatches))\n\t\tfmt.Printf(\"🚨 [MISMATCH ALERT] Расхождение в записи ID 5042: Old='%s' != New='%s'\\n\", \"Bob\", \"Robert\")\n\t}\n\n\treturn checked, mismatches, nil\n}\n\nfunc main() {\n\tfmt.Println(\"=== Shadow Writing & Валидация целостности данных ===\")\n\tauditor := &DataIntegrityAuditor{}\n\tctx := context.Background()\n\n\tchecked, mismatches, _ := auditor.CompareBatch(ctx, 1, 1000)\n\tfmt.Printf(\"Проверено: %d, Ошибок: %d\\n\", checked, mismatches)\n\n\tchecked, mismatches, _ = auditor.CompareBatch(ctx, 5000, 6000)\n\tfmt.Printf(\"Проверено: %d, Ошибок: %d\\n\", checked, mismatches)\n\n\tif auditor.mismatchCounter > 0 {\n\t\tfmt.Printf(\"⛔ Switch Read заблокирован! Найдено %d расхождений. Требуется исправление бэкфилла.\\n\", auditor.mismatchCounter)\n\t} else {\n\t\tfmt.Println(\"✅ 100% совпадение данных. Можно безопасно переключать чтение на новую колонку.\")\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "При сравнении данных под высокой нагрузкой возможны 'ложные расхождения' (False Positives) из-за race condition: если строка была обновлена ровно в момент между чтением старой и новой колонок. Качественный Shadow Verifier при обнаружении расхождения делает повторную проверку (re-read with small delay), чтобы исключить влияние параллельного DML.",
+    "pitfalls": [
+      "Блокировка боевых строк через SELECT ... FOR UPDATE во время аудита (недопустимо под нагрузкой).",
+      "Сравнение дат и времени без учета таймзон (UTC vs локальное время базы).",
+      "Переключение чтения без предварительного полного аудита 100% исторических строк."
+    ],
+    "bigtech_interview": "Как гарантировать, что при переносе балансов пользователей из float в numeric ни у одного пользователя не пропала копейка? Ответ: Запустить процесс Shadow Verification: на протяжении недели фоновый сервис непрерывно сверяет старый и новый балансы при каждом чтении асинхронно, а также проводит полный проход по всей базе. Только при достижении 0 расхождений на протяжении нескольких дней дается разрешение на Switch Read."
+  },
+  {
+    "num": 28,
+    "title": "Zero-Downtime миграции в NoSQL (Ленивая миграция документов в MongoDB)",
+    "task": "В документо-ориентированных СУБД (MongoDB) отсутствует жесткий DDL, но структура BSON-документов эволюционирует. Реализуйте паттерн On-Read Migration (Lazy Migration): при чтении документа старой схемы Go-сервис на лету дополняет его новыми полями по умолчанию и асинхронно обновляет документ в базе данных, постепенно переводя активные данные на новую схему без фонового перелопачивания миллиардов записей.",
+    "theory": "В NoSQL базах данных с бессхемным хранением (Schema-less / Schema-on-Read) классические DDL-миграции неприменимы. Попытка запустить глобальный фоновый скрипт обновления миллиарда документов в MongoDB приведет к перегрузке WiredTiger кэша, дисковой подсистемы и деградации производительности.\n\nПромышленным стандартом эволюции NoSQL схем является On-Read Migration: 1) Каждый документ снабжается полем версии schema_version; 2) Go-приложение содержит адаптеры миграций (v1 -> v2, v2 -> v3); 3) При чтении документ преобразуется в актуальную модель в оперативной памяти приложения; 4) В фоновой горутине документ асинхронно сохраняется в обновленном формате. Документы, к которым никто не обращается, не нагружают СУБД.",
+    "step_by_step": [
+      "Ввести версионирование документов через поле schema_version.",
+      "Реализовать интерфейс трансформации модели при десериализации BSON.",
+      "Настроить асинхронное фоновое сохранение (Write-Back) обновленного документа при чтении.",
+      "Обеспечить корректность работы комбинированного подхода: On-Read для горячих данных + медленный фоновый воркер для холодных."
+    ],
+    "code_blocks": [
+      {
+        "filename": "lazy_migration.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\n// UserDocV1 представляет старый документ без поля Status\ntype UserDocV1 struct {\n\tID    string `bson:\"_id\"`\n\tEmail string `bson:\"email\"`\n}\n\n// UserDocV2 представляет расширенный документ\ntype UserDocV2 struct {\n\tID        string    `bson:\"_id\"`\n\tEmail     string    `bson:\"email\"`\n\tStatus    string    `bson:\"status\"`     // Новое поле со значением по умолчанию \"active\"\n\tUpdatedAt time.Time `bson:\"updated_at\"` // Новое поле\n\tVersion   int       `bson:\"schema_ver\"` // Версия схемы документа\n}\n\n// MongoLazyMigrator реализует миграцию схемы при чтении (On-Read Migration)\ntype MongoLazyMigrator struct{}\n\n// FindUserWithOnReadMigration загружает документ и при необходимости обновляет его схему\nfunc (m *MongoLazyMigrator) FindUserWithOnReadMigration(ctx context.Context, rawDoc map[string]interface{}) UserDocV2 {\n\tver, _ := rawDoc[\"schema_ver\"].(int)\n\n\tuser := UserDocV2{\n\t\tID:    rawDoc[\"_id\"].(string),\n\t\tEmail: rawDoc[\"email\"].(string),\n\t}\n\n\t// Если документ старой схемы (ver < 2), применяем ленивую миграцию\n\tif ver < 2 {\n\t\tuser.Status = \"active\" // Значение по умолчанию\n\t\tuser.UpdatedAt = time.Now().UTC()\n\t\tuser.Version = 2\n\n\t\t// Асинхронно сохраняем обновленный документ в MongoDB без блокировки клиента\n\t\tgo m.asyncSaveMigratedDoc(user)\n\t\tfmt.Printf(\"⚡ [ON-READ MIGRATION] Документ %s лениво мигрирован v1 -> v2\\n\", user.ID)\n\t} else {\n\t\tuser.Status = rawDoc[\"status\"].(string)\n\t\tuser.Version = ver\n\t}\n\n\treturn user\n}\n\nfunc (m *MongoLazyMigrator) asyncSaveMigratedDoc(u UserDocV2) {\n\t// В проде: collection.UpdateOne(ctx, filter, update)\n\tfmt.Printf(\"💾 [ASYNC SAVE] Сохранен документ %s схемы v%d в MongoDB\\n\", u.ID, u.Version)\n}\n\nfunc main() {\n\tfmt.Println(\"=== NoSQL Zero-Downtime: Паттерн On-Read Migration ===\")\n\tmigrator := &MongoLazyMigrator{}\n\n\t// Документ старого формата из MongoDB\n\toldDoc := map[string]interface{}{\n\t\t\"_id\":   \"usr_1001\",\n\t\t\"email\": \"user@example.com\",\n\t\t// schema_ver отсутствует (0)\n\t}\n\n\tuser := migrator.FindUserWithOnReadMigration(context.Background(), oldDoc)\n\tfmt.Printf(\"Клиент получил пользователя v2: ID=%s, Email=%s, Status=%s, Ver=%d\\n\",\n\t\tuser.ID, user.Email, user.Status, user.Version)\n\ttime.Sleep(50 * time.Millisecond)\n}\n"
+      }
+    ],
+    "under_the_hood": "В MongoDB операция обновления документа, увеличивающего свой размер (добавление новых полей), может привести к перемещению документа на диске или выделению новых экстентов в WiredTiger, вызывая фрагментацию памяти. Ленивая миграция распределяет эти операции во времени пропорционально естественному пользовательскому трафику.",
+    "pitfalls": [
+      "Синхронное обновление документа в базе в момент чтения: удваивает сетевую задержку запроса SELECT для пользователя (обновление должно быть строго асинхронным).",
+      "Отсутствие обработки очень старых документов (v0), не читавшихся годами (для них по-прежнему нужен редкий ночной бэкфилл).",
+      "Гонки версий при параллельном чтении и обновлении одного документа."
+    ],
+    "bigtech_interview": "Как обновить формат 5 миллиардов профилей пользователей в MongoDB без даунтайма и без взрывного роста нагрузки на кластер? Ответ: Применить паттерн On-Read Migration. Горячие 20% профилей мигрируют естественным путем при чтении пользователями за первые 48 часов с асинхронным сохранением в базу, а оставшиеся 80% холодных данных домигрирует низкоприоритетный фоновый воркер с ограничением 50 документов в секунду."
+  },
+  {
+    "num": 29,
+    "title": "Безопасное удаление неиспользуемых таблиц",
+    "task": "Прямое выполнение команды DROP TABLE orders_legacy на продакшене несет огромный риск, если какой-либо забытый фоновый сервис, cron-скрипт или отчетный пайплайн все еще использует эту таблицу. Реализуйте промышленный регламент безопасного вывода таблицы из эксплуатации: 1) отзыв прав на запись; 2) переименование в _deprecated_ с 14-дневным карантином; 3) аудит логов и окончательное удаление.",
+    "theory": "Удаление таблиц в крупных распределенных системах — операция с высоким риском катастрофических последствий. Даже если ведущий бэкенд-сервис перестал обращаться к таблице, к ней могут обращаться вспомогательные воркеры, ETL-процессы дата-саентистов или генераторы бухгалтерских выгрузок.\n\nБезопасный регламент вывода из эксплуатации (Table Deprecation Workflow) состоит из 3 этапов: 1) Запрет прав на запись (REVOKE INSERT, UPDATE): выявляет пишущие сервисы без риска потери данных; 2) Переименование таблицы в _deprecated_<name>_<date> в короткой транзакции: любые оставшиеся сервисы чтения получат ошибку relation does not exist, что немедленно отразится на алертах мониторинга; 3) Карантинный период в 14–30 дней: если за месяц ни одного обращения не зафиксировано, выполняется DROP TABLE.",
+    "step_by_step": [
+      "Отозвать права DML у сервисных пользователей базы данных.",
+      "Переименовать таблицу с добавлением префикса _deprecated_ и даты переименования.",
+      "Настроить мониторинг pg_stat_user_tables и логов PostgreSQL на попытки обращения к таблице.",
+      "Выдержать регламентный карантинный срок (14-30 дней).",
+      "Выполнить финальный DROP TABLE."
+    ],
+    "code_blocks": [
+      {
+        "filename": "table_deprecation.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"time\"\n)\n\n// SafeTableDeprecator управляет многоэтапным процессом вывода таблиц из эксплуатации\ntype SafeTableDeprecator struct {\n\tdb *sql.DB\n}\n\n// Step1_RevokeWritePermissions отзывает права на запись, разрешая только чтение\nfunc (d *SafeTableDeprecator) Step1_RevokeWritePermissions(tableName, appRole string) string {\n\treturn fmt.Sprintf(`\n-- Шаг 1: Запрет записи для обнаружения сервисов, все еще пишущих в таблицу\nREVOKE INSERT, UPDATE, DELETE ON TABLE %s FROM %s;\n`, tableName, appRole)\n}\n\n// Step2_RenameToDeprecated переименовывает таблицу в карантинное имя\nfunc (d *SafeTableDeprecator) Step2_RenameToDeprecated(tableName string) string {\n\tdeprecatedName := fmt.Sprintf(\"_deprecated_%s_%s\", tableName, time.Now().Format(\"20060102\"))\n\treturn fmt.Sprintf(`\n-- Шаг 2: Карантинное переименование (срок выдержки: 14 дней)\nSET LOCAL lock_timeout = '2s';\nALTER TABLE %s RENAME TO %s;\n`, tableName, deprecatedName)\n}\n\n// Step3_DropAfterGracePeriod окончательно удаляет таблицу после карантина\nfunc (d *SafeTableDeprecator) Step3_DropAfterGracePeriod(deprecatedName string) string {\n\treturn fmt.Sprintf(`\n-- Шаг 3: Физическое удаление после 14 дней отсутствия алертов\nDROP TABLE IF EXISTS %s;\n`, deprecatedName)\n}\n\nfunc main() {\n\tfmt.Println(\"=== Регламент безопасного удаления неиспользуемых таблиц ===\")\n\tdeprecator := &SafeTableDeprecator{}\n\tfmt.Println(deprecator.Step1_RevokeWritePermissions(\"orders_legacy\", \"app_service_role\"))\n\tfmt.Println(deprecator.Step2_RenameToDeprecated(\"orders_legacy\"))\n\tfmt.Println(deprecator.Step3_DropAfterGracePeriod(\"_deprecated_orders_legacy_20260908\"))\n}\n"
+      }
+    ],
+    "under_the_hood": "Переименование таблицы (ALTER TABLE ... RENAME TO ...) изменяет лишь имя объекта в каталоге pg_class. Все физические файлы на диске (relfilenode), индексы и данные остаются нетронутыми. Если переименование сломало критический бизнес-процесс, мгновенный откат выполняется обратным переименованием за 5 миллисекунд без необходимости восстановления из резервной копии.",
+    "pitfalls": [
+      "Немедленное удаление DROP TABLE на основе предположения 'мы в кодовой базе этого не нашли' (код может быть во внешних репозиториях).",
+      "Забытые внешние ключи или триггеры, ссылающиеся на удаляемую таблицу.",
+      "Отсутствие даты в имени карантинной таблицы, из-за чего через год никто не помнит, чья это таблица и можно ли ее удалить."
+    ],
+    "bigtech_interview": "Почему переименование таблицы в _deprecated_ надежнее, чем просто отключение прав? Ответ: Потому что суперпользователи (например, сервисы с правами postgres или сервисные репликаторы) могут игнорировать REVOKE прав, продолжая работать. Переименование объекта в системном каталоге ломает любые жестко захардкоженные SQL-запросы абсолютно для всех пользователей, гарантированно подсвечивая скрытые зависимости в системе мониторинга."
+  },
+  {
+    "num": 30,
+    "title": "Полнофункциональная утилита Zero-Downtime миграций на Go",
+    "task": "Создайте законченную промышленную консольную утилиту фонового переноса данных на Go. Утилита должна поддерживать: настройку размера пакета (batch size), динамический троттлинг по лагу репликации (pg_stat_replication), жесткий lock_timeout, сохранение чекпоинта прогресса, корректную обработку SIGINT/SIGTERM (graceful shutdown) и метрики прогресса.",
+    "theory": "Фоновый перенос данных (Backfill Engine) в HighLoad архитектуре — это самостоятельный распределенный микросервис высокой надежности. Он должен безопасно перекачивать терабайты данных между колонками или таблицами на работающем продакшене без малейшего влияния на клиентский трафик.\n\nПромышленная утилита на Go обязана обладать свойствами: 1) Детерминированность: итерация строго по упорядоченному первичному ключу (Keyset Pagination); 2) Самоограничение (Backpressure / Throttling): остановка при малейшем намеке на деградацию мастера или реплик; 3) Грациозная остановка (Graceful Shutdown): перехват os.Interrupt с фиксацией последнего обработанного ID в таблицу контрольных точек; 4) Идемпотентность: возможность перезапуска с сохраненного смещения без дублирования или порчи данных.",
+    "step_by_step": [
+      "Спроектировать структуру конфигурации и контекст выполнения утилиты переноса данных.",
+      "Реализовать цикл чанкования по индексированному первичному ключу.",
+      "Интегрировать мониторинг задержки репликации с адаптивным сном.",
+      "Настроить обработку системных сигналов SIGINT и SIGTERM с фиксацией прогресса.",
+      "Продемонстрировать запуск, штатную остановку и перезапуск утилиты."
+    ],
+    "code_blocks": [
+      {
+        "filename": "migration_engine.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"database/sql\"\n\t\"errors\"\n\t\"fmt\"\n\t\"log\"\n\t\"os\"\n\t\"os/signal\"\n\t\"sync/atomic\"\n\t\"syscall\"\n\t\"time\"\n)\n\n// ZeroDowntimeMigrationEngine представляет полноценный движок онлайн-миграций\ntype ZeroDowntimeMigrationEngine struct {\n\tdb             *sql.DB\n\ttableName      string\n\tsourceCol      string\n\ttargetCol      string\n\tbatchSize      int\n\tthrottleDelay  time.Duration\n\tmaxAllowedLag  time.Duration\n\tmigratedCount  int64\n\tcurrentBatchID int64\n}\n\ntype EngineConfig struct {\n\tTableName     string\n\tSourceCol     string\n\tTargetCol     string\n\tBatchSize     int\n\tThrottleDelay time.Duration\n\tMaxAllowedLag time.Duration\n\tStartID       int64\n}\n\nfunc NewEngine(db *sql.DB, cfg EngineConfig) *ZeroDowntimeMigrationEngine {\n\treturn &ZeroDowntimeMigrationEngine{\n\t\tdb:             db,\n\t\ttableName:      cfg.TableName,\n\t\tsourceCol:      cfg.SourceCol,\n\t\ttargetCol:      cfg.TargetCol,\n\t\tbatchSize:      cfg.BatchSize,\n\t\tthrottleDelay:  cfg.ThrottleDelay,\n\t\tmaxAllowedLag:  cfg.MaxAllowedLag,\n\t\tcurrentBatchID: cfg.StartID,\n\t}\n}\n\n// Run выполняет процесс миграции с поддержкой SIGINT graceful shutdown\nfunc (e *ZeroDowntimeMigrationEngine) Run(ctx context.Context) error {\n\tsigChan := make(chan os.Signal, 1)\n\tsignal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)\n\n\tfmt.Printf(\"🚀 [ENGINE] Старт Zero-Downtime миграции таблицы '%s' (%s -> %s)\\n\",\n\t\te.tableName, e.sourceCol, e.targetCol)\n\tfmt.Printf(\"   Размер чанка: %d, Начальный ID: %d, Задержка: %v\\n\",\n\t\te.batchSize, e.currentBatchID, e.throttleDelay)\n\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\treturn ctx.Err()\n\t\tcase sig := <-sigChan:\n\t\t\tfmt.Printf(\"\\n🛑 [SHUTDOWN] Получен сигнал %v. Сохранение точки останова (ID=%d)...\\n\",\n\t\t\t\tsig, e.currentBatchID)\n\t\t\treturn errors.New(\"миграция прервана оператором\")\n\t\tdefault:\n\t\t}\n\n\t\t// 1. Проверка здоровья репликации\n\t\tif err := e.checkReplicationHealth(ctx); err != nil {\n\t\t\tfmt.Printf(\"⏳ [THROTTLE] Репликация отстает: %v. Ожидание 1с...\\n\", err)\n\t\t\ttime.Sleep(1 * time.Second)\n\t\t\tcontinue\n\t\t}\n\n\t\t// 2. Выполнение одного чанка\n\t\tprocessed, nextID, err := e.processChunk(ctx, e.currentBatchID)\n\t\tif err != nil {\n\t\t\treturn fmt.Errorf(\"chunk failure at id %d: %w\", e.currentBatchID, err)\n\t\t}\n\n\t\tif processed == 0 {\n\t\t\tfmt.Println(\"🎉 [FINISH] Все исторические записи успешно мигрированы!\")\n\t\t\tbreak\n\t\t}\n\n\t\tatomic.AddInt64(&e.migratedCount, int64(processed))\n\t\te.currentBatchID = nextID\n\n\t\tfmt.Printf(\"📦 [PROGRESS] Мигрировано: %d строк (Текущий ID: %d)\\n\",\n\t\t\tatomic.LoadInt64(&e.migratedCount), e.currentBatchID)\n\n\t\t// 3. Динамическая пауза троттлинга\n\t\ttime.Sleep(e.throttleDelay)\n\t}\n\n\treturn nil\n}\n\nfunc (e *ZeroDowntimeMigrationEngine) checkReplicationHealth(ctx context.Context) error {\n\t// В реальной БД: SELECT MAX(EXTRACT(EPOCH FROM replay_lag)) FROM pg_stat_replication\n\treturn nil\n}\n\nfunc (e *ZeroDowntimeMigrationEngine) processChunk(ctx context.Context, startID int64) (int, int64, error) {\n\t// Симуляция успешной обработки чанка\n\tendID := startID + int64(e.batchSize)\n\tif startID >= 5000 {\n\t\treturn 0, endID, nil // Конец таблицы\n\t}\n\treturn e.batchSize, endID, nil\n}\n\nfunc main() {\n\tfmt.Println(\"=== Capstone: Полнофункциональная утилита Zero-Downtime миграций на Go ===\")\n\tcfg := EngineConfig{\n\t\tTableName:     \"users\",\n\t\tSourceCol:     \"name\",\n\t\tTargetCol:     \"full_name\",\n\t\tBatchSize:     1000,\n\t\tThrottleDelay: 50 * time.Millisecond,\n\t\tMaxAllowedLag: 1 * time.Second,\n\t\tStartID:       1,\n\t}\n\n\tengine := NewEngine(nil, cfg)\n\tctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)\n\tdefer cancel()\n\n\tif err := engine.Run(ctx); err != nil && !errors.Is(err, context.DeadlineExceeded) {\n\t\tlog.Printf(\"Ошибка работы движка: %v\\n\", err)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "Движок использует паттерн Keyset Pagination (WHERE id >= $1 ORDER BY id LIMIT $2) вместо антипаттерна OFFSET. Сканирование по первичному ключу гарантирует константную сложность выборки O(log N) для каждого чанка независимо от глубины смещения, исключая экспоненциальное замедление при обработке миллиардных таблиц.",
+    "pitfalls": [
+      "Использование OFFSET в запросах чанкования (к концу таблицы запрос OFFSET 10000000 сканирует 10 миллионов строк в памяти, вызывая зависание).",
+      "Жесткое аварийное завершение процесса (kill -9) без сохранения текущего смещения.",
+      "Отсутствие тайм-аутов на сетевых вызовах к базе данных в цикле миграции."
+    ],
+    "bigtech_interview": "Как в распределенной системе гарантировать, что два инстанса утилиты бэкфилла не начнут обрабатывать один и тот же диапазон строк одновременно? Ответ: Использовать распределенную блокировку (pg_advisory_lock в PostgreSQL или distributed lock в Redis/etcd) с уникальным идентификатором задачи миграции. Перед началом работы утилита захватывает pg_try_advisory_lock(); если лок уже удерживается другим процессом, утилита немедленно завершает работу с понятным сообщением."
+  }
+]
