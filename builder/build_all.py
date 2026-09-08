@@ -195,6 +195,8 @@ with open('builder/chapter84_data.json', 'r', encoding='utf-8') as f:
     ch84_exercises = json.load(f)
 with open('builder/chapter85_data.json', 'r', encoding='utf-8') as f:
     ch85_exercises = json.load(f)
+with open('builder/chapter86_data.json', 'r', encoding='utf-8') as f:
+    ch86_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -422,6 +424,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             83: ('chapter83.html', f'{len(ch83_exercises)}/{len(ch83_exercises)}'),
             84: ('chapter84.html', f'{len(ch84_exercises)}/{len(ch84_exercises)}'),
             85: ('chapter85.html', f'{len(ch85_exercises)}/{len(ch85_exercises)}'),
+            86: ('chapter86.html', f'{len(ch86_exercises)}/{len(ch86_exercises)}'),
         }
         
         if num in status_map:
@@ -5159,6 +5162,66 @@ def build_chapter85_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'85. Многоуровневое кэширование (L1-L2) и распределенная когерентность ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+def build_chapter86_html(chapters):
+    active_chapter_num = 86
+    current_exercises = ch86_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 86 • Advanced Distributed Systems & Asynchronous Task Processing</div>
+        <h1 class="hero-title">Масштабируемые распределенные планировщики и очереди задач</h1>
+        <p class="hero-desc">
+            Комплексное инженерное руководство по проектированию и эксплуатации высокопроизводительных отказоустойчивых очередей фоновых задач и распределенных планировщиков на языке Go. Сравнительный анализ архитектур хранения: Redis Streams (Consumer Groups, XACK) и Sorted Sets (ZSet для отложенных задач) против очередей на базе PostgreSQL (библиотека River, транзакционная постановка без Dual-Write, конкурентная выборка FOR UPDATE SKIP LOCKED). Механизмы надежности: Heartbeat и обнаружение зависших воркеров, приоритизация (Strict vs Weighted Fair Queuing), планирование отложенных (Scheduled) и периодических (Cron) задач с распределенной синхронизацией. Математически выверенные политики повторов (Exponential Backoff с Full Jitter по алгоритмам AWS), изоляция ядовитых сообщений в Dead Letter Queue (DLQ), версионирование полезной нагрузки (Schema Upcasting), строгая идемпотентность и дедупликация. Управление потоком: распределенный Rate Limiting, честное планирование (Fair Scheduling) между тенантами в Multi-Tenant SaaS, пакетная обработка (Batching / Bulk Insert в ClickHouse), Graceful Shutdown без потери задач, динамическое масштабирование пулов воркеров (Autoscaling по Queue Lag), Backpressure-защита от переполнения брокеров и построение Enterprise менеджера задач на чистом Go.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Фундамент асинхронных очередей, воркер-пулы, Redis Streams/ZSet и PostgreSQL SKIP LOCKED (Упражнения 1–8)"),
+        (9, "Раздел 2: Распределенный Cron, Exponential Backoff с Full Jitter, DLQ, дедупликация и автоскейлинг (Упражнения 9–15)"),
+        (16, "Раздел 3: Rate Limiting, Fair Scheduling, батчинг, Graceful Shutdown и библиотеки Asynq / River (Упражнения 16–23)"),
+        (24, "Раздел 4: Изоляция Poison Pill, Backpressure, профилирование утечек, бенчмарки и Enterprise-менеджер (Упражнения 24–30)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 86 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением распределенных планировщиков и очередей задач!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы детально освоили архитектуру очередей на Redis и PostgreSQL, конкурентную выборку SKIP LOCKED, восстановление по Heartbeat, справедливое планирование между тенантами, батчинг, библиотеки Asynq и River, а также построение надежного корпоративного менеджера фоновых задач.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter85.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 85 Многоуровневое кэширование (L1-L2) и распределенная когерентность</a>
+            <a href="chapter87.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 87 Оркестрация распределенных процессов (Durable Execution) на Temporal.io →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'86. Масштабируемые распределенные планировщики и очереди задач ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 
 
 
@@ -5251,7 +5314,7 @@ all_100_chapters = [
     # 17 Planned Chapters (84-100)
     (84, "CQRS и Event Sourcing на Go", "chapter84.html", len(ch84_exercises), True, "Агрегаты, оптимистическая блокировка версий, Snapshots, проекции в Postgres/Elastic"),
     (85, "Многоуровневое кэширование (L1/L2) и распределенная когерентность", "chapter85.html", len(ch85_exercises), True, "In-memory TinyLFU/Ristretto, Redis RESP3 BCAST, алгоритм XFetch, Write-Behind"),
-    (86, "Масштабируемые распределенные планировщики и очереди задач", "chapter86.html", 30, False, "Фоновые очереди Asynq/River, SKIP LOCKED, периодические задачи, кластерный Cron"),
+    (86, "Масштабируемые распределенные планировщики и очереди задач", "chapter86.html", len(ch86_exercises), True, "Фоновые очереди Asynq/River, SKIP LOCKED, периодические задачи, кластерный Cron"),
     (87, "Оркестрация распределенных процессов (Durable Execution) на Temporal.io", "chapter87.html", 30, False, "Temporal Workflows, Activities, Replay детерминизм, Signals, Queries, Long Timers"),
     (88, "Потоковая обработка данных в реальном времени (Stream Processing)", "chapter88.html", 30, False, "Tumbling/Sliding/Session окна, Watermarks, Late Data, Exactly-Once Checkpoints"),
     (89, "Хаос-инженерия и нагрузочное тестирование на Go", "chapter89.html", 30, False, "Инъекция сбоев Toxiproxy, fasthttp генератор нагрузки, HDRHistogram, p99.9 задержки"),
@@ -5681,6 +5744,7 @@ if __name__ == '__main__':
         ('chapter83.html', build_chapter83_html),
         ('chapter84.html', build_chapter84_html),
         ('chapter85.html', build_chapter85_html),
+        ('chapter86.html', build_chapter86_html),
     ]
     
     for filename, builder_fn in pages:
