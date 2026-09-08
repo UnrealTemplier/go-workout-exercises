@@ -209,6 +209,8 @@ with open('builder/chapter91_data.json', 'r', encoding='utf-8') as f:
     ch91_exercises = json.load(f)
 with open('builder/chapter92_data.json', 'r', encoding='utf-8') as f:
     ch92_exercises = json.load(f)
+with open('builder/chapter93_data.json', 'r', encoding='utf-8') as f:
+    ch93_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -443,6 +445,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             90: ('chapter90.html', f'{len(ch90_exercises)}/{len(ch90_exercises)}'),
             91: ('chapter91.html', f'{len(ch91_exercises)}/{len(ch91_exercises)}'),
             92: ('chapter92.html', f'{len(ch92_exercises)}/{len(ch92_exercises)}'),
+            93: ('chapter93.html', f'{len(ch93_exercises)}/{len(ch93_exercises)}'),
         }
         
         if num in status_map:
@@ -5599,6 +5602,65 @@ def build_chapter92_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'92. Расширяемость систем: Plugins, IPC и WebAssembly (Wazero) ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+def build_chapter93_html(chapters):
+    active_chapter_num = 93
+    current_exercises = ch93_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 93 • HighLoad Networking, Reverse Proxy & Cloud Gateways</div>
+        <h1 class="hero-title">Высокопроизводительные API Gateway и Reverse Proxy на чистом Go</h1>
+        <p class="hero-desc">
+            Исчерпывающее практическое руководство по созданию сверхпроизводительных и отказоустойчивых API-шлюзов (API Gateway) и обратных прокси (Reverse Proxy) на чистом Go, способных выдерживать 100 000+ RPS. Архитектурная декомпозиция: различия Forward Proxy, Reverse Proxy и полнофункционального API Gateway (BFF, Single Entry Point). Анатомия net/http/httputil.ReverseProxy: детальный разбор функций Director и Rewrite (Go 1.20+), динамическая перезапись целевых хостов, заголовков Host и нормализация путей. Безопасность периметра и RFC-стандарты: стандартизация служебных заголовков X-Forwarded-* и защита от IP Spoofing, очистка транзитных заголовков (Hop-by-Hop Headers по RFC 2616/7230), инъекция корпоративных заголовков безопасности (HSTS, nosniff, DENY) и маскирование ошибок бэкенда через ModifyResponse, кастомная классификация сбоев через ErrorHandler (504 Timeout vs 502 Refused). Сетевой тюнинг ядра и рантайма: немедленный сброс потоковых данных FlushInterval (-1 для SSE и токенов LLM), защита от DoS через http.MaxBytesReader (HTTP 413), глубокий тюнинг пулов соединений http.Transport (MaxIdleConns, MaxIdleConnsPerHost, IdleConnTimeout, ForceAttemptHTTP2), системные флаги сокетов Linux SO_REUSEPORT и SO_REUSEADDR. Алгоритмическая балансировка нагрузки: lock-free Round-Robin на atomic.Uint64, балансировка по наименьшей нагрузке Least Connections с Release Callback, кольцо консистентного хэширования с виртуальными нодами (Consistent Hashing & Sticky Sessions). Надежность и самоисцеление: активный опрос здоровья /healthz с порогами сбоев, пассивное обнаружение аномалий (Outlier Detection) с карантином, размыкатель цепи (Circuit Breaker per Route). Продвинутые возможности шлюза: префиксный роутинг со стриппингом префиксов, канареечная маршрутизация по заголовкам и кукам, прозрачное проксирование WebSockets через http.Hijacker, сквозное проксирование gRPC (h2c) с трейлерами, централизованная JWT-аутентификация с инъекцией доверенных заголовков, распределенный Sliding Window Rate Limiting, динамическое gzip-сжатие с sync.Pool, HTTP Caching на ETag (304 Not Modified), сквозная трассировка W3C Trace Context (traceparent), экспорт Prometheus-метрик, структурированный Access Log на log/slog, горячая перезагрузка маршрутов через atomic.Pointer и финальный production-ready шлюз с graceful shutdown.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Устройство ReverseProxy, заголовки, потоковая передача и тюнинг транспорта (Упражнения 1–10)"),
+        (11, "Раздел 2: Алгоритмы балансировки, Health Checks, WebSockets, gRPC и JWT (Упражнения 11–20)"),
+        (21, "Раздел 3: Rate Limiting, Circuit Breaker, Caching, OTel, Hot Reload и Capstone Gateway (Упражнения 21–30)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 93 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением сетевых API-шлюзов и Reverse Proxy на Go!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы в совершенстве овладели передовыми компетенциями сетевой HighLoad-инженерии: проектированием производительных Reverse Proxy на базе httputil, сетевым тюнингом сокетов Linux (SO_REUSEPORT, somaxconn), алгоритмической балансировкой Least Connections и Consistent Hashing, защитой периметра (JWT, Rate Limiting, Circuit Breaker), поддержкой WebSockets/gRPC и сквозной наблюдаемостью.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter92.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 92 Расширяемость систем: Plugins, IPC и WebAssembly (Wazero)</a>
+            <a href="chapter94.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 94 Enterprise Release Engineering: Feature Flags, динамический конфиг и Canary Routing →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'93. Высокопроизводительные API Gateway и Reverse Proxy на чистом Go ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 
 
 
@@ -5698,7 +5760,7 @@ all_100_chapters = [
     (90, "Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI", "chapter90.html", len(ch90_exercises), True, "Contract-First, buf, gRPC-Gateway, gRPC-Web, OpenAPI v3, protovalidate"),
     (91, "Разработка собственных Kubernetes Operators и CRD на Go", "chapter91.html", len(ch91_exercises), True, "Kubebuilder, Custom Resources, Reconcile Loop, Informers, Workqueues, Webhooks, SSA"),
     (92, "Расширяемость систем: Plugins, IPC и WebAssembly (Wazero)", "chapter92.html", len(ch92_exercises), True, "plugin.Open, HashiCorp go-plugin (gRPC IPC), Wazero Wasm песочницы, Fuel metering"),
-    (93, "Высокопроизводительные API Gateway и Reverse Proxy на чистом Go", "chapter93.html", 30, False, "httputil.ReverseProxy, динамическая маршрутизация, Peak-EWMA, Request Hedging"),
+    (93, "Высокопроизводительные API Gateway и Reverse Proxy на чистом Go", "chapter93.html", len(ch93_exercises), True, "httputil.ReverseProxy, динамическая маршрутизация, Peak-EWMA, Request Hedging"),
     (94, "Enterprise Release Engineering: Feature Flags, динамический конфиг и Canary Routing", "chapter94.html", 30, False, "OpenFeature SDK, Canary rollouts, Kill Switch за 50 мс, fsnotify Hot Reload"),
     (95, "Распределенная координация и хранилище метаданных etcd v3", "chapter95.html", 30, False, "clientv3 Watchers, Leases с автопродлением, атомарные транзакции Txn, Service Discovery"),
     (96, "Zero-Downtime миграции баз данных и паттерн Expand/Contract на Go", "chapter96.html", 30, False, "Expand/Migrate/Contract, Shadow Writing, Backfill воркеры, защита от AccessExclusiveLock"),
@@ -6128,6 +6190,7 @@ if __name__ == '__main__':
         ('chapter90.html', build_chapter90_html),
         ('chapter91.html', build_chapter91_html),
         ('chapter92.html', build_chapter92_html),
+        ('chapter93.html', build_chapter93_html),
     ]
     
     for filename, builder_fn in pages:
