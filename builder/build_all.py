@@ -199,6 +199,8 @@ with open('builder/chapter86_data.json', 'r', encoding='utf-8') as f:
     ch86_exercises = json.load(f)
 with open('builder/chapter87_data.json', 'r', encoding='utf-8') as f:
     ch87_exercises = json.load(f)
+with open('builder/chapter88_data.json', 'r', encoding='utf-8') as f:
+    ch88_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -428,6 +430,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             85: ('chapter85.html', f'{len(ch85_exercises)}/{len(ch85_exercises)}'),
             86: ('chapter86.html', f'{len(ch86_exercises)}/{len(ch86_exercises)}'),
             87: ('chapter87.html', f'{len(ch87_exercises)}/{len(ch87_exercises)}'),
+            88: ('chapter88.html', f'{len(ch88_exercises)}/{len(ch88_exercises)}'),
         }
         
         if num in status_map:
@@ -5285,6 +5288,66 @@ def build_chapter87_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'87. Оркестрация распределенных процессов (Durable Execution) на Temporal.io ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+def build_chapter88_html(chapters):
+    active_chapter_num = 88
+    current_exercises = ch88_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 88 • Advanced Distributed Systems, Real-Time Analytics & Stream Processing</div>
+        <h1 class="hero-title">Потоковая обработка данных в реальном времени (Stream Processing)</h1>
+        <p class="hero-desc">
+            Полное инженерное руководство по проектированию высокопроизводительных распределенных конвейеров потоковой обработки данных на языке Go. Фундаментальные основы: непрерывные бесконечные потоки (Unbounded Streams) против пакетной обработки (Batch), потоковые пайплайны на каналах Go (Fan-In / Fan-Out), решение дилеммы времени (Event Time vs Processing Time vs Ingestion Time) и отсечение сетевых задержек. Управление временем и окнами: генераторы водяных знаков (Bounded Out-Of-Orderness Watermarks), тумблинговые (Tumbling), скользящие (Sliding с Pane-квантованием) и сессионные окна (Session Windows) с динамическим слиянием интервалов. Высокопроизводительное управление состоянием: встроенные LSM-хранилища (Embedded State Stores на базе Pebble и Badger), онлайн-алгоритмы инкрементального свертывания (алгоритм Велфорда для среднего и дисперсии за O(1) памяти) и вероятностный подсчет уникальных пользователей (HyperLogLog). Сложные потоковые паттерны: соединение независимых потоков во временном окне (Stream-Stream Join), обогащение потока данными таблиц (Stream-Table Join / KTable), потоковая дедупликация, обработка запаздывающих событий (Allowed Lateness) и перенаправление в Side Outputs (Dead Letter Stream). Надежность корпоративного уровня: семантика Exactly-Once Processing (EoS), распределенные снимки состояния по алгоритму Чанди-Лэмпорта (Chandy-Lamport Barrier Checkpointing), фреймворк Goka, партиционирование по ключам, адаптивное обратное давление (Backpressure), потоковый детектор аномалий (Z-Score), оконные триггеры (Early Emission), управление State TTL, безопасный повторный прогон истории (Stream Replay), метрики лага Prometheus, lock-free кольцевой буфер LMAX Disruptor, пакетная запись в ClickHouse, Graceful Drain и сквозной боевой сервис мониторинга антифрода (Real-Time Fraud Detection).
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Фундамент потоков, конвейеры, время, водяные знаки и оконные вычисления (Упражнения 1–7)"),
+        (8, "Раздел 2: Встроенное состояние, инкрементальная статистика, HLL, соединения потоков и Exactly-Once (Упражнения 8–15)"),
+        (16, "Раздел 3: Чекпоинты Чанди-Лэмпорта, Goka, партиционирование, Backpressure, Z-Score и триггеры (Упражнения 16–23)"),
+        (24, "Раздел 4: Stream Replay, метрики лага, Disruptor, ClickHouse Sink, Graceful Drain и Fraud Detection (Упражнения 24–30)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 88 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением потоковой обработки в реальном времени!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы полностью овладели архитектурой распределенной потоковой аналитики: оконными агрегациями, водяными знаками, встроенными хранилищами состояния, чекпоинтами Чанди-Лэмпорта, гарантией Exactly-Once, алгоритмами детектирования аномалий и высокоскоростными конвейерами на чистом Go.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter87.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 87 Оркестрация распределенных процессов (Durable Execution) на Temporal.io</a>
+            <a href="chapter89.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 89 Хаос-инженерия и нагрузочное тестирование на Go →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'88. Потоковая обработка данных в реальном времени (Stream Processing) ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 
 
 
@@ -5379,7 +5442,7 @@ all_100_chapters = [
     (85, "Многоуровневое кэширование (L1/L2) и распределенная когерентность", "chapter85.html", len(ch85_exercises), True, "In-memory TinyLFU/Ristretto, Redis RESP3 BCAST, алгоритм XFetch, Write-Behind"),
     (86, "Масштабируемые распределенные планировщики и очереди задач", "chapter86.html", len(ch86_exercises), True, "Фоновые очереди Asynq/River, SKIP LOCKED, периодические задачи, кластерный Cron"),
     (87, "Оркестрация распределенных процессов (Durable Execution) на Temporal.io", "chapter87.html", len(ch87_exercises), True, "Temporal Workflows, Activities, Replay детерминизм, Signals, Queries, Long Timers"),
-    (88, "Потоковая обработка данных в реальном времени (Stream Processing)", "chapter88.html", 30, False, "Tumbling/Sliding/Session окна, Watermarks, Late Data, Exactly-Once Checkpoints"),
+    (88, "Потоковая обработка данных в реальном времени (Stream Processing)", "chapter88.html", len(ch88_exercises), True, "Tumbling/Sliding/Session окна, Watermarks, Late Data, Exactly-Once Checkpoints"),
     (89, "Хаос-инженерия и нагрузочное тестирование на Go", "chapter89.html", 30, False, "Инъекция сбоев Toxiproxy, fasthttp генератор нагрузки, HDRHistogram, p99.9 задержки"),
     (90, "Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI", "chapter90.html", 30, False, "google.api.http аннотации, grpc-gateway, OpenAPI v3, Swagger UI в embed.FS"),
     (91, "Разработка собственных Kubernetes Operators и CRD на Go", "chapter91.html", 30, False, "Kubebuilder, Custom Resources, Reconcile Loop, Informers, Workqueues, Webhooks"),
@@ -5809,6 +5872,7 @@ if __name__ == '__main__':
         ('chapter85.html', build_chapter85_html),
         ('chapter86.html', build_chapter86_html),
         ('chapter87.html', build_chapter87_html),
+        ('chapter88.html', build_chapter88_html),
     ]
     
     for filename, builder_fn in pages:
