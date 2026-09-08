@@ -258,6 +258,8 @@ with open('builder/chapter83_data.json', 'r', encoding='utf-8') as f:
     ch83_exercises = json.load(f)
 with open('builder/chapter84_data.json', 'r', encoding='utf-8') as f:
     ch84_exercises = json.load(f)
+with open('builder/chapter85_data.json', 'r', encoding='utf-8') as f:
+    ch85_exercises = json.load(f)
 
 all_ch1 = s1 + s2 + s3 + s4 + s5 + s6
 all_ch2 = ch2_exercises
@@ -343,8 +345,9 @@ all_ch81 = ch81_exercises
 all_ch82 = ch82_exercises
 all_ch83 = ch83_exercises
 all_ch84 = ch84_exercises
+all_ch85 = ch85_exercises
 
-total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11) + len(all_ch12) + len(all_ch13) + len(all_ch14) + len(all_ch15) + len(all_ch16) + len(all_ch17) + len(all_ch18) + len(all_ch19) + len(all_ch20) + len(all_ch21) + len(all_ch22) + len(all_ch23) + len(all_ch24) + len(all_ch25) + len(all_ch26) + len(all_ch27) + len(all_ch28) + len(all_ch29) + len(all_ch30) + len(all_ch31) + len(all_ch32) + len(all_ch33) + len(all_ch34) + len(all_ch35) + len(all_ch36) + len(all_ch37) + len(all_ch38) + len(all_ch39) + len(all_ch40) + len(all_ch41) + len(all_ch42) + len(all_ch43) + len(all_ch44) + len(all_ch45) + len(all_ch46) + len(all_ch47) + len(all_ch48) + len(all_ch49) + len(all_ch50) + len(all_ch51) + len(all_ch52) + len(all_ch53) + len(all_ch54) + len(all_ch55) + len(all_ch56) + len(all_ch57) + len(all_ch58) + len(all_ch59) + len(all_ch60) + len(all_ch61) + len(all_ch62) + len(all_ch63) + len(all_ch64) + len(all_ch65) + len(all_ch66) + len(all_ch67) + len(all_ch68) + len(all_ch69) + len(all_ch70) + len(all_ch71) + len(all_ch72) + len(all_ch73) + len(all_ch74) + len(all_ch75) + len(all_ch76) + len(all_ch77) + len(all_ch78) + len(all_ch79) + len(all_ch80) + len(all_ch81) + len(all_ch82) + len(all_ch83) + len(all_ch84)
+total_ex = len(all_ch1) + len(all_ch2) + len(all_ch3) + len(all_ch4) + len(all_ch5) + len(all_ch6) + len(all_ch7) + len(all_ch8) + len(all_ch9) + len(all_ch10) + len(all_ch11) + len(all_ch12) + len(all_ch13) + len(all_ch14) + len(all_ch15) + len(all_ch16) + len(all_ch17) + len(all_ch18) + len(all_ch19) + len(all_ch20) + len(all_ch21) + len(all_ch22) + len(all_ch23) + len(all_ch24) + len(all_ch25) + len(all_ch26) + len(all_ch27) + len(all_ch28) + len(all_ch29) + len(all_ch30) + len(all_ch31) + len(all_ch32) + len(all_ch33) + len(all_ch34) + len(all_ch35) + len(all_ch36) + len(all_ch37) + len(all_ch38) + len(all_ch39) + len(all_ch40) + len(all_ch41) + len(all_ch42) + len(all_ch43) + len(all_ch44) + len(all_ch45) + len(all_ch46) + len(all_ch47) + len(all_ch48) + len(all_ch49) + len(all_ch50) + len(all_ch51) + len(all_ch52) + len(all_ch53) + len(all_ch54) + len(all_ch55) + len(all_ch56) + len(all_ch57) + len(all_ch58) + len(all_ch59) + len(all_ch60) + len(all_ch61) + len(all_ch62) + len(all_ch63) + len(all_ch64) + len(all_ch65) + len(all_ch66) + len(all_ch67) + len(all_ch68) + len(all_ch69) + len(all_ch70) + len(all_ch71) + len(all_ch72) + len(all_ch73) + len(all_ch74) + len(all_ch75) + len(all_ch76) + len(all_ch77) + len(all_ch78) + len(all_ch79) + len(all_ch80) + len(all_ch81) + len(all_ch82) + len(all_ch83) + len(all_ch84) + len(all_ch85)
 
 
 print("=== ТЕХНИЧЕСКИЙ АУДИТ УЧЕБНИКА GO ===")
@@ -432,6 +435,7 @@ print(f"Глава 81: {len(all_ch81)} упражнений")
 print(f"Глава 82: {len(all_ch82)} упражнений")
 print(f"Глава 83: {len(all_ch83)} упражнений")
 print(f"Глава 84: {len(all_ch84)} упражнений")
+print(f"Глава 85: {len(all_ch85)} упражнений")
 print(f"Всего упражнений в учебнике: {total_ex}")
 
 issues = []
@@ -642,6 +646,8 @@ for ex in all_ch83:
     check_exercise(83, ex)
 for ex in all_ch84:
     check_exercise(84, ex)
+for ex in all_ch85:
+    check_exercise(85, ex)
 
 # Check HTML files and anchors
 html_files = [
@@ -729,6 +735,7 @@ html_files = [
     ('chapter82.html', 82, len(all_ch82)),
     ('chapter83.html', 83, len(all_ch83)),
     ('chapter84.html', 84, len(all_ch84)),
+    ('chapter85.html', 85, len(all_ch85)),
 ]
 
 for fname, ch_num, count in html_files:

@@ -193,6 +193,8 @@ with open('builder/chapter83_data.json', 'r', encoding='utf-8') as f:
     ch83_exercises = json.load(f)
 with open('builder/chapter84_data.json', 'r', encoding='utf-8') as f:
     ch84_exercises = json.load(f)
+with open('builder/chapter85_data.json', 'r', encoding='utf-8') as f:
+    ch85_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -419,6 +421,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             82: ('chapter82.html', f'{len(ch82_exercises)}/{len(ch82_exercises)}'),
             83: ('chapter83.html', f'{len(ch83_exercises)}/{len(ch83_exercises)}'),
             84: ('chapter84.html', f'{len(ch84_exercises)}/{len(ch84_exercises)}'),
+            85: ('chapter85.html', f'{len(ch85_exercises)}/{len(ch85_exercises)}'),
         }
         
         if num in status_map:
@@ -5096,6 +5099,66 @@ def build_chapter84_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'84. CQRS и Event Sourcing на Go ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+def build_chapter85_html(chapters):
+    active_chapter_num = 85
+    current_exercises = ch85_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 85 • Advanced Distributed Storage, Caching & Coherence</div>
+        <h1 class="hero-title">Многоуровневое кэширование (L1-L2) и распределенная когерентность</h1>
+        <p class="hero-desc">
+            Исчерпывающее инженерное руководство по проектированию сверхпроизводительных систем многоуровневого кэширования (Multi-Level Caching) на языке Go. Организация иерархии памяти: локальный L1-кэш в оперативной памяти процесса (Zero-GC кольцевые буферы BigCache/FreeCache, шардированные структуры с защитой от False Sharing) и распределенный L2-кэш на базе Redis Cluster. Ликвидация эффекта набегающего стада (Cache Stampede / Thundering Herd) с помощью дедупликации вызовов sync/singleflight, отвязки контекстов и алгоритма вероятностного раннего устаревания XFetch. Защита базы данных от пробивания (Cache Penetration) и лавинного устаревания (Cache Avalanche) через фильтры Блума, кэширование Null-Object и центрированный TTL Jitter. Паттерны синхронной (Write-Through) и отложенной асинхронной (Write-Behind) записи с пакетным сбросом на диск. Обеспечение строгой согласованности кэшей (Cache Coherence) через шину Redis Pub/Sub и встроенный серверный трекинг протокола RESP3 (Client-Side Caching). Продвинутые алгоритмы вытеснения TinyLFU/W-TinyLFU, Zero-Copy бинарная сериализация, прозрачное сжатие zstd/lz4, контроль давления памяти (Memory Pressure / GOMEMLIMIT), Circuit Breaker защита от сбоев Redis и проектирование production-ready Enterprise-библиотеки кэша на чистом Go.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Архитектура L1/L2, Zero-GC структуры, Cache-Aside и ликвидация Thundering Herd (Упражнения 1–8)"),
+        (9, "Раздел 2: Вероятностный XFetch, фильтры Блума, джиттер TTL и инвалидация через Pub/Sub (Упражнения 9–15)"),
+        (16, "Раздел 3: Redis RESP3 Tracking, дифференциальный TTL, алгоритмы TinyLFU и Zero-Copy Protobuf (Упражнения 16–23)"),
+        (24, "Раздел 4: Метрики Hit Ratio, двойная инвалидация, Circuit Breaker, MGET и Enterprise-библиотека (Упражнения 24–30)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 85 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением многоуровневого кэширования и когерентности на Go!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы детально изучили архитектуру двухуровневого кэша L1/L2, алгоритмы Zero-GC, ликвидацию Thundering Herd через singleflight и XFetch, защиту от Penetration через фильтры Блума, протокол RESP3 Client-Side Tracking, сжатие пейлоадов и предотвращение рассинхронизации данных в распределенных кластерах.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter84.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 84 CQRS и Event Sourcing на Go</a>
+            <a href="chapter86.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 86 Масштабируемые распределенные планировщики и очереди задач →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'85. Многоуровневое кэширование (L1-L2) и распределенная когерентность ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 
 
 
@@ -5187,7 +5250,7 @@ all_100_chapters = [
     
     # 17 Planned Chapters (84-100)
     (84, "CQRS и Event Sourcing на Go", "chapter84.html", len(ch84_exercises), True, "Агрегаты, оптимистическая блокировка версий, Snapshots, проекции в Postgres/Elastic"),
-    (85, "Многоуровневое кэширование (L1/L2) и распределенная когерентность", "chapter85.html", 30, False, "In-memory TinyLFU/Ristretto, Redis RESP3 BCAST, алгоритм XFetch, Write-Behind"),
+    (85, "Многоуровневое кэширование (L1/L2) и распределенная когерентность", "chapter85.html", len(ch85_exercises), True, "In-memory TinyLFU/Ristretto, Redis RESP3 BCAST, алгоритм XFetch, Write-Behind"),
     (86, "Масштабируемые распределенные планировщики и очереди задач", "chapter86.html", 30, False, "Фоновые очереди Asynq/River, SKIP LOCKED, периодические задачи, кластерный Cron"),
     (87, "Оркестрация распределенных процессов (Durable Execution) на Temporal.io", "chapter87.html", 30, False, "Temporal Workflows, Activities, Replay детерминизм, Signals, Queries, Long Timers"),
     (88, "Потоковая обработка данных в реальном времени (Stream Processing)", "chapter88.html", 30, False, "Tumbling/Sliding/Session окна, Watermarks, Late Data, Exactly-Once Checkpoints"),
@@ -5617,6 +5680,7 @@ if __name__ == '__main__':
         ('chapter82.html', build_chapter82_html),
         ('chapter83.html', build_chapter83_html),
         ('chapter84.html', build_chapter84_html),
+        ('chapter85.html', build_chapter85_html),
     ]
     
     for filename, builder_fn in pages:
