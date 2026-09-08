@@ -203,6 +203,8 @@ with open('builder/chapter88_data.json', 'r', encoding='utf-8') as f:
     ch88_exercises = json.load(f)
 with open('builder/chapter89_data.json', 'r', encoding='utf-8') as f:
     ch89_exercises = json.load(f)
+with open('builder/chapter90_data.json', 'r', encoding='utf-8') as f:
+    ch90_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -434,6 +436,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             87: ('chapter87.html', f'{len(ch87_exercises)}/{len(ch87_exercises)}'),
             88: ('chapter88.html', f'{len(ch88_exercises)}/{len(ch88_exercises)}'),
             89: ('chapter89.html', f'{len(ch89_exercises)}/{len(ch89_exercises)}'),
+            90: ('chapter90.html', f'{len(ch90_exercises)}/{len(ch90_exercises)}'),
         }
         
         if num in status_map:
@@ -5411,6 +5414,66 @@ def build_chapter89_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'89. Хаос-инженерия и нагрузочное тестирование на Go ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+def build_chapter90_html(chapters):
+    active_chapter_num = 90
+    current_exercises = ch90_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 90 • Cloud-Native API Gateways, Protobuf Ecosystem & OpenAPI</div>
+        <h1 class="hero-title">Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI</h1>
+        <p class="hero-desc">
+            Фундаментальное практическое руководство по созданию современных контрактно-ориентированных (Contract-First) API-шлюзов на языке Go с использованием экосистемы Protocol Buffers v3, gRPC-Gateway v2, gRPC-Web и OpenAPI (Swagger). Архитектурная парадигма Single Source of Truth: единый контракт IDL против проблемы рассинхронизации (Contract Drift), автоматическая кодогенерация серверных интерфейсов, клиентов и схем данных. Аннотации маршрутизации google.api.http: привязка REST методов, параметров URL, query-строки и тела запроса. Мультиплексирование сетевых протоколов: запуск на раздельных портах, разделение трафика через библиотеку cmux (Connection Multiplexing по сигнатуре заголовков) и единый HTTP/2 сервер со стандартным пакетом h2c без сторонних библиотек. Трансляция ошибок и метаданных: соответствие кодов статусов gRPC и HTTP, кастомные обработчики ошибок в стандарте RFC 7807 (Problem Details), двунаправленный проброс метаданных контекста (WithIncomingHeaderMatcher, WithOutgoingHeaderMatcher) и аутентификация JWT на периметре шлюза. Тонкий тюнинг сериализации JSONPb: сохранение исходных snake_case имен полей и принудительный вывод значений по умолчанию (EmitUnpopulated). Потоковые интерфейсы: передача Server-Streaming RPC через HTTP Chunked Transfer Encoding и Server-Sent Events (SSE). Браузерная интеграция с протоколом gRPC-Web: спецификация фрейминга, 5-байтный префикс кадра, инкапсуляция HTTP/2 Trailers в завершающий фрейм тела ответа (0x80), in-process прокси improbable-eng/grpc-web и обязательная настройка CORS middleware (Access-Control-Expose-Headers для grpc-status). Декларативная валидация запросов через правила bufbuild/protovalidate на базе движка CEL. Линтинг и строгий аудит обратной совместимости контрактов с Buf CLI (buf lint, buf breaking против репозитория). Enterprise паттерны: частичное обновление ресурсов через google.protobuf.FieldMask (HTTP PATCH), полиморфные события с google.protobuf.Any, эффективная передача бинарных файлов через google.api.HttpBody без Base64 накладных расходов. Периметральная защита и Observability: алгоритм Token Bucket Rate Limiting (golang.org/x/time/rate), сквозная распределенная трассировка OpenTelemetry с W3C Trace Context (traceparent), раздельные метрики Prometheus для шлюза и бэкендов, скоординированный Graceful Shutdown обоих серверов, комплексное E2E тестирование паритета контрактов и финальный Capstone-шлюз микросервисной платформы.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Contract-First, кодогенерация grpc-gateway и аннотации REST (Упражнения 1–7)"),
+        (8, "Раздел 2: Мультиплексирование cmux, HTTP/2 h2c, ошибки и метаданные (Упражнения 8–15)"),
+        (16, "Раздел 3: Server-Streaming, gRPC-Web протокол, CORS и protovalidate (Упражнения 16–22)"),
+        (23, "Раздел 4: Any, HttpBody, Rate Limiting, OpenTelemetry, E2E и Capstone (Упражнения 23–30)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 90 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением контрактных API-шлюзов!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы в совершенстве овладели современным стеком контрактной разработки API: Protobuf Contract-First парадигмой, кодогенерацией gRPC-Gateway, мультиплексированием протоколов, gRPC-Web для фронтенда, декларативной валидацией protovalidate, аудитом Buf CLI и комплексной периметральной защитой.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter89.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 89 Хаос-инженерия и нагрузочное тестирование на Go</a>
+            <a href="chapter91.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 91 Разработка собственных Kubernetes Operators и CRD на Go →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'90. Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 
 
 
@@ -5507,8 +5570,8 @@ all_100_chapters = [
     (87, "Оркестрация распределенных процессов (Durable Execution) на Temporal.io", "chapter87.html", len(ch87_exercises), True, "Temporal Workflows, Activities, Replay детерминизм, Signals, Queries, Long Timers"),
     (88, "Потоковая обработка данных в реальном времени (Stream Processing)", "chapter88.html", len(ch88_exercises), True, "Tumbling/Sliding/Session окна, Watermarks, Late Data, Exactly-Once Checkpoints"),
     (89, "Хаос-инженерия и нагрузочное тестирование на Go", "chapter89.html", len(ch89_exercises), True, "Инъекция сбоев Toxiproxy, открытая модель нагрузки, HdrHistogram, p99.9 задержки"),
-    (90, "Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI", "chapter90.html", 30, False, "google.api.http аннотации, grpc-gateway, OpenAPI v3, Swagger UI в embed.FS"),
-    (91, "Разработка собственных Kubernetes Operators и CRD на Go", "chapter91.html", 30, False, "Kubebuilder, Custom Resources, Reconcile Loop, Informers, Workqueues, Webhooks"),
+    (90, "Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI", "chapter90.html", len(ch90_exercises), True, "Contract-First, buf, gRPC-Gateway, gRPC-Web, OpenAPI v3, protovalidate"),
+    (91, "Разработка собственных Kubernetes Operators и CRD на Go", "chapter91.html", 45, False, "Kubebuilder, Custom Resources, Reconcile Loop, Informers, Workqueues, Webhooks"),
     (92, "Расширяемость систем: Plugins, IPC и WebAssembly (Wazero)", "chapter92.html", 30, False, "plugin.Open, HashiCorp go-plugin (gRPC IPC), Wazero Wasm песочницы, Fuel metering"),
     (93, "Высокопроизводительные API Gateway и Reverse Proxy на чистом Go", "chapter93.html", 30, False, "httputil.ReverseProxy, динамическая маршрутизация, Peak-EWMA, Request Hedging"),
     (94, "Enterprise Release Engineering: Feature Flags, динамический конфиг и Canary Routing", "chapter94.html", 30, False, "OpenFeature SDK, Canary rollouts, Kill Switch за 50 мс, fsnotify Hot Reload"),
@@ -5937,6 +6000,7 @@ if __name__ == '__main__':
         ('chapter87.html', build_chapter87_html),
         ('chapter88.html', build_chapter88_html),
         ('chapter89.html', build_chapter89_html),
+        ('chapter90.html', build_chapter90_html),
     ]
     
     for filename, builder_fn in pages:
