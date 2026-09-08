@@ -197,6 +197,8 @@ with open('builder/chapter85_data.json', 'r', encoding='utf-8') as f:
     ch85_exercises = json.load(f)
 with open('builder/chapter86_data.json', 'r', encoding='utf-8') as f:
     ch86_exercises = json.load(f)
+with open('builder/chapter87_data.json', 'r', encoding='utf-8') as f:
+    ch87_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -425,6 +427,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             84: ('chapter84.html', f'{len(ch84_exercises)}/{len(ch84_exercises)}'),
             85: ('chapter85.html', f'{len(ch85_exercises)}/{len(ch85_exercises)}'),
             86: ('chapter86.html', f'{len(ch86_exercises)}/{len(ch86_exercises)}'),
+            87: ('chapter87.html', f'{len(ch87_exercises)}/{len(ch87_exercises)}'),
         }
         
         if num in status_map:
@@ -5222,6 +5225,66 @@ def build_chapter86_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'86. Масштабируемые распределенные планировщики и очереди задач ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+def build_chapter87_html(chapters):
+    active_chapter_num = 87
+    current_exercises = ch87_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 87 • Advanced Distributed Systems, Durable Execution & Temporal.io</div>
+        <h1 class="hero-title">Оркестрация распределенных процессов (Durable Execution) на Temporal.io</h1>
+        <p class="hero-desc">
+            Фундаментальное руководство по парадигме долговечного исполнения (Durable Execution) и распределенной оркестрации бизнес-процессов на платформе Temporal.io на языке Go. Механика Event Sourcing и Replay детерминизма: почему локальные переменные, циклы, таймеры и стек вызовов восстанавливаются без потери состояния даже при падении серверов. Разделение зон ответственности: кластер Temporal (Frontend, History, Matching) и клиентские воркеры Go SDK. Проектирование Activities: сайд-эффекты, таймауты (StartToClose, ScheduleToStart, ScheduleToClose), экспоненциальный RetryPolicy с Full Jitter, классификация Non-Retryable ошибок и Activity Heartbeating с сохранением чекпоинтов. Управление параллелизмом: workflow.Go, детерминированные каналы, Selector и параллельные Child Workflows с Fan-Out / Fan-In семафором. Взаимодействие с внешним миром: асинхронные Сигналы (Signals), синхронные Запросы (Queries), атомарный Update API (валидация + мутация за 1 round-trip) и паттерн Human-in-the-Loop. Надежность и эволюция: распределенная Сага (Saga Pattern) с компенсациями в NewDisconnectedContext, версионирование (Workflow Versioning, GetVersion, Worker Build IDs) и Replay-тестирование в CI/CD. Продвинутые возможности: Temporal Schedule API, Nexus RPC, кастомные Search Attributes в Elasticsearch, Batch Operations, сквозное шифрование AES-256 (PayloadCodec / Codec Server), мониторинг Prometheus, Multi-Cluster репликация, паттерн Durable Poller и промышленный процессинг международных банковских переводов SWIFT/SEPA.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Парадигма Durable Execution, архитектура Temporal, воркеры и детерминизм (Упражнения 1–12)"),
+        (13, "Раздел 2: Сигналы, запросы, таймеры, Human-in-the-Loop, Child Workflows и распределенная Сага (Упражнения 13–25)"),
+        (26, "Раздел 3: Мокирование, OTel трассировка, сквозное шифрование, HighLoad тюнинг и Update API (Упражнения 26–37)"),
+        (38, "Раздел 4: Checkpoints, Local Activities, mTLS Cloud, Fan-Out, Nexus, Chaos и SWIFT-процессинг (Упражнения 38–50)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 87 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением Durable Execution и Temporal.io!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы полностью овладели архитектурой Temporal, парадигмой долговечного исполнения, гарантиями детерминизма, распределенными сагами, сигналами, запросами, Update API, версионированием через Build ID, сквозным шифрованием и проектированием высоконадежных систем банковского уровня.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter86.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 86 Масштабируемые распределенные планировщики и очереди задач</a>
+            <a href="chapter88.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 88 Потоковая обработка данных в реальном времени (Stream Processing) →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'87. Оркестрация распределенных процессов (Durable Execution) на Temporal.io ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 
 
 
@@ -5315,7 +5378,7 @@ all_100_chapters = [
     (84, "CQRS и Event Sourcing на Go", "chapter84.html", len(ch84_exercises), True, "Агрегаты, оптимистическая блокировка версий, Snapshots, проекции в Postgres/Elastic"),
     (85, "Многоуровневое кэширование (L1/L2) и распределенная когерентность", "chapter85.html", len(ch85_exercises), True, "In-memory TinyLFU/Ristretto, Redis RESP3 BCAST, алгоритм XFetch, Write-Behind"),
     (86, "Масштабируемые распределенные планировщики и очереди задач", "chapter86.html", len(ch86_exercises), True, "Фоновые очереди Asynq/River, SKIP LOCKED, периодические задачи, кластерный Cron"),
-    (87, "Оркестрация распределенных процессов (Durable Execution) на Temporal.io", "chapter87.html", 30, False, "Temporal Workflows, Activities, Replay детерминизм, Signals, Queries, Long Timers"),
+    (87, "Оркестрация распределенных процессов (Durable Execution) на Temporal.io", "chapter87.html", len(ch87_exercises), True, "Temporal Workflows, Activities, Replay детерминизм, Signals, Queries, Long Timers"),
     (88, "Потоковая обработка данных в реальном времени (Stream Processing)", "chapter88.html", 30, False, "Tumbling/Sliding/Session окна, Watermarks, Late Data, Exactly-Once Checkpoints"),
     (89, "Хаос-инженерия и нагрузочное тестирование на Go", "chapter89.html", 30, False, "Инъекция сбоев Toxiproxy, fasthttp генератор нагрузки, HDRHistogram, p99.9 задержки"),
     (90, "Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI", "chapter90.html", 30, False, "google.api.http аннотации, grpc-gateway, OpenAPI v3, Swagger UI в embed.FS"),
@@ -5745,6 +5808,7 @@ if __name__ == '__main__':
         ('chapter84.html', build_chapter84_html),
         ('chapter85.html', build_chapter85_html),
         ('chapter86.html', build_chapter86_html),
+        ('chapter87.html', build_chapter87_html),
     ]
     
     for filename, builder_fn in pages:
