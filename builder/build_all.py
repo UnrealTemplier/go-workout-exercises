@@ -207,6 +207,8 @@ with open('builder/chapter90_data.json', 'r', encoding='utf-8') as f:
     ch90_exercises = json.load(f)
 with open('builder/chapter91_data.json', 'r', encoding='utf-8') as f:
     ch91_exercises = json.load(f)
+with open('builder/chapter92_data.json', 'r', encoding='utf-8') as f:
+    ch92_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -440,6 +442,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             89: ('chapter89.html', f'{len(ch89_exercises)}/{len(ch89_exercises)}'),
             90: ('chapter90.html', f'{len(ch90_exercises)}/{len(ch90_exercises)}'),
             91: ('chapter91.html', f'{len(ch91_exercises)}/{len(ch91_exercises)}'),
+            92: ('chapter92.html', f'{len(ch92_exercises)}/{len(ch92_exercises)}'),
         }
         
         if num in status_map:
@@ -5537,6 +5540,65 @@ def build_chapter91_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'91. Разработка собственных Kubernetes Operators и CRD на Go ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+def build_chapter92_html(chapters):
+    active_chapter_num = 92
+    current_exercises = ch92_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 92 • Core Systems, IPC, Security & WebAssembly Internals</div>
+        <h1 class="hero-title">Расширяемость систем: Plugins, IPC и WebAssembly (Wazero)</h1>
+        <p class="hero-desc">
+            Исчерпывающее практическое руководство по созданию расширяемых архитектур корпоративных платформ на Go. Архитектурные парадигмы расширяемости: Microkernel, FFI, Shared Objects, Out-of-Process IPC и изолированные песочницы WebAssembly. Анатомия стандартного пакета plugin: динамическая линковка .so, системный вызов dlopen, экспорт символов и фундаментальные ограничения ABI компилятора Go. Внепроцессные плагины через фреймворк HashiCorp go-plugin: архитектура взаимодействия через UNIX Domain Sockets, безопасное рукопожатие HandshakeConfig с Magic Cookies, Protobuf-контракты и адаптеры gRPC, двусторонняя коммуникация через GRPCBroker и изоляция сбоев на уровне ядра ОС. WebAssembly (Wasm) для серверного Go: сравнительный анализ с контейнерами, отказ от CGO и архитектура чистого рантайма Tetrate Wazero с JIT-компиляцией для amd64 и arm64. Линейная память Wasm: экспорт функций allocate и deallocate, чтение/запись срезов байт через api.Memory, регистрация хост-функций для предоставления системных возможностей хоста и стандарт WASI Snapshot Preview 1. Системная песочница и безопасность: ограничение виртуальной памяти Wasm, защита от OOM, перехват бесконечных циклов через context.WithTimeout и учет процессорных инструкций (Gas Metering). HighLoad паттерны: пул разогретых инстансов sync.Pool, изоляция памяти при конкурентных запросах, передача бинарных Protobuf-структур, горячая перезагрузка модулей через atomic.Pointer без прерывания трафика, компиляция динамических DSL в Wasm-байткод и построение платформы Enterprise Serverless Execution Engine.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Архитектура расширяемости, стандартный пакет plugin и HashiCorp go-plugin (Упражнения 1–10)"),
+        (11, "Раздел 2: Callbacks, рантайм Wazero, компиляция WASI, линейная память и хост-функции (Упражнения 11–20)"),
+        (21, "Раздел 3: Песочницы, лимиты памяти, Gas Metering, пулинг, бенчмарки и Serverless (Упражнения 21–30)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 92 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением плагинных архитектур и WebAssembly на Go!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы в совершенстве овладели передовыми технологиями расширяемости корпоративных систем: архитектурой Out-of-Process IPC плагинов на базе HashiCorp go-plugin, бессерверным рантаймом Wazero WebAssembly на чистом Go, безопасными песочницами WASI, Gas Metering, пулингом инстансов и горячей заменой модулей без даунтайма.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter91.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 91 Разработка собственных Kubernetes Operators и CRD на Go</a>
+            <a href="chapter93.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 93 Высокопроизводительные API Gateway и Reverse Proxy на чистом Go →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'92. Расширяемость систем: Plugins, IPC и WebAssembly (Wazero) ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 
 
 
@@ -5635,7 +5697,7 @@ all_100_chapters = [
     (89, "Хаос-инженерия и нагрузочное тестирование на Go", "chapter89.html", len(ch89_exercises), True, "Инъекция сбоев Toxiproxy, открытая модель нагрузки, HdrHistogram, p99.9 задержки"),
     (90, "Контракт-ориентированные API-шлюзы: gRPC-Gateway, gRPC-Web и OpenAPI", "chapter90.html", len(ch90_exercises), True, "Contract-First, buf, gRPC-Gateway, gRPC-Web, OpenAPI v3, protovalidate"),
     (91, "Разработка собственных Kubernetes Operators и CRD на Go", "chapter91.html", len(ch91_exercises), True, "Kubebuilder, Custom Resources, Reconcile Loop, Informers, Workqueues, Webhooks, SSA"),
-    (92, "Расширяемость систем: Plugins, IPC и WebAssembly (Wazero)", "chapter92.html", 30, False, "plugin.Open, HashiCorp go-plugin (gRPC IPC), Wazero Wasm песочницы, Fuel metering"),
+    (92, "Расширяемость систем: Plugins, IPC и WebAssembly (Wazero)", "chapter92.html", len(ch92_exercises), True, "plugin.Open, HashiCorp go-plugin (gRPC IPC), Wazero Wasm песочницы, Fuel metering"),
     (93, "Высокопроизводительные API Gateway и Reverse Proxy на чистом Go", "chapter93.html", 30, False, "httputil.ReverseProxy, динамическая маршрутизация, Peak-EWMA, Request Hedging"),
     (94, "Enterprise Release Engineering: Feature Flags, динамический конфиг и Canary Routing", "chapter94.html", 30, False, "OpenFeature SDK, Canary rollouts, Kill Switch за 50 мс, fsnotify Hot Reload"),
     (95, "Распределенная координация и хранилище метаданных etcd v3", "chapter95.html", 30, False, "clientv3 Watchers, Leases с автопродлением, атомарные транзакции Txn, Service Discovery"),
@@ -6065,6 +6127,7 @@ if __name__ == '__main__':
         ('chapter89.html', build_chapter89_html),
         ('chapter90.html', build_chapter90_html),
         ('chapter91.html', build_chapter91_html),
+        ('chapter92.html', build_chapter92_html),
     ]
     
     for filename, builder_fn in pages:
