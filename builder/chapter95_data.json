@@ -1,0 +1,782 @@
+[
+  {
+    "num": 1,
+    "title": "Архитектура etcd v3 и протокол консенсуса Raft",
+    "task": "Изучите архитектуру etcd v3 и алгоритм консенсуса Raft. Смоделируйте потокобезопасную структуру RaftNodeState с ролями Follower/Candidate/Leader, текущим термом (currentTerm) и индексом коммита (commitIndex). Реализуйте метод репликации команд и переход в состояние лидера при получении кворума.",
+    "theory": "etcd v3 — это строго консистентное распределенное хранилище метаданных вида 'ключ-значение', лежащее в основе Kubernetes (хранение всего состояния кластера, Pods, Services, CRD) и критических enterprise-систем.\n\nКлючевые архитектурные столпы etcd:\n1. Консенсус Raft: гарантирует линеаризуемость (Linearizable Reads/Writes) и устойчивость к разделению сети (Network Partitions). Кластер из `2F+1` узлов сохраняет работоспособность при падении до `F` узлов (для кластера из 3 узлов допустима потеря 1, для 5 узлов — 2).\n2. Хранилище BoltDB (bbolt): встроенная transactional B+tree СУБД, в которой данные персистентно сохраняются на диск через memory-mapped files (`mmap`).\n3. MVCC (Multi-Version Concurrency Control): данные не перезаписываются на месте. Каждая операция записи создает новую глобальную ревизию, позволяя осуществлять исторические запросы и подписки на изменения.",
+    "step_by_step": [
+      "Определите тип перечисления RaftRole для состояний Follower, Candidate и Leader.",
+      "Создайте структуру RaftNodeState с защитой состояния через sync.RWMutex.",
+      "Реализуйте метод BecomeLeader с фиксацией текущего терма выборов.",
+      "Напишите метод ProposeCommand с проверкой роли лидера и инкрементом commitIndex.",
+      "Продемонстрируйте фиксацию команды в реплицированном журнале."
+    ],
+    "code_blocks": [
+      {
+        "filename": "raft_architecture.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n)\n\n// RaftRole описывает роль узла в алгоритме консенсуса Raft\ntype RaftRole string\n\nconst (\n\tRoleFollower  RaftRole = \"Follower\"\n\tRoleCandidate RaftRole = \"Candidate\"\n\tRoleLeader    RaftRole = \"Leader\"\n)\n\n// RaftNodeState моделирует базовое состояние узла Raft в etcd\ntype RaftNodeState struct {\n\tmu          sync.RWMutex\n\tnodeID      string\n\tcurrentTerm uint64\n\trole        RaftRole\n\tvotedFor    string\n\tcommitIndex uint64\n\tlogEntries  []string\n}\n\nfunc NewRaftNode(id string) *RaftNodeState {\n\treturn &RaftNodeState{\n\t\tnodeID:      id,\n\t\tcurrentTerm: 1,\n\t\trole:        RoleFollower,\n\t\tlogEntries:  make([]string, 0),\n\t}\n}\n\nfunc (n *RaftNodeState) GetStatus() (string, RaftRole, uint64, uint64) {\n\tn.mu.RLock()\n\tdefer n.mu.RUnlock()\n\treturn n.nodeID, n.role, n.currentTerm, n.commitIndex\n}\n\n// ProposeCommand имитирует предложение команды клиентом лидеру etcd\nfunc (n *RaftNodeState) ProposeCommand(ctx context.Context, cmd string) (uint64, error) {\n\tn.mu.Lock()\n\tdefer n.mu.Unlock()\n\n\tif n.role != RoleLeader {\n\t\treturn 0, fmt.Errorf(\"node %s не является лидером, перенаправление запроса\", n.nodeID)\n\t}\n\n\tn.logEntries = append(n.logEntries, cmd)\n\tn.commitIndex = uint64(len(n.logEntries))\n\treturn n.commitIndex, nil\n}\n\n// BecomeLeader переводит узел в состояние лидера после успешного кворума\nfunc (n *RaftNodeState) BecomeLeader(term uint64) {\n\tn.mu.Lock()\n\tdefer n.mu.Unlock()\n\tn.role = RoleLeader\n\tn.currentTerm = term\n\tfmt.Printf(\"[RAFT] Узел %s избран лидером терма %d (Кворум подтвержден)\\n\", n.nodeID, n.currentTerm)\n}\n\nfunc main() {\n\tnode := NewRaftNode(\"etcd-node-1\")\n\tnode.BecomeLeader(2)\n\n\tctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)\n\tdefer cancel()\n\n\tidx, err := node.ProposeCommand(ctx, \"PUT /configs/db/host = pg.prod.local\")\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tid, role, term, commit := node.GetStatus()\n\tfmt.Printf(\"Узел: %s, Роль: %s, Терм: %d, Реплицированный индекс: %d (Команда %d закоммичена)\\n\",\n\t\tid, role, term, commit, idx)\n}\n"
+      }
+    ],
+    "under_the_hood": "В etcd v3 все изменения сначала попадают в Raft-лог в памяти, затем сбрасываются на диск с `fsync` (WAL — Write-Ahead Log). Лидер рассылает `AppendEntries` RPC фолловерам. Как только большинство (кворум `N/2 + 1`) подтвердило запись на диск, команда считается закоммиченной и применяется к состоянию MVCC в bbolt.",
+    "pitfalls": [
+      "Четное число узлов: развертывание 4 узлов не увеличивает отказоустойчивость по сравнению с 3 (в обоих случаях допустима потеря только 1 узла, но для 4 узлов требуется кворум из 3). Всегда используйте нечетное число нод (3 или 5).",
+      "Медленные диски: задержка `fsync` на WAL напрямую определяет пропускную способность etcd. Использование медленных сетевых HDD дисков приводит к потере heartbeat-пакетов и непрерывным перевыборам лидера."
+    ],
+    "bigtech_interview": "Почему etcd не масштабируется горизонтально по объему хранимых данных? etcd оптимизирован под консистентность метаданных (CP по CAP-теореме), а не под Big Data. Каждый узел хранит полную копию всех ключей. Лимит размера базы etcd по умолчанию — от 2 до 8 ГБ."
+  },
+  {
+    "num": 2,
+    "title": "Модель данных etcd: глобальные ревизии и версионирование",
+    "task": "Изучите версионирование в etcd v3: глобальный счетчик ревизий (Main Revision), CreateRevision, ModRevision и Version. Напишите имитатор MVCCStore, демонстрирующий, как изменяются метаданные при создании, повторных модификациях, удалении и пересоздании ключа.",
+    "theory": "В etcd v3 ревизия (Revision) — это 64-битный монотонно возрастающий счетчик кластера. В отличие от реляционных баз данных с табличными строками, в etcd любое действие записи (Put, Delete) увеличивает единую ревизию всего кластера.\n\nКаждая запись в etcd сопровождается тремя мета-полями:\n- `CreateRevision`: ревизия, на которой ключ был физически создан. Сохраняется неизменной при последующих обновлениях значения.\n- `ModRevision`: ревизия последней модификации данного ключа.\n- `Version`: локальный счетчик изменений ключа, начинающийся с 1. При удалении ключа счетчик сбрасывается в 0. При пересоздании начинается заново с 1.\n\nБлагодаря глобальным ревизиям etcd обеспечивает линеаризуемые снимки (Point-in-time Reads) и надежные подписки Watcher без race condition.",
+    "step_by_step": [
+      "Создайте структуру KeyMetadata с полями CreateRevision, ModRevision, Version и Value.",
+      "Реализуйте MVCCStore с глобальным счетчиком mainRevision под защитой sync.RWMutex.",
+      "В методе Put инкрементируйте mainRevision. Если ключ уже существует, сохраните CreateRevision и инкрементируйте Version.",
+      "В методе Delete инкрементируйте mainRevision и удалите ключ из активного словаря.",
+      "Проверьте, что при пересоздании ключа CreateRevision обновляется до текущей ревизии, а Version сбрасывается в 1."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_mvcc_model.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n)\n\n// KeyMetadata описывает MVCC-метаданные конкретного ключа в etcd\ntype KeyMetadata struct {\n\tKey            string\n\tValue          []byte\n\tCreateRevision int64 // Глобальная ревизия создания ключа\n\tModRevision    int64 // Глобальная ревизия последнего изменения ключа\n\tVersion        int64 // Счетчик версий (число изменений в текущей жизни)\n}\n\n// MVCCStore эмулирует хранилище etcd v3 с глобальным счетчиком ревизий\ntype MVCCStore struct {\n\tmu           sync.RWMutex\n\tmainRevision int64\n\tkeys         map[string]KeyMetadata\n}\n\nfunc NewMVCCStore() *MVCCStore {\n\treturn &MVCCStore{\n\t\tmainRevision: 1, // Начальная ревизия etcd\n\t\tkeys:         make(map[string]KeyMetadata),\n\t}\n}\n\n// Put сохраняет значение с инкрементом глобальной ревизии\nfunc (s *MVCCStore) Put(key string, val []byte) KeyMetadata {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\n\ts.mainRevision++ // Каждая операция записи инкрементирует глобальный счетчик\n\texisting, exists := s.keys[key]\n\n\tmeta := KeyMetadata{\n\t\tKey:            key,\n\t\tValue:          val,\n\t\tModRevision:    s.mainRevision,\n\t\tCreateRevision: s.mainRevision,\n\t\tVersion:        1,\n\t}\n\n\tif exists {\n\t\tmeta.CreateRevision = existing.CreateRevision\n\t\tmeta.Version = existing.Version + 1\n\t}\n\n\ts.keys[key] = meta\n\treturn meta\n}\n\n// Delete удаляет ключ с фиксацией ревизии удаления (Tombstone)\nfunc (s *MVCCStore) Delete(key string) (int64, bool) {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\n\tif _, exists := s.keys[key]; !exists {\n\t\treturn s.mainRevision, false\n\t}\n\n\ts.mainRevision++\n\tdelete(s.keys, key)\n\treturn s.mainRevision, true\n}\n\nfunc (s *MVCCStore) CurrentRevision() int64 {\n\ts.mu.RLock()\n\tdefer s.mu.RUnlock()\n\treturn s.mainRevision\n}\n\nfunc main() {\n\tstore := NewMVCCStore()\n\n\t// Шаг 1: Первое создание ключа\n\tm1 := store.Put(\"/app/rate_limit\", []byte(\"100\"))\n\tfmt.Printf(\"1. Создан ключ: Key=%s CreateRev=%d ModRev=%d Version=%d Val=%s\\n\",\n\t\tm1.Key, m1.CreateRevision, m1.ModRevision, m1.Version, string(m1.Value))\n\n\t// Шаг 2: Создание другого ключа (глобальная ревизия растет)\n\tstore.Put(\"/app/db_pool\", []byte(\"50\"))\n\n\t// Шаг 3: Модификация первого ключа\n\tm2 := store.Put(\"/app/rate_limit\", []byte(\"250\"))\n\tfmt.Printf(\"2. Обновлен ключ: Key=%s CreateRev=%d ModRev=%d Version=%d Val=%s\\n\",\n\t\tm2.Key, m2.CreateRevision, m2.ModRevision, m2.Version, string(m2.Value))\n\n\t// Шаг 4: Удаление ключа\n\tdelRev, _ := store.Delete(\"/app/rate_limit\")\n\tfmt.Printf(\"3. Ключ удален на глобальной ревизии: %d (Текущая ревизия кластера: %d)\\n\",\n\t\tdelRev, store.CurrentRevision())\n\n\t// Шаг 5: Повторное создание удаленного ключа\n\tm3 := store.Put(\"/app/rate_limit\", []byte(\"500\"))\n\tfmt.Printf(\"4. Вновь создан: Key=%s CreateRev=%d ModRev=%d Version=%d Val=%s\\n\",\n\t\tm3.Key, m3.CreateRevision, m3.ModRevision, m3.Version, string(m3.Value))\n}\n"
+      }
+    ],
+    "under_the_hood": "В реальном etcd v3 в оперативной памяти поддерживается древовидный индекс B-Tree (`treeIndex`). Он хранит для каждого ключа цепочку всех ревизий. Реальные значения и ключи хранятся в bbolt на диске, где ключом является пара `(revision, sub-revision)`, что делает запись строго последовательной (append-only) и оптимизированной под SSD.",
+    "pitfalls": [
+      "Путаница между Version и Revision: Version относится только к конкретному ключу и обнуляется при удалении. Revision — глобальное свойство всего кластера etcd, монотонно растущее на протяжении всей жизни кластера.",
+      "Переполнение счетчика: 64-битный integer (int64) при 10 000 записей в секунду переполнится только через 29 миллионов лет, поэтому переполнение исключено."
+    ],
+    "bigtech_interview": "Как глобальные ревизии etcd используются в Kubernetes контроллерах? Kubernetes сохраняет `ModRevision` как `metadata.resourceVersion`. Контроллеры используют optimistic concurrency control: при обновлении объекта в etcd отправляется проверка 'обновить только если resourceVersion не изменился'."
+  },
+  {
+    "num": 3,
+    "title": "Подключение к кластеру etcd на Go (clientv3)",
+    "task": "Подключите официальную библиотеку go.etcd.io/etcd/client/v3. Напишите функцию инициализации клиента NewEtcdClient с поддержкой множественных эндпоинтов, таймаутов, авто-синхронизации топологии кластера (AutoSyncInterval) и настройки взаимной аутентификации по сертификатам (mTLS с TLS 1.3).",
+    "theory": "`go.etcd.io/etcd/client/v3` — официальный клиентский SDK для etcd v3. В отличие от etcd v2 (который работал по протоколу HTTP/1.1 REST/JSON), v3 общается исключительно по бинарному протоколу gRPC поверх мультиплексированных соединений HTTP/2.\n\nКлючевые опции конфигурации клиента:\n1. `Endpoints`: срез адресов нод кластера (`host:port`). Клиент балансирует запросы между ними и автоматически переключается при сбое одной из нод.\n2. `AutoSyncInterval`: периодический опрос топологии кластера через `MemberList RPC`. Если в кластер добавилась новая нода, клиент автоматически начинает посылать запросы и на нее.\n3. `DialKeepAliveTime` и `DialKeepAliveTimeout`: периодические gRPC PING-пакеты для своевременного обнаружения мертвых TCP-соединений.\n4. `TLS`: взаимная аутентификация клиента и сервера (mTLS) — обязательный стандарт безопасности для доступа к etcd в корпоративных кластерах.",
+    "step_by_step": [
+      "Изучите структуру clientv3.Config и опции подключения.",
+      "Реализуйте функцию загрузки x509 клиентских сертификатов и CA пула для TLS.",
+      "Настройте параметры gRPC KeepAlive для упреждающего контроля соединений.",
+      "Инициализируйте клиент clientv3.New() и настройте корректный defer client.Close().",
+      "Проверьте обработку ошибок инициализации."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_client_init.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"crypto/tls\"\n\t\"crypto/x509\"\n\t\"fmt\"\n\t\"os\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// EtcdConnectionManager управляет жизненным циклом клиента etcd\ntype EtcdConnectionManager struct {\n\tclient *clientv3.Client\n}\n\n// NewEtcdClient создает подключение с настройкой mTLS и таймаутов\nfunc NewEtcdClient(endpoints []string, dialTimeout time.Duration, certFile, keyFile, caFile string) (*clientv3.Client, error) {\n\tvar tlsConfig *tls.Config\n\n\tif certFile != \"\" && keyFile != \"\" && caFile != \"\" {\n\t\tcert, err := tls.LoadX509KeyPair(certFile, keyFile)\n\t\tif err != nil {\n\t\t\treturn nil, fmt.Errorf(\"ошибка загрузки сертификата клиента: %w\", err)\n\t\t}\n\n\t\tcaData, err := os.ReadFile(caFile)\n\t\tif err != nil {\n\t\t\treturn nil, fmt.Errorf(\"ошибка чтения CA файла: %w\", err)\n\t\t}\n\n\t\tcaPool := x509.NewCertPool()\n\t\tif !caPool.AppendCertsFromPEM(caData) {\n\t\t\treturn nil, fmt.Errorf(\"не удалось распарсить CA сертификат\")\n\t\t}\n\n\t\ttlsConfig = &tls.Config{\n\t\t\tCertificates: []tls.Certificate{cert},\n\t\t\tRootCAs:      caPool,\n\t\t\tMinVersion:   tls.VersionTLS13,\n\t\t}\n\t}\n\n\tcli, err := clientv3.New(clientv3.Config{\n\t\tEndpoints:            endpoints,\n\t\tDialTimeout:          dialTimeout,\n\t\tDialKeepAliveTime:    10 * time.Second,\n\t\tDialKeepAliveTimeout: 3 * time.Second,\n\t\tTLS:                  tlsConfig,\n\t\tAutoSyncInterval:     30 * time.Second, // Периодическое автообновление списка активных узлов\n\t})\n\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"сбой инициализации clientv3: %w\", err)\n\t}\n\n\treturn cli, nil\n}\n\nfunc main() {\n\t// Демонстрация конфигурации подключения\n\tendpoints := []string{\"http://127.0.0.1:2379\", \"http://127.0.0.1:22379\", \"http://127.0.0.1:32379\"}\n\ttimeout := 3 * time.Second\n\n\tfmt.Println(\"Инициализация пула подключения к кластеру etcd v3...\")\n\tfmt.Printf(\"Эндпоинты кластера: %v\\n\", endpoints)\n\tfmt.Printf(\"DialTimeout: %v, TLS: опциональный mTLS\\n\", timeout)\n\n\t// Пример создания клиента с базовой конфигурацией\n\tcfg := clientv3.Config{\n\t\tEndpoints:   endpoints,\n\t\tDialTimeout: timeout,\n\t}\n\n\tclient, err := clientv3.New(cfg)\n\tif err != nil {\n\t\tfmt.Printf(\"Ошибка подключения: %v\\n\", err)\n\t\treturn\n\t}\n\tdefer client.Close()\n\n\tfmt.Println(\"Клиент clientv3 успешно инициализирован (HTTP/2 gRPC транспорт настроен).\")\n}\n"
+      }
+    ],
+    "under_the_hood": "При вызове `clientv3.New()` создается пул соединений `grpc.ClientConn`. По умолчанию etcd Go клиент использует Round-Robin балансировку gRPC между переданными эндпоинтами для операций чтения. Запросы на запись перенаправляются лидером кластера.",
+    "pitfalls": [
+      "Отсутствие client.Close(): клиент etcd держит фоновые горутины KeepAlive и HTTP/2 потоки. Утечка экземпляров клиента ведет к утечке файловых дескрипторов и памяти.",
+      "Короткий DialTimeout: при сетевой нестабильности слишком короткий таймаут (< 1s) приведет к невозможности поднять gRPC соединение при холодном старте сервиса."
+    ],
+    "bigtech_interview": "Что произойдет, если нода etcd, к которой подключен клиент, внезапно упадет? gRPC транспорт под капотом clientv3 автоматически зафиксирует обрыв потока и прозрачно перенаправит последующие вызовы на следующую здоровую ноду из списка Endpoints."
+  },
+  {
+    "num": 4,
+    "title": "Базовые операции с ключами: Put, Get, Delete",
+    "task": "Используя интерфейс clientv3.KV, реализуйте сервис KeyValueService с базовыми операциями PutKey, GetKey и DeleteKey. Извлеките из ответов etcd метаданные ревизий (Header.Revision, CreateRevision, ModRevision) и количество удаленных ключей.",
+    "theory": "Интерфейс `clientv3.KV` предоставляет низкоуровневый доступ к хранилищу etcd:\n- `Put(ctx, key, val, opts...)`: сохраняет пару ключ-значение. Возвращает `*PutResponse`. Поле `Header.Revision` отражает текущую ревизию кластера после применения данной записи.\n- `Get(ctx, key, opts...)`: считывает ключ. Возвращает `*GetResponse`. Срез `resp.Kvs` содержит найденные записи типа `*mvccpb.KeyValue`. Если ключ отсутствует, срез `resp.Kvs` будет пустым (len == 0), что не является ошибкой Go.\n- `Delete(ctx, key, opts...)`: удаляет ключ. Поле `resp.Deleted` сообщает, сколько именно ключей было удалено (0 или 1 при точном поиске, либо > 1 при удалении по префиксу).",
+    "step_by_step": [
+      "Инициализируйте интерфейс clientv3.KV через clientv3.NewKV(client).",
+      "Реализуйте метод PutKey с возвратом глобальной ревизии операции.",
+      "Реализуйте метод GetKey с безопасной проверкой наличия записей в resp.Kvs.",
+      "Извлеките значения Value, CreateRevision и ModRevision.",
+      "Реализуйте метод DeleteKey с проверкой количества удаленных сущностей."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_kv_crud.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// KeyValueService абстрагирует CRUD операции над etcd v3\ntype KeyValueService struct {\n\tkv clientv3.KV\n}\n\nfunc NewKeyValueService(client *clientv3.Client) *KeyValueService {\n\treturn &KeyValueService{kv: clientv3.NewKV(client)}\n}\n\n// PutKey записывает ключ и возвращает ревизию изменения\nfunc (s *KeyValueService) PutKey(ctx context.Context, key, val string) (int64, error) {\n\tresp, err := s.kv.Put(ctx, key, val)\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn resp.Header.Revision, nil\n}\n\n// GetKey читает значение и метаданные ключа\nfunc (s *KeyValueService) GetKey(ctx context.Context, key string) (string, int64, int64, error) {\n\tresp, err := s.kv.Get(ctx, key)\n\tif err != nil {\n\t\treturn \"\", 0, 0, err\n\t}\n\tif len(resp.Kvs) == 0 {\n\t\treturn \"\", 0, 0, fmt.Errorf(\"ключ %s не найден\", key)\n\t}\n\n\tkv := resp.Kvs[0]\n\treturn string(kv.Value), kv.CreateRevision, kv.ModRevision, nil\n}\n\n// DeleteKey удаляет ключ и возвращает число удаленных элементов\nfunc (s *KeyValueService) DeleteKey(ctx context.Context, key string) (int64, error) {\n\tresp, err := s.kv.Delete(ctx, key)\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn resp.Deleted, nil\n}\n\nfunc main() {\n\t// Демонстрация сигнатур и работы интерфейса clientv3.KV\n\tctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)\n\tdefer cancel()\n\n\tfmt.Println(\"Операции Put / Get / Delete через интерфейс clientv3.KV:\")\n\tfmt.Println(\" 1. Put(ctx, key, val) -> *PutResponse (resp.Header.Revision)\")\n\tfmt.Println(\" 2. Get(ctx, key) -> *GetResponse (resp.Kvs[0].CreateRevision, ModRevision, Version)\")\n\tfmt.Println(\" 3. Delete(ctx, key) -> *DeleteResponse (resp.Deleted)\")\n\t_ = ctx\n}\n"
+      }
+    ],
+    "under_the_hood": "По умолчанию `Get` в etcd v3 линеаризуем (Linearizable Read): перед возвратом данных клиент делает раунд обмена `ReadIndex` через протокол Raft, чтобы гарантировать, что опрашиваемый узел не находится в изолированном меньшинстве и возвращает самые свежие данные. Для сверхбыстрого, но потенциально устаревшего чтения можно передать `clientv3.WithSerializable()`.",
+    "pitfalls": [
+      "Panic при пустом Kvs: если ключ не найден в etcd, `resp.Kvs` пуст. Попытка немедленного обращения `resp.Kvs[0]` вызовет `runtime error: index out of range`.",
+      "Размер значения: etcd жестко ограничивает максимальный размер одного значения (по умолчанию 1.5 МБ). Попытка положить большой бинарный блоб вернет ошибку `etcdserver: request is too large`."
+    ],
+    "bigtech_interview": "В чем отличие линеаризуемого чтения от сериализуемого в etcd? Линеаризуемое (дефолт) опрашивает кворум узлов через Raft ReadIndex (задержка RTT), гарантируя строго свежие данные. Сериализуемое (`WithSerializable()`) читает локально из памяти узла без сетевых запросов (микросекунды), но может вернуть немного устаревшие данные."
+  },
+  {
+    "num": 5,
+    "title": "Поиск по диапазону ключей (Range) и префиксный поиск",
+    "task": "Реализуйте методы префиксного и диапазонного чтения пространства ключей etcd. Напишите функции GetByPrefix (с опцией clientv3.WithPrefix()) и GetByAlphabeticalRange (с опцией clientv3.WithRange()), а также массовое удаление по префиксу DeleteByPrefix.",
+    "theory": "В etcd v3 нет концепции реальных папок и файлов, но ключи упорядочены лексикографически в B-Tree. Иерархические пути (`/configs/billing/tax_rate`) эмулируются префиксами.\n\nКак работает префиксный поиск:\nОпция `clientv3.WithPrefix()` — это синтаксический сахар над диапазонным запросом `WithRange(endKey)`. etcd берет последний байт префикса и инкрементирует его на 1. Например, для префикса `/configs/a` конечным ключом диапазона становится `/configs/b`. Все ключи, попадающие в полуинтервал `[\"/configs/a\", \"/configs/b\")`, возвращаются клиенту.",
+    "step_by_step": [
+      "Создайте сервис PrefixSearchService с полем clientv3.KV.",
+      "Реализуйте метод GetByPrefix, передавая clientv3.WithPrefix().",
+      "Преобразуйте срез resp.Kvs в результирующую карту map[string]string.",
+      "Реализуйте метод GetByAlphabeticalRange с опцией clientv3.WithRange().",
+      "Реализуйте массовое удаление DeleteByPrefix с возвратом счетчика удаленных ключей."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_prefix_range.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// PrefixSearchService осуществляет сканирование пространств ключей etcd\ntype PrefixSearchService struct {\n\tkv clientv3.KV\n}\n\nfunc NewPrefixSearchService(kv clientv3.KV) *PrefixSearchService {\n\treturn &PrefixSearchService{kv: kv}\n}\n\n// GetByPrefix вычитывает все ключи с заданным иерархическим префиксом\nfunc (s *PrefixSearchService) GetByPrefix(ctx context.Context, prefix string) (map[string]string, error) {\n\tresp, err := s.kv.Get(ctx, prefix, clientv3.WithPrefix())\n\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"ошибка префиксного поиска: %w\", err)\n\t}\n\n\tresult := make(map[string]string, len(resp.Kvs))\n\tfor _, item := range resp.Kvs {\n\t\tresult[string(item.Key)] = string(item.Value)\n\t}\n\treturn result, nil\n}\n\n// GetByAlphabeticalRange вычитывает диапазон ключей [startKey, endKey)\nfunc (s *PrefixSearchService) GetByAlphabeticalRange(ctx context.Context, startKey, endKey string) ([]string, error) {\n\tresp, err := s.kv.Get(ctx, startKey, clientv3.WithRange(endKey))\n\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"ошибка диапазонного запроса: %w\", err)\n\t}\n\n\tkeys := make([]string, 0, len(resp.Kvs))\n\tfor _, item := range resp.Kvs {\n\t\tkeys = append(keys, fmt.Sprintf(\"%s = %s\", string(item.Key), string(item.Value)))\n\t}\n\treturn keys, nil\n}\n\n// DeleteByPrefix атомарно удаляет все ключи в иерархической подпапке\nfunc (s *PrefixSearchService) DeleteByPrefix(ctx context.Context, prefix string) (int64, error) {\n\tresp, err := s.kv.Delete(ctx, prefix, clientv3.WithPrefix())\n\tif err != nil {\n\t\treturn 0, err\n\t}\n\treturn resp.Deleted, nil\n}\n\nfunc main() {\n\tfmt.Println(\"Префиксный и диапазонный поиск в etcd v3:\")\n\tfmt.Println(\" 1. clientv3.WithPrefix() транслирует префикс '/services/' в диапазон ['/services/', '/services0')\")\n\tfmt.Println(\" 2. clientv3.WithRange(endKey) выполняет лексикографический скан от startKey до endKey\")\n\tfmt.Println(\" 3. Delete с WithPrefix() удаляет целые директории ключей одной операцией\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Поскольку в bbolt и в in-memory B-Tree etcd ключи отсортированы побайтово, поиск по диапазону выполняется за `O(log N + M)`, где N — общее число ключей в базе, а M — количество элементов в возвращаемом диапазоне. Это на порядки быстрее сканирования полнотекстовых баз данных.",
+    "pitfalls": [
+      "Непреднамеренное удаление всей базы: вызов `client.Delete(ctx, \"\", clientv3.WithPrefix())` удалит АБСОЛЮТНО ВСЕ КЛЮЧИ в кластере etcd! Всегда строго валидируйте входящий префикс на непустоту.",
+      "Слишком широкий префикс: чтение префикса `/` в большом кластере приведет к выгрузке сотен тысяч ключей и OOM-падению приложения."
+    ],
+    "bigtech_interview": "Как Kubernetes организует хранилище объектов в etcd? Kubernetes использует жесткую префиксную схему: `/registry/<resource_type>/<namespace>/<name>`. Например, `/registry/pods/default/nginx-pod`. Это позволяет API-серверу мгновенно получать все поды неймспейса одним префиксным вызовом."
+  },
+  {
+    "num": 6,
+    "title": "Постраничная выгрузка и сортировка ключей в etcd",
+    "task": "Спроектируйте компонент EtcdPaginator для безопасной постраничной выгрузки сотен тысяч ключей. Используйте комбинацию опций clientv3.WithLimit, clientv3.WithSort и clientv3.WithFromKey с правильным инкрементом пограничного ключа через добавление нулевого байта.",
+    "theory": "В продуктовом кластере etcd могут храниться миллионы записей (например, реестр маршрутов или пользовательских сессий). Попытка вычитать весь каталог за один запрос `Get(ctx, prefix, WithPrefix())` чревата серьезными проблемами:\n1. Гигантский gRPC ответ превысит лимит `MaxCallRecvMsgSize` (по умолчанию 4 МБ) и вызовет падение клиента.\n2. Пауза GC в Go вырастет из-за выделения сотен мегабайт в куче под единый срез.\n3. etcd потратит значительные процессорные ресурсы на формирование одного гигантского ответа.\n\nПравильное решение — Cursor-based пагинация:\n- Запрашиваем пачку из N элементов (`WithLimit(N)`).\n- Сортируем по возрастанию ключа (`WithSort(SortByKey, SortAscend)`).\n- Для следующей страницы начинаем поиск от `lastKey + 0x00` с помощью `WithFromKey()`, предотвращая повторную обработку последнего ключа предыдущей страницы.",
+    "step_by_step": [
+      "Создайте структуру EtcdPaginator с параметром размера страницы pageSize.",
+      "Сформируйте опции сортировки clientv3.WithSort(SortByKey, SortAscend) и лимита clientv3.WithLimit.",
+      "Реализуйте цикл выгрузки с использованием WithFromKey().",
+      "Для избежания зацикливания добавьте нулевой байт (0x00) к последнему элементу пачки перед следующим запросом.",
+      "Завершите цикл, если размер пачки меньше pageSize."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_pagination.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// EtcdPaginator обеспечивает постраничную вычитку большого объема ключей\ntype EtcdPaginator struct {\n\tkv       clientv3.KV\n\tpageSize int64\n}\n\nfunc NewEtcdPaginator(kv clientv3.KV, pageSize int64) *EtcdPaginator {\n\treturn &EtcdPaginator{kv: kv, pageSize: pageSize}\n}\n\n// FetchAllPaged читает все ключи по префиксу пачками без риска исчерпания памяти\nfunc (p *EtcdPaginator) FetchAllPaged(ctx context.Context, prefix string, processBatch func(batch []*clientv3.GetResponse) error) (int, error) {\n\t// Базовые опции: лимит страницы и сортировка ключей\n\topts := []clientv3.OpOption{\n\t\tclientv3.WithPrefix(),\n\t\tclientv3.WithSort(clientv3.SortByKey, clientv3.SortAscend),\n\t\tclientv3.WithLimit(p.pageSize),\n\t}\n\n\tcurrentKey := prefix\n\ttotalCount := 0\n\n\tfor {\n\t\t// При переходе на следующую страницу начинаем с последнего прочитанного ключа\n\t\tpageOpts := append(opts, clientv3.WithFromKey())\n\t\tresp, err := p.kv.Get(ctx, currentKey, pageOpts...)\n\t\tif err != nil {\n\t\t\treturn totalCount, fmt.Errorf(\"ошибка постраничного чтения: %w\", err)\n\t\t}\n\n\t\tif len(resp.Kvs) == 0 {\n\t\t\tbreak\n\t\t}\n\n\t\ttotalCount += len(resp.Kvs)\n\n\t\t// Если на первой итерации прочитано меньше pageSize элементов, страниц больше нет\n\t\tif int64(len(resp.Kvs)) < p.pageSize {\n\t\t\tbreak\n\t\t}\n\n\t\t// Следующий ключ для WithFromKey — добавляем нулевой байт к последнему ключу пачки\n\t\tlastKey := resp.Kvs[len(resp.Kvs)-1].Key\n\t\tcurrentKey = string(append(lastKey, 0x00))\n\t}\n\n\treturn totalCount, nil\n}\n\nfunc main() {\n\tfmt.Println(\"Постраничная выгрузка (Pagination) в etcd v3:\")\n\tfmt.Println(\" 1. WithLimit(N) ограничивает размер пачки\")\n\tfmt.Println(\" 2. WithSort(clientv3.SortByKey, clientv3.SortAscend) гарантирует стабильный порядок\")\n\tfmt.Println(\" 3. WithFromKey() в сочетании с lastKey + 0x00 исключает дублирование пограничных элементов\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Добавление байта `0x00` — стандартная идиома в лексикографических системах (etcd, RocksDB, LevelDB). Ключ `\"/users/1\" + 0x00` строго больше `\"/users/1\"`, но меньше любого другого допустимого ключа (например, `\"/users/2\"`), что обеспечивает точный сдвиг курсора без пропусков.",
+    "pitfalls": [
+      "Зацикливание при повторном чтении lastKey: если просто передать `lastKey` в `WithFromKey()`, он вернется первым элементом в следующей странице, вызвав дублирование записей и бесконечный цикл.",
+      "Изменение данных во время пагинации: если во время постраничной выгрузки в etcd добавляются новые ключи, они могут попасть в срез. Чтобы зафиксировать неизменяемый снимок, следует передать `clientv3.WithRev(snapshotRevision)`."
+    ],
+    "bigtech_interview": "Как в Kubernetes `kubectl get pods --all-namespaces` избегает падения etcd при миллионах подов? Используется chunking (пагинация) через параметры `limit` и `continue` (который хранит etcd cursor revision), вычитывая данные страницами по 500 штук."
+  },
+  {
+    "num": 7,
+    "title": "Механизм аренды (Leases) и TTL ключей",
+    "task": "Изучите механизм аренды (Lease) в etcd v3. Реализуйте сервис EphemeralStore с методами PutWithTTL, AttachKeyToExistingLease и RevokeLease. Покажите, как один объект аренды с единым LeaseID может управлять временем жизни множества связанных ключей.",
+    "theory": "В Redis каждый ключ имеет собственный таймер TTL. В etcd архитекторы применили принципиально иную, высокомасштабируемую модель: концепцию аренды (Lease).\n\nОбъект Lease создается в кластере вызовом `client.Grant(ctx, ttl)` и получает уникальный 64-битный идентификатор `LeaseID`.\nПреимущества архитектуры Leases:\n1. Группировка ресурсов: к одному `LeaseID` можно привязать сотни ключей (`/services/payments/host1`, `/metrics/host1`, `/status/host1`).\n2. Минимальные накладные расходы: etcd отслеживает таймер только для объекта аренды, а не для каждого ключа в отдельности.\n3. Атомарное каскадное удаление: как только срок аренды истекает (или вызывается `Revoke`), etcd атомарно удаляет абсолютно все ключи, привязанные к этой аренде.",
+    "step_by_step": [
+      "Инициализируйте интерфейсы clientv3.Lease и clientv3.KV.",
+      "Реализуйте метод PutWithTTL: вызовите lease.Grant(ctx, ttlSeconds) для получения LeaseID.",
+      "Сохраните ключ с опцией clientv3.WithLease(leaseID).",
+      "Напишите метод AttachKeyToExistingLease для переиспользования существующего LeaseID.",
+      "Реализуйте досрочный отзыв аренды через lease.Revoke."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_leases_ttl.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// EphemeralStore управляет временными ключами с TTL через Leases\ntype EphemeralStore struct {\n\tclient *clientv3.Client\n\tlease  clientv3.Lease\n\tkv     clientv3.KV\n}\n\nfunc NewEphemeralStore(cli *clientv3.Client) *EphemeralStore {\n\treturn &EphemeralStore{\n\t\tclient: cli,\n\t\tlease:  clientv3.NewLease(cli),\n\t\tkv:     clientv3.NewKV(cli),\n\t}\n}\n\n// PutWithTTL создает аренду на ttlSeconds и привязывает к ней ключ\nfunc (s *EphemeralStore) PutWithTTL(ctx context.Context, key, val string, ttlSeconds int64) (clientv3.LeaseID, error) {\n\t// 1. Создаем объект аренды в кластере\n\tgrantResp, err := s.lease.Grant(ctx, ttlSeconds)\n\tif err != nil {\n\t\treturn 0, fmt.Errorf(\"ошибка создания аренды: %w\", err)\n\t}\n\n\tleaseID := grantResp.ID\n\n\t// 2. Привязываем ключ к аренде\n\t_, err = s.kv.Put(ctx, key, val, clientv3.WithLease(leaseID))\n\tif err != nil {\n\t\t// Откатываем аренду при сбое\n\t\t_, _ = s.lease.Revoke(ctx, leaseID)\n\t\treturn 0, fmt.Errorf(\"ошибка привязки ключа к аренде: %w\", err)\n\t}\n\n\treturn leaseID, nil\n}\n\n// AttachKeyToExistingLease привязывает дополнительный ключ к существующей аренде\nfunc (s *EphemeralStore) AttachKeyToExistingLease(ctx context.Context, key, val string, leaseID clientv3.LeaseID) error {\n\t_, err := s.kv.Put(ctx, key, val, clientv3.WithLease(leaseID))\n\treturn err\n}\n\n// RevokeLease досрочно отзывает аренду (удаляя все привязанные ключи)\nfunc (s *EphemeralStore) RevokeLease(ctx context.Context, leaseID clientv3.LeaseID) error {\n\t_, err := s.lease.Revoke(ctx, leaseID)\n\treturn err\n}\n\nfunc main() {\n\tfmt.Println(\"Механизм аренды (Leases) в etcd v3:\")\n\tfmt.Println(\" 1. client.Grant(ctx, ttl) создает один LeaseID на несколько секунд\")\n\tfmt.Println(\" 2. Десятки ключей могут привязываться к ОДНОМУ LeaseID через WithLease(id)\")\n\tfmt.Println(\" 3. При истечении TTL или вызове Revoke(id) etcd удаляет ВСЕ привязанные ключи\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Внутри etcd хранит список аренд в куче минимальных элементов (Min-Heap) по времени истечения. Каждые 500 мс фоновый таймер проверяет вершину кучи. Если аренда истекла, etcd генерирует Raft-команду на удаление всех ассоциированных с ней ключей.",
+    "pitfalls": [
+      "Создание отдельного Lease на каждый ключ: если на 100 000 ключей создать 100 000 отдельных Leases, таймер etcd перегрузится. Все ключи одного сервиса/узла должны шарить единый `LeaseID`.",
+      "Отказ от явного Revoke: если сервис штатно завершает работу, вызов `Revoke` освобождает ресурсы немедленно, не дожидаясь истечения таймаута."
+    ],
+    "bigtech_interview": "Почему в etcd TTL задается в секундах, а не миллисекундах? etcd предназначен для распределенной координации сервисов, блокировок и обнаружения узлов, где гранулярность в секундах оптимальна. Высокочастотные миллисекундные таймеры перегрузили бы протокол консенсуса Raft постоянными обновлениями."
+  },
+  {
+    "num": 8,
+    "title": "Автоматическое продление аренды (Lease KeepAlive)",
+    "task": "Реализуйте подсистему непрерывного продления аренды HeartbeatService с помощью метода client.KeepAlive. Организуйте фоновый воркер, слушающий канал <-chan *clientv3.LeaseKeepAliveResponse, и предусмотрите корректную обработку обрыва связи и штатный отзыв аренды при завершении сервиса.",
+    "theory": "Чтобы узел считался живым в кластере, его регистрационные ключи не должны исчезать. Однако ручная отправка команд `KeepAliveOnce` в цикле `for range time.Tick` неэффективна и создает избыточные TCP-запросы.\n\nВ Go SDK метод `client.KeepAlive(ctx, leaseID)` открывает постоянный двунаправленный gRPC-стрим к etcd:\n- Клиент автоматически рассчитывает оптимальную частоту отправки пингов (обычно `TTL / 3`).\n- Ответы сервера передаются в канал `<-chan *clientv3.LeaseKeepAliveResponse`.\n- Если канал закрывается (`!ok`), это свидетельствует о серьезной аварии: аренда истекла на сервере (например, из-за сетевого раздела split-brain или паузы GC) либо связь с кластером разорвана. Сервис должен немедленно перейти в режим перерегистрации.",
+    "step_by_step": [
+      "Создайте структуру HeartbeatService с каналом завершения stopCh и sync.WaitGroup.",
+      "Вызовите lease.Grant для выделения аренды с базовым TTL.",
+      "Запустите двунаправленный стрим через lease.KeepAlive().",
+      "В отдельной горутине читайте входящие ответы из keepAliveChan с проверкой закрытия канала.",
+      "Реализуйте метод Stop с гарантированным отзывом аренды через Revoke."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_keepalive_service.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// HeartbeatService поддерживает жизнь аренды в фоновом режиме\ntype HeartbeatService struct {\n\tclient  *clientv3.Client\n\tlease   clientv3.Lease\n\tleaseID clientv3.LeaseID\n\tstopCh  chan struct{}\n\twg      sync.WaitGroup\n}\n\nfunc NewHeartbeatService(cli *clientv3.Client) *HeartbeatService {\n\treturn &HeartbeatService{\n\t\tclient: cli,\n\t\tlease:  clientv3.NewLease(cli),\n\t\tstopCh: make(chan struct{}),\n\t}\n}\n\n// StartKeepAlive создает аренду и запускает непрерывное продление\nfunc (h *HeartbeatService) StartKeepAlive(ctx context.Context, ttl int64) (clientv3.LeaseID, error) {\n\tgrantResp, err := h.lease.Grant(ctx, ttl)\n\tif err != nil {\n\t\treturn 0, fmt.Errorf(\"ошибка grant lease: %w\", err)\n\t}\n\n\th.leaseID = grantResp.ID\n\n\t// KeepAlive запускает gRPC двунаправленный стрим продления\n\tkeepAliveChan, err := h.lease.KeepAlive(ctx, h.leaseID)\n\tif err != nil {\n\t\t_, _ = h.lease.Revoke(ctx, h.leaseID)\n\t\treturn 0, fmt.Errorf(\"ошибка запуска keepalive: %w\", err)\n\t}\n\n\th.wg.Add(1)\n\tgo func() {\n\t\tdefer h.wg.Done()\n\t\tfor {\n\t\t\tselect {\n\t\t\tcase <-h.stopCh:\n\t\t\t\tfmt.Println(\"[KEEPALIVE] Остановка продления по сигналу сервиса\")\n\t\t\t\treturn\n\t\t\tcase kaResp, ok := <-keepAliveChan:\n\t\t\t\tif !ok {\n\t\t\t\t\tfmt.Printf(\"⚠️ [KEEPALIVE CRITICAL] Канал продления закрыт! Аренда %x утеряна\\n\", h.leaseID)\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t\t// kaResp.TTL содержит актуальный подтвержденный TTL от сервера etcd\n\t\t\t\t_ = kaResp\n\t\t\t}\n\t\t}\n\t}()\n\n\treturn h.leaseID, nil\n}\n\nfunc (h *HeartbeatService) Stop(ctx context.Context) error {\n\tclose(h.stopCh)\n\th.wg.Wait()\n\tif h.leaseID != 0 {\n\t\t_, err := h.lease.Revoke(ctx, h.leaseID)\n\t\treturn err\n\t}\n\treturn nil\n}\n\nfunc main() {\n\tfmt.Println(\"Автоматическое продление аренды (Lease KeepAlive):\")\n\tfmt.Println(\" 1. client.KeepAlive(ctx, id) возвращает канал подтверждений <-chan *LeaseKeepAliveResponse\")\n\tfmt.Println(\" 2. Закрытие канала ok == false сигнализирует о разрыве связи или удалении аренды на сервере\")\n\tfmt.Println(\" 3. При штатной остановке вызывается Revoke() для немедленного удаления эфемерных записей\")\n}\n"
+      }
+    ],
+    "under_the_hood": "gRPC стрим KeepAlive мультиплексируется в то же самое единое HTTP/2 TCP-соединение, что и обычные вызовы KV. При кратковременном сетевом сбое clientv3 автоматически пытается переподключить стрим без вмешательства разработчика до тех пор, пока контекст не отменен.",
+    "pitfalls": [
+      "Игнорирование закрытия канала: если горутина не проверяет `ok := <-keepAliveChan`, она завершится или начнет крутиться вхолостую, а сервис не узнает, что его ключи уже удалены из реестра кластера.",
+      "Утечка горутин продления: если не отменять context или не закрывать канал stopCh, фоновая горутина продолжит работать вечно."
+    ],
+    "bigtech_interview": "Что произойдет с ключами сервиса при долгой Stop-The-World паузе GC в Go приложении? Если пауза GC превысит время TTL аренды (например, 15 секунд), etcd сочтет узел упавшим и удалит все его регистрационные ключи. Поэтому в HighLoad-системах TTL аренды выбирают с запасом (обычно 10–15 секунд)."
+  },
+  {
+    "num": 9,
+    "title": "Реализация Service Discovery на базе etcd и Leases",
+    "task": "Спроектируйте компонент ServiceRegistrar для обнаружения сервисов (Service Discovery). При старте микросервис сериализует структуру ServiceInstance в JSON, регистрирует её по ключу /services/<name>/<id> с привязкой к LeaseID и поддерживает присутствие через фоновый KeepAlive. Реализуйте метод корректной дерегистрации Unregister.",
+    "theory": "В динамических облачных средах (Kubernetes, Bare-metal кластеры) IP-адреса и порты микросервисов постоянно меняются в результате масштабирования, перебалансировки и перезапусков подов.\n\nПаттерн Service Discovery (Обнаружение сервисов) на базе etcd v3:\n1. Иерархический ключ: сервис регистрирует себя по пути `/services/<service_name>/<instance_id>`.\n2. Эфемерность через Leases: запись привязывается к аренде с TTL (10–15 сек).\n3. Устойчивость к авариям: если процесс сервиса падает (OOMKilled, SIGKILL) или нода физически обесточивается, стрим KeepAlive мгновенно прекращается. Спустя 15 секунд etcd самостоятельно удаляет ключ из каталога.\n4. Чистый Unregister: при штатном `SIGTERM` сервис отзывает аренду через `Revoke()`, и адрес исчезает из балансировщика за 5 миллисекунд.",
+    "step_by_step": [
+      "Определите структуру ServiceInstance с метаданными адреса, версии и идентификатора экземпляра.",
+      "Создайте ServiceRegistrar с полями clientv3.Lease и clientv3.KV.",
+      "В методе Register выделите аренду, сохраните JSON-описание инстанса и запустите KeepAlive в горутине.",
+      "Обеспечьте сохранение функции отмены контекста cancel для остановки продления.",
+      "Реализуйте метод Unregister с остановкой стрима и вызовом lease.Revoke."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_service_discovery.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// ServiceInstance описывает метаданные регистрируемого экземпляра микросервиса\ntype ServiceInstance struct {\n\tServiceName string            `json:\"service_name\"`\n\tInstanceID  string            `json:\"instance_id\"`\n\tAddress     string            `json:\"address\"`\n\tMetadata    map[string]string `json:\"metadata\"`\n}\n\n// ServiceRegistrar регистрирует сервис в etcd с автоматическим продлением аренды\ntype ServiceRegistrar struct {\n\tclient  *clientv3.Client\n\tlease   clientv3.Lease\n\tkv      clientv3.KV\n\tleaseID clientv3.LeaseID\n\tcancel  context.CancelFunc\n\twg      sync.WaitGroup\n}\n\nfunc NewServiceRegistrar(cli *clientv3.Client) *ServiceRegistrar {\n\treturn &ServiceRegistrar{\n\t\tclient: cli,\n\t\tlease:  clientv3.NewLease(cli),\n\t\tkv:     clientv3.NewKV(cli),\n\t}\n}\n\n// Register публикует инстанс сервиса в etcd с TTL и запускает KeepAlive\nfunc (r *ServiceRegistrar) Register(ctx context.Context, inst ServiceInstance, ttlSeconds int64) error {\n\tgrantResp, err := r.lease.Grant(ctx, ttlSeconds)\n\tif err != nil {\n\t\treturn fmt.Errorf(\"сбой grant lease: %w\", err)\n\t}\n\tr.leaseID = grantResp.ID\n\n\tkey := fmt.Sprintf(\"/services/%s/%s\", inst.ServiceName, inst.InstanceID)\n\tval, err := json.Marshal(inst)\n\tif err != nil {\n\t\treturn err\n\t}\n\n\t_, err = r.kv.Put(ctx, key, string(val), clientv3.WithLease(r.leaseID))\n\tif err != nil {\n\t\t_, _ = r.lease.Revoke(ctx, r.leaseID)\n\t\treturn fmt.Errorf(\"сбой регистрации ключа сервиса: %w\", err)\n\t}\n\n\tkaCtx, cancel := context.WithCancel(context.Background())\n\tr.cancel = cancel\n\n\tkeepAliveCh, err := r.lease.KeepAlive(kaCtx, r.leaseID)\n\tif err != nil {\n\t\tcancel()\n\t\treturn fmt.Errorf(\"сбой KeepAlive: %w\", err)\n\t}\n\n\tr.wg.Add(1)\n\tgo func() {\n\t\tdefer r.wg.Done()\n\t\tfor range keepAliveCh {\n\t\t\t// Аренда успешно продлевается\n\t\t}\n\t\tfmt.Printf(\"[DISCOVERY] Регистрация экземпляра %s прекращена\\n\", inst.InstanceID)\n\t}()\n\n\tfmt.Printf(\"[DISCOVERY] Сервис %s зарегистрирован по ключу %s (LeaseID=%x, TTL=%ds)\\n\",\n\t\tinst.ServiceName, key, r.leaseID, ttlSeconds)\n\treturn nil\n}\n\n// Unregister производит корректную дерегистрацию сервиса\nfunc (r *ServiceRegistrar) Unregister(ctx context.Context) error {\n\tif r.cancel != nil {\n\t\tr.cancel()\n\t}\n\tr.wg.Wait()\n\tif r.leaseID != 0 {\n\t\t_, err := r.lease.Revoke(ctx, r.leaseID)\n\t\treturn err\n\t}\n\treturn nil\n}\n\nfunc main() {\n\tinst := ServiceInstance{\n\t\tServiceName: \"payment-service\",\n\t\tInstanceID:  \"node-eu-1\",\n\t\tAddress:     \"10.240.0.15:9090\",\n\t\tMetadata:    map[string]string{\"version\": \"v2.4.0\", \"dc\": \"eu-central\"},\n\t}\n\n\tdata, _ := json.MarshalIndent(inst, \"\", \"  \")\n\tfmt.Printf(\"Регистрация инстанса Service Discovery в etcd:\\n%s\\n\", string(data))\n\tfmt.Println(\"Паттерн: ключ /services/<name>/<id> с привязкой к Lease KeepAlive\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Такой подход аналогичен механизму эфемерных нод (Ephemeral Nodes) в Apache ZooKeeper, но превосходит его по производительности: etcd не требует сохранения сессий в отдельных файлах состояния и масштабируется до десятков тысяч регистраций в секунду.",
+    "pitfalls": [
+      "Коллизия InstanceID: если два запущенных пода случайно используют одинаковый `InstanceID`, они начнут перезаписывать ключ друг друга в etcd, нарушая маршрутизацию.",
+      "Большой объем метаданных: не следует сохранять в Service Discovery крупные объекты данных. Только IP, порт, протокол и версия."
+    ],
+    "bigtech_interview": "Почему etcd предпочтительнее Consul для Service Discovery в высоконадежных системах? etcd проще в эксплуатации, не имеет избыточного UI, строго следует спецификации Raft и имеет минимальное потребление ресурсов при поддержке официального Go SDK."
+  },
+  {
+    "num": 10,
+    "title": "Клиентский Service Resolver (Балансировка вызовов)",
+    "task": "Реализуйте компонент ClientServiceResolver для клиентской балансировки нагрузки (Client-Side Load Balancing). Резолвер считывает список активных инстансов по префиксу /services/<name>/, кэширует адреса и распределяет вызовы по алгоритму Round-Robin с использованием atomic.Uint64.",
+    "theory": "В классической инфраструктуре клиент отправляет запрос на единый L4/L7 балансировщик (Nginx, HAProxy), который перенаправляет трафик на целевой узел. Это создает дополнительный сетевой хоп (Network Hop) и единую точку отказа.\n\nКлиентская балансировка (Client-Side Load Balancing), популяризованная gRPC и Finagle:\n1. Клиент сам периодически опрашивает etcd (или слушает Watcher) и хранит актуальный пул IP-адресов целевого сервиса.\n2. Запросы отправляются напрямую от клиента к нужному пода без промежуточных прокси.\n3. Алгоритм Round-Robin на `atomic.Uint64` обеспечивает равномерное распределение запросов с нулевыми накладными расходами на блокировки.",
+    "step_by_step": [
+      "Определите структуру DiscoveredEndpoint для хранения IP и порта инстанса.",
+      "Спроектируйте ClientServiceResolver со списком эндпоинтов под защитой sync.RWMutex и счетчиком rrIndex.",
+      "В методе RefreshEndpoints выполните префиксный запрос client.Get(ctx, prefix, WithPrefix()) и распарсите JSON.",
+      "Реализуйте метод NextEndpoint: атомарный инкремент счетчика и вычисление индекса по модулю len(endpoints).",
+      "Продемонстрируйте корректное циклическое распределение запросов."
+    ],
+    "code_blocks": [
+      {
+        "filename": "client_service_resolver.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"sync\"\n\t\"sync/atomic\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// DiscoveredEndpoint содержит адрес и метаданные сервиса\ntype DiscoveredEndpoint struct {\n\tInstanceID string `json:\"instance_id\"`\n\tAddress    string `json:\"address\"`\n}\n\n// ClientServiceResolver осуществляет клиентскую балансировку по данным etcd\ntype ClientServiceResolver struct {\n\tcli         *clientv3.Client\n\tserviceName string\n\tmu          sync.RWMutex\n\tendpoints   []DiscoveredEndpoint\n\trrIndex     atomic.Uint64\n}\n\nfunc NewClientServiceResolver(cli *clientv3.Client, serviceName string) *ClientServiceResolver {\n\treturn &ClientServiceResolver{\n\t\tcli:         cli,\n\t\tserviceName: serviceName,\n\t}\n}\n\n// RefreshEndpoints запрашивает актуальный список инстансов из etcd\nfunc (r *ClientServiceResolver) RefreshEndpoints(ctx context.Context) error {\n\tprefix := fmt.Sprintf(\"/services/%s/\", r.serviceName)\n\tresp, err := r.cli.Get(ctx, prefix, clientv3.WithPrefix())\n\tif err != nil {\n\t\treturn fmt.Errorf(\"ошибка разрешения эндпоинтов: %w\", err)\n\t}\n\n\tvar newEndpoints []DiscoveredEndpoint\n\tfor _, kv := range resp.Kvs {\n\t\tvar ep DiscoveredEndpoint\n\t\tif err := json.Unmarshal(kv.Value, &ep); err == nil && ep.Address != \"\" {\n\t\t\tnewEndpoints = append(newEndpoints, ep)\n\t\t}\n\t}\n\n\tr.mu.Lock()\n\tr.endpoints = newEndpoints\n\tr.mu.Unlock()\n\n\treturn nil\n}\n\n// NextEndpoint возвращает следующий адрес по алгоритму Round-Robin\nfunc (r *ClientServiceResolver) NextEndpoint() (string, error) {\n\tr.mu.RLock()\n\tdefer r.mu.RUnlock()\n\n\tif len(r.endpoints) == 0 {\n\t\treturn \"\", fmt.Errorf(\"нет доступных инстансов для сервиса %s\", r.serviceName)\n\t}\n\n\tidx := r.rrIndex.Add(1) - 1\n\tselected := r.endpoints[idx%uint64(len(r.endpoints))]\n\treturn selected.Address, nil\n}\n\nfunc main() {\n\tresolver := &ClientServiceResolver{\n\t\tserviceName: \"auth-service\",\n\t\tendpoints: []DiscoveredEndpoint{\n\t\t\t{InstanceID: \"auth-1\", Address: \"10.0.1.10:8080\"},\n\t\t\t{InstanceID: \"auth-2\", Address: \"10.0.1.11:8080\"},\n\t\t\t{InstanceID: \"auth-3\", Address: \"10.0.1.12:8080\"},\n\t\t},\n\t}\n\n\tfmt.Println(\"Клиентская балансировка Round-Robin по эндпоинтам из etcd:\")\n\tfor i := 1; i <= 6; i++ {\n\t\taddr, _ := resolver.NextEndpoint()\n\t\tfmt.Printf(\" Запрос #%d -> направлен на бэкенд: %s\\n\", i, addr)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "В официальной библиотеке `google.golang.org/grpc/resolver` есть готовый интерфейс для подключения кастомных резолверов к пулу соединений gRPC. Клиент etcd v3 может выступать в качестве бэкенда для `grpc.Dial(\"etcd:///services/auth\", ...)`.",
+    "pitfalls": [
+      "Опрос etcd на каждый запрос: вызов `RefreshEndpoints` нельзя делать перед каждым HTTP-вызовом, иначе etcd упадет от нагрузки. Рефреш выполняется либо по таймеру раз в 10–30 секунд, либо реактивно по событиям Watcher.",
+      "Деление на ноль: если список `endpoints` пуст, операция деления по модулю `% len(r.endpoints)` вызовет панику `integer divide by zero`. Обязательна проверка `len == 0`."
+    ],
+    "bigtech_interview": "В чем преимущество связки etcd Watcher + Client-Side Balancer перед классическим DNS Round-Robin? DNS кэшируется промежуточными серверами (TTL), из-за чего клиенты могут слать запросы на умерший узел еще несколько минут. Watcher в etcd доставляет события удаления узла за 1–2 миллисекунды."
+  },
+  {
+    "num": 11,
+    "title": "Подписка на изменения (Watchers) в реальном времени",
+    "task": "Изучите механизм Watchers в etcd v3. Создайте компонент ConfigWatcher, подписывающийся на поток событий по заданному ключу через clientv3.NewWatcher. Напишите цикл обработки событий, классифицирующий операции mvccpb.PUT и mvccpb.DELETE с извлечением метаданных ревизии и предыдущего значения (WithPrevKV).",
+    "theory": "Механизм Watcher — одна из самых мощных возможностей etcd v3. Вместо неэффективного периодического поллинга (Polling) клиент открывает долгоживущий gRPC-поток, в который сервер etcd асинхронно пушит события в момент их коммита в Raft-лог.\n\nОсобенности архитектуры Watcher:\n1. Мультиплексирование потоков: сотни подписок на разные ключи внутри одного приложения передаются через единственный TCP/HTTP2 стрим.\n2. Типы событий: `mvccpb.PUT` (создание или перезапись) и `mvccpb.DELETE` (явное удаление или истечение Lease TTL).\n3. Опция `WithPrevKV()`: указывает etcd передать вместе с новым значением и предыдущее состояние ключа (`event.PrevKv`), что незаменимо для логирования аудита и отката транзакций.",
+    "step_by_step": [
+      "Инициализируйте наблюдатель clientv3.NewWatcher(client) с обязательным defer watcher.Close().",
+      "Вызовите watcher.Watch(ctx, key) для получения канала WatchChan.",
+      "Организуйте цикл for watchResp := range watchChan.",
+      "Проверьте флаг watchResp.Canceled и ошибки отмены стрима.",
+      "Используйте switch-case по event.Type (mvccpb.PUT vs mvccpb.DELETE)."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_watcher_stream.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n\t\"go.etcd.io/etcd/api/v3/mvccpb\"\n)\n\n// ConfigWatcher демонстрирует обработку потоковых событий изменения ключа\ntype ConfigWatcher struct {\n\tcli *clientv3.Client\n}\n\nfunc NewConfigWatcher(cli *clientv3.Client) *ConfigWatcher {\n\treturn &ConfigWatcher{cli: cli}\n}\n\n// WatchKey слушает события по конкретному ключу\nfunc (w *ConfigWatcher) WatchKey(ctx context.Context, key string) {\n\twatcher := clientv3.NewWatcher(w.cli)\n\tdefer watcher.Close()\n\n\t// Watch возвращает канал событий clientv3.WatchChan\n\twatchChan := watcher.Watch(ctx, key)\n\tfmt.Printf(\"[WATCHER] Запущена подписка на ключ: %s\\n\", key)\n\n\tfor watchResp := range watchChan {\n\t\tif watchResp.Canceled {\n\t\t\tfmt.Printf(\"[WATCHER] Подписка отменена: %v\\n\", watchResp.Err())\n\t\t\treturn\n\t\t}\n\n\t\tfor _, event := range watchResp.Events {\n\t\t\tswitch event.Type {\n\t\t\tcase mvccpb.PUT:\n\t\t\t\tfmt.Printf(\" 📝 [EVENT PUT] Key=%s Val=%s (ModRev=%d, Version=%d)\\n\",\n\t\t\t\t\tstring(event.Kv.Key), string(event.Kv.Value), event.Kv.ModRevision, event.Kv.Version)\n\t\t\t\tif event.PrevKv != nil {\n\t\t\t\t\tfmt.Printf(\"    Старое значение было: %s\\n\", string(event.PrevKv.Value))\n\t\t\t\t}\n\t\t\tcase mvccpb.DELETE:\n\t\t\t\tfmt.Printf(\" ❌ [EVENT DELETE] Key=%s (Удален на ModRev=%d)\\n\",\n\t\t\t\t\tstring(event.Kv.Key), event.Kv.ModRevision)\n\t\t\t}\n\t\t}\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"Подписка на изменения (Watchers) в реальном времени:\")\n\tfmt.Println(\" 1. watcher.Watch(ctx, key) открывает постоянный gRPC поток\")\n\tfmt.Println(\" 2. mvccpb.PUT фиксирует создание или модификацию ключа\")\n\tfmt.Println(\" 3. mvccpb.DELETE сигнализирует об удалении (или истечении срока аренды)\")\n\tfmt.Println(\" 4. Опция clientv3.WithPrevKV() позволяет получить предыдущее значение до изменения\")\n}\n"
+      }
+    ],
+    "under_the_hood": "На стороне сервера etcd все Watchers хранятся в двухуровневой структуре в памяти. При коммите новой ревизии etcd сопоставляет измененные ключи с активными вотчерами и собирает их в единый батч для отправки по HTTP/2, снижая накладные расходы до микросекунд.",
+    "pitfalls": [
+      "Незакрытый Watcher: если не вызывать `watcher.Close()` или не отменять контекст, сервер etcd будет продолжать удерживать вотчер в памяти, что приведет к утечке ресурсов на стороне кластера.",
+      "Медленный обработчик событий: если в цикле обработки `range watchChan` выполнять тяжелые синхронные операции (запросы в БД), внутренний буфер канала переполнится, замедляя чтение."
+    ],
+    "bigtech_interview": "Как Kubernetes Informer использует etcd Watchers? Паттерн Reflector в client-go сначала делает `Get(prefix)` для начальной синхронизации локального кэша, сохраняет максимальную ревизию и сразу открывает `Watch(prefix, WithRev(lastRev))`, поддерживая 100% консистентность без нагрузки на etcd."
+  },
+  {
+    "num": 12,
+    "title": "Префиксное наблюдение за каталогом конфигурации",
+    "task": "Спроектируйте реестр динамической конфигурации DynamicConfigRegistry. Реализуйте двухфазную схему: 1) Начальная вычитка каталога по префиксу через Get с сохранением ревизии, 2) Запуск префиксного Watcher с опциями WithPrefix() и WithRev(initRev+1) для обновления in-memory карты без потери событий.",
+    "theory": "Частая ошибка начинающих инженеров — запустить `Watch(prefix)` и отдельно сделать `Get(prefix)`. Между выполнением `Get` и запуском `Watch` неизбежно возникает временное окно (race window), в течение которого сторонний сервис может изменить ключ. В результате это изменение не попадет ни в `Get`, ни в `Watch`, вызвав рассинхронизацию.\n\nКанонический паттерн надежной инициализации:\n1. Делаем `Get(prefix, WithPrefix())` и получаем `initResp.Header.Revision`.\n2. Наполняем локальную мапу в памяти данными из `initResp.Kvs`.\n3. Запускаем `Watch(prefix, WithPrefix(), WithRev(initResp.Header.Revision + 1))`.\nПоскольку etcd хранит историю изменений в MVCC, передача `WithRev(N+1)` гарантирует получение всех событий, произошедших строго после точки начального чтения.",
+    "step_by_step": [
+      "Создайте структуру DynamicConfigRegistry с локальной картой параметров под sync.RWMutex.",
+      "Выполните начальный запрос client.Get(ctx, prefix, WithPrefix()) для заполнения карты.",
+      "Извлеките ревизию initResp.Header.Revision.",
+      "Запустите watcher.Watch с опциями WithPrefix() и WithRev(initRev+1).",
+      "В горутине обновляйте локальную карту при событиях PUT и DELETE."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_prefix_watcher.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"strings\"\n\t\"sync\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n\t\"go.etcd.io/etcd/api/v3/mvccpb\"\n)\n\n// DynamicConfigRegistry хранит конфигурацию микросервиса, обновляемую на лету\ntype DynamicConfigRegistry struct {\n\tcli    *clientv3.Client\n\tprefix string\n\tmu     sync.RWMutex\n\tparams map[string]string\n}\n\nfunc NewDynamicConfigRegistry(cli *clientv3.Client, prefix string) *DynamicConfigRegistry {\n\treturn &DynamicConfigRegistry{\n\t\tcli:    cli,\n\t\tprefix: prefix,\n\t\tparams: make(map[string]string),\n\t}\n}\n\n// WatchCatalog запускает префиксный вотчер для целого каталога параметров\nfunc (r *DynamicConfigRegistry) WatchCatalog(ctx context.Context) error {\n\t// 1. Начальная выгрузка всех параметров каталога\n\tinitResp, err := r.cli.Get(ctx, r.prefix, clientv3.WithPrefix())\n\tif err != nil {\n\t\treturn fmt.Errorf(\"ошибка начальной загрузки каталога: %w\", err)\n\t}\n\n\tr.mu.Lock()\n\tfor _, kv := range initResp.Kvs {\n\t\tcleanKey := strings.TrimPrefix(string(kv.Key), r.prefix)\n\t\tr.params[cleanKey] = string(kv.Value)\n\t}\n\tr.mu.Unlock()\n\tfmt.Printf(\"[CONFIG INIT] Загружено %d параметров из каталога %s (Rev=%d)\\n\",\n\t\tlen(initResp.Kvs), r.prefix, initResp.Header.Revision)\n\n\t// 2. Запуск наблюдения с ревизии сразу после снимка\n\twatcher := clientv3.NewWatcher(r.cli)\n\twatchChan := watcher.Watch(ctx, r.prefix,\n\t\tclientv3.WithPrefix(),\n\t\tclientv3.WithRev(initResp.Header.Revision+1),\n\t\tclientv3.WithPrevKV(),\n\t)\n\n\tgo func() {\n\t\tdefer watcher.Close()\n\t\tfor resp := range watchChan {\n\t\t\tfor _, ev := range resp.Events {\n\t\t\t\tcleanKey := strings.TrimPrefix(string(ev.Kv.Key), r.prefix)\n\t\t\t\tr.mu.Lock()\n\t\t\t\tif ev.Type == mvccpb.PUT {\n\t\t\t\t\tr.params[cleanKey] = string(ev.Kv.Value)\n\t\t\t\t\tfmt.Printf(\"[CONFIG UPDATE] Параметр '%s' изменен на '%s'\\n\", cleanKey, string(ev.Kv.Value))\n\t\t\t\t} else if ev.Type == mvccpb.DELETE {\n\t\t\t\t\tdelete(r.params, cleanKey)\n\t\t\t\t\tfmt.Printf(\"[CONFIG DELETE] Параметр '%s' удален\\n\", cleanKey)\n\t\t\t\t}\n\t\t\t\tr.mu.Unlock()\n\t\t\t}\n\t\t}\n\t}()\n\n\treturn nil\n}\n\nfunc (r *DynamicConfigRegistry) Get(key string) string {\n\tr.mu.RLock()\n\tdefer r.mu.RUnlock()\n\treturn r.params[key]\n}\n\nfunc main() {\n\tfmt.Println(\"Префиксное наблюдение за каталогом конфигурации в etcd v3:\")\n\tfmt.Println(\" 1. Initial Load: Get(prefix, WithPrefix()) фиксирует снапшот и startRevision\")\n\tfmt.Println(\" 2. Watch(prefix, WithPrefix(), WithRev(startRev+1)) ловит ВСЕ последующие изменения\")\n\tfmt.Println(\" 3. Локальный in-memory кэш гарантирует чтение за доли наносекунды\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Опция `WithRev(rev)` обращается к MVCC-журналу etcd. Если запрошенная ревизия еще не была удалена процедурой компактификации (Compaction), etcd проиграет все исторические события из bbolt и передаст их в стрим, после чего прозрачно перейдет в режим реального времени.",
+    "pitfalls": [
+      "Обрезка префикса: если не удалять префикс `/configs/app/` при сохранении в локальную карту, приложению придется везде передавать полные пути.",
+      "Отсутствие синхронизации доступа: локальная карта параметров должна защищаться `sync.RWMutex`, так как чтение из нее будет происходить параллельно с записью из горутины вотчера."
+    ],
+    "bigtech_interview": "Почему в production микросервисах предпочитают etcd Watchers вместо Consul Watches? Consul Watches под капотом используют механизм Long Polling HTTP/1.1 (постоянный перезапуск HTTP-запросов), что создает на порядки больший трафик и задержки по сравнению с мультиплексированным gRPC-стримом etcd."
+  },
+  {
+    "num": 13,
+    "title": "Надежная обработка разрыва соединения в Watcher",
+    "task": "Реализуйте отказоустойчивый наблюдатель ResilientWatcher с сохранением последней подтвержденной ревизии в atomic.Int64. Напишите цикл автоматического переподключения при обрывах gRPC-потока с возобновлением наблюдения через WithRev(lastRevision + 1) и экспоненциальным бэкоффом.",
+    "theory": "Сетевые сбои, рестарты нод etcd и плановые миграции подов — обычное дело в production. При обрыве TCP-соединения канал `watchChan` закрывается.\n\nЕсли просто перезапустить `watcher.Watch(ctx, key)` без указания ревизии, клиент начнет слушать только будущие события. Все изменения, произошедшие в кластере за секунды отсутствия связи, будут безвозвратно потеряны для приложения.\n\nАрхитектура непрерывного потока:\n1. При обработке каждого события сохраняем `lastRevision = max(lastRevision, event.Kv.ModRevision)`.\n2. При падении стрима делаем повторное подключение с опцией `clientv3.WithRev(lastRevision + 1)`.\n3. Сервер etcd выдаст клиенту накопившуюся очередь пропущенных событий из истории MVCC, и сервис восстановит консистентность без потерь.",
+    "step_by_step": [
+      "Создайте структуру ResilientWatcher с потокобезопасным полем lastRevision atomic.Int64.",
+      "Реализуйте бесконечный цикл for с проверкой ctx.Done().",
+      "Инициализируйте watcher.Watch с передачей WithRev(currentRev + 1).",
+      "Обновляйте lastRevision на основе resp.Header.Revision и ev.Kv.ModRevision.",
+      "Добавьте экспоненциальный бэкофф при возникновении ошибок стрима."
+    ],
+    "code_blocks": [
+      {
+        "filename": "resilient_etcd_watcher.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync/atomic\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// ResilientWatcher обеспечивает надежное возобновление наблюдения при сбоях сети\ntype ResilientWatcher struct {\n\tcli          *clientv3.Client\n\tkey          string\n\tlastRevision atomic.Int64\n}\n\nfunc NewResilientWatcher(cli *clientv3.Client, key string, startRev int64) *ResilientWatcher {\n\tw := &ResilientWatcher{cli: cli, key: key}\n\tw.lastRevision.Store(startRev)\n\treturn w\n}\n\n// StartWatchLoop запускает устойчивый цикл наблюдения с авто-восстановлением\nfunc (w *ResilientWatcher) StartWatchLoop(ctx context.Context, onEvent func(ev *clientv3.Event)) {\n\tbackoff := 100 * time.Millisecond\n\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\tfmt.Println(\"[WATCHER LOOP] Завершение работы по контексту\")\n\t\t\treturn\n\t\tdefault:\n\t\t}\n\n\t\tcurrentRev := w.lastRevision.Load()\n\t\tfmt.Printf(\"[WATCHER RECONNECT] Подключение Watcher к ключу %s с ревизии %d...\\n\", w.key, currentRev+1)\n\n\t\twatcher := clientv3.NewWatcher(w.cli)\n\t\twatchChan := watcher.Watch(ctx, w.key, clientv3.WithRev(currentRev+1))\n\n\t\twatchErr := false\n\t\tfor resp := range watchChan {\n\t\t\tif resp.Canceled {\n\t\t\t\tfmt.Printf(\"⚠️ [WATCHER CANCEL] Стрим разорван: %v\\n\", resp.Err())\n\t\t\t\twatchErr = true\n\t\t\t\tbreak\n\t\t\t}\n\n\t\t\t// Фиксируем последнюю обработанную ревизию\n\t\t\tif resp.Header.Revision > w.lastRevision.Load() {\n\t\t\t\tw.lastRevision.Store(resp.Header.Revision)\n\t\t\t}\n\n\t\t\tfor _, ev := range resp.Events {\n\t\t\t\tif ev.Kv.ModRevision > w.lastRevision.Load() {\n\t\t\t\t\tw.lastRevision.Store(ev.Kv.ModRevision)\n\t\t\t\t}\n\t\t\t\tonEvent(ev)\n\t\t\t}\n\t\t\tbackoff = 100 * time.Millisecond // Сбрасываем бэкофф при успешных событиях\n\t\t}\n\n\t\twatcher.Close()\n\n\t\tif watchErr {\n\t\t\tfmt.Printf(\"[WATCHER RETRY] Пауза перед переподключением: %v\\n\", backoff)\n\t\t\ttime.Sleep(backoff)\n\t\t\tif backoff < 5*time.Second {\n\t\t\t\tbackoff *= 2 // Экспоненциальный бэкофф\n\t\t\t}\n\t\t}\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"Надежная обработка разрыва соединения в Watcher:\")\n\tfmt.Println(\" 1. lastRevision непрерывно сохраняется в atomic.Int64 при каждом полученном событии\")\n\tfmt.Println(\" 2. При обрыве gRPC стрима цикл переподключается с WithRev(lastRevision + 1)\")\n\tfmt.Println(\" 3. Экспоненциальный бэкофф предотвращает Thundering Herd при недоступности кластера etcd\")\n}\n"
+      }
+    ],
+    "under_the_hood": "etcd гарантирует строгий порядок доставки событий (FIFO ordering). Даже если за время сетевого сбоя ключ изменился 5 раз, etcd при передаче `WithRev` передаст все 5 промежуточных событий в точной хронологической последовательности их фиксации в Raft.",
+    "pitfalls": [
+      "Переподключение с той же ревизией: если передать `WithRev(lastRevision)`, а не `lastRevision + 1`, клиент повторно получит последнее уже обработанное событие (дубликат).",
+      "Отсутствие бэкоффа: при полном падении etcd миллионы клиентов начнут спамить запросами на подключение каждую миллисекунду, не давая кластеру подняться."
+    ],
+    "bigtech_interview": "Что произойдет, если клиент etcd был оффлайн 2 дня? За это время etcd выполнит процедуру Compaction и сотрет старые ревизии. Попытка вызвать `WithRev` вернет ошибку `ErrCompacted`. Как с ней бороться, разберем в следующем упражнении."
+  },
+  {
+    "num": 14,
+    "title": "Обработка фатальной ошибки ErrCompacted в Watcher",
+    "task": "Реализуйте самоисцеляющийся наблюдатель SelfHealingWatcher, корректно обрабатывающий ошибку rpctypes.ErrCompacted. При получении ошибки сжатия истории сервис должен перехватить её, выполнить полный ресинхронизационный срез (Full Resync) через Get и возобновить наблюдение со свежей ревизии кластера.",
+    "theory": "Файл базы данных etcd не может расти бесконечно: чтобы диск не переполнился, администраторы настраивают периодическую компактификацию (например, удалять ревизии старше 1 часа).\n\nЕсли сервис:\n1. Был остановлен на несколько часов для технического обслуживания,\n2. Или испытывал длительную сетевую изоляцию,\nто при попытке возобновить стрим `Watch(WithRev(lastRev + 1))` etcd вернет фатальную ошибку `rpctypes.ErrCompacted`: запрашиваемая историческая ревизия уже физически стерта с диска!\n\nОбычный ретрай здесь бесполезен — он приведет к бесконечному циклу ошибок. Единственное правильное решение — выполнить двухфазное восстановление:\n1. Сбросить локальное состояние и выполнить полный `Get(prefix, WithPrefix())` с текущей ревизии кластера.\n2. Перезапустить Watcher с полученной свежей ревизии.",
+    "step_by_step": [
+      "Импортируйте пакет go.etcd.io/etcd/api/v3/v3rpc/rpctypes.",
+      "Создайте SelfHealingWatcher с методом fullResync для полной перезагрузки данных.",
+      "В цикле обработки watchChan проверьте условие errors.Is(resp.Err(), rpctypes.ErrCompacted).",
+      "При обнаружении ошибки компактификации установите флаг needResync и прервите стрим.",
+      "Вызовите fullResync() и возобновите наблюдение со свежего снапшота."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_err_compacted_handler.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n\t\"go.etcd.io/etcd/api/v3/v3rpc/rpctypes\"\n)\n\n// SelfHealingWatcher умеет самовосстанавливаться при фатальной ошибке ErrCompacted\ntype SelfHealingWatcher struct {\n\tcli      *clientv3.Client\n\tprefix   string\n\tmu       sync.RWMutex\n\tlastRev  int64\n\tcache    map[string]string\n}\n\nfunc NewSelfHealingWatcher(cli *clientv3.Client, prefix string) *SelfHealingWatcher {\n\treturn &SelfHealingWatcher{\n\t\tcli:    cli,\n\t\tprefix: prefix,\n\t\tcache:  make(map[string]string),\n\t}\n}\n\n// fullResync производит полную пересинхронизацию снимка данных из etcd\nfunc (w *SelfHealingWatcher) fullResync(ctx context.Context) (int64, error) {\n\tresp, err := w.cli.Get(ctx, w.prefix, clientv3.WithPrefix())\n\tif err != nil {\n\t\treturn 0, fmt.Errorf(\"ошибка full resync: %w\", err)\n\t}\n\n\tw.mu.Lock()\n\tnewCache := make(map[string]string, len(resp.Kvs))\n\tfor _, kv := range resp.Kvs {\n\t\tnewCache[string(kv.Key)] = string(kv.Value)\n\t}\n\tw.cache = newCache\n\tw.lastRev = resp.Header.Revision\n\tw.mu.Unlock()\n\n\tfmt.Printf(\"🔄 [FULL RESYNC] Полная ресинхронизация завершена: %d ключей (Новая ревизия: %d)\\n\",\n\t\tlen(resp.Kvs), resp.Header.Revision)\n\treturn resp.Header.Revision, nil\n}\n\n// RunWatchLoop обрабатывает ErrCompacted с полным сбросом и ресинхронизацией\nfunc (w *SelfHealingWatcher) RunWatchLoop(ctx context.Context) error {\n\trev, err := w.fullResync(ctx)\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\treturn ctx.Err()\n\t\tdefault:\n\t\t}\n\n\t\twatcher := clientv3.NewWatcher(w.cli)\n\t\twatchChan := watcher.Watch(ctx, w.prefix, clientv3.WithPrefix(), clientv3.WithRev(rev+1))\n\n\t\tneedResync := false\n\t\tfor resp := range watchChan {\n\t\t\tif resp.Canceled {\n\t\t\t\t// Проверяем, является ли ошибка фатальным ErrCompacted\n\t\t\t\tif errors.Is(resp.Err(), rpctypes.ErrCompacted) {\n\t\t\t\t\tfmt.Printf(\"🚨 [COMPACTED ERROR] Запрошенная ревизия %d была сжата кластером etcd!\\n\", rev+1)\n\t\t\t\t\tneedResync = true\n\t\t\t\t\tbreak\n\t\t\t\t}\n\t\t\t\tfmt.Printf(\"[WATCH CANCEL] Обычный разрыв стрима: %v\\n\", resp.Err())\n\t\t\t\tbreak\n\t\t\t}\n\n\t\t\tw.mu.Lock()\n\t\t\trev = resp.Header.Revision\n\t\t\tw.lastRev = rev\n\t\t\t// Обработка событий PUT/DELETE...\n\t\t\tw.mu.Unlock()\n\t\t}\n\n\t\twatcher.Close()\n\n\t\tif needResync {\n\t\t\t// При компактификации история утеряна: делаем полный сброс и начинаем с текущей ревизии\n\t\t\tnewRev, err := w.fullResync(ctx)\n\t\t\tif err != nil {\n\t\t\t\ttime.Sleep(1 * time.Second)\n\t\t\t\tcontinue\n\t\t\t}\n\t\t\trev = newRev\n\t\t}\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"Обработка ошибки rpctypes.ErrCompacted в etcd Watcher:\")\n\tfmt.Println(\" 1. При длительном оффлайне история старых ревизий удаляется etcd compaction\")\n\tfmt.Println(\" 2. errors.Is(resp.Err(), rpctypes.ErrCompacted) перехватывает ошибку сжатия\")\n\tfmt.Println(\" 3. Выполняется полный сброс in-memory кэша (Full Resync) с текущего снапшота кластера\")\n}\n"
+      }
+    ],
+    "under_the_hood": "В Kubernetes эта же ситуация возникает, когда `kube-apiserver` компактифицирует etcd. Контроллер в `k8s.io/client-go` ловит `410 Gone (Too old resource version)` и инициирует процедуру List-Watch Re-list.",
+    "pitfalls": [
+      "Бесконечный цикл ретраев без проверки ошибки: если не проверять `ErrCompacted`, сервис будет долбить etcd миллионы раз в секунду с одной и той же умершей ревизией.",
+      "Игнорирование локальных удалений: при `fullResync` необходимо полностью перезаписать локальную карту, иначе ключи, удаленные во время оффлайна, останутся в кэше навсегда (Ghost Keys)."
+    ],
+    "bigtech_interview": "Почему etcd не хранит историю бесконечно? Хранение всех ревизий при интенсивной записи (10 000 операций/сек) привело бы к исчерпанию диска за считанные часы. Компактификация очищает старые версии ключей из bbolt, поддерживая компактный размер файла базы."
+  },
+  {
+    "num": 15,
+    "title": "Атомарные транзакции Compare-And-Swap (etcd Txn / STM)",
+    "task": "Изучите декларативную модель транзакций etcd v3: If(Condition) -> Then(Op) -> Else(Op). Реализуйте метод TryAcquireLock, осуществляющий атомарную проверку отсутствия ключа (CreateRevision == 0) и создание блокировки за один шаг без гонок данных.",
+    "theory": "В распределенных системах проверка условия и последующая запись, разделенные по времени (Check-Then-Act), приводят к race condition: между проверкой `Get` и записью `Put` другой узел может успеть перехватить ресурс.\n\netcd v3 предоставляет мощный декларативный механизм мини-транзакций `Txn`:\n```go\nclient.Txn(ctx).\n    If(Conditions...).\n    Then(SuccessOps...).\n    Else(FailureOps...).\n    Commit()\n```\nВсе проверки условий (`If`) и операции (`Then` / `Else`) пакуются в единое сообщение Raft и атомарно применяются к bbolt в рамках одной ревизии кластера. Либо все операции `Then` успешно фиксируются, либо выполняется ветка `Else`. Никакие промежуточные состояния другим клиентам не видны.",
+    "step_by_step": [
+      "Сформируйте предикат проверки: clientv3.Compare(clientv3.CreateRevision(key), \"=\", 0).",
+      "Подготовьте операцию ветки успеха clientv3.OpPut(key, holderID).",
+      "Подготовьте операцию ветки отката clientv3.OpGet(key).",
+      "Вызовите kv.Txn(ctx).If(cmp).Then(thenOp).Else(elseOp).Commit().",
+      "Проверьте флаг txnResp.Succeeded и извлеките данные текущего владельца из ответа ветки Else."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_atomic_txn.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// AtomicLockService реализует примитив атомарной вставки (Insert-if-not-exists)\ntype AtomicLockService struct {\n\tkv clientv3.KV\n}\n\nfunc NewAtomicLockService(cli *clientv3.Client) *AtomicLockService {\n\treturn &AtomicLockService{kv: clientv3.NewKV(cli)}\n}\n\n// TryAcquireLock выполняет атомарный CAS через etcd Txn\nfunc (s *AtomicLockService) TryAcquireLock(ctx context.Context, lockKey, holderID string) (bool, error) {\n\t// Декларативная транзакция etcd v3: If -> Then -> Else\n\t// Условие: Ключ НЕ существует (его CreateRevision равен 0)\n\tcmp := clientv3.Compare(clientv3.CreateRevision(lockKey), \"=\", 0)\n\n\t// Ветка Then: Если условие истинно, создаем ключ со значением владельца\n\tthenOp := clientv3.OpPut(lockKey, holderID)\n\n\t// Ветка Else: Если ключ уже существует, считываем текущего владельца\n\telseOp := clientv3.OpGet(lockKey)\n\n\t// Выполняем транзакцию атомарно на сервере etcd\n\ttxnResp, err := s.kv.Txn(ctx).\n\t\tIf(cmp).\n\t\tThen(thenOp).\n\t\tElse(elseOp).\n\t\tCommit()\n\n\tif err != nil {\n\t\treturn false, fmt.Errorf(\"ошибка выполнения транзакции: %w\", err)\n\t}\n\n\tif txnResp.Succeeded {\n\t\tfmt.Printf(\"✅ [TXN SUCCESS] Блокировка %s успешно захвачена узлом %s\\n\", lockKey, holderID)\n\t\treturn true, nil\n\t}\n\n\t// Извлекаем текущего владельца из ветки Else\n\tif len(txnResp.Responses) > 0 {\n\t\tgetResp := txnResp.Responses[0].GetResponseRange()\n\t\tif len(getResp.Kvs) > 0 {\n\t\t\tcurrentHolder := string(getResp.Kvs[0].Value)\n\t\t\tfmt.Printf(\"❌ [TXN REJECTED] Блокировка %s занята узлом: %s\\n\", lockKey, currentHolder)\n\t\t}\n\t}\n\n\treturn false, nil\n}\n\nfunc main() {\n\tfmt.Println(\"Атомарные транзакции Compare-And-Swap (etcd Txn):\")\n\tfmt.Println(\" 1. If(Compare(CreateRevision(key), '=', 0)) проверяет отсутствие ключа\")\n\tfmt.Println(\" 2. Then(OpPut(key, val)) выполняется атомарно при успехе проверки\")\n\tfmt.Println(\" 3. Else(OpGet(key)) возвращает текущее состояние при отказе\")\n\tfmt.Println(\" 4. txnResp.Succeeded указывает, какая именно ветка была выполнена в Raft\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Транзакции etcd не требуют блокировок строк на стороне сервера. etcd валидирует предикаты условий в момент применения Raft-лога. Если условие истинно, операции применяются немедленно в памяти и сбрасываются в bbolt в рамках единой ACID-транзакции bbolt.",
+    "pitfalls": [
+      "Сложные условия: в etcd транзакции не поддерживают циклические запросы. Все операции `OpPut`, `OpGet`, `OpDelete` должны быть детерминированными и определены заранее.",
+      "Превышение лимита операций: etcd по умолчанию ограничивает число операций в одной транзакции (обычно до 128 операций)."
+    ],
+    "bigtech_interview": "Как в etcd v3 реализован CAS (Compare-And-Swap) по значению или ревизии? Мы передаем `Compare(ModRevision(key), \"=\", expectedRev)` или `Compare(Value(key), \"=\", expectedVal)`. Если кто-то успел изменить ключ, транзакция возвращает `Succeeded: false`."
+  },
+  {
+    "num": 16,
+    "title": "Атомарный инкремент счетчика на транзакциях etcd",
+    "task": "Реализуйте распределенный счетчик DistributedCounter на базе оптимистичных транзакций etcd (Optimistic Concurrency Control). Счетчик должен считывать значение и ModRevision ключа, формировать предикат Compare по ревизии и повторять транзакцию при конфликтах параллельной записи.",
+    "theory": "В распределенных системах наивный инкремент `val = Get(); Put(val + 1)` приводит к потерянным обновлениям (Lost Updates) при параллельных запросах сотен воркеров.\n\nВ etcd v3 эта проблема решается через паттерн Compare-And-Swap (CAS) по номеру ревизии:\n1. Воркер читает ключ и запоминает `expectedModRev`.\n2. Формируется транзакция с условием: `If(Compare(ModRevision(key), \"=\", expectedModRev))`.\n3. Ветка успеха `Then(OpPut(key, val + 1))` выполняется только в том случае, если ни один другой узел не успел изменить ключ за это время.\n4. Если транзакция отклонена (`Succeeded == false`), воркер выполняет повторную попытку (Retry) со свежими данными.",
+    "step_by_step": [
+      "Создайте структуру DistributedCounter с ссылкой на clientv3.KV.",
+      "В цикле с лимитом попыток выполните kv.Get для получения текущего значения и ModRevision.",
+      "Преобразуйте строковое значение в int64 через strconv.ParseInt.",
+      "Составьте условие Compare(ModRevision, '=', expectedModRev) или Compare(CreateRevision, '=', 0) для первого создания.",
+      "Вызовите Txn().If().Then().Commit() и верните результат при txnResp.Succeeded."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_occ_counter.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// DistributedCounter реализует оптимистичный CAS счетчик на транзакциях etcd\ntype DistributedCounter struct {\n\tkv         clientv3.KV\n\tcounterKey string\n}\n\nfunc NewDistributedCounter(kv clientv3.KV, key string) *DistributedCounter {\n\treturn &DistributedCounter{kv: kv, counterKey: key}\n}\n\n// Increment атомарно увеличивает счетчик с повторными попытками при конфликтах (OCC)\nfunc (c *DistributedCounter) Increment(ctx context.Context, maxRetries int) (int64, error) {\n\tfor attempt := 0; attempt < maxRetries; attempt++ {\n\t\t// 1. Читаем текущее значение и ModRevision\n\t\tgetResp, err := c.kv.Get(ctx, c.counterKey)\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"ошибка чтения счетчика: %w\", err)\n\t\t}\n\n\t\tvar currentVal int64 = 0\n\t\tvar expectedModRev int64 = 0\n\n\t\tif len(getResp.Kvs) > 0 {\n\t\t\texpectedModRev = getResp.Kvs[0].ModRevision\n\t\t\tcurrentVal, err = strconv.ParseInt(string(getResp.Kvs[0].Value), 10, 64)\n\t\t\tif err != nil {\n\t\t\t\treturn 0, fmt.Errorf(\"невалидное значение счетчика в etcd: %w\", err)\n\t\t\t}\n\t\t}\n\n\t\tnewVal := currentVal + 1\n\t\tnewValStr := strconv.FormatInt(newVal, 10)\n\n\t\t// 2. Формируем предикат CAS транзакции\n\t\tvar cmp clientv3.Cmp\n\t\tif expectedModRev == 0 {\n\t\t\t// Ключ еще не существует: проверяем CreateRevision == 0\n\t\t\tcmp = clientv3.Compare(clientv3.CreateRevision(c.counterKey), \"=\", 0)\n\t\t} else {\n\t\t\t// Ключ существует: проверяем, что ModRevision не изменилась\n\t\t\tcmp = clientv3.Compare(clientv3.ModRevision(c.counterKey), \"=\", expectedModRev)\n\t\t}\n\n\t\t// 3. Выполняем атомарную транзакцию\n\t\ttxnResp, err := c.kv.Txn(ctx).\n\t\t\tIf(cmp).\n\t\t\tThen(clientv3.OpPut(c.counterKey, newValStr)).\n\t\t\tCommit()\n\n\t\tif err != nil {\n\t\t\treturn 0, fmt.Errorf(\"сбой коммита транзакции etcd: %w\", err)\n\t\t}\n\n\t\tif txnResp.Succeeded {\n\t\t\treturn newVal, nil\n\t\t}\n\n\t\t// Конфликт параллельной записи: делаем небольшую паузу с джиттером и повторяем\n\t\ttime.Sleep(time.Duration(10*(attempt+1)) * time.Millisecond)\n\t}\n\n\treturn 0, fmt.Errorf(\"превышен лимит попыток (%d) из-за высокой конкуренции\", maxRetries)\n}\n\nfunc main() {\n\tfmt.Println(\"Атомарный инкремент счетчика на транзакциях etcd:\")\n\tfmt.Println(\" 1. Читаем ключ и фиксируем expectedModRev\")\n\tfmt.Println(\" 2. Txn.If(Compare(ModRevision(key), '=', expectedModRev)).Then(OpPut(key, newVal))\")\n\tfmt.Println(\" 3. При параллельном изменении (txn.Succeeded == false) перезапрашиваем актуальную ревизию\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Поскольку etcd гарантирует строгую сериализуемость транзакций, в момент коммита Raft-лога сервер etcd атомарно сверяет ревизию в памяти. Если параллельный запрос инкрементировал ключ на одну микросекунду раньше, его ревизия выросла, и проверка условия текущего запроса возвратит false без побочных эффектов.",
+    "pitfalls": [
+      "Отсутствие бэк-оффа при ретраях: сотни горутин, одновременно пытающихся инкрементировать один ключ без пауз, создадут шторм транзакций (Live Lock) и перегрузят Raft-кворум.",
+      "Игнорирование CreateRevision == 0: если ключ создается впервые, его `ModRevision` не существует. Предикат должен проверять `CreateRevision == 0`."
+    ],
+    "bigtech_interview": "Почему для счетчиков с миллионами событий в секунду не используют etcd? etcd имеет пропускную способность записи порядка 10 000–30 000 RPS из-за синхронного fsync дискового журнала Raft на кворуме узлов. Для сверхвысоких нагрузок используют Redis INCR или распределенные батчинг-счетчики в памяти."
+  },
+  {
+    "num": 17,
+    "title": "Программная память транзакций (Software Transactional Memory - STM)",
+    "task": "Изучите высокоуровневый пакет concurrency.NewSTM для программной памяти транзакций в etcd. Реализуйте сервис BankAccountService с методом TransferMoney, который выполняет атомарный перевод средств между двумя счетами с контролем баланса и изоляцией SerializableSnapshot.",
+    "theory": "Ручное составление транзакций `etcd.Txn` при затрагивании нескольких взаимосвязанных ключей становится чрезвычайно сложным: разработчик должен вручную собрать все `ModRevision`, сформировать массив `Compare` и самостоятельно организовать цикл повторов.\n\nПакет `go.etcd.io/etcd/client/v3/concurrency` предоставляет абстракцию Software Transactional Memory (STM):\n- Внутри функции `apply(stm)` вы просто вызываете `stm.Get(key)` и `stm.Put(key, val)`.\n- STM автоматически отслеживает Read Set (все прочитанные ключи и их ревизии) и Write Set (все изменяемые ключи).\n- При коммите STM компилирует это в единый атомарный вызов `Txn`.\n- Если за время выполнения функции какой-либо из прочитанных ключей был изменен другим клиентом, `concurrency.NewSTM` автоматически перезапускает функцию с актуальными данными.",
+    "step_by_step": [
+      "Импортируйте пакет go.etcd.io/etcd/client/v3/concurrency.",
+      "Создайте сервис BankAccountService с ссылкой на clientv3.Client.",
+      "Напишите функцию транзакции applyTxn с чтением балансов через stm.Get.",
+      "Проверьте достаточность средств и обновите значения через stm.Put.",
+      "Запустите concurrency.NewSTM с опцией изоляции SerializableSnapshot."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_stm_transfer.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"strconv\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n\t\"go.etcd.io/etcd/client/v3/concurrency\"\n)\n\n// BankAccountService осуществляет межбанковские переводы с гарантией ACID\ntype BankAccountService struct {\n\tcli *clientv3.Client\n}\n\nfunc NewBankAccountService(cli *clientv3.Client) *BankAccountService {\n\treturn &BankAccountService{cli: cli}\n}\n\n// TransferMoney атомарно переводит сумму между двумя счетами через STM\nfunc (s *BankAccountService) TransferMoney(ctx context.Context, fromAccount, toAccount string, amount int64) error {\n\t// Инициализируем STM (Software Transactional Memory)\n\tapplyTxn := func(stm concurrency.STM) error {\n\t\t// Читаем баланс отправителя через STM\n\t\tfromValStr := stm.Get(fromAccount)\n\t\tfromBalance, _ := strconv.ParseInt(fromValStr, 10, 64)\n\n\t\tif fromBalance < amount {\n\t\t\treturn fmt.Errorf(\"недостаточно средств на счете %s: баланс %d, требуется %d\",\n\t\t\t\tfromAccount, fromBalance, amount)\n\t\t}\n\n\t\t// Читаем баланс получателя\n\t\ttoValStr := stm.Get(toAccount)\n\t\ttoBalance, _ := strconv.ParseInt(toValStr, 10, 64)\n\n\t\t// Модифицируем балансы в транзакционной памяти\n\t\tstm.Put(fromAccount, strconv.FormatInt(fromBalance-amount, 10))\n\t\tstm.Put(toAccount, strconv.FormatInt(toBalance+amount, 10))\n\n\t\treturn nil\n\t}\n\n\t// concurrency.NewSTM автоматически собирает все Get/Put в Txn и повторяет при конфликтах\n\t_, err := concurrency.NewSTM(s.cli, applyTxn, concurrency.WithIsolation(concurrency.SerializableSnapshot))\n\tif err != nil {\n\t\treturn fmt.Errorf(\"транзакция перевода отклонена: %w\", err)\n\t}\n\n\tfmt.Printf(\"[STM SUCCESS] Успешный перевод %d со счета %s на счет %s\\n\", amount, fromAccount, toAccount)\n\treturn nil\n}\n\nfunc main() {\n\tfmt.Println(\"Программная память транзакций (Software Transactional Memory - STM):\")\n\tfmt.Println(\" 1. concurrency.NewSTM(cli, applyFn) отслеживает все прочитанные ключи stm.Get()\")\n\tfmt.Println(\" 2. Автоматически генерирует If(Compare(ModRev...)) для всех прочитанных ключей\")\n\tfmt.Println(\" 3. При конфликте перезапускает applyFn до успешной фиксации (SerializableSnapshot)\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Уровень изоляции `concurrency.SerializableSnapshot` гарантирует отсутствие аномалий фантомного и несогласованного чтения (Write Skew): STM проверяет, что ревизии абсолютно всех прочитанных ключей не изменились к моменту записи.",
+    "pitfalls": [
+      "Побочные эффекты внутри apply: функция, переданная в `NewSTM`, может быть вызвана 5–10 раз подряд из-за конфликтов параллельных транзакций. Внутри неё категорически запрещено отправлять письма, списывать деньги через сторонние API или вызывать внешние неидемпотентные сетевые вызовы.",
+      "Большой объем Read Set: если внутри STM вычитать тысячи ключей, транзакция превысит лимит размера сообщения etcd."
+    ],
+    "bigtech_interview": "В чем разница между оптимистичной транзакцией в STM etcd и пессимистичной блокировкой в PostgreSQL (`SELECT FOR UPDATE`)? В etcd узлы не удерживают блокировки строк в процессе вычисления (lock-free), что устраняет риск взаимных блокировок (Deadlocks). Но при крайне высокой конкуренции на одну запись транзакции будут тратить CPU на постоянные повторы (Retry storms)."
+  },
+  {
+    "num": 18,
+    "title": "Распределенные блокировки (Distributed Lock) с concurrency.Mutex",
+    "task": "Изучите устройство распределенного мьютекса в etcd v3. Реализуйте DistributedLockManager с методом ExecuteWithLock, создающим сессию concurrency.NewSession с TTL, захватывающим блокировку через concurrency.NewMutex, выполняющим критическую секцию и безопасно освобождающим ресурс.",
+    "theory": "В распределенных системах множество экземпляров сервиса конкурируют за неделимый ресурс: генерацию ежемесячного биллинга, доступ к оборудованию или миграцию схемы БД.\n\nПакет `concurrency.NewMutex` в etcd реализует классический алгоритм распределенной очереди блокировок (Fair Distributed Lock):\n1. `session := concurrency.NewSession(client, WithTTL(10))` создает объект аренды с авто-продлением KeepAlive.\n2. При вызове `mutex.Lock(ctx)` клиент создает ключ с префиксом: `/locks/resource/<lease_id>`.\n3. etcd сортирует созданные ключи по их `CreateRevision`.\n4. Если созданный ключ имеет наименьшую ревизию в префиксе — узел немедленно получает блокировку!\n5. Если есть ключи с меньшей ревизией, клиент вешает `Watcher` строго на ключ непосредственно ПЕРЕД ним в очереди. Как только предшественник удаляет свой ключ (Unlock или падение), следующий узел мгновенно получает владение.",
+    "step_by_step": [
+      "Инициализируйте сессию concurrency.NewSession с параметром WithTTL.",
+      "Создайте мьютекс concurrency.NewMutex(session, lockKey).",
+      "Вызовите mutex.Lock(ctx) с обработкой отмены по таймауту контекста.",
+      "Выполните целевую функцию criticalSection под гарантированной защитой блокировки.",
+      "Вызовите mutex.Unlock() и закройте сессию defer session.Close()."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_distributed_mutex.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n\t\"go.etcd.io/etcd/client/v3/concurrency\"\n)\n\n// DistributedLockManager управляет распределенными мьютексами в etcd\ntype DistributedLockManager struct {\n\tclient *clientv3.Client\n}\n\nfunc NewDistributedLockManager(cli *clientv3.Client) *DistributedLockManager {\n\treturn &DistributedLockManager{client: cli}\n}\n\n// ExecuteWithLock выполняет критическую секцию под защитой распределенного мьютекса\nfunc (m *DistributedLockManager) ExecuteWithLock(ctx context.Context, lockKey string, ttlSeconds int, criticalSection func() error) error {\n\t// 1. Создаем сессию concurrency.Session (автоматический Lease + KeepAlive)\n\tsession, err := concurrency.NewSession(m.client, concurrency.WithTTL(ttlSeconds))\n\tif err != nil {\n\t\treturn fmt.Errorf(\"ошибка создания сессии блокировки: %w\", err)\n\t}\n\tdefer session.Close()\n\n\t// 2. Инициализируем мьютекс\n\tmutex := concurrency.NewMutex(session, lockKey)\n\n\t// 3. Захватываем блокировку (блокируется до тех пор, пока ресурс не освободится)\n\tfmt.Printf(\"[LOCK ACQUIRE] Запрос захвата блокировки '%s'...\\n\", lockKey)\n\tif err := mutex.Lock(ctx); err != nil {\n\t\treturn fmt.Errorf(\"не удалось захватить блокировку: %w\", err)\n\t}\n\tfmt.Printf(\"🔒 [LOCK GRANTED] Блокировка '%s' успешно получена (Ключ в etcd: %s)\\n\", lockKey, mutex.Key())\n\n\t// 4. Выполняем защищенный бизнес-код\n\texecErr := criticalSection()\n\n\t// 5. Освобождаем блокировку\n\tif err := mutex.Unlock(context.Background()); err != nil {\n\t\tfmt.Printf(\"⚠️ Ошибка явного освобождения блокировки: %v\\n\", err)\n\t} else {\n\t\tfmt.Printf(\"🔓 [LOCK RELEASED] Блокировка '%s' успешно освобождена\\n\", lockKey, mutex.Key())\n\t}\n\n\treturn execErr\n}\n\nfunc main() {\n\tfmt.Println(\"Распределенные блокировки (Distributed Lock) с concurrency.Mutex:\")\n\tfmt.Println(\" 1. concurrency.NewSession(cli, WithTTL(10)) создает аренду с фоновым KeepAlive\")\n\tfmt.Println(\" 2. mutex.Lock(ctx) создает эфемерный ключ и встает в очередь по ревизиям\")\n\tfmt.Println(\" 3. mutex.Unlock(ctx) удаляет ключ и пробуждает следующий ожидающий узел\")\n}\n"
+      }
+    ],
+    "under_the_hood": "В отличие от Redis Redlock, где клиенты непрерывно спамят поллингом `SET NX EX` каждые 50 мс, алгоритм etcd не создает лишнего сетевого трафика. Каждый ожидающий узел подписывается ровно на один предыдущий ключ, исключая эффект Thundering Herd (когда при освобождении замка сотни клиентов одновременно штурмуют базу).",
+    "pitfalls": [
+      "Забытый session.Close(): незакрытая сессия оставляет аренду активной в etcd, удерживая блокировку даже после завершения выполнения функции.",
+      "Таймаут контекста в Unlock: при освобождении блокировки `mutex.Unlock()` следует передавать `context.Background()` с коротким таймаутом, а не родительский отмененный `ctx`, иначе запрос на удаление ключа будет отменен."
+    ],
+    "bigtech_interview": "Почему алгоритм распределенных блокировок etcd надежнее Redis Redlock? Мартин Клеппманн доказал, что Redlock подвержен сбоям из-за сдвигов системных часов (Clock Drift) и пауз GC. etcd опирается на строгий консенсус Raft и монотонные логические ревизии, не зависящие от физических часов серверов."
+  },
+  {
+    "num": 19,
+    "title": "Безопасность блокировок: предотвращение зависания при падении узла",
+    "task": "Смоделируйте сценарий аварийного падения узла (Hard Crash / SIGKILL), удерживающего распределенный мьютекс. Докажите, что благодаря привязке concurrency.Mutex к объекту concurrency.Session с ограниченным TTL, кластер etcd автоматически освобождает блокировку по истечении срока аренды.",
+    "theory": "Главная опасность распределенных блокировок — вечный дедлок (Deadlock): узел захватывает мьютекс, начинает обработку и неожиданно погибает (Kernel Panic, Out of Memory, потеря электропитания). Если блокировка не имеет срока жизни, ни один другой сервер в мире больше никогда не сможет ее захватить.\n\nВ etcd v3 распределенный мьютекс физически не может существовать без `concurrency.Session`:\n1. Сессия создается с жестким TTL (например, 10 секунд).\n2. Фоновая горутина Go-клиента регулярно шлет KeepAlive heartbeat-пакеты.\n3. При падении процесса сокет закрывается на уровне ОС, отправка KeepAlive прекращается.\n4. Ровно через 10 секунд таймер аренды на сервере etcd истекает, etcd генерирует Raft-удаление ключа и оповещает следующий узел в очереди ожидания.",
+    "step_by_step": [
+      "Создайте симулятор DeadlockSafetySimulator с клиентом clientv3.Client.",
+      "Реализуйте SimulateCrashedNode: захватите мьютекс и смоделируйте гибель процесса без вызова Unlock.",
+      "В методе WaitForLockRelease запустите резервный узел, вызывающий mutex.Lock().",
+      "Зафиксируйте время разблокировки time.Since(start).",
+      "Убедитесь, что задержка передачи блокировки точно соответствует TTL аренды."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_lock_safety_deadlock.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n\t\"go.etcd.io/etcd/client/v3/concurrency\"\n)\n\n// DeadlockSafetySimulator демонстрирует автоматическое снятие блокировки при аварии узла\ntype DeadlockSafetySimulator struct {\n\tcli *clientv3.Client\n}\n\nfunc NewDeadlockSafetySimulator(cli *clientv3.Client) *DeadlockSafetySimulator {\n\treturn &DeadlockSafetySimulator{cli: cli}\n}\n\n// SimulateCrashedNode имитирует узел, который захватил мьютекс и внезапно упал (SIGKILL)\nfunc (s *DeadlockSafetySimulator) SimulateCrashedNode(lockKey string, leaseTTL int) clientv3.LeaseID {\n\t// Создаем сессию с коротким TTL (например, 5 секунд)\n\tsession, err := concurrency.NewSession(s.cli, concurrency.WithTTL(leaseTTL))\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tmutex := concurrency.NewMutex(session, lockKey)\n\tif err := mutex.Lock(context.Background()); err != nil {\n\t\tpanic(err)\n\t}\n\n\tleaseID := session.Lease()\n\tfmt.Printf(\"💥 [NODE CRASH] Узел захватил мьютекс '%s' (LeaseID=%x) и аварийно завершился (kill -9)\\n\",\n\t\tmutex.Key(), leaseID)\n\n\t// Эмулируем падение процесса: сессия НЕ закрывается через session.Close(),\n\t// а горутина KeepAlive убивается (отменяем внутренний контекст сессии).\n\t// В реальной жизни процесс Go просто погибает вместе со всеми сокетами.\n\t_ = session.Client().Revoke(context.Background(), 0) // демонстрационный маркер\n\n\treturn leaseID\n}\n\n// WaitForLockRelease проверяет, освободит ли etcd блокировку по тайм-ауту\nfunc (s *DeadlockSafetySimulator) WaitForLockRelease(ctx context.Context, lockKey string, leaseTTL int) {\n\tfmt.Printf(\"[FAILOVER WAIT] Резервный узел ждет освобождения ресурса '%s' (TTL=%ds)...\\n\", lockKey, leaseTTL)\n\n\tstart := time.Now()\n\t// Создаем новую изолированную сессию резервного узла\n\tstandbySession, err := concurrency.NewSession(s.cli, concurrency.WithTTL(10))\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer standbySession.Close()\n\n\tstandbyMutex := concurrency.NewMutex(standbySession, lockKey)\n\n\t// Пытаемся захватить тот же мьютекс\n\tif err := standbyMutex.Lock(ctx); err != nil {\n\t\tfmt.Printf(\"Ошибка ожидания блокировки: %v\\n\", err)\n\t\treturn\n\t}\n\n\telapsed := time.Since(start)\n\tfmt.Printf(\"✅ [FAILOVER SUCCESS] Резервный узел получил блокировку спустя %v!\\n\", elapsed)\n\tfmt.Println(\"Кластер etcd автоматически удалил заброшенный ключ упавшего узла по истечении Lease TTL.\")\n\t_ = standbyMutex.Unlock(context.Background())\n}\n\nfunc main() {\n\tfmt.Println(\"Безопасность блокировок: предотвращение deadlock при аварии узла:\")\n\tfmt.Println(\" 1. Мьютекс etcd всегда привязан к аренде LeaseID\")\n\tfmt.Println(\" 2. При физическом падении сервера (паника, сбой питания) KeepAlive прекращается\")\n\tfmt.Println(\" 3. etcd автоматически удаляет эфемерный ключ, исключая вечный deadlock\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Так как удаление ключа по тайм-ауту аренды является обычной операцией записи в Raft-лог, оно детерминированно реплицируется на все фолловеры etcd. Даже если лидер etcd упадет одновременно с падением клиента, новый лидер применит тайм-аут аренды без сбоев.",
+    "pitfalls": [
+      "Слишком длинный TTL: если указать TTL 60 секунд, при падении активного узла вся распределенная система будет простаивать целую минуту в ожидании failover.",
+      "Слишком короткий TTL: если указать TTL 1 секунду, кратковременная пауза сборщика мусора Go (GC Pause) или сетевой джиттер приведут к ложной потере блокировки."
+    ],
+    "bigtech_interview": "Что такое Fencing Token и почему одного TTL блокировки недостаточно для абсолютной безопасности? Ответ: если процесс 'завис' на 15 секунд в GC-паузе, его блокировка истечет, и второй узел захватит ресурс. Очнувшись, первый узел продолжит запись, повредив данные. etcd решает это с помощью ревизий (`CreateRevision`), выступающих в роли возрастающего Fencing Token."
+  },
+  {
+    "num": 20,
+    "title": "Выборы лидера (Leader Election) в распределенной системе",
+    "task": "Изучите механизм выбора лидера concurrency.NewElection в etcd. Реализуйте компонент LeaderElectionNode, который открывает сессию с TTL, начинает предвыборную кампанию вызовом election.Campaign(ctx, nodeID) и блокируется до победы в выборах по принципу наименьшей ревизии.",
+    "theory": "Во многих распределенных архитектурах (активно-пассивные кластеры, фоновые планировщики, генераторы очередей) только один экземпляр сервиса должен выполнять роль 'Координатора' (Active Master), пока остальные находятся в режиме горячего резерва (Standby Followers).\n\nПакет `concurrency.NewElection` реализует выборы лидера поверх транзакций и ревизий etcd:\n1. Все кандидаты вызывают `election.Campaign(ctx, nodeID)` с префиксом `/elections/my-service`.\n2. etcd создает для каждого кандидата ключ с привязкой к его `LeaseID`.\n3. Лидером становится кандидат, чей ключ был создан с НАИМЕНЬШЕЙ глобальной ревизией (`CreateRevision`).\n4. Метод `Campaign` возвращает управление только победителю. Остальные кандидаты ждут в очереди через Watcher.",
+    "step_by_step": [
+      "Создайте структуру LeaderElectionNode с идентификатором узла nodeID и статусом роли.",
+      "Инициализируйте concurrency.NewSession с желаемым таймаутом TTL.",
+      "Создайте объект выборов concurrency.NewElection(session, electionPrefix).",
+      "Вызовите блокирующий метод election.Campaign(ctx, n.nodeID).",
+      "После разблокировки переведите роль узла в Leader и начните выполнение лидерских задач."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_leader_election.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n\t\"go.etcd.io/etcd/client/v3/concurrency\"\n)\n\n// LeaderElectionNode участвует в кампании по выборам лидера кластера\ntype LeaderElectionNode struct {\n\tcli     *clientv3.Client\n\tnodeID  string\n\trole    string\n\tmu      sync.RWMutex\n}\n\nfunc NewLeaderElectionNode(cli *clientv3.Client, id string) *LeaderElectionNode {\n\treturn &LeaderElectionNode{cli: cli, nodeID: id, role: \"Candidate\"}\n}\n\n// Campaign запускает предвыборную кампанию\nfunc (n *LeaderElectionNode) Campaign(ctx context.Context, electionPrefix string, ttlSeconds int) error {\n\t// 1. Создаем сессию для выборов с автоматическим KeepAlive\n\tsession, err := concurrency.NewSession(n.cli, concurrency.WithTTL(ttlSeconds))\n\tif err != nil {\n\t\treturn fmt.Errorf(\"ошибка создания сессии кандидата: %w\", err)\n\t}\n\tdefer session.Close()\n\n\t// 2. Инициализируем предвыборный избирательный округ\n\telection := concurrency.NewElection(session, electionPrefix)\n\n\tfmt.Printf(\"[ELECTION] Узел %s начинает предвыборную кампанию в '%s'...\\n\", n.nodeID, electionPrefix)\n\n\t// 3. Campaign блокируется до тех пор, пока данный узел не победит в выборах\n\tif err := election.Campaign(ctx, n.nodeID); err != nil {\n\t\treturn fmt.Errorf(\"кампания прервана: %w\", err)\n\t}\n\n\tn.mu.Lock()\n\tn.role = \"Leader\"\n\tn.mu.Unlock()\n\n\tfmt.Printf(\"👑 [LEADER ELECTED] Узел %s УСПЕШНО ИЗБРАН ЛИДЕРОМ! (Rev=%d)\\n\",\n\t\tn.nodeID, election.Header(ctx).Revision)\n\n\treturn nil\n}\n\nfunc main() {\n\tfmt.Println(\"Выборы лидера (Leader Election) с concurrency.Election:\")\n\tfmt.Println(\" 1. concurrency.NewElection(session, prefix) объявляет пространство выборов\")\n\tfmt.Println(\" 2. election.Campaign(ctx, nodeID) публикует кандидатуру узла\")\n\tfmt.Println(\" 3. Вызов блокируется до момента, пока узел не станет лидером по наименьшей ревизии\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Механизм выборов в etcd полностью децентрализован и не требует внешнего арбитра. Протокол консенсуса Raft гарантирует, что порядок создания ревизий ключей строго линеаризуем, поэтому возникновение двух лидеров (Split-Brain) математически исключено.",
+    "pitfalls": [
+      "Игнорирование контекста: вызов `election.Campaign` должен принимать отменяемый контекст `ctx`. При получении `SIGINT/SIGTERM` контекст отменяется, прерывая ожидание.",
+      "Выполнение тяжелых задач в главном потоке: после избрания лидером длительные блокирующие операции не должны мешать фоновому стриму KeepAlive сессии."
+    ],
+    "bigtech_interview": "В чем отличие выборов лидера через etcd от алгоритма Bully или Paxos? В Bully узлы должны знать адреса всех остальных узлов и обмениваться сообщениями peer-to-peer. В etcd узлы координируются асинхронно через централизованное отказоустойчивое хранилище метаданных."
+  },
+  {
+    "num": 21,
+    "title": "Жизненный цикл лидера: поддержание лидерства и добровольная отставка",
+    "task": "Реализуйте сервис ManagedLeaderService, управляющий полным жизненным циклом лидера. При избрании сервис запускает фоновые воркеры с изолированным контекстом, а при получении сигнала Graceful Shutdown выполняет добровольную отставку election.Resign(ctx) для мгновенной передачи власти без ожидания истечения TTL.",
+    "theory": "В production-системах важно различать два сценария смены лидера:\n1. Аварийное падение (Crash): узел погиб внезапно. Кластер вынужден ждать истечения TTL сессии (например, 15 секунд), чтобы убедиться в недоступности лидера.\n2. Плановый перезапуск (Rolling Update / Graceful Shutdown): инженер выкатывает новый релиз. Ждать 15 секунд простоя недопустимо!\n\nМетод `election.Resign(ctx)`:\n- Вызывается при обработке сигналов `SIGTERM` или `SIGINT`.\n- Атомарно удаляет ключ текущего лидера в etcd.\n- Следующий кандидат в очереди немедленно просыпается от события Watcher и становится лидером за 1–2 миллисекунды, обеспечивая истинный Zero-Downtime Failover.",
+    "step_by_step": [
+      "Определите ManagedLeaderService с полями префикса выборов и идентификатора узла.",
+      "В методе RunLeaderEcosystem инициализируйте сессию и вызовите election.Campaign.",
+      "После избрания создайте подчиненный context.WithCancel для управления фоновыми задачами.",
+      "Организуйте ожидание сигнала завершения <-ctx.Done().",
+      "Вызовите cancelLeaderTasks() и метод добровольной отставки election.Resign(resignCtx)."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_leader_lifecycle_resign.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n\t\"go.etcd.io/etcd/client/v3/concurrency\"\n)\n\n// ManagedLeaderService управляет полным жизненным циклом лидера\ntype ManagedLeaderService struct {\n\tcli            *clientv3.Client\n\telectionPrefix string\n\tnodeID         string\n\tisLeader       bool\n\tmu             sync.RWMutex\n}\n\nfunc NewManagedLeaderService(cli *clientv3.Client, prefix, nodeID string) *ManagedLeaderService {\n\treturn &ManagedLeaderService{\n\t\tcli:            cli,\n\t\telectionPrefix: prefix,\n\t\tnodeID:         nodeID,\n\t}\n}\n\n// RunLeaderEcosystem запускает кампанию, лидерскую работу и добровольную отставку (Resign)\nfunc (s *ManagedLeaderService) RunLeaderEcosystem(ctx context.Context, ttl int) error {\n\tsession, err := concurrency.NewSession(s.cli, concurrency.WithTTL(ttl))\n\tif err != nil {\n\t\treturn err\n\t}\n\tdefer session.Close()\n\n\telection := concurrency.NewElection(session, s.electionPrefix)\n\n\tfmt.Printf(\"[NODE %s] Участие в выборах...\\n\", s.nodeID)\n\tif err := election.Campaign(ctx, s.nodeID); err != nil {\n\t\treturn err\n\t}\n\n\ts.mu.Lock()\n\ts.isLeader = true\n\ts.mu.Unlock()\n\tfmt.Printf(\"👑 [NODE %s] Избран лидером! Старт фоновых координационных задач...\\n\", s.nodeID)\n\n\t// Контекст для остановки лидерских задач при потере лидерства или отставке\n\tleaderCtx, cancelLeaderTasks := context.WithCancel(ctx)\n\tdefer cancelLeaderTasks()\n\n\t// Запуск периодических лидерских воркеров (Cron jobs)\n\tgo func() {\n\t\tticker := time.NewTicker(500 * time.Millisecond)\n\t\tdefer ticker.Stop()\n\t\tfor {\n\t\t\tselect {\n\t\t\tcase <-leaderCtx.Done():\n\t\t\t\tfmt.Printf(\"[NODE %s] Фоновые задачи лидера остановлены\\n\", s.nodeID)\n\t\t\t\treturn\n\t\t\tcase <-ticker.C:\n\t\t\t\tfmt.Printf(\"[LEADER WORKER] Узел %s выполняет кластерную задачу...\\n\", s.nodeID)\n\t\t\t}\n\t\t}\n\t}()\n\n\t// Ожидаем внешнего сигнала остановки (Graceful Shutdown)\n\t<-ctx.Done()\n\n\tfmt.Printf(\"🛑 [SHUTDOWN] Сигнал завершения узла %s: добровольная отставка (Resign)\\n\", s.nodeID)\n\tcancelLeaderTasks()\n\n\t// Добровольная отставка: мгновенная передача власти следующему кандидату\n\tresignCtx, resignCancel := context.WithTimeout(context.Background(), 3*time.Second)\n\tdefer resignCancel()\n\n\tif err := election.Resign(resignCtx); err != nil {\n\t\tfmt.Printf(\"⚠️ Ошибка отставки: %v\\n\", err)\n\t} else {\n\t\tfmt.Printf(\"👋 [RESIGNED] Узел %s добровольно передал полномочия следующему лидеру\\n\", s.nodeID)\n\t}\n\n\treturn nil\n}\n\nfunc main() {\n\tfmt.Println(\"Жизненный цикл лидера: поддержание лидерства и Resign:\")\n\tfmt.Println(\" 1. После победы в Campaign() запускаются критические фоновые воркеры\")\n\tfmt.Println(\" 2. При получении SIGTERM вызывается election.Resign(ctx)\")\n\tfmt.Println(\" 3. Resign мгновенно удаляет ключ лидерства, избегая простоя на время таймаута сессии\")\n}\n"
+      }
+    ],
+    "under_the_hood": "При вызове `Resign()` etcd выполняет транзакцию удаления лидерского ключа с проверкой того, что вызывающий узел все еще действительно является текущим лидером, исключая случайную отставку чужого лидерства.",
+    "pitfalls": [
+      "Продолжение работы воркеров после Resign: если воркеры не остановились до вызова `Resign()`, в кластере на несколько секунд возникнет ситуация двух одновременно работающих лидеров (Dual Leaders). Сначала останавливаем работу, затем отдаем лидерство.",
+      "Короткий таймаут на отставку: при высокой сетевой нагрузке вызов `Resign` должен иметь разумный таймаут (2–3 секунды)."
+    ],
+    "bigtech_interview": "Как избежать ситуации 'Split-Brain' при сетевом разделе датацентра? Raft требует строгого большинства `N/2 + 1`. Лидер, оказавшийся в меньшинстве, потеряет кворум и не сможет подтверждать KeepAlive. Большинство в другой половине датацентра изберет нового лидера."
+  },
+  {
+    "num": 22,
+    "title": "Наблюдение за сменой лидера фолловерами (Observe)",
+    "task": "Реализуйте компонент LeaderObserver для пассивного наблюдения за лидером кластера. Используйте метод election.Observe(ctx) для получения непрерывного канала уведомлений <-chan clientv3.GetResponse и сохраняйте текущий ID лидера в потокобезопасную переменную для маршрутизации RPC-запросов.",
+    "theory": "В архитектуре с выделенным лидером не всем узлам обязательно участвовать в предвыборной гонке. Рядовые фолловеры, API-шлюзы и клиенты должны знать, кто именно в текущий момент является лидером, чтобы перенаправлять на него мутирующие команды.\n\nМетод `election.Observe(ctx)` в etcd concurrency:\n1. Возвращает канал `<-chan clientv3.GetResponse`.\n2. В момент запуска метод сразу возвращает текущего лидера (если он есть).\n3. При любой смене лидера (отставка, падение или перевыборы) сервер etcd мгновенно пушит в канал новый снимок с идентификатором победителя.\n4. Если лидер упал и выборы еще идут, канал передает пустой срез `len(resp.Kvs) == 0`.",
+    "step_by_step": [
+      "Создайте структуру LeaderObserver с полем currentLeader под защитой sync.RWMutex.",
+      "Инициализируйте объект concurrency.NewElection(session, electionPrefix).",
+      "Получите канал уведомлений через election.Observe(ctx).",
+      "В отдельной горутине обрабатывайте входящие события resp.Kvs и обновляйте поле currentLeader.",
+      "Реализуйте метод GetCurrentLeader() для безопасного чтения текущего координатора."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_leader_observer.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n\t\"go.etcd.io/etcd/client/v3/concurrency\"\n)\n\n// LeaderObserver отслеживает текущего лидера кластера в реальном времени\ntype LeaderObserver struct {\n\tcli            *clientv3.Client\n\telectionPrefix string\n\tmu             sync.RWMutex\n\tcurrentLeader  string\n}\n\nfunc NewLeaderObserver(cli *clientv3.Client, prefix string) *LeaderObserver {\n\treturn &LeaderObserver{\n\t\tcli:            cli,\n\t\telectionPrefix: prefix,\n\t}\n}\n\n// StartObserving запускает непрерывное наблюдение за лидером\nfunc (o *LeaderObserver) StartObserving(ctx context.Context) error {\n\tsession, err := concurrency.NewSession(o.cli)\n\tif err != nil {\n\t\treturn err\n\t}\n\n\telection := concurrency.NewElection(session, o.electionPrefix)\n\n\t// Observe возвращает канал <-chan clientv3.GetResponse с нотификациями о смене лидера\n\tobserveChan := election.Observe(ctx)\n\n\tgo func() {\n\t\tdefer session.Close()\n\t\tfor resp := range observeChan {\n\t\t\tif len(resp.Kvs) == 0 {\n\t\t\t\to.mu.Lock()\n\t\t\t\to.currentLeader = \"\"\n\t\t\t\to.mu.Unlock()\n\t\t\t\tfmt.Println(\"⚠️ [OBSERVE] Лидер в кластере отсутствует (Идут перевыборы...)\")\n\t\t\t\tcontinue\n\t\t\t}\n\n\t\t\tnewLeaderID := string(resp.Kvs[0].Value)\n\t\t\to.mu.Lock()\n\t\t\to.currentLeader = newLeaderID\n\t\t\to.mu.Unlock()\n\n\t\t\tfmt.Printf(\"👁️ [OBSERVE] Зафиксирован действующий лидер: %s (Rev=%d)\\n\",\n\t\t\t\tnewLeaderID, resp.Kvs[0].ModRevision)\n\t\t}\n\t}()\n\n\treturn nil\n}\n\nfunc (o *LeaderObserver) GetCurrentLeader() string {\n\to.mu.RLock()\n\tdefer o.mu.RUnlock()\n\treturn o.currentLeader\n}\n\nfunc main() {\n\tfmt.Println(\"Наблюдение за сменой лидера фолловерами (Observe):\")\n\tfmt.Println(\" 1. election.Observe(ctx) возвращает канал актуальных ответов <-chan clientv3.GetResponse\")\n\tfmt.Println(\" 2. Фолловеры получают мгновенные пуш-уведомления при каждой смене лидера\")\n\tfmt.Println(\" 3. Клиенты перенаправляют RPC-запросы на актуальный узел без поллинга\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Под капотом метод `Observe` использует префиксный Watcher на каталог выборов и автоматически находит ключ с минимальной `CreateRevision`, избавляя разработчика от самостоятельного парсинга и фильтрации ревизий.",
+    "pitfalls": [
+      "Отправка запросов во время перевыборов: когда лидер упал, а новый еще не избран, `GetCurrentLeader()` вернет пустую строку. Клиент должен поддерживать буферизацию запросов с коротким ожиданием (1–2 секунды).",
+      "Утечка сессии наблюдения: сессия observer не должна выделять долгий Lease TTL, так как сам наблюдатель не публикует никаких ключей."
+    ],
+    "bigtech_interview": "Как в Kubernetes `kubectl` и `kube-scheduler` узнают текущего активного лидера планировщика? Используется ресурс `Leases` в API-сервере Kubernetes (реализованный поверх etcd Leases), за которым наблюдают все реплики через Informer."
+  },
+  {
+    "num": 23,
+    "title": "Кэширование метаданных в оперативной памяти сервиса с ревизиями",
+    "task": "Спроектируйте высокопроизводительный сервис CachedMetadataStore с двухуровневой архитектурой: оперативная память (L1 sync.Map) + удаленный кластер etcd v3 (L2). Обеспечьте нулевые аллокации и задержки чтения при гарантированном реактивном обновлении кэша через фоновый Watcher.",
+    "theory": "Чтение данных напрямую из etcd на каждый входящий HTTP/gRPC запрос в HighLoad-сервисе недопустимо: даже при сериализуемом чтении (`WithSerializable()`) сетевой RTT составляет 0.5–2 мс, а пропускная способность ограничивается сетевой картой.\n\nПаттерн Read-Through Reactive In-Memory Cache:\n1. При старте сервис выполняет один префиксный запрос и копирует все метаданные в потокобезопасную память (`sync.Map` или `atomic.Pointer`).\n2. Фоновый Watcher непрерывно применяет изменения в память.\n3. Рабочие потоки читают данные исключительно из памяти за несколько наносекунд.\n4. etcd полностью разгружается: нагрузка на кластер не зависит от числа читающих запросов.",
+    "step_by_step": [
+      "Определите CachedMetadataStore с полями sync.Map, syncRev atomic.Int64 и hitCount.",
+      "В методе Initialize выполните начальный префиксный Get() и наполните sync.Map.",
+      "Зафиксируйте ревизию кластера resp.Header.Revision.",
+      "Запустите горутину syncLoop с опциями WithPrefix() и WithRev(startRev).",
+      "Реализуйте метод Get() с атомарным инкрементом счетчика попаданий."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_inmemory_cache.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"sync/atomic\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n\t\"go.etcd.io/etcd/api/v3/mvccpb\"\n)\n\n// CachedMetadataStore реализует двухуровневый кэш (L1 Memory + L2 etcd)\ntype CachedMetadataStore struct {\n\tcli      *clientv3.Client\n\tprefix   string\n\tcache    sync.Map\n\tsyncRev  atomic.Int64\n\thitCount atomic.Uint64\n}\n\nfunc NewCachedMetadataStore(cli *clientv3.Client, prefix string) *CachedMetadataStore {\n\treturn &CachedMetadataStore{cli: cli, prefix: prefix}\n}\n\n// Initialize загружает начальное состояние и запускает фоновый синхронизатор\nfunc (s *CachedMetadataStore) Initialize(ctx context.Context) error {\n\t// 1. Читаем все метаданные из etcd\n\tresp, err := s.cli.Get(ctx, s.prefix, clientv3.WithPrefix())\n\tif err != nil {\n\t\treturn fmt.Errorf(\"ошибка начальной загрузки метаданных: %w\", err)\n\t}\n\n\tfor _, kv := range resp.Kvs {\n\t\ts.cache.Store(string(kv.Key), string(kv.Value))\n\t}\n\ts.syncRev.Store(resp.Header.Revision)\n\n\tfmt.Printf(\"[CACHE INIT] Загружено %d записей в L1 кэш (Ревизия: %d)\\n\",\n\t\tlen(resp.Kvs), resp.Header.Revision)\n\n\t// 2. Фоновый поток непрерывной синхронизации\n\tgo s.syncLoop(ctx)\n\treturn nil\n}\n\nfunc (s *CachedMetadataStore) syncLoop(ctx context.Context) {\n\twatcher := clientv3.NewWatcher(s.cli)\n\tdefer watcher.Close()\n\n\tstartRev := s.syncRev.Load() + 1\n\twatchCh := watcher.Watch(ctx, s.prefix, clientv3.WithPrefix(), clientv3.WithRev(startRev))\n\n\tfor resp := range watchCh {\n\t\tfor _, ev := range resp.Events {\n\t\t\tkey := string(ev.Kv.Key)\n\t\t\tif ev.Type == mvccpb.PUT {\n\t\t\t\ts.cache.Store(key, string(ev.Kv.Value))\n\t\t\t} else if ev.Type == mvccpb.DELETE {\n\t\t\t\ts.cache.Delete(key)\n\t\t\t}\n\t\t\ts.syncRev.Store(ev.Kv.ModRevision)\n\t\t}\n\t}\n}\n\n// Get выполняет lock-free чтение за доли наносекунды\nfunc (s *CachedMetadataStore) Get(key string) (string, bool) {\n\ts.hitCount.Add(1)\n\tval, ok := s.cache.Load(key)\n\tif !ok {\n\t\treturn \"\", false\n\t}\n\treturn val.(string), true\n}\n\nfunc (s *CachedMetadataStore) Hits() uint64 {\n\treturn s.hitCount.Load()\n}\n\nfunc main() {\n\tfmt.Println(\"Двухуровневое кэширование метаданных (L1 Memory + L2 etcd):\")\n\tfmt.Println(\" 1. Initial Get() наполняет sync.Map и фиксирует ревизию\")\n\tfmt.Println(\" 2. Фоновый Watcher обновляет локальную память за микросекунды\")\n\tfmt.Println(\" 3. Бизнес-запросы читают из памяти без сетевых задержек (100% Hit Rate)\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Использование `sync.Map` идеально подходит для сценария 'Append-mostly / Read-heavy', когда ключи читаются миллионы раз, а обновляются редко. Доступ к ключам происходит через lock-free чтение atomic-указателей внутри структуры `sync.Map.read`.",
+    "pitfalls": [
+      "Неконсистентность при рестарте Watcher: если стрим разорвался, а затем восстановился с ошибкой `ErrCompacted`, кэш в памяти должен быть полностью перезагружен, иначе удаленные ключи останутся в памяти навсегда.",
+      "Eventual Consistency: между коммитом в etcd и применением события в локальный кэш проходит от 0.5 до 5 мс. Если бизнес-логике требуется строгая линеаризуемость в конкретной точке, в ней следует выполнить явный `client.Get`."
+    ],
+    "bigtech_interview": "Как устроена архитектура кэширования в Kubernetes API Server? API-сервер держит Informer Cache на все объекты кластера. Все вызовы `kubectl get` без флага resourceVersion читаются строго из оперативной памяти сервера, защищая etcd от перегрузки."
+  },
+  {
+    "num": 24,
+    "title": "Периодическая компактификация etcd (Compaction)",
+    "task": "Реализуйте сервисный компонент MaintenanceManager для обслуживания кластера etcd v3. Напишите метод CompactHistoricalData с опцией clientv3.WithCompactPhysical() и фоновый планировщик AutoCompactorByInterval, который сжимает ревизии старше заданного горизонта keepRevs.",
+    "theory": "Поскольку etcd — это версионируемая база данных (MVCC), ни один `Delete` или `Put` не удаляет старые данные с диска. Вместо этого они помечаются маркером Tombstone и сохраняются в истории.\n\nБез регулярного обслуживания файл базы `member/snap/db` вырастет до гигантских размеров и кластер остановится по лимиту квоты (`NOSPACE`).\n\nПроцесс Compaction (Сжатие истории):\n1. Вызов `client.Compact(ctx, targetRevision)` приказывает кластеру удалить все исторические ревизии ключей `< targetRevision`.\n2. После компактификации старые версии ключей физически удаляются из страниц B+tree BoltDB.\n3. Любые запросы `Get(WithRev)` или `Watch(WithRev)` с ревизией меньше `targetRevision` теперь будут завершаться ошибкой `ErrCompacted`.",
+    "step_by_step": [
+      "Создайте MaintenanceManager с полем clientv3.Client.",
+      "Реализуйте метод CompactHistoricalData с вызовом cli.Compact(ctx, targetRev).",
+      "Передайте флаг clientv3.WithCompactPhysical() для форсирования очистки физических страниц.",
+      "В методе AutoCompactorByInterval организуйте опрос текущей ревизии через cli.Status.",
+      "Вычислите targetRev = currentRev - keepRevs и вызовите компактификацию."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_compaction_manager.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// MaintenanceManager выполняет административные операции обслуживания etcd\ntype MaintenanceManager struct {\n\tcli *clientv3.Client\n}\n\nfunc NewMaintenanceManager(cli *clientv3.Client) *MaintenanceManager {\n\treturn &MaintenanceManager{cli: cli}\n}\n\n// CompactHistoricalData сжимает историю до указанной ревизии\nfunc (m *MaintenanceManager) CompactHistoricalData(ctx context.Context, targetRev int64) error {\n\tfmt.Printf(\"[COMPACT START] Запуск сжатия истории etcd до ревизии %d...\\n\", targetRev)\n\n\t// client.Compact освобождает устаревшие исторические версии ключей в bbolt\n\tcompactResp, err := m.cli.Compact(ctx, targetRev, clientv3.WithCompactPhysical())\n\tif err != nil {\n\t\treturn fmt.Errorf(\"ошибка выполнения компактификации: %w\", err)\n\t}\n\n\t_ = compactResp\n\tfmt.Printf(\"✅ [COMPACT DONE] Компактификация до ревизии %d успешно завершена\\n\", targetRev)\n\treturn nil\n}\n\n// AutoCompactorByInterval запускает периодическое сжатие истории каждые N минут\nfunc (m *MaintenanceManager) AutoCompactorByInterval(ctx context.Context, interval time.Duration, keepRevs int64) {\n\tticker := time.NewTicker(interval)\n\tdefer ticker.Stop()\n\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\treturn\n\t\tcase <-ticker.C:\n\t\t\t// Узнаем текущую ревизию кластера\n\t\t\tstatusResp, err := m.cli.Status(ctx, m.cli.Endpoints()[0])\n\t\t\tif err != nil {\n\t\t\t\tfmt.Printf(\"⚠️ Ошибка получения статуса кластера: %v\\n\", err)\n\t\t\t\tcontinue\n\t\t\t}\n\n\t\t\tcurrentRev := statusResp.Header.Revision\n\t\t\tif currentRev > keepRevs {\n\t\t\t\ttargetRev := currentRev - keepRevs\n\t\t\t\tif err := m.CompactHistoricalData(ctx, targetRev); err != nil {\n\t\t\t\t\tfmt.Printf(\"⚠️ Ошибка авто-компактификации: %v\\n\", err)\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"Периодическая компактификация etcd (Compaction):\")\n\tfmt.Println(\" 1. client.Compact(ctx, rev) удаляет все версии ключей старше rev\")\n\tfmt.Println(\" 2. WithCompactPhysical() заставляет etcd немедленно очистить физические страницы bbolt\")\n\tfmt.Println(\" 3. Предотвращает неконтролируемый рост базы данных при интенсивных обновлениях\")\n}\n"
+      }
+    ],
+    "under_the_hood": "По умолчанию etcd выполняет компактификацию асинхронно в фоне, помечая неиспользуемые страницы bbolt во внутреннем списке свободных страниц (FreeList). С опцией `WithCompactPhysical()` etcd ожидает физического удаления данных перед отправкой подтверждения клиенту.",
+    "pitfalls": [
+      "Слишком частая компактификация (каждую секунду): создает избыточную нагрузку на дисковую подсистему и ломает работу медленных Watcher-клиентов.",
+      "Сжатие слишком близко к текущей ревизии (`targetRev = currentRev`): если удалить всю историю вплоть до текущей секунды, любой клиент при кратковременном сетевом сбое мгновенно словит `ErrCompacted`."
+    ],
+    "bigtech_interview": "Как в продакшене Kubernetes настраивают авто-компактификацию etcd? В параметрах запуска `etcd` передают флаг `--auto-compaction-retention=1h` (или `--auto-compaction-mode=periodic`), что заставляет etcd автоматически сжимать ревизии старше 1 часа."
+  },
+  {
+    "num": 25,
+    "title": "Дефрагментация хранилища etcd (Defragmentation)",
+    "task": "Изучите механизм дефрагментации etcd bbolt хранилища. Реализуйте сервис StorageMaintenanceService, который опрашивает метрики DbSize и DbSizeInUse через client.Status и выполняет последовательную дефрагментацию каждого узла через client.Defragment(ctx, endpoint) с паузами для сохранения стабильности кворума.",
+    "theory": "Критически важно понимать разницу между Compaction и Defragmentation:\n- `Compaction`: логически удаляет старые ревизии. Страницы внутри bbolt помечаются как свободные, но сам файл базы данных `member/snap/db` на диске НЕ уменьшается (он сохраняет свой максимальный выделенный размер).\n- `Defragmentation`: физически пересоздает файл базы данных с нуля. etcd читает только живые страницы из старой базы и последовательно записывает их в новый компактный файл bbolt, после чего старый файл удаляется.\n\nТолько после дефрагментации дисковое пространство возвращается операционной системе хоста, а разница `DbSize - DbSizeInUse` стремится к нулю.",
+    "step_by_step": [
+      "Создайте StorageMaintenanceService с ссылкой на clientv3.Client.",
+      "Реализуйте метод GetStorageMetrics с извлечением statusResp.DbSize и DbSizeInUse.",
+      "В методе DefragmentAllEndpoints итерируйтесь по срезу cli.Endpoints().",
+      "Вызовите s.cli.Defragment(ctx, ep) строго поочередно для каждого узла.",
+      "Добавьте паузу time.Sleep между узлами для предотвращения флапа лидера Raft."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_defragmentation.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// StorageMaintenanceService управляет дефрагментацией узлов etcd\ntype StorageMaintenanceService struct {\n\tcli *clientv3.Client\n}\n\nfunc NewStorageMaintenanceService(cli *clientv3.Client) *StorageMaintenanceService {\n\treturn &StorageMaintenanceService{cli: cli}\n}\n\n// DefragmentAllEndpoints поочередно дефрагментирует все ноды кластера\nfunc (s *StorageMaintenanceService) DefragmentAllEndpoints(ctx context.Context) error {\n\tendpoints := s.cli.Endpoints()\n\tfmt.Printf(\"[DEFRAG] Начало дефрагментации %d узлов кластера etcd...\\n\", len(endpoints))\n\n\tfor _, ep := range endpoints {\n\t\tfmt.Printf(\"[DEFRAG] Запуск дефрагментации на узле %s...\\n\", ep)\n\t\tstart := time.Now()\n\n\t\t// Defragment вызывается строго для конкретного эндпоинта!\n\t\t_, err := s.cli.Defragment(ctx, ep)\n\t\tif err != nil {\n\t\t\treturn fmt.Errorf(\"ошибка дефрагментации узла %s: %w\", ep, err)\n\t\t}\n\n\t\telapsed := time.Since(start)\n\t\tfmt.Printf(\"✅ [DEFRAG DONE] Узел %s успешно дефрагментирован за %v\\n\", ep, elapsed)\n\n\t\t// Пауза между узлами для стабилизации кворума Raft\n\t\ttime.Sleep(1 * time.Second)\n\t}\n\n\treturn nil\n}\n\n// GetStorageMetrics опрашивает размер базы данных на диске\nfunc (s *StorageMaintenanceService) GetStorageMetrics(ctx context.Context, endpoint string) (int64, int64, error) {\n\tstatusResp, err := s.cli.Status(ctx, endpoint)\n\tif err != nil {\n\t\treturn 0, 0, err\n\t}\n\n\t// DbSize: реальный размер файла db на диске\n\t// DbSizeInUse: полезный объем реально занятых данных\n\treturn statusResp.DbSize, statusResp.DbSizeInUse, nil\n}\n\nfunc main() {\n\tfmt.Println(\"Дефрагментация хранилища etcd (Defragmentation):\")\n\tfmt.Println(\" 1. Compaction освобождает страницы внутри bbolt, но НЕ уменьшает файл на диске\")\n\tfmt.Println(\" 2. client.Defragment(ctx, endpoint) физически пересоздает файл bbolt и возвращает место ОС\")\n\tfmt.Println(\" 3. Дефрагментация выполняется строго последовательно по одному узлу за раз!\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Во время дефрагментации узел etcd блокирует запись в локальный bbolt. Если дефрагментировать все узлы одновременно, кластер потеряет кворум и перестанет обслуживать запросы! Поэтому дефрагментацию ВСЕГДА производят строго последовательно: узел 1 -> ожидание -> узел 2 -> ожидание -> узел 3.",
+    "pitfalls": [
+      "Параллельная дефрагментация: вызов дефрагментации в параллельных горутинах приведет к остановке всего кластера (Cluster Outage).",
+      "Дефрагментация лидера: дефрагментация лидера может вызвать задержку отправки Heartbeat и привести к перевыборам. В продакшене сначала дефрагментируют всех фолловеров, затем отдают лидерство (`MoveLeader`) и дефрагментируют бывшего лидера."
+    ],
+    "bigtech_interview": "Что делать, если etcd база выросла до лимита квоты 8 ГБ и заблокировала запись? Порядок действий SRE: 1) Найти ревизию и запустить `Compact`, 2) Поочередно запустить `Defragment` на каждой ноде, 3) Снять тревогу переполнения командой `etcdctl alarm disarm`."
+  },
+  {
+    "num": 26,
+    "title": "Контроль квот хранилища etcd и обработка ошибки ErrNoSpace",
+    "task": "Изучите поведение etcd при исчерпании дисковой квоты. Реализуйте QuotaGuardService, перехватывающий ошибку rpctypes.ErrNoSpace при записи, генерирующий критический алерт и запускающий сценарий экстренного восстановления (Emergency Remediation).",
+    "theory": "Чтобы не допустить неконтролируемого исчерпания диска физического сервера, в etcd встроен механизм квот (Space Quota, по умолчанию 2 ГБ, максимум 8 ГБ).\n\nКогда размер базы данных превышает квоту:\n1. etcd переходит в аварийный защитный режим (Alarm State: `NOSPACE`).\n2. Все операции чтения (`Get`, `Watch`) продолжают работать штатно.\n3. Все операции записи (`Put`, `Txn`, `Grant`) немедленно отклоняются gRPC-ошибкой `rpctypes.ErrNoSpace`.\n4. Важно: даже если вы удалите часть ключей через `Delete`, запись НЕ разблокируется автоматически, так как `Delete` тоже является операцией записи!",
+    "step_by_step": [
+      "Импортируйте пакет rpctypes из go.etcd.io/etcd/api/v3/v3rpc/rpctypes.",
+      "Создайте структуру QuotaGuardService с клиентом etcd.",
+      "В методе SafePut выполните запись cli.Put(ctx, key, val).",
+      "Проверьте ошибку через errors.Is(err, rpctypes.ErrNoSpace).",
+      "Реализуйте каркас аварийной процедуры восстановления triggerEmergencyRemediation."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_quota_guard.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"fmt\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n\t\"go.etcd.io/etcd/api/v3/v3rpc/rpctypes\"\n)\n\n// QuotaGuardService защищает систему от переполнения квоты etcd\ntype QuotaGuardService struct {\n\tcli      *clientv3.Client\n\tmaxBytes int64\n}\n\nfunc NewQuotaGuardService(cli *clientv3.Client, maxBytes int64) *QuotaGuardService {\n\treturn &QuotaGuardService{cli: cli, maxBytes: maxBytes}\n}\n\n// SafePut осуществляет запись с перехватом фатальной ошибки ErrNoSpace\nfunc (q *QuotaGuardService) SafePut(ctx context.Context, key, val string) error {\n\t_, err := q.cli.Put(ctx, key, val)\n\tif err == nil {\n\t\treturn nil\n\t}\n\n\t// Проверяем, вызван ли сбой превышением квоты хранилища\n\tif errors.Is(err, rpctypes.ErrNoSpace) {\n\t\tfmt.Printf(\"🚨 [CRITICAL ALERT] Кластер etcd исчерпал дисковую квоту (ErrNoSpace)! Запись заблокирована!\\n\")\n\t\tq.triggerEmergencyRemediation(context.Background())\n\t\treturn fmt.Errorf(\"отказ в обслуживании: хранилище метаданных переполнено: %w\", err)\n\t}\n\n\treturn err\n}\n\n// triggerEmergencyRemediation запускает экстренную процедуру очистки\nfunc (q *QuotaGuardService) triggerEmergencyRemediation(ctx context.Context) {\n\tfmt.Println(\"⚡ [EMERGENCY] Запуск аварийного протокола очистки квоты etcd:\")\n\tfmt.Println(\" 1. Получение текущей ревизии кластера\")\n\tfmt.Println(\" 2. Форсированная компактификация последних 100 000 ревизий\")\n\tfmt.Println(\" 3. Экстренная дефрагментация узлов\")\n\tfmt.Println(\" 4. Снятие тревоги NOSPACE через client.AlarmDisarm()\")\n}\n\nfunc main() {\n\tfmt.Println(\"Контроль квот хранилища etcd и обработка ошибки ErrNoSpace:\")\n\tfmt.Println(\" 1. По умолчанию etcd имеет жесткую квоту памяти (2GB / 8GB)\")\n\tfmt.Println(\" 2. При превышении квоты etcd поднимает тревогу AlarmType_NOSPACE\")\n\tfmt.Println(\" 3. Все последующие вызовы Put блокируются ошибкой rpctypes.ErrNoSpace\")\n\tfmt.Println(\" 4. Чтение (Get) продолжает работать в режиме Read-Only\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Система алармов etcd (`etcdserverpb.AlarmType_NOSPACE`) реплицируется через Raft. Чтобы снять блокировку после проведения Compact и Defrag, администратор обязан явно вызвать `Alarm(AlarmAction_ALARM_DISARM)`, подтверждая нормализацию свободного места.",
+    "pitfalls": [
+      "Увеличение квоты выше 8 ГБ: официальная документация etcd не рекомендует устанавливать квоту больше 8 ГБ (`--quota-backend-bytes=8589934592`), так как BoltDB с гигантскими файлами страдает от резкого роста задержек mmap и пауз сборщика мусора.",
+      "Попытка писать Delete во время аларма: при активном NOSPACE команда `client.Delete()` также вернет `ErrNoSpace`. Спасает только `Compact`."
+    ],
+    "bigtech_interview": "Что происходит с кластером Kubernetes при наступлении ErrNoSpace в etcd? API Server перестает принимать любые изменения (нельзя создать Pod, обновить Deployment, зарегистрировать Node Heartbeat). При этом уже запущенные поды продолжают работать, но оркестрация полностью парализуется."
+  },
+  {
+    "num": 27,
+    "title": "Распределенная очередь задач (FIFO Queue) на базе etcd",
+    "task": "Реализуйте распределенную FIFO-очередь задач DistributedQueue на базе etcd. Метод Push добавляет элемент в префикс очереди. Метод Pop находит задачу с минимальной CreateRevision через WithSort(SortByCreateRevision, SortAscend) и атомарно удаляет ее через транзакцию Txn, предотвращая дублирование обработки между параллельными воркерами.",
+    "theory": "Организация очередей задач в реляционных БД требует `SELECT ... FOR UPDATE SKIP LOCKED`. В etcd v3 распределенная строгая очередь реализуется элегантно благодаря глобальному порядку ревизий создания:\n1. При добавлении задачи `Push` ключ получает уникальную монотонную `CreateRevision`.\n2. Воркер ищет самый первый элемент очереди: `Get(prefix, WithSort(SortByCreateRevision, SortAscend), WithLimit(1))`.\n3. Захват задачи производится через CAS-транзакцию: `If(ModRevision(key) == currentRev).Then(OpDelete(key))`.\n4. Если транзакция успешна, узел получает эксклюзивное право на выполнение задачи. Если конкурирующий воркер успел перехватить ее раньше, транзакция отклоняется, и воркер переходит к следующей задаче.",
+    "step_by_step": [
+      "Создайте структуру DistributedQueue с полями clientv3.KV и prefix.",
+      "В методе Push сгенерируйте ключ с таймстемпом и сохраните полезную нагрузку.",
+      "В методе Pop вызовите Get с сортировкой clientv3.SortByCreateRevision по возрастанию с лимитом 1.",
+      "Сформируйте транзакцию Txn с условием совпадения ModRevision и удалением OpDelete.",
+      "При успехе txnResp.Succeeded верните ключ и значение задачи."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_distributed_queue.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// DistributedQueue реализует распределенную строгую FIFO очередь задач\ntype DistributedQueue struct {\n\tcli    *clientv3.Client\n\tkv     clientv3.KV\n\tprefix string\n}\n\nfunc NewDistributedQueue(cli *clientv3.Client, prefix string) *DistributedQueue {\n\treturn &DistributedQueue{\n\t\tcli:    cli,\n\t\tkv:     clientv3.NewKV(cli),\n\t\tprefix: prefix,\n\t}\n}\n\n// Push помещает задачу в очередь\nfunc (q *DistributedQueue) Push(ctx context.Context, payload string) (int64, error) {\n\t// Создаем уникальный ключ задачи с префиксом очереди\n\ttaskKey := fmt.Sprintf(\"%s/%d\", q.prefix, time.Now().UnixNano())\n\n\tresp, err := q.kv.Put(ctx, taskKey, payload)\n\tif err != nil {\n\t\treturn 0, fmt.Errorf(\"ошибка добавления задачи в очередь: %w\", err)\n\t}\n\n\treturn resp.Header.Revision, nil\n}\n\n// Pop атомарно извлекает задачу с наименьшей ревизией создания (FIFO)\nfunc (q *DistributedQueue) Pop(ctx context.Context) (string, string, error) {\n\tfor {\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\treturn \"\", \"\", ctx.Err()\n\t\tdefault:\n\t\t}\n\n\t\t// 1. Ищем задачу с НАИМЕНЬШЕЙ CreateRevision (самая старая в очереди)\n\t\topts := []clientv3.OpOption{\n\t\t\tclientv3.WithPrefix(),\n\t\t\tclientv3.WithSort(clientv3.SortByCreateRevision, clientv3.SortAscend),\n\t\t\tclientv3.WithLimit(1),\n\t\t}\n\n\t\tresp, err := q.kv.Get(ctx, q.prefix, opts...)\n\t\tif err != nil {\n\t\t\treturn \"\", \"\", err\n\t\t}\n\n\t\tif len(resp.Kvs) == 0 {\n\t\t\t// Очередь пуста: делаем небольшую паузу\n\t\t\ttime.Sleep(100 * time.Millisecond)\n\t\t\tcontinue\n\t\t}\n\n\t\ttargetKV := resp.Kvs[0]\n\t\ttargetKey := string(targetKV.Key)\n\t\ttargetVal := string(targetKV.Value)\n\n\t\t// 2. Атомарно удаляем задачу через Txn (только если её ModRevision не изменилась)\n\t\tcmp := clientv3.Compare(clientv3.ModRevision(targetKey), \"=\", targetKV.ModRevision)\n\t\ttxnResp, err := q.kv.Txn(ctx).\n\t\t\tIf(cmp).\n\t\t\tThen(clientv3.OpDelete(targetKey)).\n\t\t\tCommit()\n\n\t\tif err != nil {\n\t\t\treturn \"\", \"\", err\n\t\t}\n\n\t\t// Если транзакция успешна — задача гарантированно захвачена текущим воркером\n\t\tif txnResp.Succeeded {\n\t\t\treturn targetKey, targetVal, nil\n\t\t}\n\n\t\t// Если другой воркер опередил нас, цикл повторяется для следующей задачи\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"Распределенная очередь задач (FIFO Queue) на базе etcd:\")\n\tfmt.Println(\" 1. WithSort(SortByCreateRevision, SortAscend) находит старейшую задачу O(1)\")\n\tfmt.Println(\" 2. Txn.If(Compare(ModRevision == rev)).Then(OpDelete) исключает двойную обработку\")\n\tfmt.Println(\" 3. Строгая очередность FIFO гарантируется глобальным упорядочиванием Raft\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Поскольку Raft строго линеаризует все операции записи, невозможно появление двух задач с одинаковой `CreateRevision`. Очередь etcd является математически строгой FIFO (First-In, First-Out), не подверженной race condition.",
+    "pitfalls": [
+      "Большой объем очереди: etcd не предназначен для очередей на миллионы сообщений (для этого есть RabbitMQ/Kafka). Очередь etcd идеальна для редких, критически важных системных задач (миграции, бэкапы, деплои).",
+      "Потеря задачи при падении воркера: если задача удаляется из etcd ДО ее завершения, при падении воркера она пропадет. Более надежный паттерн — временная привязка задачи к Lease воркера."
+    ],
+    "bigtech_interview": "Почему etcd не рекомендуется использовать как высокопроизводительный брокер сообщений? Каждая запись и удаление в etcd — это fsync на диск на кворуме узлов и создание новых ревизий в bbolt. При 50 000 сообщений/сек база etcd мгновенно исчерпает квоту памяти."
+  },
+  {
+    "num": 28,
+    "title": "Встраиваемый кластер etcd в Go-тестах (Embedded etcd)",
+    "task": "Изучите пакет go.etcd.io/etcd/server/v3/embed. Создайте структуру EmbeddedEtcdCluster для запуска полноценного узла etcd внутри процесса Go. Настройте конфигурацию с эфемерной временной директорией, ожиданием готовности через e.Server.ReadyNotify() и корректным освобождением ресурсов.",
+    "theory": "Интеграционное тестирование кода, зависящего от etcd (блокировки, выборы лидера, транзакции), часто упирается в необходимость запуска внешнего Docker контейнера (`testcontainers-go`). В средах без Docker (некоторые CI/CD раннеры, песочницы) это невозможно.\n\nПоскольку etcd написан на чистом Go, его можно запустить как обычную библиотеку прямо внутри тестового бинарника:\n- Пакет `go.etcd.io/etcd/server/v3/embed` позволяет программно поднять настоящий экземпляр etcd сервер со всеми Raft-механизмами.\n- Канал `<-e.Server.ReadyNotify()` сообщает, когда сервер полностью инициализирован и готов обрабатывать gRPC вызовы.\n- После выполнения тестов сервер штатно закрывается методом `Close()`, а временная директория удаляется.",
+    "step_by_step": [
+      "Импортируйте пакет embed из go.etcd.io/etcd/server/v3/embed.",
+      "Создайте временную директорию через os.MkdirTemp.",
+      "Сконфигурируйте embed.NewConfig с эфемерными URL адресами.",
+      "Вызовите embed.StartEtcd(cfg) и дождитесь сигнала из канала e.Server.ReadyNotify().",
+      "Инициализируйте clientv3.New с эндпоинтами созданного встроенного сервера."
+    ],
+    "code_blocks": [
+      {
+        "filename": "embedded_etcd_test.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"net/url\"\n\t\"os\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n\t\"go.etcd.io/etcd/server/v3/embed\"\n)\n\n// EmbeddedEtcdCluster управляет запуском изолированного узла etcd прямо в памяти процесса\ntype EmbeddedEtcdCluster struct {\n\tserver *embed.Etcd\n\tclient *clientv3.Client\n\ttmpDir string\n}\n\n// StartEmbeddedEtcd запускает локальный тестовый сервер etcd\nfunc StartEmbeddedEtcd() (*EmbeddedEtcdCluster, error) {\n\ttmpDir, err := os.MkdirTemp(\"\", \"embedded-etcd-*\")\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\n\tcfg := embed.NewConfig()\n\tcfg.Dir = tmpDir\n\tcfg.LogLevel = \"error\" // Отключаем шумные логи рантайма\n\n\t// Назначаем локальные эфемерные порты\n\tclientURL, _ := url.Parse(\"http://127.0.0.1:0\")\n\tpeerURL, _ := url.Parse(\"http://127.0.0.1:0\")\n\n\tcfg.ListenClientUrls = []url.URL{*clientURL}\n\tcfg.AdvertiseClientUrls = []url.URL{*clientURL}\n\tcfg.ListenPeerUrls = []url.URL{*peerURL}\n\tcfg.AdvertisePeerUrls = []url.URL{*peerURL}\n\tcfg.InitialCluster = cfg.InitialClusterFromName(cfg.Name)\n\n\te, err := embed.StartEtcd(cfg)\n\tif err != nil {\n\t\t_ = os.RemoveAll(tmpDir)\n\t\treturn nil, fmt.Errorf(\"ошибка запуска embedded etcd: %w\", err)\n\t}\n\n\tselect {\n\tcase <-e.Server.ReadyNotify():\n\t\t// Сервер успешно поднялся и готов принимать запросы\n\tcase <-time.After(10 * time.Second):\n\t\te.Close()\n\t\t_ = os.RemoveAll(tmpDir)\n\t\treturn nil, fmt.Errorf(\"таймаут ожидания готовности etcd\")\n\t}\n\n\t// Создаем клиент к запущенному встроенному серверу\n\tclientEndpoints := make([]string, len(e.Clients))\n\tfor i, l := range e.Clients {\n\t\tclientEndpoints[i] = l.Addr().String()\n\t}\n\n\tcli, err := clientv3.New(clientv3.Config{\n\t\tEndpoints:   clientEndpoints,\n\t\tDialTimeout: 3 * time.Second,\n\t})\n\tif err != nil {\n\t\te.Close()\n\t\t_ = os.RemoveAll(tmpDir)\n\t\treturn nil, err\n\t}\n\n\treturn &EmbeddedEtcdCluster{\n\t\tserver: e,\n\t\tclient: cli,\n\t\ttmpDir: tmpDir,\n\t}, nil\n}\n\nfunc (c *EmbeddedEtcdCluster) Close() {\n\tif c.client != nil {\n\t\t_ = c.client.Close()\n\t}\n\tif c.server != nil {\n\t\tc.server.Close()\n\t}\n\t_ = os.RemoveAll(c.tmpDir)\n}\n\nfunc (c *EmbeddedEtcdCluster) Client() *clientv3.Client {\n\treturn c.client\n}\n\nfunc main() {\n\tfmt.Println(\"Встраиваемый кластер etcd в Go-тестах (Embedded etcd):\")\n\tfmt.Println(\" 1. embed.StartEtcd(cfg) запускает настоящий полноценный узел etcd в процессе\")\n\tfmt.Println(\" 2. <-e.Server.ReadyNotify() сигнализирует о готовности Raft кворума\")\n\tfmt.Println(\" 3. Идеально для TestMain() в CI без необходимости Docker daemon\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Встроенный etcd исполняется в тех же горутинах текущего процесса ОС. Это позволяет запускать сотни интеграционных тестов за секунды без сетевых накладных расходов виртуализации Docker.",
+    "pitfalls": [
+      "Утечка директории: если забыть удалить `tmpDir` в defer, диск забьется сотнями временных файлов BoltDB.",
+      "Конфликты портов: при запуске тестов с флагом `-parallel` использование фиксированных портов (`2379`) приведет к ошибке `bind: address already in use`. Следует использовать порт `:0` для автоматического назначения свободного порта ОС."
+    ],
+    "bigtech_interview": "Почему мокирование клиента `clientv3.KV` через testify/mock уступает тестированию на Embedded etcd? Моки не способны воспроизвести тонкости распределенного консенсуса, конкуренции ревизий, тайм-аутов аренды и поведения Watcher при сбоях. Тестирование на реальном встраиваемом движке дает 100% достоверность."
+  },
+  {
+    "num": 29,
+    "title": "Мониторинг кластера etcd: экспорт метрик и RTT",
+    "task": "Оснастите клиент etcd v3 телеметрией и мониторингом задержек (RTT). Реализуйте коллектор EtcdMetricsCollector, выполняющий замер времени выполнения методов TimedPut и TimedGet, фиксирующий среднюю задержку операций и сигнализирующий о деградации при превышении SLI порога 50 мс.",
+    "theory": "etcd является узким местом всей инфраструктуры: если etcd замедляется, начинают тормозить абсолютно все сервисы кластера.\n\nКлючевые золотые сигналы (Golden Signals) здоровья etcd:\n1. `etcd_disk_wal_fsync_duration_seconds`: время записи журнала на диск. Если p99 превышает 10 мс — диски перегружены.\n2. `etcd_network_peer_round_trip_time_seconds`: задержка репликации между узлами кластера. Рост свидетельствует о сетевом джиттере.\n3. `etcd_server_leader_changes_seen_total`: частая смена лидера говорит о потере Heartbeat-пакетов и нестабильности.\n4. Клиентская латентность Put/Get: замер времени выполнения запроса со стороны приложения позволяет вовремя зафиксировать проблемы до наступления масштабного сбоя.",
+    "step_by_step": [
+      "Создайте EtcdMetricsCollector со словарями для учета числа вызовов и накопленной задержки.",
+      "В методе TimedPut зафиксируйте метку времени старта через time.Now().",
+      "Вызовите cli.Put и вычислите длительность через time.Since(start).",
+      "Добавьте проверку порогового значения латентности (> 50ms) с выводом предупреждения.",
+      "Реализуйте метод PrintReport для расчета средних задержек операций."
+    ],
+    "code_blocks": [
+      {
+        "filename": "etcd_client_metrics.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n)\n\n// EtcdMetricsCollector собирает телеметрию производительности etcd клиента\ntype EtcdMetricsCollector struct {\n\tcli        *clientv3.Client\n\tmu         sync.Mutex\n\tlatencies  map[string]time.Duration\n\tcallCounts map[string]int64\n\terrorCount int64\n}\n\nfunc NewEtcdMetricsCollector(cli *clientv3.Client) *EtcdMetricsCollector {\n\treturn &EtcdMetricsCollector{\n\t\tcli:        cli,\n\t\tlatencies:  make(map[string]time.Duration),\n\t\tcallCounts: make(map[string]int64),\n\t}\n}\n\n// TimedPut выполняет запись с замером латентности\nfunc (c *EtcdMetricsCollector) TimedPut(ctx context.Context, key, val string) error {\n\tstart := time.Now()\n\t_, err := c.cli.Put(ctx, key, val)\n\telapsed := time.Since(start)\n\n\tc.mu.Lock()\n\tdefer c.mu.Unlock()\n\n\tc.callCounts[\"Put\"]++\n\tc.latencies[\"Put\"] += elapsed\n\n\tif err != nil {\n\t\tc.errorCount++\n\t\treturn err\n\t}\n\n\tif elapsed > 50*time.Millisecond {\n\t\tfmt.Printf(\"⚠️ [PERF ALERT] Медленный Put в etcd: %v (> 50ms SLI threshold)!\\n\", elapsed)\n\t}\n\n\treturn nil\n}\n\n// TimedGet выполняет чтение с замером латентности\nfunc (c *EtcdMetricsCollector) TimedGet(ctx context.Context, key string) (string, error) {\n\tstart := time.Now()\n\tresp, err := c.cli.Get(ctx, key)\n\telapsed := time.Since(start)\n\n\tc.mu.Lock()\n\tdefer c.mu.Unlock()\n\n\tc.callCounts[\"Get\"]++\n\tc.latencies[\"Get\"] += elapsed\n\n\tif err != nil {\n\t\tc.errorCount++\n\t\treturn \"\", err\n\t}\n\n\tif len(resp.Kvs) == 0 {\n\t\treturn \"\", nil\n\t}\n\treturn string(resp.Kvs[0].Value), nil\n}\n\n// PrintReport выводит агрегированную статистику\nfunc (c *EtcdMetricsCollector) PrintReport() {\n\tc.mu.Lock()\n\tdefer c.mu.Unlock()\n\n\tfmt.Println(\"\\n=== ОТЧЕТ ПРОИЗВОДИТЕЛЬНОСТИ ETCD КЛИЕНТА ===\")\n\tfor op, count := range c.callCounts {\n\t\tavg := c.latencies[op] / time.Duration(count)\n\t\tfmt.Printf(\" Операция: %-6s Вызовов: %-6d Средняя задержка: %v\\n\", op, count, avg)\n\t}\n\tfmt.Printf(\" Всего ошибок: %d\\n\", c.errorCount)\n}\n\nfunc main() {\n\tfmt.Println(\"Мониторинг кластера etcd: экспорт метрик и задержек RTT:\")\n\tfmt.Println(\" 1. Замер латентности операций Put / Get для отслеживания деградации дисков\")\n\tfmt.Println(\" 2. Алерт на задержку > 50 мс сигнализирует о задержках fsync на кворуме Raft\")\n\tfmt.Println(\" 3. Интеграция с Prometheus через экспортеры etcd_request_duration_seconds\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Сам сервер etcd нативно экспортирует сотни Prometheus-метрик по адресу `:2379/metrics`. Go-клиент `clientv3` также поддерживает интерцепторы `grpc.WithUnaryInterceptor`, позволяющие автоматически передавать метрики в OpenTelemetry спаны.",
+    "pitfalls": [
+      "Блокировка мьютекса в горячем пути: в приложениях с десятками тысяч RPS сбор метрик должен использовать lock-free атомарные счетчики или гистограммы Prometheus без тяжелых глобальных мьютексов.",
+      "Игнорирование сетевого контекста: замер времени должен учитывать сетевой таймаут `ctx`, иначе зависший вызов исказит среднюю статистику."
+    ],
+    "bigtech_interview": "Какой самый критичный алерт для кластера etcd в SRE? 'HasNoLeader' (у кластера нет лидера) и 'HighNumberOfFailedProposals' (рост числа отклоненных предложений Raft из-за перегрузки дисков или сетевых разделов)."
+  },
+  {
+    "num": 30,
+    "title": "Enterprise Подсистема Распределенной Координации на etcd v3",
+    "task": "Спроектируйте и разработайте законченную корпоративную библиотеку координации EnterpriseCoordinator на чистом Go. Объедините автоматическую регистрацию Service Discovery с единой сессией Lease KeepAlive, фоновые выборы лидера с добровольной отставкой Resign, распределенные блокировки Mutex и безопасное завершение Graceful Shutdown.",
+    "theory": "В завершающем упражнении мы синтезируем все ключевые концепции распределенной координации в законченный модуль уровня Staff Engineer:\n1. Единый жизненный цикл сессии: все примитивы (мьютекс, выборы лидера, регистрация сервиса) привязаны к одному объекту `concurrency.Session`. Это гарантирует согласованность: при падении узла одновременно освобождается мьютекс, передается лидерство и удаляется регистрационный адрес сервиса.\n2. Отказоустойчивость: использование встроенного KeepAlive, защита от `SIGKILL` через Lease TTL и поддержка мгновенной передачи власти при штатном выключении через `Resign()`.\n3. Высокая производительность: отсутствие поллинга, реактивная модель на долгих gRPC потоках HTTP/2 и строгая линеаризуемость консенсуса Raft.\n\nТакая координационная подсистема лежит в основе архитектуры высоконадежных микросервисов в ведущих BigTech компаниях.",
+    "step_by_step": [
+      "Спроектируйте EnterpriseCoordinator с единой сессией concurrency.Session.",
+      "Реализуйте метод RegisterServiceInstance с привязкой ключа к session.Lease().",
+      "Напишите метод RunElectionCampaign с фоновым вызовом election.Campaign в горутине.",
+      "Реализуйте метод ExecuteWithLock для синхронизации критических секций.",
+      "В методе Shutdown предусмотрите добровольную отставку лидера (Resign), закрытие сессии и ожидание завершения горутин через sync.WaitGroup."
+    ],
+    "code_blocks": [
+      {
+        "filename": "enterprise_etcd_coordinator.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"sync\"\n\t\"sync/atomic\"\n\t\"time\"\n\n\tclientv3 \"go.etcd.io/etcd/client/v3\"\n\t\"go.etcd.io/etcd/client/v3/concurrency\"\n)\n\n// EnterpriseCoordinator объединяет все возможности распределенной координации etcd v3\ntype EnterpriseCoordinator struct {\n\tcli         *clientv3.Client\n\tserviceName string\n\tnodeID      string\n\tsession     *concurrency.Session\n\n\t// Компоненты координации\n\tmutex       *concurrency.Mutex\n\telection    *concurrency.Election\n\tisLeader    atomic.Bool\n\n\t// Локальный кэш\n\tconfigCache sync.Map\n\tstopCh      chan struct{}\n\twg          sync.WaitGroup\n}\n\nfunc NewEnterpriseCoordinator(cli *clientv3.Client, serviceName, nodeID string) (*EnterpriseCoordinator, error) {\n\t// 1. Создаем глобальную сессию с авто-продлением KeepAlive на 15 секунд\n\tsession, err := concurrency.NewSession(cli, concurrency.WithTTL(15))\n\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"ошибка создания etcd сессии: %w\", err)\n\t}\n\n\tlockKey := fmt.Sprintf(\"/enterprise/locks/%s\", serviceName)\n\telectionPrefix := fmt.Sprintf(\"/enterprise/elections/%s\", serviceName)\n\n\treturn &EnterpriseCoordinator{\n\t\tcli:         cli,\n\t\tserviceName: serviceName,\n\t\tnodeID:      nodeID,\n\t\tsession:     session,\n\t\tmutex:       concurrency.NewMutex(session, lockKey),\n\t\telection:    concurrency.NewElection(session, electionPrefix),\n\t\tstopCh:      make(chan struct{}),\n\t}, nil\n}\n\n// RegisterServiceInstance регистрирует узел в реестре Service Discovery\nfunc (c *EnterpriseCoordinator) RegisterServiceInstance(ctx context.Context, addr string) error {\n\tkey := fmt.Sprintf(\"/enterprise/services/%s/%s\", c.serviceName, c.nodeID)\n\t_, err := c.cli.Put(ctx, key, addr, clientv3.WithLease(c.session.Lease()))\n\tif err != nil {\n\t\treturn fmt.Errorf(\"сбой регистрации инстанса: %w\", err)\n\t}\n\tfmt.Printf(\"✅ [REGISTRY] Узел %s зарегистрирован: %s -> %s (LeaseID=%x)\\n\",\n\t\tc.nodeID, key, addr, c.session.Lease())\n\treturn nil\n}\n\n// RunElectionCampaign участвует в выборах лидера в фоновом режиме\nfunc (c *EnterpriseCoordinator) RunElectionCampaign(ctx context.Context) {\n\tc.wg.Add(1)\n\tgo func() {\n\t\tdefer c.wg.Done()\n\t\tfmt.Printf(\"[COORDINATOR] Узел %s начинает предвыборную кампанию...\\n\", c.nodeID)\n\t\tif err := c.election.Campaign(ctx, c.nodeID); err != nil {\n\t\t\tfmt.Printf(\"Кампания завершена: %v\\n\", err)\n\t\t\treturn\n\t\t}\n\t\tc.isLeader.Store(true)\n\t\tfmt.Printf(\"👑 [COORDINATOR] Узел %s СТАЛ ЛИДЕРОМ КЛАСТЕРА!\\n\", c.nodeID)\n\t}()\n}\n\n// ExecuteWithLock выполняет задачу под защитой распределенного мьютекса\nfunc (c *EnterpriseCoordinator) ExecuteWithLock(ctx context.Context, fn func() error) error {\n\tif err := c.mutex.Lock(ctx); err != nil {\n\t\treturn err\n\t}\n\tdefer func() {\n\t\t_ = c.mutex.Unlock(context.Background())\n\t}()\n\n\treturn fn()\n}\n\n// Shutdown корректно завершает работу: добровольная отставка, освобождение сессии\nfunc (c *EnterpriseCoordinator) Shutdown(ctx context.Context) error {\n\tclose(c.stopCh)\n\n\tif c.isLeader.Load() {\n\t\tfmt.Printf(\"[SHUTDOWN] Узел %s добровольно слагает полномочия лидера (Resign)...\\n\", c.nodeID)\n\t\t_ = c.election.Resign(ctx)\n\t\tc.isLeader.Store(false)\n\t}\n\n\tc.session.Close()\n\tc.wg.Wait()\n\tfmt.Printf(\"🏁 [SHUTDOWN] Координатор узла %s штатно остановлен.\\n\", c.nodeID)\n\treturn nil\n}\n\nfunc main() {\n\tfmt.Println(\"=== ENTERPRISE ПОДСИСТЕМА РАСПРЕДЕЛЕННОЙ КООРДИНАЦИИ НА ETCD V3 ===\")\n\tfmt.Println(\" 1. Service Discovery с автоматической регистрацией по LeaseID сессии\")\n\tfmt.Println(\" 2. Фоновые выборы лидера с мгновенной отставкой Resign() при Shutdown\")\n\tfmt.Println(\" 3. Распределенный Fair Mutex для синхронизации критических операций\")\n\tfmt.Println(\" 4. Полная защита от дедлоков, утечек горутин и разрывов сети\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Благодаря использованию единого `LeaseID` для всех ресурсов ноды нагрузка на кластер etcd минимальна: одна горутина шлет всего один heartbeat раз в 5 секунд, поддерживая одновременную регистрацию сервиса, лидерство и блокировки.",
+    "pitfalls": [
+      "Создание нескольких независимых сессий: если создать отдельную сессию для блокировок и отдельную для выборов, сервис будет расходовать лишние ресурсы и может попасть в состояние частичного падения (рассинхронизация сессий).",
+      "Блокировка метода Shutdown: если отставка `Resign()` зависнет из-за отсутствия контекста с таймаутом, контейнер будет убит по SIGKILL через terminationGracePeriodSeconds."
+    ],
+    "bigtech_interview": "Как в распределенных системах предотвратить проблему 'Split-Brain' и обеспечить консистентность при сбоях сети? На интервью Staff Engineer ожидают ответ: использование систем с кворумным консенсусом (etcd / Raft) в сочетании с эфемерными арендами (Leases), строгими глобальными ревизиями (Fencing Tokens) и процедурой добровольной отставки (Resign)."
+  }
+]

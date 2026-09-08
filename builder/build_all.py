@@ -213,6 +213,8 @@ with open('builder/chapter93_data.json', 'r', encoding='utf-8') as f:
     ch93_exercises = json.load(f)
 with open('builder/chapter94_data.json', 'r', encoding='utf-8') as f:
     ch94_exercises = json.load(f)
+with open('builder/chapter95_data.json', 'r', encoding='utf-8') as f:
+    ch95_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -449,6 +451,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             92: ('chapter92.html', f'{len(ch92_exercises)}/{len(ch92_exercises)}'),
             93: ('chapter93.html', f'{len(ch93_exercises)}/{len(ch93_exercises)}'),
             94: ('chapter94.html', f'{len(ch94_exercises)}/{len(ch94_exercises)}'),
+            95: ('chapter95.html', f'{len(ch95_exercises)}/{len(ch95_exercises)}'),
         }
         
         if num in status_map:
@@ -5723,6 +5726,65 @@ def build_chapter94_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'94. Enterprise Release Engineering: Feature Flags, динамический конфиг и Canary Routing ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+def build_chapter95_html(chapters):
+    active_chapter_num = 95
+    current_exercises = ch95_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 95 • Distributed Systems, Raft Consensus & Cloud Metadata</div>
+        <h1 class="hero-title">Распределенная координация и хранилище метаданных etcd v3</h1>
+        <p class="hero-desc">
+            Исчерпывающее практическое руководство по распределенной координации, консенсусу Raft и надежному хранилищу метаданных на базе etcd v3 на Go. Архитектура etcd: многоверсионный контроль конкурентности (MVCC), логический счетчик глобальных ревизий (Main Revision, ModRevision, CreateRevision), встроенный B+tree движок BoltDB (bbolt) и алгоритм консенсуса Raft. Подключение через официальный SDK go.etcd.io/etcd/client/v3: пулы соединений, таймауты, взаимная mTLS-аутентификация с сертификатами X.509 и авто-синхронизация топологии кластера. Базовые операции и расширенный диапазонный поиск: Get, Put, Delete, WithPrefix(), алфавитный скан WithRange(), постраничная выгрузка курсором (Cursor-based Pagination). Механизм аренд (Leases): эфемерные ключи с TTL, двунаправленный gRPC KeepAlive стрим, построение динамического Service Discovery и клиентская балансировка вызовов Round-Robin. Потоковые подписки Watchers: реактивные уведомления в реальном времени, префиксный мониторинг каталогов параметров, надежное возобновление после разрывов сети через WithRev(lastRev+1) и самоисцеление при сжатии истории (rpctypes.ErrCompacted). Распределенные примитивы синхронизации: атомарные транзакции Compare-And-Swap (If/Then/Else Txn), программная память транзакций (Software Transactional Memory - STM), честные распределенные блокировки concurrency.NewMutex с защитой от дедлоков при сбоях (kill -9), выборы лидера (Leader Election) с методом Campaign, поддержание лидерства и добровольная отставка Resign. Эксплуатация и SRE: in-memory L1 кэш метаданных с ревизиями, периодическая компактификация (Compaction), дефрагментация узлов (Defragmentation), обработка переполнения дисковой квоты (ErrNoSpace / Alarm Disarm), распределенная FIFO-очередь задач, запуск встроенного тестового кластера (Embedded etcd) и финальный Enterprise Coordinator на Go.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: Архитектура Raft, MVCC ревизии, clientv3, пагинация и Service Discovery (Упражнения 1–10)"),
+        (11, "Раздел 2: Watchers, авто-восстановление, транзакции Txn, STM и Distributed Locks (Упражнения 11–20)"),
+        (21, "Раздел 3: Выборы лидера, Compaction, Defragmentation, Embedded etcd и Enterprise Coordinator (Упражнения 21–30)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 95 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением распределенной координации на etcd v3!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы в совершенстве овладели передовыми механизмами распределенных систем: протоколом консенсуса Raft, версионированием MVCC, транзакциями CAS и STM, честными распределенными блокировками, выборами лидера с Resign, реактивными подписками Watchers, эксплуатацией (Compaction/Defragmentation) и разработкой отказоустойчивых координаторов на Go.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter94.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 94 Enterprise Release Engineering: Feature Flags, динамический конфиг и Canary Routing</a>
+            <a href="chapter96.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 96 Zero-Downtime миграции баз данных и паттерн Expand/Contract на Go →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'95. Распределенная координация и хранилище метаданных etcd v3 ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 # All 100 chapters metadata
 all_100_chapters = [
     (1, "Пакеты и модули", "chapter1.html", 91, True, "Модули, go.mod, SemVer, Cobra CLI, internal, vendor"),
@@ -5821,7 +5883,7 @@ all_100_chapters = [
     (92, "Расширяемость систем: Plugins, IPC и WebAssembly (Wazero)", "chapter92.html", len(ch92_exercises), True, "plugin.Open, HashiCorp go-plugin (gRPC IPC), Wazero Wasm песочницы, Fuel metering"),
     (93, "Высокопроизводительные API Gateway и Reverse Proxy на чистом Go", "chapter93.html", len(ch93_exercises), True, "httputil.ReverseProxy, динамическая маршрутизация, Peak-EWMA, Request Hedging"),
     (94, "Enterprise Release Engineering: Feature Flags, динамический конфиг и Canary Routing", "chapter94.html", len(ch94_exercises), True, "OpenFeature SDK, Canary rollouts, Kill Switch за 50 мс, fsnotify Hot Reload"),
-    (95, "Распределенная координация и хранилище метаданных etcd v3", "chapter95.html", 30, False, "clientv3 Watchers, Leases с автопродлением, атомарные транзакции Txn, Service Discovery"),
+    (95, "Распределенная координация и хранилище метаданных etcd v3", "chapter95.html", len(ch95_exercises), True, "clientv3 Watchers, Leases с автопродлением, атомарные транзакции Txn, Service Discovery"),
     (96, "Zero-Downtime миграции баз данных и паттерн Expand/Contract на Go", "chapter96.html", 30, False, "Expand/Migrate/Contract, Shadow Writing, Backfill воркеры, защита от AccessExclusiveLock"),
     (97, "Time-Series СУБД, сжатие Gorilla и IoT-телеметрия на Go", "chapter97.html", 30, False, "Прием сотен тысяч метрик/сек, Gorilla Delta-of-Delta и XOR компрессия, TimescaleDB"),
     (98, "Архитектурный контроль: Разработка корпоративных линтеров для golangci-lint", "chapter98.html", 30, False, "go/analysis фреймворк, семантика типов go/types, AST-инспекция, Suggested Fixes"),
@@ -6251,6 +6313,7 @@ if __name__ == '__main__':
         ('chapter92.html', build_chapter92_html),
         ('chapter93.html', build_chapter93_html),
         ('chapter94.html', build_chapter94_html),
+        ('chapter95.html', build_chapter95_html),
     ]
     
     for filename, builder_fn in pages:
