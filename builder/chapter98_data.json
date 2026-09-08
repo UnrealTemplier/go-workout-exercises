@@ -1,0 +1,783 @@
+[
+  {
+    "num": 1,
+    "title": "Роль статического анализа в поддержании архитектуры Monorepo",
+    "task": "Изучите, почему ручное ревью кода (Code Review) неизбежно дает сбои в масштабе компании с сотнями разработчиков и микросервисов. Сформулируйте задачи автоматического архитектурного надзора: предотвращение эрозии архитектурных слоев (Layer Inversion), обнаружение утечек горутин и контекстов, блокировка SQL-инъекций и принудительное следование соглашениям компании на уровне CI.",
+    "theory": "В быстрорастущих технологических компаниях кодовая база исчисляется миллионами строк кода в Monorepo или сотнях репозиториев.\n\nПроблема 'архитектурной эрозии' (Architectural Decay): когда дедлайны горят, разработчики склонны срезать углы — импортировать слой базы данных напрямую в доменную модель, использовать `context.Background()` вместо проброса контекста или забывать освобождать ресурсы.\n\nНадежда на ручное Code Review не оправдывается: 1) Человеческая усталость (reviewer fatigue); 2) Разный уровень опыта инженеров; 3) Субъективность споров в комментариях к PR.\n\nЕдинственное надежное решение — **программный архитектурный надзор (Policy as Code)** через кастомные статические анализаторы. Линтер проверяет синтаксические деревья (AST) за секунды и блокирует слияние pull request при малейшем нарушении контрактов.",
+    "step_by_step": [
+      "Классифицировать категории критических дефектов (архитектурные, надежность, безопасность).",
+      "Сформулировать инварианты изоляции слоев Clean Architecture.",
+      "Определить место статического анализа в конвейере разработки (Pre-commit -> IDE -> CI/CD Gate).",
+      "Спроектировать манифест корпоративных правил кодогенерации и проверки."
+    ],
+    "code_blocks": [
+      {
+        "filename": "monorepo_governance.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// ArchitectureRule описывает правило архитектурного контроля\ntype ArchitectureRule struct {\n\tName        string\n\tSeverity    string\n\tDescription string\n}\n\n// MonorepoGovernancePolicy формулирует манифест автоматического контроля\nfunc GetArchitectureRules() []ArchitectureRule {\n\treturn []ArchitectureRule{\n\t\t{\n\t\t\tName:        \"LayerIsolation\",\n\t\t\tSeverity:    \"BLOCKING\",\n\t\t\tDescription: \"Пакет domain/* не имеет права импортировать infrastructure/* или database/*.\",\n\t\t},\n\t\t{\n\t\t\tName:        \"ContextPropagation\",\n\t\t\tSeverity:    \"BLOCKING\",\n\t\t\tDescription: \"Запрещен context.Background() внутри бизнес-логики; контекст передается 1-м аргументом.\",\n\t\t},\n\t\t{\n\t\t\tName:        \"SQLSanitization\",\n\t\t\tSeverity:    \"BLOCKING\",\n\t\t\tDescription: \"Запрещена конкатенация строк в SQL-запросах; разрешены только позиционные плейсхолдеры.\",\n\t\t},\n\t\t{\n\t\t\tName:        \"ResourceCleanup\",\n\t\t\tSeverity:    \"BLOCKING\",\n\t\t\tDescription: \"defer resp.Body.Close() обязан вызываться строго ПОСЛЕ проверки if err != nil.\",\n\t\t},\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"=== Автоматический архитектурный контроль в Monorepo ===\")\n\trules := GetArchitectureRules()\n\tfor i, r := range rules {\n\t\tfmt.Printf(\"%d. [%s] %s: %s\\n\", i+1, r.Severity, r.Name, r.Description)\n\t}\n\tfmt.Println(\"\\nВывод: Ручное Code Review пропускает 30% скрытых архитектурных нарушений.\")\n\tfmt.Println(\"Пользовательские линтеры на go/analysis блокируют антипаттерны еще до коммита.\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Статический анализ Go опирается на то, что язык Go имеет строгую грамматику и компилятор с открытым исходным кодом. Официальный тулинг `golang.org/x/tools/go/analysis` позволяет инспектировать типы и AST с той же точностью, с какой их видит компилятор `gc`.",
+    "pitfalls": [
+      "Попытка писать архитектурные проверки на регулярных выражениях regex (grep) вместо синтаксического анализа AST (регулярки ломаются от комментариев и форматирования).",
+      "Слишком жесткие неблокирующие предупреждения (Warning), которые разработчики быстро начинают игнорировать.",
+      "Отсутствие автоматических исправлений (SuggestedFixes) для распространенных нарушений."
+    ],
+    "bigtech_interview": "Как в Uber и Google обеспечивают соблюдение архитектурных стандартов тысячами инженеров? Ответ: Через создание собственных линтеров на базе go/analysis, интегрированных в CI. Если код нарушает правило (например, обращается к внутренней структуре чужого пакета без интерфейса), PR автоматически блокируется ботом с точной ссылкой на документацию и готовым Suggested Fix."
+  },
+  {
+    "num": 2,
+    "title": "Архитектура фреймворка golang.org/x/tools/go/analysis",
+    "task": "Изучите внутреннее устройство стандартного фреймворка статического анализа Go (golang.org/x/tools/go/analysis): манифест analysis.Analyzer, контекст прохода analysis.Pass, сообщения об ошибках analysis.Diagnostic, зависимости анализаторов (Requires) и межпакетные факты analysis.Fact.",
+    "theory": "Фреймворк `golang.org/x/tools/go/analysis` — это официальный модульный стандарт разработки линтеров в экосистеме Go, созданный авторами языка (на нем работают `go vet`, `staticcheck` и `golangci-lint`).\n\nАрхитектура построена вокруг двух понятий:\n1) **`analysis.Analyzer`**: неизменяемый дескриптор инструмента. Он задает уникальное имя (`Name`), документацию (`Doc`), функцию запуска (`Run`), список предварительно требуемых анализаторов (`Requires`) и типы экспортируемых фактов (`FactTypes`);\n2) **`analysis.Pass`**: контекст выполнения для одного конкретного пакета Go. Через `pass` анализатор получает доступ к синтаксическим деревьям файлов (`pass.Files`), таблицам типов компилятора (`pass.TypesInfo`), набору файлов (`pass.Fset`) и методам сообщения об ошибках (`pass.Reportf`).\n\nФреймворк берет на себя распараллеливание анализа по ядрам CPU, кэширование результатов и управление зависимостями.",
+    "step_by_step": [
+      "Изучить сигнатуру функции `Run: func(*analysis.Pass) (interface{}, error)`.",
+      "Понять роль `token.FileSet` для перевода смещений байт в номера строк.",
+      "Разобрать граф зависимостей между анализаторами через поле `Requires`.",
+      "Сформулировать требования к модульности и идемпотентности анализатора."
+    ],
+    "code_blocks": [
+      {
+        "filename": "analysis_framework.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/token\"\n)\n\n// DummyDiagnostic имитирует структуру analysis.Diagnostic\ntype DummyDiagnostic struct {\n\tPos     token.Pos\n\tMessage string\n}\n\n// DummyAnalyzer описывает контракт анализатора\ntype DummyAnalyzer struct {\n\tName string\n\tDoc  string\n\tRun  func() []DummyDiagnostic\n}\n\nfunc main() {\n\tfmt.Println(\"=== Архитектура фреймворка golang.org/x/tools/go/analysis ===\")\n\tfmt.Println()\n\tfmt.Println(\"Ключевые сущности фреймворка:\")\n\tfmt.Println(\"1. analysis.Analyzer — манифест линтера (Name, Doc, Run, Requires, FactTypes).\")\n\tfmt.Println(\"2. analysis.Pass — контекст запуска для конкретного пакета Go:\")\n\tfmt.Println(\"   - pass.Fset: token.FileSet (позиции файлов, строк и колонок)\")\n\tfmt.Println(\"   - pass.Files: []*ast.File (синтаксические деревья)\")\n\tfmt.Println(\"   - pass.Pkg: *types.Package (информация о компилируемом пакете)\")\n\tfmt.Println(\"   - pass.TypesInfo: *types.Info (карты семантики типов: Defs, Uses, Types)\")\n\tfmt.Println(\"   - pass.Reportf(): регистрация ошибок и предупреждений с точной позицией в коде\")\n\tfmt.Println(\"3. analysis.Fact — механизм передачи информации между пакетами в дереве сборки.\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Драйвер анализа (например, `singlechecker` или `multichecker`) строит направленный ациклический граф (DAG) пакетов проекта. Пакеты анализируются в топологическом порядке: сначала зависимости, затем зависимые модули. Это позволяет передавать факты о типах от нижних уровней к верхним.",
+    "pitfalls": [
+      "Использование глобального изменяемого состояния внутри структуры Analyzer (приведет к гонкам данных при параллельном анализе пакетов).",
+      "Вызов `panic()` внутри функции `Run` при синтаксических ошибках в анализируемом коде.",
+      "Игнорирование поля `Requires`: если анализатору нужны типы, но не указан inspect/types, `pass.TypesInfo` может быть неполным."
+    ],
+    "bigtech_interview": "В чем преимущество `go/analysis` перед написанием собственных скриптов разбора AST? Ответ: Унификация. Линтер, написанный по стандарту `go/analysis`, может запускаться как самостоятельная консольная утилита (`singlechecker`), как часть общего монолитного чекера (`multichecker`), встраиваться в `go vet` или компилироваться в плагин `golangci-lint` без изменения единой строчки кода."
+  },
+  {
+    "num": 3,
+    "title": "Анатомия абстрактного синтаксического дерева (go/ast)",
+    "task": "Изучите базовые типы и иерархию пакета go/ast: корень дерева ast.File, интерфейс узла ast.Node, объявления ast.Decl (FuncDecl, GenDecl), операторы ast.Stmt (IfStmt, ReturnStmt, AssignStmt) и выражения ast.Expr (CallExpr, BinaryExpr, Ident). Напишите утилиту инспекции структуры функции Calculate.",
+    "theory": "Пакет `go/ast` объявляет типы данных для представления абстрактных синтаксических деревьев программ на Go.\n\nКаждый элемент программы является реализацией интерфейса `ast.Node`:\n```go\ntype Node interface {\n    Pos() token.Pos // Начальная позиция узла\n    End() token.Pos // Конечная позиция узла\n}\n```\nВсе узлы делятся на три основные группы:\n1) **`ast.Decl` (Declarations)**: объявления верхнего уровня (`*ast.FuncDecl` — функции и методы, `*ast.GenDecl` — импорты, константы, переменные и типы);\n2) **`ast.Stmt` (Statements)**: императивные инструкции внутри тел функций (`*ast.IfStmt`, `*ast.ForStmt`, `*ast.ReturnStmt`, `*ast.AssignStmt`);\n3) **`ast.Expr` (Expressions)**: выражения, вычисляющие значение (`*ast.CallExpr` — вызов функции, `*ast.BinaryExpr` — бинарная операция `x > 0`, `*ast.Ident` — идентификатор имени переменной).",
+    "step_by_step": [
+      "Использовать `parser.ParseFile` для разбора исходного текста программы в дерево AST.",
+      "Итерироваться по слайсу объявлений `file.Decls`.",
+      "Выполнить приведение типа к `*ast.FuncDecl` для получения сигнатуры и тела функции.",
+      "Разобрать операторы блока `fn.Body.List` через switch по типам `ast.Stmt`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "ast_anatomy.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n)\n\n// PrintASTStructure демонстрирует иерархию синтаксического дерева Go\nfunc PrintASTStructure() {\n\tsrc := `\npackage sample\n\nfunc Calculate(x int) int {\n\tif x > 0 {\n\t\treturn x * 2\n\t}\n\treturn 0\n}\n`\n\tfset := token.NewFileSet()\n\tnode, err := parser.ParseFile(fset, \"sample.go\", src, parser.AllErrors)\n\tif err != nil {\n\t\tfmt.Println(\"Parse error:\", err)\n\t\treturn\n\t}\n\n\tfmt.Println(\"Имя пакета:\", node.Name.Name)\n\tfor _, decl := range node.Decls {\n\t\tif fn, ok := decl.(*ast.FuncDecl); ok {\n\t\t\tfmt.Printf(\"Объявление функции: %s\\n\", fn.Name.Name)\n\t\t\tfmt.Printf(\"  -> Параметров: %d\\n\", len(fn.Type.Params.List))\n\t\t\tfmt.Printf(\"  -> Операторов в теле: %d\\n\", len(fn.Body.List))\n\t\t\tfor i, stmt := range fn.Body.List {\n\t\t\t\tswitch s := stmt.(type) {\n\t\t\t\tcase *ast.IfStmt:\n\t\t\t\t\tfmt.Printf(\"    [%d] Оператор условия: if ...\\n\", i)\n\t\t\t\tcase *ast.ReturnStmt:\n\t\t\t\t\tfmt.Printf(\"    [%d] Оператор возврата: return ...\\n\", i)\n\t\t\t\tdefault:\n\t\t\t\t\tfmt.Printf(\"    [%d] Оператор типа: %T\\n\", i, s)\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n}\n\nfunc main() {\n\tfmt.Println(\"=== Анатомия абстрактного синтаксического дерева (go/ast) ===\")\n\tPrintASTStructure()\n}\n"
+      }
+    ],
+    "under_the_hood": "Парсер Go строит точное синтаксическое дерево без потерь: каждый узел хранит token.Pos, указывающий на байтовое смещение в исходном файле. Это позволяет сопоставлять синтаксические конструкции с комментариями (`ast.CommentGroup`) и сохранять форматирование.",
+    "pitfalls": [
+      "Путаница между выражениями (`ast.Expr`) и операторами (`ast.Stmt`): например, вызов функции в строке `fn()` является оператором `*ast.ExprStmt`, внутри которого лежит выражение `*ast.CallExpr`.",
+      "Разыменование nil-полей (например, `fn.Body` у объявления функции интерфейса или внешней сборки cgo равен `nil`).",
+      "Игнорирование скобок `*ast.ParenExpr` при анализе сложных выражений."
+    ],
+    "bigtech_interview": "Почему в AST Go вызов метода `user.Save()` представлен как `*ast.CallExpr` с полем `Fun` типа `*ast.SelectorExpr`? Ответ: Потому что синтаксически `user.Save` — это выборка поля/метода через селектор точку. `X` селектора — это идентификатор `user`, а `Sel` — идентификатор `Save`. `CallExpr` оборачивает этот селектор со списком переданных аргументов `Args`."
+  },
+  {
+    "num": 4,
+    "title": "Информация о типах (go/types): переход от синтаксиса к семантике",
+    "task": "Синтаксический анализ AST видит только имена идентификаторов, но слеп к их реальным типам. Изучите структуру types.Info пакета go/types: карты Types (типы и константные значения выражений), Defs (объявления идентификаторов) и Uses (использование идентификаторов). Покажите, как types.Info связывает узел AST с типами компилятора.",
+    "theory": "Синтаксическое дерево (AST) знает только то, что написано в коде: например, `x.Close()`. Но является ли `x` структурой `*os.File`, сетевым сокетом `net.Conn` или кастомным типом пользователя? Имеет ли метод `Close()` сигнатуру `Close() error` или не возвращает ничего?\n\nБез информации о типах ответить на эти вопросы невозможно.\n\nПакет `go/types` выполняет полную проверку типов (Type Checking) по правилам языка Go и заполняет структуру `types.Info`:\n1) **`Types map[ast.Expr]TypeAndValue`**: отображает любое синтаксическое выражение (например, `x + 1`) на его статический тип `types.Type` и значение (если вычисляется во время компиляции);\n2) **`Defs map[*ast.Ident]Object`**: отображает идентификатор в месте его ОБЪЯВЛЕНИЯ на объект символа (переменная, константа, имя функции);\n3) **`Uses map[*ast.Ident]Object`**: отображает идентификатор в месте его ИСПОЛЬЗОВАНИЯ на объект, где он был объявлен;\n4) **`types.Implements(T, Iface)`**: позволяет программно проверить, реализует ли тип интерфейс `error` или `io.Closer`.",
+    "step_by_step": [
+      "Изучить назначение структуры `types.Info` и ее основных карт Defs, Uses, Types.",
+      "Инициализировать `types.Config` и выполнить `conf.Check` для AST-файлов.",
+      "Проверить связывание идентификатора вызова метода с его семантическим объектом `types.Func`.",
+      "Определить разницу между интерфейсным типом и конкретной структурой."
+    ],
+    "code_blocks": [
+      {
+        "filename": "types_semantics.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/importer\"\n\t\"go/parser\"\n\t\"go/token\"\n\t\"go/types\"\n)\n\n// SemanticTypeAnalyzer демонстрирует извлечение типов компилятора через go/types\nfunc SemanticTypeAnalyzer() {\n\tsrc := `\npackage main\n\nimport \"io\"\n\nfunc CloseResource(r io.Closer) error {\n\treturn r.Close()\n}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"main.go\", src, parser.AllErrors)\n\n\t// Настройка type checker\n\tconf := types.Config{Importer: importer.Default()}\n\tinfo := &types.Info{\n\t\tTypes: make(map[ast.Expr]types.TypeAndValue),\n\t\tDefs:  make(map[*ast.Ident]types.Object),\n\t\tUses:  make(map[*ast.Ident]types.Object),\n\t}\n\n\tpkg, err := conf.Check(\"main\", fset, []*ast.File{file}, info)\n\tif err != nil {\n\t\tfmt.Println(\"Typecheck error:\", err)\n\t\treturn\n\t}\n\n\tfmt.Printf(\"Пакет успешно типизирован: %s\\n\", pkg.Path())\n\tfmt.Printf(\"Количество разрешенных выражений в Types: %d\\n\", len(info.Types))\n\tfmt.Printf(\"Количество определенных объектов в Defs: %d\\n\", len(info.Defs))\n\tfmt.Printf(\"Количество используемых объектов в Uses: %d\\n\", len(info.Uses))\n}\n\nfunc main() {\n\tfmt.Println(\"=== Семантический анализ типов с go/types ===\")\n\tSemanticTypeAnalyzer()\n}\n"
+      }
+    ],
+    "under_the_hood": "Внутри `go/types` объекты типов представлены интерфейсом `types.Type` и его конкретными реализациями: `*types.Basic` (int, string), `*types.Named` (пользовательские типы), `*types.Pointer`, `*types.Struct`, `*types.Interface`, `*types.Signature` (функции). Это позволяет линтеру с идеальной точностью анализировать структуры данных.",
+    "pitfalls": [
+      "Обращение к `pass.TypesInfo.Types[expr]` для выражений, не вычисляющих значение (например, метка перехода label: вернет отсутствие ключа).",
+      "Попытка сравнения типов через оператор `==` вместо `types.Identical(t1, t2)` (для именованных типов прямое сравнение может дать сбой из-за разных экземпляров пакетов).",
+      "Необработанный `nil` при вызове `pass.TypesInfo.TypeOf(expr)`."
+    ],
+    "bigtech_interview": "Как в анализаторе проверить, возвращает ли функция тип `error`? Ответ: 1) Получить сигнатуру функции `sig := obj.Type().(*types.Signature)`; 2) Проверить результаты `results := sig.Results()`; 3) Если `results.Len() > 0`, взять тип последнего параметра `lastType := results.At(results.Len()-1).Type()`; 4) Проверить совпадение с встроенным типом ошибки через `types.Identical(lastType, types.Universe.Lookup(\"error\").Type())`."
+  },
+  {
+    "num": 5,
+    "title": "Создание первого статического анализатора на Go",
+    "task": "Напишите свой первый статический анализатор noempty: анализатор сканирует объявления функций *ast.FuncDecl, проверяет количество операторов в блоке fn.Body.List и формирует диагностическое предупреждение, если тело функции пусто (len(fn.Body.List) == 0).",
+    "theory": "Создание собственного линтера начинается с формулирования простого синтаксического инварианта.\n\nВ Go функция с пустым телом `func DoSomething() {}` часто является забытой заглушкой (TODO stub), ошибочно оставленной разработчиком в коде перед релизом.\n\nКаноничная структура анализатора в терминах `go/analysis`:\n```go\nvar Analyzer = &analysis.Analyzer{\n    Name: \"noempty\",\n    Doc:  \"находит функции с пустым телом\",\n    Run:  run,\n}\n\nfunc run(pass *analysis.Pass) (interface{}, error) {\n    for _, file := range pass.Files {\n        // Обход AST\n    }\n    return nil, nil\n}\n```\nФункция `run` итерируется по всем файлам пакета `pass.Files`, фильтрует объявления `*ast.FuncDecl` и сообщает об ошибках вызовом `pass.Reportf(fn.Pos(), \"сообщение\")`.",
+    "step_by_step": [
+      "Объявить глобальную переменную дескриптора `analysis.Analyzer`.",
+      "Реализовать функцию `run(pass *analysis.Pass)`.",
+      "Отфильтровать узлы `*ast.FuncDecl`, исключая прототипы интерфейсов без тела (`fn.Body == nil`).",
+      "Проверить условие `len(fn.Body.List) == 0` и зарегистрировать диагностику."
+    ],
+    "code_blocks": [
+      {
+        "filename": "noempty_analyzer.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n)\n\n// DummyReport сообщение линтера\ntype DummyReport struct {\n\tPos     token.Pos\n\tMessage string\n}\n\n// CheckEmptyFunctions обходит AST и находит пустые функции\nfunc CheckEmptyFunctions(fset *token.FileSet, file *ast.File) []DummyReport {\n\tvar reports []DummyReport\n\n\tfor _, decl := range file.Decls {\n\t\tfn, ok := decl.(*ast.FuncDecl)\n\t\tif !ok || fn.Body == nil {\n\t\t\tcontinue\n\t\t}\n\n\t\t// Если список операторов в теле функции пуст\n\t\tif len(fn.Body.List) == 0 {\n\t\t\treports = append(reports, DummyReport{\n\t\t\t\tPos:     fn.Pos(),\n\t\t\t\tMessage: fmt.Sprintf(\"функция '%s' имеет пустое тело\", fn.Name.Name),\n\t\t\t})\n\t\t}\n\t}\n\n\treturn reports\n}\n\nfunc main() {\n\tfmt.Println(\"=== Создание первого статического анализатора (noempty) ===\")\n\tsrc := `\npackage testpkg\n\nfunc ValidFunction() {\n\tprintln(\"doing work\")\n}\n\nfunc SuspiciousEmpty() {}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"test.go\", src, 0)\n\n\tfindings := CheckEmptyFunctions(fset, file)\n\tfor _, f := range findings {\n\t\tpos := fset.Position(f.Pos)\n\t\tfmt.Printf(\"⚠️  [%s:%d] %s\\n\", pos.Filename, pos.Line, f.Message)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "Когда вызывается `pass.Reportf(pos, ...)`, фреймворк `go/analysis` автоматически использует внутренний `pass.Fset` для преобразования целочисленного `token.Pos` в файл, строку и столбец. Это гарантирует точную интеграцию с редакторами кода VS Code / GoLand / Cursor.",
+    "pitfalls": [
+      "Паника разыменования nil-указателя на внешних объявлениях функций без тела (например, в ассемблерных функциях или CGO: `func Syscall()` имеет `fn.Body == nil`).",
+      "Срабатывание на функции, содержащие только комментарии (комментарии не входят в `fn.Body.List`, поэтому тело формально пусто).",
+      "Регистрация ошибки на методах-заглушках, реализующих интерфейс с явным комментарием `// no-op`."
+    ],
+    "bigtech_interview": "Как отличить забытую пустую функцию от осознанной заглушки `// no-op`? Ответ: В AST к файлу привязан список комментариев `file.Comments`. Анализатор может проверить, попадает ли позиция комментария внутрь диапазона `[fn.Body.Lbrace, fn.Body.Rbrace]`. Если внутри скобок есть комментарий, содержащий маркер `no-op` или `stub`, анализатор игнорирует функцию."
+  },
+  {
+    "num": 6,
+    "title": "Обход AST с помощью ast.Inspect",
+    "task": "Изучите стандартную функцию рекурсивного обхода дерева ast.Inspect(node ast.Node, f func(ast.Node) bool): покажите, как остановить спуск в ненужные поддеревья возвратом false (например, пропуск инспекции внутренних тел анонимных функций или структур) и как обрабатывать выход из узла при n == nil.",
+    "theory": "Вместо ручного написания рекурсивных функций обхода десятков типов узлов `go/ast` предоставляет стандартную функцию высшего порядка `ast.Inspect`.\n\nСигнатура:\n`ast.Inspect(node ast.Node, f func(ast.Node) bool)`\n\nМеханика работы:\n1) Функция `f` вызывается для каждого узла дерева в порядке обхода в глубину (DFS — Depth-First Search);\n2) Если `f` возвращает **`true`**, `ast.Inspect` продолжает спуск во всех потомков текущего узла;\n3) Если `f` возвращает **`false`**, обход дочерних элементов этого узла прекращается (pruning subtrees). Это критически важно для производительности;\n4) После того как все дети узла обойдены, функция `f` вызывается повторно со значением `n == nil`, что позволяет реализовать логику выхода из контекста (exit hook, аналог закрывающей скобки).",
+    "step_by_step": [
+      "Изучить сигнатуру и контракт функции `ast.Inspect`.",
+      "Реализовать фильтрацию по типу узла через type-assertion `n.(*ast.CallExpr)`.",
+      "Продемонстрировать отсечение поддерева возвратом `false`.",
+      "Использовать условие `n == nil` для очистки состояния стека обхода."
+    ],
+    "code_blocks": [
+      {
+        "filename": "ast_inspect.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n)\n\n// RunInspectDemo демонстрирует рекурсивный обход AST функцией ast.Inspect\nfunc RunInspectDemo() {\n\tsrc := `\npackage main\n\nfunc Outer() {\n\tprintln(\"outer\")\n\tfn := func() {\n\t\tprintln(\"inner closure\")\n\t}\n\tfn()\n}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"main.go\", src, 0)\n\n\ttotalNodes := 0\n\tcallCount := 0\n\n\t// ast.Inspect рекурсивно обходит дерево в глубину (Depth-First Search)\n\tast.Inspect(file, func(n ast.Node) bool {\n\t\tif n == nil {\n\t\t\treturn false // Вызывается при выходе из узла\n\t\t}\n\t\ttotalNodes++\n\n\t\t// Если встретили вызов функции\n\t\tif call, ok := n.(*ast.CallExpr); ok {\n\t\t\tcallCount++\n\t\t\tpos := fset.Position(call.Pos())\n\t\t\tfmt.Printf(\"Найден вызов функции в строке %d\\n\", pos.Line)\n\t\t}\n\n\t\t// Возврат true означает: продолжать спускаться вглубь дочерних узлов\n\t\t// Возврат false остановил бы обход текущей подветки дерева!\n\t\treturn true\n\t})\n\n\tfmt.Printf(\"Всего обойдено узлов AST: %d, вызовов функций: %d\\n\", totalNodes, callCount)\n}\n\nfunc main() {\n\tfmt.Println(\"=== Рекурсивный обход AST с помощью ast.Inspect ===\")\n\tRunInspectDemo()\n}\n"
+      }
+    ],
+    "under_the_hood": "Под капотом `ast.Inspect` вызывает `ast.Walk`. В `ast.Walk` реализован колоссальный оператор `switch` по всем 50+ типам AST-узлов языка Go, вызывающий `Walk` для всех непустых полей структуры. Возврат `false` предотвращает вызовы для вложенных узлов, экономя такты CPU.",
+    "pitfalls": [
+      "Забытая проверка `if n == nil { return false }`: попытка разыменовать `n.Pos()` при выходе из узла вызовет панику `nil pointer dereference`.",
+      "Случайный возврат `false` на корневом узле `*ast.File` (обход завершится немедленно, не проверив ни одной строчки кода).",
+      "Чрезмерная глубина стека вызовов при обработке гигантских сгенерированных файлов."
+    ],
+    "bigtech_interview": "Как в `ast.Inspect` запретить линтеру заходить внутрь тел тестовых функций `TestXxx(t *testing.T)`? Ответ: При встрече узла `*ast.FuncDecl` проверить, начинается ли его имя с `Test` и лежит ли файл в `_test.go`. Если да — вернуть `false`. Это исключит все дерево тела тестовой функции из инспекции."
+  },
+  {
+    "num": 7,
+    "title": "Регистрация предупреждений и позиционирование в коде",
+    "task": "Изучите механику перевода абстрактных смещений token.Pos в точные координаты исходного кода (имя файла, номер строки и колонки) через token.FileSet. Реализуйте метод логирования предупреждений в каноничном формате компилятора Go filename:line:column: message.",
+    "theory": "Для эффективности представления памяти компилятор Go не хранит строки и имена файлов в каждом синтаксическом узле AST. Вместо этого используется глобальная непрерывная числовая ось смещений — тип `token.Pos` (по сути, обычный `int`).\n\nСтруктура `token.FileSet` управляет этой осью:\n1) Каждый распарсенный файл занимает определенный диапазон смещений `[base, base + size]`;\n2) Для любого `node.Pos()` метод `fset.Position(pos)` выполняет бинарный поиск по файлам и вычисляет:\n   - `Filename string`: относительный или абсолютный путь к файлу;\n   - `Line int`: точный номер строки (1-based);\n   - `Column int`: номер символа в строке (1-based).\n\nВ `go/analysis` метод `pass.Reportf(node.Pos(), format, args...)` автоматически производит это преобразование и формирует диагностику `analysis.Diagnostic`.",
+    "step_by_step": [
+      "Изучить природу компактного числового типа `token.Pos`.",
+      "Использовать `pass.Fset.Position(pos)` для получения структуры `token.Position`.",
+      "Сформировать вывод в каноничном формате компилятора UNIX.",
+      "Убедиться, что позиция указывает на начало идентификатора ошибки, а не на весь блок."
+    ],
+    "code_blocks": [
+      {
+        "filename": "source_reporter.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n)\n\n// SourceCodeReporter демонстрирует точное позиционирование диагностик\ntype SourceCodeReporter struct {\n\tfset *token.FileSet\n}\n\nfunc (r *SourceCodeReporter) Report(pos token.Pos, format string, args ...interface{}) {\n\tposition := r.fset.Position(pos)\n\tmsg := fmt.Sprintf(format, args...)\n\t// Формат, стандартизированный для компиляторов и линтеров: filename:line:column: message\n\tfmt.Printf(\"%s:%d:%d: %s\\n\", position.Filename, position.Line, position.Column, msg)\n}\n\nfunc main() {\n\tfmt.Println(\"=== Позиционирование в коде с token.FileSet и Reportf ===\")\n\tsrc := `package main\n\nfunc main() {\n\tvar unusedVariable = 42\n}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"app/main.go\", src, 0)\n\treporter := &SourceCodeReporter{fset: fset}\n\n\t// Найдем неиспользуемую переменную\n\tast.Inspect(file, func(n ast.Node) bool {\n\t\tif valSpec, ok := n.(*ast.ValueSpec); ok {\n\t\t\tfor _, id := range valSpec.Names {\n\t\t\t\tif id.Name == \"unusedVariable\" {\n\t\t\t\t\treporter.Report(id.Pos(), \"переменная '%s' объявлена, но не используется\", id.Name)\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\treturn true\n\t})\n}\n"
+      }
+    ],
+    "under_the_hood": "Хранение одного 32/64-битного `token.Pos` вместо структуры `{File, Line, Col}` в каждом из миллионов узлов AST экономит до 70% оперативной памяти при разборе больших проектов.",
+    "pitfalls": [
+      "Передача `node.End()` вместо `node.Pos()`: предупреждение подсветит конец функции или файла вместо проблемного места.",
+      "Использование чужого `token.FileSet`, не связанного с текущим сеансом парсинга (вернет мусорные или отрицательные номера строк).",
+      "Некорректная обработка сгенерированных файлов с директивами `//line`."
+    ],
+    "bigtech_interview": "Почему `pass.ReportRangef` лучше, чем обычный `pass.Reportf`? Ответ: `pass.ReportRangef(node, ...)` принимает узел целиком (с Pos() и End()), что позволяет современным IDE (VS Code, GoLand) подсветить волнистой линией точный диапазон проблемного выражения целиком, а не только первый символ."
+  },
+  {
+    "num": 8,
+    "title": "Фреймворк тестирования анализаторов: analysistest",
+    "task": "Изучите специализированный фреймворк тестирования статических анализаторов golang.org/x/tools/go/analysis/analysistest. Разберите структуру каталогов testdata/src/, использование специальных маркерных комментариев // want 'regexp' и написание юнит-тестов с помощью analysistest.Run.",
+    "theory": "Тестирование статических анализаторов требует проверки двух вещей: 1) Линтер находит ошибку именно там, где она есть (True Positive); 2) Линтер молчит там, где код написан корректно (True Negative / No False Positives).\n\nПакет `analysistest` автоматизирует этот процесс через декларативные тесты:\n1) Создается директория `testdata/src/<pkgname>/`;\n2) Внутри пишутся реальные `.go` файлы с правильным и ошибочным кодом;\n3) На строках, где анализатор ДОЛЖЕН выдать предупреждение, добавляется специальный комментарий:\n`// want \"текст ошибки или регулярное выражение\"`\n4) В юнит-тесте вызывается:\n```go\nfunc TestMyAnalyzer(t *testing.T) {\n    testdata := analysistest.TestData()\n    analysistest.Run(t, testdata, myanalyzer.Analyzer, \"pkgname\")\n}\n```\nЕсли анализатор выдаст ошибку не на той строке, выдаст лишнюю ошибку или текст не совпадет с `// want`, тест упадет с подробным diff.",
+    "step_by_step": [
+      "Создать структуру каталога `testdata/src/a` в репозитории линтера.",
+      "Написать тестовые кейсы с валидными и невалидными конструкциями Go.",
+      "Разместить маркеры `// want \"...\"` на целевых строках.",
+      "Запустить тест через стандартный `go test ./...` и убедиться в 100% покрытии правил."
+    ],
+    "code_blocks": [
+      {
+        "filename": "analysistest_guide.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// ExplainAnalysisTest иллюстрирует методологию тестирования линтеров Go\nfunc ExplainAnalysisTest() {\n\tfmt.Println(\"=== Фреймворк тестирования analysistest в Go ===\")\n\tfmt.Println()\n\tfmt.Println(\"Стандартный подход к тестированию линтеров на базе go/analysis:\")\n\tfmt.Println(\"1. Структура тестовых каталогов:\")\n\tfmt.Println(\"   myanalyzer/\")\n\tfmt.Println(\"   ├── analyzer.go\")\n\tfmt.Println(\"   ├── analyzer_test.go\")\n\tfmt.Println(\"   └── testdata/src/a/\")\n\tfmt.Println(\"       └── sample.go\")\n\tfmt.Println()\n\tfmt.Println(\"2. Содержимое testdata/src/a/sample.go с маркерными комментариями:\")\n\tfmt.Println(\"   package a\")\n\tfmt.Println(\"   func BadFunction() {} // want \\\"функция имеет пустое тело\\\"\")\n\tfmt.Println(\"   func GoodFunction() { println(\\\"ok\\\") }\")\n\tfmt.Println()\n\tfmt.Println(\"3. Тестовый файл analyzer_test.go:\")\n\tfmt.Println(\"   func TestAnalyzer(t *testing.T) {\")\n\tfmt.Println(\"       testdata := analysistest.TestData()\")\n\tfmt.Println(\"       analysistest.Run(t, testdata, myanalyzer.Analyzer, \\\"a\\\")\")\n\tfmt.Println(\"   }\")\n\tfmt.Println()\n\tfmt.Println(\"Механика: analysistest.Run компилирует тестовый пакет 'a', запускает анализатор\")\n\tfmt.Println(\"и сверяет текст и номера строк сообщений с комментариями // want.\")\n}\n\nfunc main() {\n\tExplainAnalysisTest()\n}\n"
+      }
+    ],
+    "under_the_hood": "`analysistest` создает виртуальное окружение GOPATH/Go Modules в папке `testdata`, парсит комментарии специальным лексером и сопоставляет позиции `pass.Reportf` с позициями комментариев `want`.",
+    "pitfalls": [
+      "Неправильный синтаксис комментария (например, `//want` без пробела или опечатка в кавычках).",
+      "Пропуск тестирования валидных случаев (тест должен доказывать отсутствие ложных срабатываний).",
+      "Различия в путях на Windows и Linux при работе с `analysistest.TestData()`."
+    ],
+    "bigtech_interview": "Почему маркерный подход `// want` лучше ручной проверки слайса диагностик `assert.Equal(t, reports)`? Ответ: Потому что тест становится самодокументируемым примером кода: разработчик видит исходный Go-код и прямо напротив проблемной строки видит ожидаемое сообщение линтера, что делает поддержку сотен тест-кейсов тривиальной."
+  },
+  {
+    "num": 9,
+    "title": "Линтер 1: Запрет context.Background() вне main() и тестов",
+    "task": "В микросервисной архитектуре создание нового context.Background() или context.TODO() внутри бизнес-слоя разрывает цепочку контекстов: теряются таймауты, отмены и trace ID OpenTelemetry. Разработайте анализатор nobackground: запретите вызовы context.Background() и context.TODO() везде, кроме функций main() и тестовых файлов *_test.go.",
+    "theory": "Контекст (`context.Context`) в Go предназначен для сквозной передачи сигналов отмены, дедлайнов и метаданных трассировки через все уровни приложения.\n\nКогда разработчик внутри сервисного метода вызывает `ctx := context.Background()` вместо того, чтобы принять `ctx context.Context` первым параметром функции:\n1) Разрывается распределенная трассировка (Distributed Tracing): Jaeger/OpenTelemetry Spans теряют связь с родительским трейсом;\n2) Игнорируется отмена клиентского HTTP/gRPC запроса (сервер продолжает молотить тяжелый SQL-запрос, хотя клиент уже закрыл вкладку браузера);\n3) Перестают работать глобальные таймауты деградации.\n\nЛинтер `nobackground` обходит AST и пресекает создание контекстов на корню во всех бизнес-пакетах компании.",
+    "step_by_step": [
+      "Исключить из проверки тестовые файлы с суффиксом `_test.go`.",
+      "Исключить из проверки функцию верхнего уровня `func main()`.",
+      "Обнаружить вызовы `*ast.CallExpr`, где функция является `*ast.SelectorExpr` с `X == \"context\"`.",
+      "Заблокировать методы `Background` и `TODO` с требованием проброса контекста через параметры."
+    ],
+    "code_blocks": [
+      {
+        "filename": "nobackground_analyzer.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n\t\"strings\"\n)\n\n// CheckNoBackground находит вызовы context.Background() в бизнес-коде\nfunc CheckNoBackground(fset *token.FileSet, file *ast.File, filename string) []string {\n\tvar issues []string\n\n\t// Исключаем тесты\n\tif strings.HasSuffix(filename, \"_test.go\") {\n\t\treturn nil\n\t}\n\n\tast.Inspect(file, func(n ast.Node) bool {\n\t\t// Исключаем функцию main()\n\t\tif fn, ok := n.(*ast.FuncDecl); ok && fn.Name.Name == \"main\" {\n\t\t\treturn false // Не заходим внутрь main()\n\t\t}\n\n\t\tcall, ok := n.(*ast.CallExpr)\n\t\tif !ok {\n\t\t\treturn true\n\t\t}\n\n\t\t// Проверяем селектор: context.Background() или context.TODO()\n\t\tif sel, ok := call.Fun.(*ast.SelectorExpr); ok {\n\t\t\tif ident, ok := sel.X.(*ast.Ident); ok && ident.Name == \"context\" {\n\t\t\t\tif sel.Sel.Name == \"Background\" || sel.Sel.Name == \"TODO\" {\n\t\t\t\t\tpos := fset.Position(call.Pos())\n\t\t\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: запрещен вызов context.%s() в бизнес-логике; передавайте входящий ctx первым аргументом\",\n\t\t\t\t\t\tpos.Filename, pos.Line, sel.Sel.Name))\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\treturn true\n\t})\n\n\treturn issues\n}\n\nfunc main() {\n\tfmt.Println(\"=== Линтер nobackground: Запрет context.Background() ===\")\n\tsrc := `package service\n\nimport \"context\"\n\nfunc ProcessOrder() {\n\tctx := context.Background() // Ошибка!\n\t_ = ctx\n}\n\nfunc main() {\n\tctx := context.Background() // Разрешено в main\n\t_ = ctx\n}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"service/order.go\", src, 0)\n\n\tfindings := CheckNoBackground(fset, file, \"service/order.go\")\n\tfor _, f := range findings {\n\t\tfmt.Println(\"🚨\", f)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "Для 100% надежности анализатор должен проверять не просто строковое имя `\"context\"`, а семантический пакет через `pass.TypesInfo.Uses[ident]`. Это предотвратит ложные срабатывания, если разработчик создал локальную переменную с именем `context`.",
+    "pitfalls": [
+      "Блокировка легитимных вызовов в фоновых worker-демонах (для фоновых задач должен использоваться контролируемый корневой контекст приложения `appCtx`).",
+      "Пропуск алиасов импорта (например, `import ctxpkg \"context\"`).",
+      "Блокировка контекста в тестах."
+    ],
+    "bigtech_interview": "Почему в Google запрещено использовать `context.TODO()` в коде master-ветки? Ответ: `context.TODO()` задумывался как временная заглушка в процессе рефакторинга. Оставленный на проде, он означает, что разработчик не знал, откуда взять контекст, и проигнорировал таймауты. Линтер в CI Google блокирует коммиты с `context.TODO()`, заставляя инженера явно прокинуть контекст."
+  },
+  {
+    "num": 10,
+    "title": "Линтер 2: Запрет хранения context.Context в структурах",
+    "task": "Официальный гайдлайн Go Code Review Comments гласит: «Do not store Contexts inside a struct type; instead, pass a Context explicitly to each function that needs it». Разработайте линтер structcontext: анализатор инспектирует ast.StructType и сообщает об ошибке, если поле структуры имеет тип context.Context.",
+    "theory": "Хранение `context.Context` внутри полей структуры — один из самых коварных антипаттернов в Go.\n\nПочему это опасно:\n1) **Жизненный цикл**: Структура (например, сервис `UserService` или репозиторий `OrderRepo`) создается один раз при старте приложения (Singleton) и живет часами/днями. Контекст же привязан к конкретному HTTP-запросу и живет 50 миллисекунд. Сохранение контекста запроса в сервис приводит к сохранению мертвого отмененного контекста для всех последующих пользователей;\n2) **Гонки данных (Data Races)**: Если структура используется параллельно десятками горутин, замена контекста в поле структуры приведет к немедленной гонке данных;\n3) **Утечки памяти**: Контекст хранит ссылки на горутины и значения, препятствуя их очистке Garbage Collector.\n\nЕдинственное исключение — структуры DTO сообщений или команд, но не сервисы.",
+    "step_by_step": [
+      "Обнаружить синтаксические узлы объявления структур `*ast.StructType`.",
+      "Пройти по полям структуры `structType.Fields.List`.",
+      "Проверить тип поля на селектор `context.Context`.",
+      "Вывести предупреждение с рекомендацией передавать контекст первым параметром методов."
+    ],
+    "code_blocks": [
+      {
+        "filename": "structcontext_analyzer.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n)\n\n// CheckStructContext проверяет, чтобы context.Context не хранился в полях структур\nfunc CheckStructContext(fset *token.FileSet, file *ast.File) []string {\n\tvar issues []string\n\n\tast.Inspect(file, func(n ast.Node) bool {\n\t\tstructType, ok := n.(*ast.StructType)\n\t\tif !ok || structType.Fields == nil {\n\t\t\treturn true\n\t\t}\n\n\t\tfor _, field := range structType.Fields.List {\n\t\t\t// Проверяем тип поля: context.Context\n\t\t\tif sel, ok := field.Type.(*ast.SelectorExpr); ok {\n\t\t\t\tif ident, ok := sel.X.(*ast.Ident); ok && ident.Name == \"context\" && sel.Sel.Name == \"Context\" {\n\t\t\t\t\tpos := fset.Position(field.Pos())\n\t\t\t\t\tfieldName := \"(anonymous)\"\n\t\t\t\t\tif len(field.Names) > 0 {\n\t\t\t\t\t\tfieldName = field.Names[0].Name\n\t\t\t\t\t}\n\t\t\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: поле '%s' имеет запрещенный тип context.Context; передавайте context аргументом в методы\",\n\t\t\t\t\t\tpos.Filename, pos.Line, fieldName))\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\treturn true\n\t})\n\n\treturn issues\n}\n\nfunc main() {\n\tfmt.Println(\"=== Линтер structcontext: Запрет context в структурах ===\")\n\tsrc := `package repository\n\nimport \"context\"\n\ntype BadRepository struct {\n\tctx context.Context // Запрещено официальным Go Code Review Comments!\n\tdb  string\n}\n\ntype GoodRepository struct {\n\tdb string\n}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"repo.go\", src, 0)\n\n\tfindings := CheckStructContext(fset, file)\n\tfor _, f := range findings {\n\t\tfmt.Println(\"🚨\", f)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "Правило 'Contexts should not be stored in structs' проверяется также стандартным линтером `containedctx`. Наш кастомный анализатор расширяет его, позволяя настраивать белый список структур (например, разрешать контекст в типах `http.Request`).",
+    "pitfalls": [
+      "Блокировка `http.Request`: стандартная структура библиотеки Go содержит поле `ctx context.Context` (нужно добавить исключение).",
+      "Пропуск встроенных (embedded) анонимных полей `context.Context`.",
+      "Пропуск алиасов контекста через typedef."
+    ],
+    "bigtech_interview": "Почему в стандартной структуре `http.Request` есть поле `ctx context.Context`, если гайдлайны Go это запрещают? Ответ: Это исторический компромисс обратной совместимости. Пакет `context` был добавлен в стандартную библиотеку только в Go 1.7, когда сигнатура `http.Handler.ServeHTTP(ResponseWriter, *Request)` уже была зафиксирована обещанием Go 1 Compatibility Promise. Чтобы не ломать миллиарды строк существующего кода, контекст встроили прямо в `*http.Request` через методы `Context()` и `WithContext()`."
+  },
+  {
+    "num": 11,
+    "title": "Линтер 3: Детекция пропущенных проверок ошибок (unhandled errors)",
+    "task": "Игнорирование ошибок — первопричина 'тихого падения' сервисов под нагрузкой. Разработайте анализатор checkerr: находит вызовы функций, возвращающих тип error, результат которых либо полностью игнорируется fn(), либо явно сбрасывается в пустой идентификатор _ = fn().",
+    "theory": "В Go ошибки являются обычными значениями, возвращаемыми функциями. Язык намеренно не имеет механизма исключений (try/catch), требуя явной обработки.\n\nОднако разработчики иногда забывают обработать ошибку или сознательно пишут `_ = file.Close()`, надеясь, что 'здесь ошибки быть не может'. На практике игнорирование ошибок при закрытии файлов приводит к потере недозаписанных на диск буферов, а игнорирование ошибок сетевых вызовов порождает скрытое повреждение данных (Silent Corruption).\n\nЛинтер `checkerr` (аналог популярного `errcheck`) использует комбинацию AST и `go/types`:\n1) Находит все операторы-вызовы `*ast.ExprStmt` и присваивания `*ast.AssignStmt` с `_`;\n2) Через `pass.TypesInfo.Types[call]` проверяет сигнатуру возвращаемого типа;\n3) Если среди возвращаемых значений есть тип `error`, регистрирует блокирующую ошибку.",
+    "step_by_step": [
+      "Обнаружить одиночные вызовы функций в виде операторов `ast.ExprStmt`.",
+      "Обнаружить присваивания в пустой идентификатор `_` в `ast.AssignStmt`.",
+      "Использовать информацию о типах `types.Info` для фильтрации функций, действительно возвращающих `error`.",
+      "Реализовать исключения для безопасных функций стандартной библиотеки (например, `fmt.Println`)."
+    ],
+    "code_blocks": [
+      {
+        "filename": "checkerr_analyzer.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n)\n\n// CheckUnhandledErrors находит игнорирование возвращаемых ошибок\nfunc CheckUnhandledErrors(fset *token.FileSet, file *ast.File) []string {\n\tvar issues []string\n\n\tast.Inspect(file, func(n ast.Node) bool {\n\t\t// 1. Случай вызова функции как отдельного оператора: fn()\n\t\tif exprStmt, ok := n.(*ast.ExprStmt); ok {\n\t\t\tif call, ok := exprStmt.X.(*ast.CallExpr); ok {\n\t\t\t\tpos := fset.Position(call.Pos())\n\t\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: результат вызова функции игнорируется (возможна потеря error)\",\n\t\t\t\t\tpos.Filename, pos.Line))\n\t\t\t}\n\t\t}\n\n\t\t// 2. Случай явного сброса в blank identifier: _ = fn()\n\t\tif assign, ok := n.(*ast.AssignStmt); ok {\n\t\t\tif len(assign.Lhs) == 1 {\n\t\t\t\tif ident, ok := assign.Lhs[0].(*ast.Ident); ok && ident.Name == \"_\" {\n\t\t\t\t\tpos := fset.Position(assign.Pos())\n\t\t\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: явный сброс результата в '_' запрещен правилами надежности\",\n\t\t\t\t\t\tpos.Filename, pos.Line))\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\n\t\treturn true\n\t})\n\n\treturn issues\n}\n\nfunc main() {\n\tfmt.Println(\"=== Линтер checkerr: Детекция пропущенных ошибок ===\")\n\tsrc := `package main\n\nimport \"os\"\n\nfunc BadWorker() {\n\tos.Remove(\"/tmp/file\") // Ошибка игнорируется!\n\n\t_ = os.Chmod(\"/tmp/file\", 0777) // Ошибка сброшена в blank identifier!\n}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"worker.go\", src, 0)\n\n\tfindings := CheckUnhandledErrors(fset, file)\n\tfor _, f := range findings {\n\t\tfmt.Println(\"🚨\", f)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "Проверка типа ошибки выполняется вызовом компилятора: `types.Implements(returnType, errorInterface)`. Если возвращается множественный кортеж `(int, error)`, анализатор инспектирует последний элемент кортежа `types.Tuple`.",
+    "pitfalls": [
+      "Предупреждения на вызовы `fmt.Printf` или `fmt.Fprintln`, которые формально возвращают error, но в 99.9% случаев не требуют обработки в консоли (требуется белый список исключений).",
+      "Пропуск обработки ошибок внутри операторов `go fn()` и `defer fn()`.",
+      "Ложные срабатывания на функциях, возвращающих статус `bool`, а не `error`."
+    ],
+    "bigtech_interview": "Почему игнорирование ошибки `defer file.Close()` в Go может привести к потере данных? Ответ: Операционная система сбрасывает данные из буфера файлового кэша на физический диск в момент закрытия дескриптора. Если на диске закончилось место (No space left on device) или произошел сбой сети в NFS, системный вызов close() вернет ошибку записи. Если Go-код проигнорировал ошибку Close(), приложение считает файл успешно сохраненным, тогда как данные были потеряны."
+  },
+  {
+    "num": 12,
+    "title": "Линтер 4: Контроль слоев Clean Architecture (Layer Imports)",
+    "task": "Архитектурное правило гласит: внутренние слои Чистой Архитектуры (Domain, Entities, Use Cases) ничего не знают о внешних слоях (Database, HTTP, Infrastructure). Разработайте линтер cleanarch: анализатор проверяет директивы импорта файлов в пакетах /domain/ и запрещает импорт пакетов infrastructure, database или database/sql.",
+    "theory": "Чистая Архитектура (Clean Architecture / Onion / Hexagonal) держится на **Принципе Инверсии Зависимостей (Dependency Inversion Principle)**:\nСтрелки зависимостей в кодовой базе должны быть направлены СТРОГО СНАРУЖИ ВНУТРЬ. Доменный слой ядра бизнеса (`domain`) должен зависеть только от чистого языка Go и не иметь никаких внешних зависимостей.\n\nНа практике разработчики часто срезают углы: импортируют драйвер PostgreSQL (`database/sql`), Redis или клиент Kafka прямо в доменные структуры. В результате доменное ядро оказывается жестко привязано к конкретным технологиям, а модульное тестирование бизнес-логики без поднятия баз данных становится невозможным.\n\nАрхитектурный линтер анализирует `ast.ImportSpec` и физический путь к файлу: если файл находится в `/domain/`, любые импорты инфраструктурных пакетов немедленно прерывают билд.",
+    "step_by_step": [
+      "Определить принадлежность анализируемого файла к доменному слою по его пути.",
+      "Итерироваться по списку директив импорта `file.Imports`.",
+      "Сопоставить очищенный путь импорта `imp.Path.Value` с черным списком инфраструктурных модулей.",
+      "Вывести строгое сообщение об ошибке с пояснением принципа инверсии зависимостей."
+    ],
+    "code_blocks": [
+      {
+        "filename": "cleanarch_linter.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n\t\"strings\"\n)\n\n// CleanArchRule задает правила изоляции слоев\ntype CleanArchRule struct {\n\tForbiddenImportPrefix string\n\tReason                string\n}\n\n// CheckCleanArchLayers проверяет соблюдение правила зависимостей\nfunc CheckCleanArchLayers(fset *token.FileSet, file *ast.File, filePath string) []string {\n\tvar issues []string\n\n\t// Проверяем, находится ли файл в доменном слое\n\tif !strings.Contains(filePath, \"/domain/\") {\n\t\treturn nil\n\t}\n\n\t// Запрещенные импорты для доменного слоя\n\tforbidden := []CleanArchRule{\n\t\t{ForbiddenImportPrefix: \"mycompany/pkg/infrastructure\", Reason: \"Доменный слой не должен зависеть от инфраструктуры\"},\n\t\t{ForbiddenImportPrefix: \"mycompany/pkg/database\", Reason: \"Доменный слой не должен зависеть от базы данных\"},\n\t\t{ForbiddenImportPrefix: \"database/sql\", Reason: \"Доменный слой не должен зависеть от драйверов SQL\"},\n\t}\n\n\tfor _, imp := range file.Imports {\n\t\timportPath := strings.Trim(imp.Path.Value, `\"`)\n\t\tfor _, rule := range forbidden {\n\t\t\tif strings.HasPrefix(importPath, rule.ForbiddenImportPrefix) {\n\t\t\t\tpos := fset.Position(imp.Pos())\n\t\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: нарушение Чистой Архитектуры: импорт '%s' запрещен в домене (%s)\",\n\t\t\t\t\tpos.Filename, pos.Line, importPath, rule.Reason))\n\t\t\t}\n\t\t}\n\t}\n\n\treturn issues\n}\n\nfunc main() {\n\tfmt.Println(\"=== Архитектурный линтер: Контроль слоев Clean Architecture ===\")\n\tsrc := `package domain\n\nimport (\n\t\"context\"\n\t\"database/sql\" // Нарушение!\n)\n\ntype User struct {\n\tID string\n}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"internal/domain/user.go\", src, 0)\n\n\tfindings := CheckCleanArchLayers(fset, file, \"internal/domain/user.go\")\n\tfor _, f := range findings {\n\t\tfmt.Println(\"🚨\", f)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "В крупных корпоративных системах (например, uber-go/nilaway или bazel visibility) контроль границ пакетов реализуется декларативными правилами package boundary rules, запрещающими циклические и обратные зависимости на уровне графа сборки.",
+    "pitfalls": [
+      "Проверка только локальных путей без учета полного имени модуля из `go.mod`.",
+      "Использование относительных путей `../infrastructure` (в Go запрещено, но должно валидироваться).",
+      "Отсутствие исключений для чисто служебных пакетов общего назначения (`time`, `errors`, `math`)."
+    ],
+    "bigtech_interview": "Как в Clean Architecture доменный слой взаимодействует с базой данных, если ему запрещено импортировать пакет базы данных? Ответ: Через интерфейсы (Ports and Adapters). Доменный слой объявляет интерфейс `type UserRepository interface { Save(u User) error }`. Внешний инфраструктурный пакет базы данных импортирует домен и РЕАЛИЗУЕТ этот интерфейс. В рантайме зависимость внедряется через Dependency Injection, удовлетворяя архитектурный контракт."
+  },
+  {
+    "num": 13,
+    "title": "Инспекция директив импорта (ast.ImportSpec)",
+    "task": "Реализуйте глубокий анализ директив импорта ast.ImportSpec: различие стандартной библиотеки Go и внешних сторонних зависимостей, разбор путей импортов и фильтрацию по белому списку разрешенных пакетов (Whitelist) для критических модулей ядра.",
+    "theory": "Узел `ast.ImportSpec` представляет единичную строку импорта внутри блока `import (...)`.\n\nСтруктура `ast.ImportSpec`:\n- `Path *ast.BasicLit`: строковый литерал пути (всегда содержит окружающие кавычки `\"net/http\"`, которые необходимо снимать через `strings.Trim(imp.Path.Value, \"\\\"\")` или `strconv.Unquote`);\n- `Name *ast.Ident`: опциональное локальное переименование импорта (alias), точка `.` для прямого импорта или подчеркивание `_` для сайд-эффект импорта;\n- `Doc *ast.CommentGroup`: комментарии над строкой импорта.\n\nПроверка структуры импортов позволяет отслеживать раздувание зависимостей (Dependency Bloat) и предотвращать попадание тяжелых фреймворков в легковесные библиотеки компании.",
+    "step_by_step": [
+      "Итерироваться по срезу `file.Imports`.",
+      "Корректно извлечь путь через `strconv.Unquote`.",
+      "Классифицировать путь: стандартная библиотека (без точки в первом сегменте) vs внешний репозиторий.",
+      "Сопоставить путь с корпоративным белым списком разрешенных пакетов."
+    ],
+    "code_blocks": [
+      {
+        "filename": "import_inspector.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n\t\"strings\"\n)\n\n// ImportPolicyValidator проверяет список разрешенных стандартных библиотек\ntype ImportPolicyValidator struct {\n\tallowedStdLib map[string]struct{}\n}\n\nfunc NewImportValidator() *ImportPolicyValidator {\n\treturn &ImportPolicyValidator{\n\t\tallowedStdLib: map[string]struct{}{\n\t\t\t\"context\": {},\n\t\t\t\"errors\":  {},\n\t\t\t\"fmt\":     {},\n\t\t\t\"time\":    {},\n\t\t\t\"strings\": {},\n\t\t},\n\t}\n}\n\nfunc (v *ImportPolicyValidator) ValidateImports(fset *token.FileSet, file *ast.File) []string {\n\tvar issues []string\n\n\tfor _, imp := range file.Imports {\n\t\tpath := strings.Trim(imp.Path.Value, `\"`)\n\n\t\t// Если это сторонняя библиотека (содержит точку в первом сегменте домена)\n\t\tif strings.Contains(strings.Split(path, \"/\")[0], \".\") {\n\t\t\tpos := fset.Position(imp.Pos())\n\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: сторонняя библиотека '%s' запрещена в Core-пакете\",\n\t\t\t\tpos.Filename, pos.Line, path))\n\t\t\tcontinue\n\t\t}\n\n\t\t// Проверка стандартной библиотеки по белому списку\n\t\tif _, ok := v.allowedStdLib[path]; !ok {\n\t\t\tpos := fset.Position(imp.Pos())\n\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: пакет стандартной библиотеки '%s' не входит в разрешенный whitelist\",\n\t\t\t\tpos.Filename, pos.Line, path))\n\t\t}\n\t}\n\n\treturn issues\n}\n\nfunc main() {\n\tfmt.Println(\"=== Инспекция директив импорта (ast.ImportSpec) ===\")\n\tsrc := `package core\n\nimport (\n\t\"context\"\n\t\"net/http\" // Запрещен whitelist'ом\n\t\"github.com/google/uuid\" // Сторонняя зависимость\n)\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"core/entity.go\", src, 0)\n\n\tvalidator := NewImportValidator()\n\tfindings := validator.ValidateImports(fset, file)\n\tfor _, f := range findings {\n\t\tfmt.Println(\"🚨\", f)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "В компиляторе Go стандартная библиотека определяется отсутствием точки `.` в первой компоненте пути (например, `math/rand` vs `github.com/pkg/errors`). Пакет `golang.org/x/tools/go/packages` использует это же правило для разделения stdlib и внешних модулей.",
+    "pitfalls": [
+      "Забытое удаление кавычек из `imp.Path.Value` (сравнение `\"fmt\"` со строкой `fmt` всегда вернет `false`).",
+      "Игнорирование анонимных импортов `_ \"net/http/pprof\"` (сайд-эффект импорты несут особые риски безопасности).",
+      "Обработка алиасов: если файл содержит `import h \"net/http\"`, `imp.Name.Name` будет `h`."
+    ],
+    "bigtech_interview": "Почему в production монорепозиториях часто запрещают точечные импорты `import . \"mypkg\"`? Ответ: Точечный импорт вываливает все экспортируемые идентификаторы чужого пакета в текущее пространство имен файла. Это делает чтение кода запутанным (непонятно, откуда взялась функция), порождает конфликты имен при обновлении библиотек и ломает рефакторинг в IDE."
+  },
+  {
+    "num": 14,
+    "title": "Линтер 5: Детекция неконтролируемых горутин (Unguarded Goroutines)",
+    "task": "Запуск горутин через ключевое слово go func() без привязки к WaitGroup, Worker Pool или ErrGroup — частая причина утечек памяти и аварийного завершения сервиса при панике. Разработайте анализатор safego: находит все операторы ast.GoStmt и требует использования утвержденных корпоративных примитивов конкурентности.",
+    "theory": "Горутины в Go дешевы (около 2 КБ стека), что провоцирует разработчиков запускать их бесконтрольно: `go sendEmail()`, `go updateMetrics()`.\n\nТри смертельных риска 'диких' горутин (Unguarded Goroutines):\n1) **Необработанная паника**: Если внутри горутины произойдет `panic` (например, nil pointer dereference), аварийно завершится ВЕСЬ Go-процесс, положив весь сервис в Kubernetes;\n2) **Утечка памяти и процессора (Goroutine Leak)**: Если горутина зависнет на вечном чтении небуферизованного канала или блокирующем сетевом сокете без таймаута, она останется в памяти навсегда;\n3) **Нарушение Graceful Shutdown**: При остановке пода Kubernetes неконтролируемые горутины будут грубо убиты операционной системой на середине записи в базу данных.\n\nЛинтер `safego` запрещает прямое использование ключевого слова `go`, принуждая инженеров использовать безопасные обертки (например, `pool.Go()`, `errgroup.Group` или корпоративный `safego.Go(func())` с встроенным `recover()`).",
+    "step_by_step": [
+      "Обнаружить узел запуска горутины `*ast.GoStmt`.",
+      "Проверить вызываемое выражение `goStmt.Call`.",
+      "Идентифицировать запуск анонимной функции `*ast.FuncLit`.",
+      "Зарегистрировать предупреждение о нарушении корпоративного стандарта безопасной многопоточности."
+    ],
+    "code_blocks": [
+      {
+        "filename": "safego_analyzer.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n)\n\n// CheckUnguardedGoroutines находит 'дикие' запуски горутин без надзора\nfunc CheckUnguardedGoroutines(fset *token.FileSet, file *ast.File) []string {\n\tvar issues []string\n\n\tast.Inspect(file, func(n ast.Node) bool {\n\t\tgoStmt, ok := n.(*ast.GoStmt)\n\t\tif !ok {\n\t\t\treturn true\n\t\t}\n\n\t\tpos := fset.Position(goStmt.Pos())\n\t\t// Проверяем, что именно запускается: анонимная функция go func() или обычная функция\n\t\tswitch callTarget := goStmt.Call.Fun.(type) {\n\t\tcase *ast.FuncLit:\n\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: обнаружена неконтролируемая анонимная горутина 'go func()'; используйте WorkerPool или sync.WaitGroup\",\n\t\t\t\tpos.Filename, pos.Line))\n\t\tcase *ast.Ident:\n\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: запуск горутины 'go %s()'; убедитесь в наличии graceful shutdown и recover\",\n\t\t\t\tpos.Filename, pos.Line, callTarget.Name))\n\t\tdefault:\n\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: неконтролируемый запуск горутины\", pos.Filename, pos.Line))\n\t\t}\n\n\t\treturn true\n\t})\n\n\treturn issues\n}\n\nfunc main() {\n\tfmt.Println(\"=== Линтер safego: Детекция неконтролируемых горутин ===\")\n\tsrc := `package handler\n\nfunc HandleRequest() {\n\t// Опасный запуск без WaitGroup и отслеживания контекста!\n\tgo func() {\n\t\tprintln(\"async work\")\n\t}()\n}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"handler.go\", src, 0)\n\n\tfindings := CheckUnguardedGoroutines(fset, file)\n\tfor _, f := range findings {\n\t\tfmt.Println(\"🚨\", f)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "В рантайме Go паника в любой горутине, не перехваченная локальным `recover()`, поднимается до вершины стека горутины и вызывает `runtime.fatalpanic`, приводящий к мгновенному падению процесса (Exit Code 2). Защитить чужую горутину внешним `recover` невозможно, поэтому изоляция обязана быть внутри тела горутины.",
+    "pitfalls": [
+      "Ложные срабатывания на легитимном создании пула воркеров в функции `main()` или `init()`.",
+      "Пропуск запусков через методы объектов `go s.worker()`.",
+      "Отсутствие белого списка для одобренных библиотек конкурентности."
+    ],
+    "bigtech_interview": "Как в Ozon и Wildberries защищают серверы от падения при фоновых асинхронных задачах? Ответ: Запрещают сырое ключевое слово `go` линтером и обязывают использовать утилиту вида `safego.Go(ctx, func(ctx context.Context))`. Внутри этой функции автоматически делается `defer recover()` с отправкой стек-трейса в Sentry, логов в Elastic и инкрементом счетчика паник в Prometheus."
+  },
+  {
+    "num": 15,
+    "title": "Линтер 6: Запрет глобальных мутабельных переменных",
+    "task": "Глобальное изменяемое состояние (Global State) разрушает изоляцию тестов, делает невозможным конкурентное исполнение и провоцирует Data Race. Разработайте анализатор noglobalstate: сканирует объявления ast.GenDecl с token.VAR на уровне пакета, запрещая глобальные переменные (за исключением константных ошибок var ErrXxx = errors.New()).",
+    "theory": "В Go переменные, объявленные на уровне пакета через ключевое слово `var`, доступны всем горутинам и функциям этого пакета.\n\nПочему глобальное состояние опасно:\n1) **Гонки данных (Data Races)**: Если две горутины одновременно читают и пишут в `var GlobalConfig` или `var cache map[...]`, происходит повреждение памяти и аварийная остановка рантайма;\n2) **Скрытые связи (Tight Coupling)**: Функции становятся нечистыми (Non-pure functions), их результат зависит от скрытого состояния, а не от переданных аргументов;\n3) **Сложность тестирования**: Тесты, запущенные параллельно (`t.Parallel()`), начинают перезаписывать глобальные переменные друг друга, порождая плавающие падения (Flaky Tests).\n\nКачественный линтер разрешает на уровне пакета только неизменяемые константы (`const`), статические ошибки (`var ErrNotFound = errors.New(...)`) и потокобезопасные синглтоны, запрещая изменяемые счетчики, мапы и срезы.",
+    "step_by_step": [
+      "Отфильтровать объявления верхнего уровня `*ast.GenDecl` с маркером `token.VAR`.",
+      "Итерироваться по спецификациям значений `*ast.ValueSpec`.",
+      "Реализовать фильтрацию разрешенных паттернов: префикс `Err` для статических ошибок sentinel errors.",
+      "Зарегистрировать предупреждение с требованием передачи зависимостей через структуру конструктора."
+    ],
+    "code_blocks": [
+      {
+        "filename": "noglobalstate_analyzer.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n)\n\n// CheckGlobalMutableState проверяет объявления глобальных переменных на уровне пакета\nfunc CheckGlobalMutableState(fset *token.FileSet, file *ast.File) []string {\n\tvar issues []string\n\n\tfor _, decl := range file.Decls {\n\t\tgenDecl, ok := decl.(*ast.GenDecl)\n\t\t// Нас интересуют только объявления 'var' на уровне пакета\n\t\tif !ok || genDecl.Tok != token.VAR {\n\t\t\tcontinue\n\t\t}\n\n\t\tfor _, spec := range genDecl.Specs {\n\t\t\tvalSpec, ok := spec.(*ast.ValueSpec)\n\t\t\tif !ok {\n\t\t\t\tcontinue\n\t\t\t}\n\n\t\t\tfor _, name := range valSpec.Names {\n\t\t\t\t// Разрешаем известные безопасные паттерны (например, var ErrNotFound = ...)\n\t\t\t\tif len(name.Name) >= 3 && name.Name[:3] == \"Err\" {\n\t\t\t\t\tcontinue\n\t\t\t\t}\n\n\t\t\t\tpos := fset.Position(name.Pos())\n\t\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: обнаружена глобальная мутабельная переменная 'var %s'; используйте инкапсуляцию в структуру или const\",\n\t\t\t\t\tpos.Filename, pos.Line, name.Name))\n\t\t\t}\n\t\t}\n\t}\n\n\treturn issues\n}\n\nfunc main() {\n\tfmt.Println(\"=== Линтер noglobalstate: Запрет глобальных переменных ===\")\n\tsrc := `package cache\n\nimport \"errors\"\n\n// Разрешенная неизменяемая ошибка\nvar ErrCacheMiss = errors.New(\"miss\")\n\n// Опасное глобальное состояние! Гонка данных при многопоточности!\nvar GlobalCache = make(map[string]string)\nvar RequestCount int\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"cache.go\", src, 0)\n\n\tfindings := CheckGlobalMutableState(fset, file)\n\tfor _, f := range findings {\n\t\tfmt.Println(\"🚨\", f)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "В популярном линтере `gochecknoglobals` проверка семантики типов углубляется: разрешаются типы, реализующие потокобезопасные интерфейсы (`sync.Locker`, `atomic.Pointer`), но строго запрещаются примитивные скалярные типы и сырые коллекции.",
+    "pitfalls": [
+      "Блокировка легитимных регулярок `var re = regexp.MustCompile(...)` (их компиляция в рантайме тяжелая, и глобальное хранение оправдано).",
+      "Блокировка зарегистрированных ошибок `var ErrExpired = ...`.",
+      "Ложные срабатывания на флагах Cobra CLI в файлах команд."
+    ],
+    "bigtech_interview": "Почему `var myRegex = regexp.MustCompile(...)` разрешают делать глобальной переменной, а `var myMap = make(map[string]string)` запрещают? Ответ: `*regexp.Regexp` после компиляции является потокобезопасным объектом только для чтения (Read-Only), и его методы поиска могут безопасно вызываться тысячами параллельных горутин. Напротив, встроенная `map` в Go не защищена от гонок и мгновенно роняет приложение с фатальной ошибкой `fatal error: concurrent map writes` при параллельной модификации."
+  },
+  {
+    "num": 16,
+    "title": "Линтер 7: Проверка правильного вызова defer Body.Close()",
+    "task": "Классическая ловушка новичков в Go: вызов defer resp.Body.Close() сразу после вызова http.Get(...) ДО проверки if err != nil. Если сеть недоступна, resp равен nil, и отложенный вызов Close() обрушивает приложение паникой разыменования nil-указателя. Разработайте анализатор httpclose, детектирующий этот антипаттерн в AST.",
+    "theory": "Сетевой клиент Go (`net/http`) устроен так, что при возникновении ошибки соединения (DNS failure, Connection refused, Timeout) вызов `http.Get(url)` или `client.Do(req)` возвращает `resp == nil` и ошибку `err != nil`.\n\nЕсли разработчик напишет:\n```go\nresp, err := http.Get(url)\ndefer resp.Body.Close() // СМЕРТЕЛЬНО ОПАСНО!\nif err != nil {\n    return err\n}\n```\nВ случае сетевого сбоя функция попытается вернуть ошибку, сработает зарегистрированный `defer`, обратится к полю `nil.Body` и приложение упадет с фатальной паникой `panic: runtime error: invalid memory address or nil pointer dereference`.\n\nПравильный порядок: `defer resp.Body.Close()` обязан находиться СТРОГО ВНУТРИ блока после успешной проверки `if err != nil { return err }`.",
+    "step_by_step": [
+      "Обнаружить вызовы функций HTTP-клиента в операторах присваивания.",
+      "Зафиксировать относительный порядок оператора `ast.DeferStmt` и оператора условия `ast.IfStmt`.",
+      "Убедиться, что позиция `defer.Pos() < ifStmt.Pos()` генерирует блокирующее предупреждение.",
+      "Проверить корректность правильного кода, где defer следует за проверкой."
+    ],
+    "code_blocks": [
+      {
+        "filename": "httpclose_analyzer.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n)\n\n// CheckDeferOrder проверяет правильный порядок defer resp.Body.Close()\nfunc CheckDeferOrder(fset *token.FileSet, file *ast.File) []string {\n\tvar issues []string\n\n\tast.Inspect(file, func(n ast.Node) bool {\n\t\tfn, ok := n.(*ast.FuncDecl)\n\t\tif !ok || fn.Body == nil {\n\t\t\treturn true\n\t\t}\n\n\t\t// Ищем вызов http.Get или client.Do\n\t\tvar httpCallPos token.Pos\n\t\tvar deferClosePos token.Pos\n\t\tvar errCheckPos token.Pos\n\n\t\tfor _, stmt := range fn.Body.List {\n\t\t\t// Проверяем присваивание resp, err := http.Get(...)\n\t\t\tif assign, ok := stmt.(*ast.AssignStmt); ok {\n\t\t\t\tfor _, rhs := range assign.Rhs {\n\t\t\t\t\tif call, ok := rhs.(*ast.CallExpr); ok {\n\t\t\t\t\t\tif sel, ok := call.Fun.(*ast.SelectorExpr); ok {\n\t\t\t\t\t\t\tif sel.Sel.Name == \"Get\" || sel.Sel.Name == \"Do\" {\n\t\t\t\t\t\t\t\thttpCallPos = assign.Pos()\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\n\t\t\t// Проверяем оператор if err != nil\n\t\t\tif ifStmt, ok := stmt.(*ast.IfStmt); ok {\n\t\t\t\tif errCheckPos == token.NoPos && httpCallPos != token.NoPos {\n\t\t\t\t\terrCheckPos = ifStmt.Pos()\n\t\t\t\t}\n\t\t\t}\n\n\t\t\t// Проверяем оператор defer resp.Body.Close()\n\t\t\tif deferStmt, ok := stmt.(*ast.DeferStmt); ok {\n\t\t\t\tif call, ok := deferStmt.Call.Fun.(*ast.SelectorExpr); ok {\n\t\t\t\t\tif call.Sel.Name == \"Close\" {\n\t\t\t\t\t\tdeferClosePos = deferStmt.Pos()\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\n\t\t// Если defer встретился РАНЬШЕ проверки if err != nil\n\t\tif deferClosePos != token.NoPos && errCheckPos != token.NoPos && deferClosePos < errCheckPos {\n\t\t\tpos := fset.Position(deferClosePos)\n\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: критическая ошибка: defer resp.Body.Close() размещен до проверки if err != nil (риск паники при ошибке сети)\",\n\t\t\t\tpos.Filename, pos.Line))\n\t\t}\n\n\t\treturn true\n\t})\n\n\treturn issues\n}\n\nfunc main() {\n\tfmt.Println(\"=== Линтер httpclose: Проверка порядка defer Body.Close() ===\")\n\tsrc := `package client\n\nimport \"net/http\"\n\nfunc BadFetch() {\n\tresp, err := http.Get(\"https://api.example.com\")\n\tdefer resp.Body.Close() // Ошибка! Если Get вернет err, resp будет nil, и вызов Close вызовет panic!\n\tif err != nil {\n\t\treturn\n\t}\n}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"client.go\", src, 0)\n\n\tfindings := CheckDeferOrder(fset, file)\n\tfor _, f := range findings {\n\t\tfmt.Println(\"🚨\", f)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "В AST Go каждый оператор внутри `fn.Body.List` имеет монотонно возрастающие координаты `Pos()`. Сравнение `deferPos < errCheckPos` позволяет математически доказать последовательность выполнения операторов в рамках одного блока.",
+    "pitfalls": [
+      "Пропуск случаев, когда проверка ошибки завернута во вспомогательную функцию.",
+      "Ложные срабатывания, если разработчик проверил `if resp != nil { defer resp.Body.Close() }`.",
+      "Забытый `defer resp.Body.Close()` при раннем `return` из функции."
+    ],
+    "bigtech_interview": "Почему `http.Response.Body` вообще нужно закрывать, если сборщик мусора Go сам освобождает память? Ответ: `resp.Body` удерживает под капотом системный сокет операционной системы (File Descriptor) и буфер TCP-соединения. Если тело ответа не закрыть, сетевое соединение не сможет вернуться в пул Keep-Alive, а дескрипторы ОС будут утекать, пока сервер не выдаст `too many open files`."
+  },
+  {
+    "num": 17,
+    "title": "Линтер 8: Оптимизация выравнивания памяти структур (Field Alignment)",
+    "task": "Из-за правил выравнивания памяти процессора (CPU Alignment) неоптимальный порядок полей структуры приводит к раздуванию памяти пустыми байтами (Memory Padding). Разработайте концепцию линтера fieldalign на базе pass.TypesSizes: расчет размера структуры и генерация рекомендации по перестановке полей от большего к меньшему, экономящей до 33% памяти.",
+    "theory": "Современные 64-битные процессоры читают память словами по 8 байт. Для максимальной скорости работы компилятор Go выравнивает поля структур: 8-байтовое число (`int64`, указатель) обязано размещаться по адресу, кратному 8.\n\nЕсли структура объявлена так:\n```go\ntype Bad struct {\n    a bool  // 1 байт + 7 БАЙТ ПУСТОГО ПАДДИНГА\n    b int64 // 8 байт\n    c bool  // 1 байт + 7 БАЙТ ПУСТОГО ПАДДИНГА\n}\n```\nОбщий размер составляет **24 байта** (из которых 14 байт — бесполезная дыра!).\n\nЕсли переставить поля:\n```go\ntype Good struct {\n    b int64 // 8 байт\n    a bool  // 1 байт\n    c bool  // 1 байт + 6 байт хвостового паддинга\n}\n```\nРазмер сокращается до **16 байт** (экономия 33% оперативной памяти)!\n\nОфициальный анализатор `fieldalignment` из `golang.org/x/tools/go/analysis/passes/fieldalignment` использует `pass.TypesSizes.Sizeof(structType)` и генерирует `SuggestedFix` для автоматической сортировки полей.",
+    "step_by_step": [
+      "Изучить правила машинного выравнивания памяти x86-64 и ARM64.",
+      "Использовать интерфейс `types.Sizes` для расчета размера и смещения каждого поля.",
+      "Рассчитать оптимальный порядок полей методом жадной упаковки (сортировка по убыванию размера выравнивания).",
+      "Сформировать диагностику с указанием текущего и оптимизированного размера в байтах."
+    ],
+    "code_blocks": [
+      {
+        "filename": "fieldalign_demo.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"unsafe\"\n)\n\n// UnalignedUser неэффективный порядок полей (занимает 24 байта из-за паддинга)\ntype UnalignedUser struct {\n\tIsActive  bool   // 1 байт + 7 байт паддинга (padding)\n\tID        int64  // 8 байт\n\tIsBlocked bool   // 1 байт + 7 байт паддинга (padding)\n}\n\n// AlignedUser оптимизированный порядок полей (занимает 16 байт)\ntype AlignedUser struct {\n\tID        int64 // 8 байт\n\tIsActive  bool  // 1 байт\n\tIsBlocked bool  // 1 байт + 6 байт хвостового паддинга\n}\n\nfunc main() {\n\tfmt.Println(\"=== Линтер fieldalign: Оптимизация выравнивания памяти структур ===\")\n\tsize1 := unsafe.Sizeof(UnalignedUser{})\n\tsize2 := unsafe.Sizeof(AlignedUser{})\n\n\tfmt.Printf(\"Размер UnalignedUser в RAM: %d байт\\n\", size1)\n\tfmt.Printf(\"Размер AlignedUser   в RAM: %d байт\\n\", size2)\n\tfmt.Printf(\"Экономия памяти: %d байт на объект (%.1f%%)!\\n\",\n\t\tsize1-size2, (1.0-float64(size2)/float64(size1))*100.0)\n\tfmt.Println()\n\tfmt.Println(\"При 10 миллионах пользователей в кэше:\")\n\tfmt.Printf(\"  Unaligned: %.1f МБ RAM\\n\", float64(size1*10000000)/(1024*1024))\n\tfmt.Printf(\"  Aligned:   %.1f МБ RAM (экономия %.1f МБ RAM на пустом месте!)\\n\",\n\t\tfloat64(size2*10000000)/(1024*1024), float64((size1-size2)*10000000)/(1024*1024))\n}\n"
+      }
+    ],
+    "under_the_hood": "Функция `pass.TypesSizes.Alignof(T)` возвращает требуемое выравнивание в байтах. Компилятор Go выравнивает структуры так, чтобы размер всей структуры был кратен ее максимальному выравниванию полей, что гарантирует корректность при размещении структур в массиве `[]T`.",
+    "pitfalls": [
+      "Перестановка полей в структурах, маппируемых из бинарных протоколов C/CGO без упаковки `#pragma pack`.",
+      "Ухудшение читаемости кода при слепом выравнивании всех вспомогательных структур (оптимизировать нужно только горячие структуры, создаваемые миллионами).",
+      "Влияние false sharing при выравнивании полей в многопоточных структурах со счетчиками."
+    ],
+    "bigtech_interview": "Всегда ли нужно оптимизировать порядок полей структуры? Ответ: Нет. Оптимизация fieldalign критична для структур сущностей в In-Memory кэшах, базах данных и плотных слайсах из миллионов элементов. Для обычных конфигурационных структур или контроллеров логическая группировка по смыслу важнее экономии 8 байт, поэтому линтер fieldalign обычно включают точечно или как информационный уровень."
+  },
+  {
+    "num": 18,
+    "title": "Линтер 9: Запрет непроверенного приведения типов (Type Assertion Panic)",
+    "task": "Одинарное приведение интерфейсного типа val := x.(MyType) бросает неперехватываемый рантайм-паник, если реальный тип значения не совпадает с MyType. Разработайте анализатор safetypeassert: находит выражения ast.TypeAssertExpr, не использующие безопасную двухэлементную форму val, ok := x.(MyType).",
+    "theory": "В Go приведение динамического типа интерфейса (Type Assertion) имеет две синтаксические формы:\n1) **Небезопасная форма (1 переменная)**:\n```go\nval := x.(string)\n```\nЕсли `x` равен `nil` или содержит значение другого типа (например, `int`), программа аварийно завершается с паникой: `panic: interface conversion: interface {} is int, not string`.\n2) **Безопасная форма 'Comma-ok idiom' (2 переменные)**:\n```go\nval, ok := x.(string)\nif !ok {\n    // Грациозная обработка ошибки без паники\n}\n```\n\nВ микросервисах при десериализации JSON или чтении метаданных из gRPC заголовков тип значения часто не гарантирован. Анализатор `safetypeassert` инспектирует AST и требует обязательного использования Comma-ok формы во всей кодовой базе.",
+    "step_by_step": [
+      "Обнаружить узел приведения типа `*ast.TypeAssertExpr`.",
+      "Исключить конструкции Type Switch `switch x.(type)` (в них `assertExpr.Type == nil`).",
+      "Проверить контекст родительского узла: является ли выражение правой частью присваивания с двумя переменными в левой части (`len(assign.Lhs) == 2`).",
+      "Зарегистрировать предупреждение при обнаружении одинарного приведения."
+    ],
+    "code_blocks": [
+      {
+        "filename": "safetypeassert_analyzer.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n)\n\n// CheckTypeAssertions находит опасные одинарные приведения типов: x.(T)\nfunc CheckTypeAssertions(fset *token.FileSet, file *ast.File) []string {\n\tvar issues []string\n\n\tast.Inspect(file, func(n ast.Node) bool {\n\t\t// Одинарное приведение типа в операторе присваивания или выражении\n\t\tassertExpr, ok := n.(*ast.TypeAssertExpr)\n\t\tif !ok {\n\t\t\treturn true\n\t\t}\n\n\t\t// Если это type switch (switch v := x.(type)), Type == nil — это безопасно\n\t\tif assertExpr.Type == nil {\n\t\t\treturn true\n\t\t}\n\n\t\t// Проверяем, является ли родительский узел двухзначным присваиванием (val, ok := x.(T))\n\t\t// Для простой симуляции проверяем через позицию\n\t\tpos := fset.Position(assertExpr.Pos())\n\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: обнаружено непроверенное приведение типа x.(T); используйте безопасную форму 'val, ok := x.(T)'\",\n\t\t\tpos.Filename, pos.Line))\n\n\t\treturn true\n\t})\n\n\treturn issues\n}\n\nfunc main() {\n\tfmt.Println(\"=== Линтер safetypeassert: Запрет паникующих приведений типов ===\")\n\tsrc := `package service\n\nfunc Process(data interface{}) {\n\t// Опасно: если data не string, произойдет немедленный panic!\n\tstr := data.(string)\n\tprintln(str)\n\n\t// Безопасно:\n\tif val, ok := data.(string); ok {\n\t\tprintln(val)\n\t}\n}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"service.go\", src, 0)\n\n\tfindings := CheckTypeAssertions(fset, file)\n\tfor _, f := range findings {\n\t\tfmt.Println(\"🚨\", f)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "В ассемблере Go одинарное приведение типа компилируется в вызов `runtime.panicdottypeE` или `runtime.panicdottypeI`, тогда как безопасная форма вызывает `runtime.assertE2` или `runtime.assertI2`, возвращающие флаг успеха без прерывания потока инструкций.",
+    "pitfalls": [
+      "Ложное срабатывание внутри `switch v := x.(type)`.",
+      "Срабатывание на приведении внутри тестов, где быстрый panic в случае сбоя является намеренным поведением.",
+      "Сложные выражения, в которых `x.(T)` вложено в вызов функции `fn(x.(T))`."
+    ],
+    "bigtech_interview": "Почему Go позволяет одинарную форму `x.(T)`, если она опасна? Ответ: Для ситуаций, когда разработчик абсолютно уверен в типе на 100% (например, сразу после проверки `if reflect.TypeOf(x) == ...`) или когда несоответствие типа считается фатальной ошибкой программиста (Inviolate Constraint), при которой падение сервиса предпочтительнее работы с поврежденными данными."
+  },
+  {
+    "num": 19,
+    "title": "Автоматическое исправление кода: SuggestedFixes",
+    "task": "Современный линтер должен не просто сообщать об ошибке, но и уметь автоматически исправить ее в исходном коде по команде разработчика. Изучите структуры analysis.SuggestedFix и analysis.TextEdit фреймворка go/analysis и напишите логику генерации автоисправлений для флага -fix.",
+    "theory": "Фреймворк `go/analysis` содержит нативную поддержку автоматического рефакторинга кода через поле `SuggestedFixes` в структуре `analysis.Diagnostic`.\n\nКаждое исправление `analysis.SuggestedFix` состоит из:\n- `Message string`: человекочитаемое описание предлагаемого действия;\n- `TextEdits []analysis.TextEdit`: срез атомарных правок текста.\n\nКаждая правка `analysis.TextEdit` задает диапазон замены в исходном файле:\n```go\ntype TextEdit struct {\n    Pos     token.Pos // Начало заменяемого фрагмента\n    End     token.Pos // Конец заменяемого фрагмента\n    NewText []byte    // Новый текст на замену\n}\n```\nКогда разработчик запускает линтер с флагом `-fix` (например, `golangci-lint run --fix` или в IDE через Quick Fix), тулинг автоматически заменяет байты в исходных файлах и форматирует код через `gofmt`.",
+    "step_by_step": [
+      "Сформировать объект `analysis.TextEdit` с точными координатами `node.Pos()` и `node.End()`.",
+      "Подготовить замещающий срез байт `NewText`.",
+      "Привязать `SuggestedFix` к сообщению `pass.Report`.",
+      "Проверить применение исправления через `analysistest` с суффиксом `.golden`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "suggested_fixes.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/token\"\n)\n\n// DummyTextEdit симулирует правку текста analysis.TextEdit\ntype DummyTextEdit struct {\n\tPos     int\n\tEnd     int\n\tNewText string\n}\n\n// DummySuggestedFix симулирует analysis.SuggestedFix\ntype DummySuggestedFix struct {\n\tMessage   string\n\tTextEdits []DummyTextEdit\n}\n\n// ApplyFixes демонстрация применения автоисправлений к исходному коду\nfunc ApplyFixes(src string, fix DummySuggestedFix) string {\n\tfor _, edit := range fix.TextEdits {\n\t\tprefix := src[:edit.Pos]\n\t\tsuffix := src[edit.End:]\n\t\treturn prefix + edit.NewText + suffix\n\t}\n\treturn src\n}\n\nfunc main() {\n\tfmt.Println(\"=== Автоматическое исправление кода (SuggestedFixes) ===\")\n\toriginalCode := `func Bad() {\n\tctx := context.Background()\n}`\n\n\t// Исправление: замена \"context.Background()\" на \"ctx\"\n\tfix := DummySuggestedFix{\n\t\tMessage: \"Использовать переданный ctx вместо создания Background\",\n\t\tTextEdits: []DummyTextEdit{\n\t\t\t{\n\t\t\t\tPos:     21,\n\t\t\t\tEnd:     41,\n\t\t\t\tNewText: \"/* TODO: используйте переданный ctx */\",\n\t\t\t},\n\t\t},\n\t}\n\n\tfmt.Println(\"Исходный код:\\n\", originalCode)\n\tfixed := ApplyFixes(originalCode, fix)\n\tfmt.Println(\"\\nАвтоматически исправленный код:\\n\", fixed)\n\tfmt.Println(\"\\nПри запуске 'golangci-lint run --fix' это исправление применится автоматически!\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Драйвер анализа сортирует `TextEdits` в обратном порядке (с конца файла к началу). Это гарантирует, что изменение длины строки в начале файла не сдвинет смещения байт для последующих правок в этом же файле.",
+    "pitfalls": [
+      "Пересекающиеся диапазоны `TextEdits` (приведет к ошибке overlapping edits).",
+      "Генерация синтаксически невалидного кода Go в `NewText`.",
+      "Забытый импорт пакетов, требуемых для нового сгенерированного кода (требуется кодогенерация импортов через `golang.org/x/tools/go/ast/astutil`)."
+    ],
+    "bigtech_interview": "Как протестировать `SuggestedFixes` в `analysistest`? Ответ: Создать рядом с файлом `sample.go` файл с суффиксом `sample.go.golden`. Фреймворк `analysistest.Run` применит правки анализатора к первому файлу и побайтово сравнит результат с эталонным файлом `.golden`."
+  },
+  {
+    "num": 20,
+    "title": "Передача фактов между пакетами (Modular Analysis Facts)",
+    "task": "Некоторые архитектурные проверки невозможно выполнить в рамках одного файла или пакета: например, обнаружение вызова медленной блокирующей функции внутри критической секции. Изучите механизм межпакетных фактов (Modular Analysis Facts): экспорт фактов pass.ExportObjectFact и импорт pass.ImportObjectFact.",
+    "theory": "Большинство линтеров работают изолированно в пределах одного пакета (Intra-package Analysis). Но что делать, если функция `db.Query()` объявлена в пакете `database`, а вызывается в пакете `api`?\n\nФреймворк `go/analysis` предоставляет механизм **Фактов (Facts)**:\n1) **Экспорт факта**: Анализатор пакета A помечает объект типа (`types.Object`) или сам пакет сериализуемой структурой-фактом:\n```go\npass.ExportObjectFact(fnObj, &BlockingFact{})\n```\n2) **Кэширование**: Драйвер анализа сохраняет экспортированные факты в бинарный кэш компилятора;\n3) **Импорт факта**: Когда анализатор проверяет пакет B, вызывающий эту функцию, он запрашивает:\n```go\nvar fact BlockingFact\nif pass.ImportObjectFact(calledFn, &fact) {\n    // Найдена блокирующая функция из чужого пакета!\n}\n```\nЭто обеспечивает глубокий межпакетный статический анализ без необходимости перепарсивать исходные коды зависимостей.",
+    "step_by_step": [
+      "Объявить структуру факта, реализующую интерфейс `analysis.Fact` (метод `AFact()`).",
+      "Зарегистрировать тип факта в `analyzer.FactTypes` дескриптора.",
+      "Экспортировать факт для обнаруженных функций через `pass.ExportObjectFact`.",
+      "Импортировать факт в зависимых пакетах через `pass.ImportObjectFact` и выдать предупреждение."
+    ],
+    "code_blocks": [
+      {
+        "filename": "modular_facts.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/types\"\n)\n\n// BlockingCallFact факт о том, что функция выполняет блокирующий I/O\ntype BlockingCallFact struct {\n\tReason string\n}\n\nfunc (f *BlockingCallFact) AFact() {} // Маркерный метод интерфейса analysis.Fact\n\nfunc (f *BlockingCallFact) String() string {\n\treturn \"blocking: \" + f.Reason\n}\n\nfunc main() {\n\tfmt.Println(\"=== Межпакетный модульный анализ (Modular Facts) ===\")\n\tfact := &BlockingCallFact{Reason: \"выполняет сетевой вызов\"}\n\tfmt.Printf(\"Зарегистрирован факт: %s\\n\", fact.String())\n\tfmt.Println()\n\tfmt.Println(\"Принцип работы Facts в go/analysis:\")\n\tfmt.Println(\"1. Пакет A объявляет функцию DoNetworkRequest() и экспортирует факт:\")\n\tfmt.Println(\"   pass.ExportObjectFact(fnObj, &BlockingCallFact{\\\"network\\\"})\")\n\tfmt.Println(\"2. Пакет B импортирует пакет A и вызывает DoNetworkRequest().\")\n\tfmt.Println(\"3. Анализатор в пакете B импортирует факт:\")\n\tfmt.Println(\"   var fact BlockingCallFact\")\n\tfmt.Println(\"   if pass.ImportObjectFact(targetFnObj, &fact) {\")\n\tfmt.Println(\"       pass.Reportf(call.Pos(), \\\"вызов блокирующей функции внутри критической секции!\\\")\")\n\tfmt.Println(\"   }\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Факты сериализуются с помощью пакета `encoding/gob`. Драйвер сохраняет их в `~/.cache/go-build/`, что позволяет при инкрементальном запуске линтера не анализировать заново неизмененные библиотеки зависимостей.",
+    "pitfalls": [
+      "Забытая регистрация типа факта в срезе `analyzer.FactTypes` (вызовет панику при вызове `ExportObjectFact`).",
+      "Попытка экспортировать несериализуемые типы (каналы, функции, замыкания).",
+      "Циклические зависимости между фактами."
+    ],
+    "bigtech_interview": "Как стандартный анализатор `printf` из `go vet` узнает, что функция `myLogger.Infof()` принимает форматированную строку, если она лежит в другом пакете? Ответ: Анализатор `printf` анализирует исходный код `myLogger.Infof()`. Обнаружив внутри вызов `fmt.Sprintf(format, args...)`, он экспортирует объектный факт `printf.Fact{Kind: ...}` на метод `Infof`. При проверке вызывающего кода `pass.ImportObjectFact` считывает этот факт и проверяет соответствие глаголов форматирования (%s, %d) переданным типам."
+  },
+  {
+    "num": 21,
+    "title": "Сборка кастомного линтера как плагина golangci-lint",
+    "task": "Изучите механизм динамических плагинов (Go Plugins) в golangci-lint: напишите экспортируемую функцию New(conf any) ([]*analysis.Analyzer, error), скомпилируйте линтер в динамическую библиотеку mylinters.so с флагом -buildmode=plugin и подключите его в секцию custom конфигурации golangci-lint.",
+    "theory": "`golangci-lint` — абсолютный стандарт агрегации линтеров в сообществе Go (объединяет более 50 инструментов анализа).\n\nДля подключения собственных корпоративных проверок `golangci-lint` поддерживает систему плагинов:\n1) **Контракт плагина**: Создается пакет `main`, экспортирующий конструктор:\n```go\nfunc New(conf any) ([]*analysis.Analyzer, error) {\n    return []*analysis.Analyzer{MyCustomAnalyzer}, nil\n}\n```\n2) **Компиляция**: Плагин собирается как динамическая библиотека shared object:\n`go build -buildmode=plugin -o mylinters.so .`\n3) **Конфигурация**: В `.golangci.yml` прописывается путь к `.so` файлу.\n\nОднако режим `-buildmode=plugin` имеет жесткое ограничение: он требует точнейшего побайтового совпадения версий зависимостей, компилятора Go и флагов сборки между бинарником `golangci-lint` и плагином, поэтому в современных пайплайнах предпочтение отдается компиляции через Module Plugins.",
+    "step_by_step": [
+      "Создать файл плагина с функцией-конструктором `New`.",
+      "Скомпилировать плагин с флагом `-buildmode=plugin`.",
+      "Прописать плагин в блоке `linters-settings.custom` в `.golangci.yml`.",
+      "Запустить проверку `golangci-lint run` с новым анализатором."
+    ],
+    "code_blocks": [
+      {
+        "filename": "plugin_integration.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// ExplainGolangciPlugin демонстрирует интерфейс плагина для golangci-lint\nfunc ExplainGolangciPlugin() {\n\tfmt.Println(\"=== Сборка линтера как плагина для golangci-lint ===\")\n\tfmt.Println()\n\tfmt.Println(\"1. Обязательная точка входа плагина (файл plugin.go):\")\n\tfmt.Println(\"   package main\")\n\tfmt.Println(\"   import \\\"golang.org/x/tools/go/analysis\\\"\")\n\tfmt.Println()\n\tfmt.Println(\"   // Экспортируемая переменная или функция New\")\n\tfmt.Println(\"   func New(conf any) ([]*analysis.Analyzer, error) {\")\n\tfmt.Println(\"       return []*analysis.Analyzer{\")\n\tfmt.Println(\"           myanalyzer.Analyzer,\")\n\tfmt.Println(\"       }, nil\")\n\tfmt.Println(\"   }\")\n\tfmt.Println()\n\tfmt.Println(\"2. Команда компиляции плагина Go (.so):\")\n\tfmt.Println(\"   go build -buildmode=plugin -o mylinters.so plugin.go\")\n\tfmt.Println()\n\tfmt.Println(\"3. Подключение в .golangci.yml:\")\n\tfmt.Println(\"   linters-settings:\")\n\tfmt.Println(\"     custom:\")\n\tfmt.Println(\"       myanalyzer:\")\n\tfmt.Println(\"         path: mylinters.so\")\n\tfmt.Println(\"         description: Корпоративные правила архитектуры\")\n}\n\nfunc main() {\n\tExplainGolangciPlugin()\n}\n"
+      }
+    ],
+    "under_the_hood": "`golangci-lint` открывает `.so` файл системным вызовом `plugin.Open()`, ищет символ `New` через `p.Lookup(\"New\")` и регистрирует полученные анализаторы в общем планировщике проверок.",
+    "pitfalls": [
+      "Несовпадение версии компилятора Go между `golangci-lint` и плагином (ошибка `plugin was built with a different version of package ...`).",
+      "Плагины Go не поддерживаются на операционной системе Windows.",
+      "Несовпадение версии пакета `golang.org/x/tools`."
+    ],
+    "bigtech_interview": "Почему в production CI/CD избегают `.so` плагинов Go? Ответ: Из-за крайней хрупкости `plugin.Open`: любая разница в зависимостях или патч-версии компилятора Go ломает запуск линтера. Вместо динамических плагинов в BigTech используютModule Plugins: статическую пересборку бинарника `golangci-lint` с включенными линтерами компании."
+  },
+  {
+    "num": 22,
+    "title": "Интеграция через Module Plugins в golangci-lint",
+    "task": "Динамические плагины .so хрупки и не работают на Windows. Освойте официальный механизм Module Plugins в golangci-lint: декларативный файл конфигурации .custom-gcl.yml, утилиту golangci-lint custom и статическую компиляцию монолитного корпоративного бинарника линтера со встроенными анализаторами компании.",
+    "theory": "Для решения проблем с динамическими плагинами создатели `golangci-lint` разработали команду `golangci-lint custom` (Module Plugins).\n\nПринцип работы:\n1) Создается манифест `.custom-gcl.yml`:\n```yaml\nversion: v1.60.0\nplugins:\n  - module: 'github.com/mycompany/governance-linters'\n    import: 'github.com/mycompany/governance-linters/pkg/rules'\n    version: v1.2.0\n```\n2) Запускается команда `golangci-lint custom`;\n3) Утилита скачивает Go-модули ваших линтеров, генерирует обертку `main.go` и статически компилирует единый самодостаточный бинарный файл `custom-gcl`;\n4) Полученный бинарник распространяется среди разработчиков и в Docker-образах CI/CD. Он на 100% стабилен, работает без CGO на любой ОС (Linux, macOS, Windows) и запускается мгновенно.",
+    "step_by_step": [
+      "Спроектировать манифест `.custom-gcl.yml` с указанием версии базового линтера и модулей плагинов.",
+      "Реализовать экспорт структуры анализатора из корпоративного Go-модуля.",
+      "Выполнить сборку через `golangci-lint custom`.",
+      "Проверить работу собственного бинарника командой `./custom-gcl linters`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "custom_gcl_builder.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// ExplainModulePlugins демонстрирует статическую сборку golangci-lint с линтерами\nfunc ExplainModulePlugins() {\n\tfmt.Println(\"=== Статическая интеграция через Module Plugins в golangci-lint ===\")\n\tfmt.Println()\n\tfmt.Println(\"Современный стандарт без CGO и без проблем с версиями (golangci-lint custom):\")\n\tfmt.Println(\"1. Создание манифеста сборщика .custom-gcl.yml:\")\n\tfmt.Println(\"   version: v1.60.0\")\n\tfmt.Println(\"   plugins:\")\n\tfmt.Println(\"     - module: 'github.com/mycompany/linters'\")\n\tfmt.Println(\"       import: 'github.com/mycompany/linters/cleanarch'\")\n\tfmt.Println(\"       version: v1.0.0\")\n\tfmt.Println()\n\tfmt.Println(\"2. Команда сборки корпоративного бинарника:\")\n\tfmt.Println(\"   golangci-lint custom\")\n\tfmt.Println()\n\tfmt.Println(\"3. Результат: Единый монолитный бинарник ./custom-gcl со всеми встроенными\")\n\tfmt.Println(\"   корпоративными анализаторами, работающий на любой ОС без CGO и .so файлов!\")\n}\n\nfunc main() {\n\tExplainModulePlugins()\n}\n"
+      }
+    ],
+    "under_the_hood": "Команда `custom` под капотом разворачивает временный модуль Go в каталоге кэша, генерирует код вызова конструкторов линтеров, запускает стандартный компилятор `go build -o custom-gcl` и очищает временные артефакты.",
+    "pitfalls": [
+      "Конфликт версий транзитивных зависимостей между `golangci-lint` и вашим линтером (требуется выравнивание go.mod).",
+      "Отсутствие тэга версии в Git-репозитории кастомного линтера при сборке через модуль.",
+      "Забытое обновление версии базового golangci-lint в манифесте."
+    ],
+    "bigtech_interview": "Как распространять кастомный корпоративный `golangci-lint` среди 500 разработчиков компании? Ответ: Собирать бинарник `custom-gcl` в базовый Docker-образ CI/CD и выкладывать мультиплатформенные бинарники (linux/amd64, darwin/arm64, windows/amd64) во внутренний реестр Nexus/Artifactory с автоматическим обновлением через корпоративный менеджер пакетов (brew tap или asdf plugin)."
+  },
+  {
+    "num": 23,
+    "title": "Конфигурация .golangci.yml для корпоративных проверок",
+    "task": "Напишите эталонный конфигурационный файл .golangci.yml для крупного микросервисного проекта: отключение проверок по умолчанию (disable-all: true), включение строгого базового набора линтеров (govet, errcheck, staticcheck, gosec, bodyclose), настройка правил revive и лимитов диагностик.",
+    "theory": "Эффективность статического анализа определяется качеством его конфигурации. Конфигурация по умолчанию в `golangci-lint` включает лишь несколько базовых инструментов, пропуская критические баги.\n\nПромышленный стандарт настройки `.golangci.yml`:\n1) **`disable-all: true`**: отключить дефолтный набор, чтобы явно контролировать каждый включенный инструмент;\n2) **Ядро надежности**: `errcheck`, `govet`, `staticcheck`, `ineffassign`, `unused`;\n3) **Безопасность**: `gosec` (детекция слабых шифров, инъекций, утечек секретов);\n4) **Управление ресурсами**: `bodyclose` (контроль HTTP body);\n5) **Тюнинг вывода (`issues`)**: установка `max-issues-per-linter: 0` и `max-same-issues: 0`, чтобы линтер не обрезал одинаковые ошибки на больших кодовых базах.",
+    "step_by_step": [
+      "Настроить секцию `run` (таймаут выполнения, анализ тестов).",
+      "Сформировать белый список включенных линтеров в секции `linters.enable`.",
+      "Настроить параметры правил в `linters-settings`.",
+      "Настроить правила фильтрации ложных срабатываний в секции `issues`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "golangci_config.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// GenerateGolangciYaml генерирует эталонный файл конфигурации\nfunc GenerateGolangciYaml() string {\n\treturn `\nrun:\n  timeout: 5m\n  tests: true\n\nlinters:\n  disable-all: true\n  enable:\n    - errcheck      # Проверка необработанных ошибок\n    - gosimple      # Упрощение кода\n    - govet         # Официальные проверки компилятора\n    - ineffassign   # Детекция бесполезных присваиваний\n    - staticcheck   # Глубокий статический анализ\n    - unused        # Неиспользуемый код\n    - gosec         # Проверка уязвимостей безопасности\n    - revive        # Быстрый расширяемый линтер стиля\n    - bodyclose     # Закрытие resp.Body\n\nlinters-settings:\n  govet:\n    enable-all: true\n    disable:\n      - fieldalignment # Включается точечно\n  revive:\n    rules:\n      - name: context-as-argument\n        severity: error\n      - name: exported\n        severity: warning\n\nissues:\n  exclude-use-default: false\n  max-issues-per-linter: 0\n  max-same-issues: 0\n`\n}\n\nfunc main() {\n\tfmt.Println(\"=== Корпоративная конфигурация .golangci.yml ===\")\n\tfmt.Println(GenerateGolangciYaml())\n}\n"
+      }
+    ],
+    "under_the_hood": "`golangci-lint` парсит `.golangci.yml` с помощью библиотеки `spf13/viper`. Конфигурация кэшируется, а при запуске в подкаталогах репозитория линтер автоматически поднимается вверх по дереву каталогов в поисках ближайшего конфига.",
+    "pitfalls": [
+      "Включение сразу всех 60+ линтеров без разбора (приведет к тысячам конфликтующих предупреждений и отторжению инструмента командой).",
+      "Установка слишком низкого таймаута (например, 1m на проекте из миллиона строк линтер упадет по таймауту).",
+      "Использование устаревших имен линтеров в новых версиях golangci-lint."
+    ],
+    "bigtech_interview": "Как внедрить жесткий `.golangci.yml` в старый легаси-проект с 5000 существующих нарушений? Ответ: Использовать параметр `new-from-rev: origin/master` в секции `issues`. Линтер будет проверять и блокировать ошибки ТОЛЬКО в новых измененных строках кода PR, не трогая легаси. Это позволяет мгновенно остановить деградацию кода, а старые ошибки постепенно вычищать в фоновом режиме."
+  },
+  {
+    "num": 24,
+    "title": "Оптимизация производительности анализатора",
+    "task": "В Monorepo на 1 000 000 строк медленный линтер парализует работу разработчиков и затягивает CI. Изучите методы оптимизации производительности анализаторов: отсечение поддеревьев AST (Pruning), ленивый запрос семантики типов go/types только после синтаксической фильтрации и профилирование скорости через go test -bench.",
+    "theory": "Статический анализ — ресурсоемкая операция. Если ваш кастомный линтер будет для каждого выражения в кодовой базе вызывать тяжелые проверки типов `types.Implements` или парсить интерфейсы, проверка репозитория займет 10 минут.\n\nЗолотые правила оптимизации анализаторов:\n1) **Синтаксический фильтр впереди семантического (AST Filter First)**: Сравнение строк `call.Sel.Name == \"Exec\"` занимает 2 наносекунды. Запрос к карте типов `pass.TypesInfo.Types[call]` занимает 100 наносекунд. Сначала отфильтруйте 99.9% нерелевантных узлов по именам селекторов AST, и только для оставшихся 0.1% делайте проверку типов;\n2) **Раннее отсечение (Subtree Pruning)**: Если анализатор проверяет глобальные переменные, возвращайте `false` при входе в любую функцию — не тратьте время на обход миллионов операторов внутри функций;\n3) **Профилирование**: Запуск `go test -bench . -cpuprofile cpu.prof` позволяет выявить узкие места линтера через `go tool pprof`.",
+    "step_by_step": [
+      "Изучить воронку фильтрации узлов AST от дешевых синтаксических к дорогим семантическим.",
+      "Реализовать возврат `false` в `ast.Inspect` для отсечения нерелевантных блоков.",
+      "Написать бенчмарк анализатора на синтетическом пакете из 10 000 строк.",
+      "Замерить ускорение работы и сокращение потребления оперативной памяти."
+    ],
+    "code_blocks": [
+      {
+        "filename": "linter_optimization.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"time\"\n)\n\n// ProfilingOptimizer объясняет техники ускорения анализаторов\nfunc ExplainLinterOptimizations() {\n\tfmt.Println(\"=== Оптимизация производительности статических анализаторов ===\")\n\tfmt.Println()\n\tfmt.Println(\"Ключевые приемы ускорения на миллионных кодовых базах:\")\n\tfmt.Println(\"1. Pruning поддеревьев в ast.Inspect:\")\n\tfmt.Println(\"   - Возвращайте 'false' сразу при встрече узлов, которые не могут содержать ошибку.\")\n\tfmt.Println(\"2. Ленивый (Lazy) анализ типов:\")\n\tfmt.Println(\"   - Сначала делайте быструю синтаксическую фильтрацию по AST (например, call.Sel.Name == 'Query').\")\n\tfmt.Println(\"   - И только если имя совпало — запрашивайте тяжелый семантический тип из pass.TypesInfo.\")\n\tfmt.Println(\"3. Предварительная фильтрация файлов по байтовому сканированию:\")\n\tfmt.Println(\"   - Если файл не содержит подстроку 'context', не парсите его глубоким анализатором контекстов.\")\n\tfmt.Println(\"4. Параллелизация на уровне пакетов (встроена в go/analysis).\")\n}\n\nfunc main() {\n\tExplainLinterOptimizations()\n}\n"
+      }
+    ],
+    "under_the_hood": "Фреймворк `go/analysis` использует `inspect.Analyzer` (из пакета `golang.org/x/tools/go/analysis/passes/inspect`). Он выполняет ровно один проход по AST для всех анализаторов пакета, собирая индекс узлов по типам (`inspector.Preorder`), устраняя повторные обходы дерева.",
+    "pitfalls": [
+      "Повторный парсинг исходных файлов через `parser.ParseFile` внутри функции `Run` (файлы уже распарсены и лежат в `pass.Files`).",
+      "Создание больших временных структур данных в хипе на каждый узел AST.",
+      "Аллокации замыканий внутри функции обхода `ast.Inspect`."
+    ],
+    "bigtech_interview": "Почему использование `golang.org/x/tools/go/analysis/passes/inspect` ускоряет сьют из 20 линтеров в 5 раз? Ответ: Без инспектора каждый из 20 анализаторов делает свой собственный полный рекурсивный обход всех файлов пакета. Инспектор обходит AST один раз, строит компактный слайс узлов и позволяет каждому анализатору подписаться только на интересующие его типы узлов (например, только `*ast.CallExpr`), исключая 95% лишней работы."
+  },
+  {
+    "num": 25,
+    "title": "Линтер 10: Запрет использования SQL-конкатенации (SQL Injection Prevention)",
+    "task": "SQL-инъекция — уязвимость номер один в веб-приложениях. Разработайте анализатор безопасности nosqlinjection: анализирует аргументы методов Query, QueryRow и Exec, запрещая формирование текста запроса через конкатенацию строк (оператор +) или вызов fmt.Sprintf, принуждая разработчиков использовать позиционные параметры ($1, $2).",
+    "theory": "Уязвимости типа SQL Injection возникают, когда недоверенные пользовательские данные конкатенируются напрямую в строку SQL-запроса.\n\nЗлоумышленник может передать в поле ID значение `' OR '1'='1`, получив доступ ко всей базе данных или стерев таблицы (`'; DROP TABLE users; --`).\n\nЕдинственная надежная защита — параметризованные запросы (Prepared Statements / Positional Parameters):\n```go\n// БЕЗОПАСНО:\ndb.QueryContext(ctx, \"SELECT * FROM users WHERE id = $1\", userID)\n\n// ОПАСНО (конкатенация):\ndb.QueryContext(ctx, \"SELECT * FROM users WHERE id = '\" + userID + \"'\")\n\n// ОПАСНО (fmt.Sprintf):\ndb.QueryContext(ctx, fmt.Sprintf(\"SELECT * FROM users WHERE id = '%s'\", userID))\n```\nАнализатор `nosqlinjection` инспектирует аргумент SQL-запроса: если аргумент не является строковым литералом `*ast.BasicLit` или статической константой, а представлен бинарным сложением `*ast.BinaryExpr (+)` или вызовом `fmt.Sprintf`, билд немедленно блокируется.",
+    "step_by_step": [
+      "Обнаружить вызовы методов `Query`, `QueryRow`, `Exec` у интерфейсов базы данных.",
+      "Определить позицию аргумента SQL-запроса с учетом наличия контекста первым параметром.",
+      "Проверить узел аргумента на бинарную операцию сложения `token.ADD`.",
+      "Проверить узел аргумента на вызов функции форматирования `fmt.Sprintf`.",
+      "Сформировать предупреждение безопасности критического приоритета (CRITICAL)."
+    ],
+    "code_blocks": [
+      {
+        "filename": "nosqlinjection_analyzer.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n)\n\n// CheckSQLInjection находит склеивание строк в SQL запросах\nfunc CheckSQLInjection(fset *token.FileSet, file *ast.File) []string {\n\tvar issues []string\n\n\tast.Inspect(file, func(n ast.Node) bool {\n\t\tcall, ok := n.(*ast.CallExpr)\n\t\tif !ok {\n\t\t\treturn true\n\t\t}\n\n\t\tsel, ok := call.Fun.(*ast.SelectorExpr)\n\t\tif !ok {\n\t\t\treturn true\n\t\t}\n\n\t\t// Проверяем вызовы методов Query, QueryRow, Exec\n\t\tmethodName := sel.Sel.Name\n\t\tif methodName != \"Query\" && methodName != \"QueryRow\" && methodName != \"Exec\" {\n\t\t\treturn true\n\t\t}\n\n\t\tif len(call.Args) == 0 {\n\t\t\treturn true\n\t\t}\n\n\t\t// Первый аргумент (или второй, если первым идет context)\n\t\tsqlArg := call.Args[0]\n\t\tif len(call.Args) > 1 {\n\t\t\t// Если первый аргумент ctx\n\t\t\tif ident, ok := call.Args[0].(*ast.Ident); ok && ident.Name == \"ctx\" {\n\t\t\t\tsqlArg = call.Args[1]\n\t\t\t}\n\t\t}\n\n\t\t// 1. Проверка конкатенации строк через оператор '+'\n\t\tif binExpr, ok := sqlArg.(*ast.BinaryExpr); ok && binExpr.Op == token.ADD {\n\t\t\tpos := fset.Position(binExpr.Pos())\n\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: уязвимость SQL-инъекции: запрещена конкатенация строк в %s(); используйте плейсхолдеры $1, $2\",\n\t\t\t\tpos.Filename, pos.Line, methodName))\n\t\t}\n\n\t\t// 2. Проверка форматирования через fmt.Sprintf(...)\n\t\tif innerCall, ok := sqlArg.(*ast.CallExpr); ok {\n\t\t\tif innerSel, ok := innerCall.Fun.(*ast.SelectorExpr); ok {\n\t\t\t\tif innerSel.Sel.Name == \"Sprintf\" {\n\t\t\t\t\tpos := fset.Position(innerCall.Pos())\n\t\t\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: уязвимость SQL-инъекции: запрещено использование fmt.Sprintf в %s(); используйте плейсхолдеры\",\n\t\t\t\t\t\tpos.Filename, pos.Line, methodName))\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\n\t\treturn true\n\t})\n\n\treturn issues\n}\n\nfunc main() {\n\tfmt.Println(\"=== Линтер nosqlinjection: Защита от SQL-инъекций ===\")\n\tsrc := `package repo\n\nimport \"fmt\"\n\nfunc GetUser(db DB, ctx Context, id string) {\n\t// Опасная конкатенация!\n\tdb.Query(ctx, \"SELECT * FROM users WHERE id = '\" + id + \"'\")\n\n\t// Опасный fmt.Sprintf!\n\tquery := fmt.Sprintf(\"DELETE FROM orders WHERE user_id = '%s'\", id)\n\tdb.Exec(ctx, query)\n}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"repo.go\", src, 0)\n\n\tfindings := CheckSQLInjection(fset, file)\n\tfor _, f := range findings {\n\t\tfmt.Println(\"🚨\", f)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "В enterprise-безопасности аналогичный анализ выполняется популярными линтерами `gosec` (правило G201/G202) и Google SafeSQL. Они используют граф потока данных (Taint Analysis) для отслеживания пути переменной от HTTP-запроса до вызова SQL-драйвера.",
+    "pitfalls": [
+      "Ложные срабатывания при склейке статических константных строк, разбитых на несколько строк для читаемости (`\"SELECT ... \" + \"FROM ...\"`).",
+      "Пропуск запросов, собранных через `strings.Builder` или `bytes.Buffer` (требуется taint analysis).",
+      "Игнорирование оберток ORM (Gorm, Squirrel, Ent)."
+    ],
+    "bigtech_interview": "Как разрешить разработчикам динамически добавлять условия `WHERE` без риска SQL-инъекций? Ответ: Использовать типобезопасные query builder библиотеки (например, `Masterminds/squirrel` или кодогенератор `sqlc`). Они собирают запросы из отдельных клауз, автоматически подставляя плейсхолдеры `$1, $2` и собирая аргументы в единый безопасный слайс параметров `args []interface{}`."
+  },
+  {
+    "num": 26,
+    "title": "Интеграция линтеров в pre-commit хуки (Lefthook)",
+    "task": "Если проверки линтера работают только в CI, разработчик тратит десятки минут на цикл 'коммит -> пуш -> ожидание пайплайна -> ошибка'. Настройте скоростной запуск линтеров на этапе Git Pre-Commit с помощью инструмента Lefthook на Go: фильтрация только измененных файлов ({staged_files}), параллельный запуск и время отклика менее 1 секунды.",
+    "theory": "Инженерная обратная связь (Feedback Loop) тем эффективнее, чем ближе она к моменту написания кода.\n\nПроблема стандартных pre-commit хуков на Python/Bash — медлительность: запуск проверки всего проекта занимает 30 секунд, из-за чего разработчики начинают коммитить с флагом `--no-verify`.\n\n**Lefthook** — сверхбыстрый менеджер Git-хуков, написанный на Go:\n1) **Параллелизм (`parallel: true`)**: запускает несколько линтеров одновременно на всех ядрах CPU;\n2) **Селективность (`{staged_files}`)**: передает линтеру не весь проект из миллиона строк, а только те 3 файла, которые разработчик добавил в индекс `git add`;\n3) **Фокус на новом коде**: аргумент `--new-from-rev=HEAD~1` заставляет линтер анализировать только измененные строки.\nВ результате проверка выполняется за 300–600 миллисекунд прямо в момент нажатия Enter в терминале или IDE.",
+    "step_by_step": [
+      "Установить Lefthook в проект через `go install github.com/evilmartians/lefthook@latest`.",
+      "Спроектировать файл конфигурации `lefthook.yml`.",
+      "Настроить фильтрацию файлов по маске `*.go` и подстановку плейсхолдера `{staged_files}`.",
+      "Проверить запуск хука при попытке коммита с нарушением архитектурного правила."
+    ],
+    "code_blocks": [
+      {
+        "filename": "lefthook_integration.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// GenerateLefthookConfig генерирует конфигурацию ультрабыстрых pre-commit хуков\nfunc GenerateLefthookConfig() string {\n\treturn `\n# lefthook.yml — скоростные pre-commit проверки перед коммитом\npre-commit:\n  parallel: true\n  commands:\n    # Проверка только проиндексированных файлов (staged files)\n    golangci-lint:\n      tags: backend style\n      glob: \"*.go\"\n      run: golangci-lint run --new-from-rev=HEAD~1 {staged_files}\n    \n    # Быстрая проверка форматирования\n    gofmt:\n      tags: backend style\n      glob: \"*.go\"\n      run: gofumpt -l {staged_files}\n\n    # Проверка архитектурных линтеров компании\n    corporate-linters:\n      tags: architecture\n      glob: \"*.go\"\n      run: custom-gcl run {staged_files}\n`\n}\n\nfunc main() {\n\tfmt.Println(\"=== Интеграция линтеров в pre-commit хуки (Lefthook) ===\")\n\tfmt.Println(GenerateLefthookConfig())\n\tfmt.Println(\"Преимущество Lefthook: Параллельный запуск на Go, фильтрация staged_files\")\n\tfmt.Println(\"и мгновенная обратная связь разработчику менее чем за 500 миллисекунд!\")\n}\n"
+      }
+    ],
+    "under_the_hood": "Lefthook выполняет команду `git diff --name-only --cached --diff-filter=ACMR` для мгновенного получения списка файлов в оперативной памяти и запускает процессы линтеров в параллельных горутинах через `os/exec`.",
+    "pitfalls": [
+      "Передача полного пути к файлам, ломающая относительные пути импортов модулей Go.",
+      "Использование медленных bash-скриптов с циклом for по файлам вместо пакетной передачи списка аргументов.",
+      "Отсутствие автоматической установки хуков при вызове `go mod download` или `make init`."
+    ],
+    "bigtech_interview": "Почему фильтрация staged_files в pre-commit хуках критична для монорепозиториев? Ответ: В монорепозитории размером в 5 миллионов строк запуск полного линтинга занимает 2–3 минуты. Проверка только 2–3 файлов из staged_files занимает 0.4 секунды, не раздражая разработчика и гарантируя, что некачественный код никогда не попадет в Git."
+  },
+  {
+    "num": 27,
+    "title": "Запуск линтеров в GitHub Actions с аннотациями в PR",
+    "task": "Настройте рабочий процесс CI/CD в GitHub Actions для проверки архитектурных правил: использование официального флага --out-format=github-actions, генерация встроенных аннотаций прямо в коде Pull Request (Inline Annotations) и блокировка слияния невалидного кода через branch protection rules.",
+    "theory": "В современных процессах разработки отчет линтера в виде сырого консольного лога на 5000 строк текста никто не читает.\n\nФлаг `--out-format=github-actions` заставляет `golangci-lint` выводить ошибки в специальном синтаксисе метакоманд GitHub Runner Workflow:\n`::error file={name},line={line},col={col}::{message}`\n\nКогда GitHub Actions видит такой вывод в stdout:\n1) В интерфейсе Pull Request на вкладке **Files Changed** на соответствующей строке автоматически появляется красная плашка с точным текстом ошибки;\n2) Разработчик видит замечание линтера точно так же, как если бы его оставил живой сеньор-разработчик на ревью;\n3) Пайплайн падает с кодом 1, предотвращая автоматический мерж.",
+    "step_by_step": [
+      "Создать файл workflow `.github/workflows/lint.yml`.",
+      "Настроить шаг кэширования модулей `actions/setup-go` с параметром `cache: true`.",
+      "Запустить команду проверки с флагом `--out-format=github-actions`.",
+      "Продемонстрировать отображение inline-аннотации на строке коммита."
+    ],
+    "code_blocks": [
+      {
+        "filename": "github_actions_workflow.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// GenerateGitHubActionsWorkflow генерирует YAML пайплайна CI/CD\nfunc GenerateGitHubActionsWorkflow() string {\n\treturn `\nname: \"Architectural Lint & Code Quality\"\n\non:\n  pull_request:\n    branches: [ main, master ]\n  push:\n    branches: [ main, master ]\n\njobs:\n  golangci:\n    name: \"Run Corporate Linters\"\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n\n      - uses: actions/setup-go@v5\n        with:\n          go-version: '1.24'\n          cache: true\n\n      # Запуск с официальным форматом вывода GitHub Actions\n      - name: \"Run Custom golangci-lint\"\n        run: |\n          golangci-lint run \\\n            --out-format=github-actions \\\n            --timeout=5m \\\n            --issues-exit-code=1\n`\n}\n\nfunc main() {\n\tfmt.Println(\"=== GitHub Actions: Запуск линтеров с Inline Annotations ===\")\n\tfmt.Println(GenerateGitHubActionsWorkflow())\n\tfmt.Println(\"При флаге '--out-format=github-actions' линтер выводит специальные команды:\")\n\tfmt.Println(\"::error file=main.go,line=42,col=5::Запрещен context.Background() в бизнес-логике\")\n\tfmt.Println(\"GitHub автоматически подсвечивает эту строку красным прямо в диффе Pull Request!\")\n}\n"
+      }
+    ],
+    "under_the_hood": "GitHub Runner парсит stdout каждого шага регулярным выражением на префикс `::error` и `::warning`. Обнаружив совпадение, runner через внутренний REST API GitHub регистрирует объект Check Run Annotation, привязанный к SHA коммита.",
+    "pitfalls": [
+      "Неправильный путь к файлу в монорепозитории (если линтер запускается из подкаталога, аннотации не смогут привязаться к корню репозитория).",
+      "Превышение лимита GitHub на количество аннотаций (максимум 50 аннотаций на один Check Run).",
+      "Забытый флаг `--issues-exit-code=1`, из-за чего шаг линтера завершается с успехом даже при наличии ошибок."
+    ],
+    "bigtech_interview": "Как не допустить замедления CI при запуске линтера на тысячах пакетов? Ответ: Использовать кэширование каталога `~/.cache/golangci-lint` и `~/.cache/go-build` в GitHub Actions через `actions/cache`. При повторных запусках линтер переиспользует результаты проверки неизмененных пакетов, сокращая время выполнения с 3 минут до 15 секунд."
+  },
+  {
+    "num": 28,
+    "title": "Минимизация ложноположительных срабатываний (False Positives)",
+    "task": "Линтер, генерирующий ложные срабатывания (False Positives), вызывает раздражение разработчиков и быстро отключается командой. Разработайте механизм подавления предупреждений через директивы комментариев //nolint:mylinter с обязательным указанием причины, а также учет интерфейсных методов и сгенерированного кода (code generated).",
+    "theory": "Качество статического анализатора измеряется не тем, сколько предупреждений он нашел, а отношением полезного сигнала к шуму (Signal-to-Noise Ratio).\n\nЕсли анализатор выдает ложную ошибку в легитимном краевом случае (например, в автогенерированном protobuf-коде или в разовой миграционной утилите), у разработчика должен быть цивилизованный способ подавить проверку.\n\nСтандарты чистоты линтеров:\n1) **Игнорирование сгенерированных файлов**: Первая строка файла проверяется на маркер `^// Code generated .* DO NOT EDIT\\.$`;\n2) **Директивы подавления**: Анализатор парсит `file.Comments` на наличие `//nolint:analyzer_name`;\n3) **Запрет слепого `//nolint`**: Требовать обязательного указания конкретного имени правила и комментария с обоснованием (`//nolint:nobackground // legacy code, ticket JIRA-1234`).",
+    "step_by_step": [
+      "Использовать флаг `parser.ParseComments` для сохранения комментариев в AST.",
+      "Реализовать проверку заголовка файла на сгенерированный код `astutil.IsGenerated`.",
+      "Написать функцию сопоставления номеров строк комментариев с диагностиками.",
+      "Проверить работу точечного подавления ошибки директивой `//nolint`."
+    ],
+    "code_blocks": [
+      {
+        "filename": "nolint_suppression.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n\t\"strings\"\n)\n\n// NolintDetector проверяет наличие директив подавления //nolint\ntype NolintDetector struct{}\n\nfunc (d *NolintDetector) IsSuppressed(comments []*ast.CommentGroup, targetPos token.Pos, fset *token.FileSet, linterName string) bool {\n\ttargetLine := fset.Position(targetPos).Line\n\n\tfor _, cg := range comments {\n\t\tfor _, c := range cg.List {\n\t\t\tcommentLine := fset.Position(c.Pos()).Line\n\t\t\t// Если комментарий находится на той же строке или прямо над ней\n\t\t\tif commentLine == targetLine || commentLine == targetLine-1 {\n\t\t\t\ttext := c.Text\n\t\t\t\tif strings.Contains(text, \"//nolint\") {\n\t\t\t\t\t// Если указан конкретный линтер (например, //nolint:nobackground) или глобальный //nolint\n\t\t\t\t\tif strings.Contains(text, linterName) || text == \"//nolint\" {\n\t\t\t\t\t\treturn true\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n\treturn false\n}\n\nfunc main() {\n\tfmt.Println(\"=== Минимизация False Positives и поддержка //nolint ===\")\n\tsrc := `package main\n\nimport \"context\"\n\nfunc LegacyMigration() {\n\t//nolint:nobackground // Осознанное исключение для разовой миграции\n\tctx := context.Background()\n\t_ = ctx\n}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"migration.go\", src, parser.ParseComments)\n\n\tdetector := &NolintDetector{}\n\t// Проверяем строку с вызовом\n\tsuppressed := detector.IsSuppressed(file.Comments, token.Pos(65), fset, \"nobackground\")\n\tfmt.Printf(\"Подавление директивой //nolint:nobackground активно: %v\\n\", suppressed)\n\tfmt.Println(\"Результат: Анализатор не выдает ошибку, сохраняя гибкость для легитимных исключений.\")\n}\n"
+      }
+    ],
+    "under_the_hood": "В `golangci-lint` встроен специальный процессор `nolintlint`. Он следит за культурой подавлений: запрещает глобальные `//nolint` без имени линтера и предупреждает, если директива `//nolint` висит на строке, где линтер на самом деле не находит никаких ошибок (Unused nolint directive).",
+    "pitfalls": [
+      "Игнорирование комментариев внутри многострочных блоков `/* ... */`.",
+      "Подавление всех последующих строк файла вместо одной целевой строки.",
+      "Пропуск сгенерированных файлов из-за опечатки в регулярке `Code generated`."
+    ],
+    "bigtech_interview": "Почему в Google запрещено ставить `//nolint` без ссылки на задачу в трекере? Ответ: Потому что подавление проверки без обоснования превращается в способ замаскировать технический долг. Требование формата `//nolint:rule // TODO(username): JIRA-123 reason` гарантирует, что у каждого исключения есть ответственный автор и запланированный срок устранения."
+  },
+  {
+    "num": 29,
+    "title": "Линтер архитектурного соответствия API DTO и Domain Entities",
+    "task": "Прямая отдача внутренних доменных сущностей (Domain Entities) наружу в JSON-ответах HTTP/gRPC API — грубое нарушение Clean Architecture, приводящее к утечкам приватных полей (пароли, внутренние флаги) и поломке обратной совместимости API при рефакторинге домена. Разработайте линтер nodomaininapi: находит использование доменных типов в сигнатурах функций API-хэндлеров и требует использования отдельных DTO-структур.",
+    "theory": "В зрелой архитектуре модели данных строго разделены по слоям:\n1) **Domain Entity (`User`)**: отражает бизнес-логику, инварианты, может содержать хэш пароля `PasswordHash`, внутренний статус модерации и приватные методы;\n2) **Data Transfer Object (`UserResponseDTO`)**: отражает публичный контракт внешнего API, содержит json-теги и только те поля, которые разрешено видеть клиенту.\n\nСоблазн новичка — использовать `User` везде: `func HandleGetUser(w, r) { json.NewEncoder(w).Encode(user) }`.\nПоследствия:\n- Случайная утечка конфиденциальных данных наружу;\n- Изменение внутренней структуры БД ломает фронтенд и мобильные приложения;\n- Тесная связность слоев.\n\nЛинтер `nodomaininapi` инспектирует параметры и возвращаемые типы функций в транспортных пакетах (`api/`, `handler/`, `controller/`): появление типов из пакета `domain` немедленно блокирует коммит.",
+    "step_by_step": [
+      "Идентифицировать функции транспортного слоя по префиксу пакета или суффиксу `Handler`.",
+      "Инспектировать типы входных аргументов `fn.Type.Params` и возвращаемых значений `fn.Type.Results`.",
+      "Проверить принадлежность типов к доменному слою через селектор пакета или `pass.TypesInfo`.",
+      "Вывести строгое предупреждение с требованием введения слоя DTO и маппера."
+    ],
+    "code_blocks": [
+      {
+        "filename": "dto_enforcer.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"go/ast\"\n\t\"go/parser\"\n\t\"go/token\"\n\t\"strings\"\n)\n\n// CheckDomainInAPIHandlers запрещает доменные сущности в сигнатурах хэндлеров\nfunc CheckDomainInAPIHandlers(fset *token.FileSet, file *ast.File) []string {\n\tvar issues []string\n\n\tast.Inspect(file, func(n ast.Node) bool {\n\t\tfn, ok := n.(*ast.FuncDecl)\n\t\tif !ok || fn.Type == nil {\n\t\t\treturn true\n\t\t}\n\n\t\t// Если имя функции похоже на HTTP/gRPC хэндлер (например, CreateUserHandler)\n\t\tif !strings.HasSuffix(fn.Name.Name, \"Handler\") && !strings.HasPrefix(fn.Name.Name, \"Handle\") {\n\t\t\treturn true\n\t\t}\n\n\t\t// Проверяем параметры функции\n\t\tif fn.Type.Params != nil {\n\t\t\tfor _, param := range fn.Type.Params.List {\n\t\t\t\ttypeStr := fmt.Sprintf(\"%v\", param.Type)\n\t\t\t\t// Проверяем утечку сущностей из пакета domain\n\t\t\t\tif strings.Contains(typeStr, \"domain.\") || strings.Contains(typeStr, \"Entity\") {\n\t\t\t\t\tpos := fset.Position(param.Pos())\n\t\t\t\t\tissues = append(issues, fmt.Sprintf(\"%s:%d: утечка абстракции: хэндлер '%s' использует доменную сущность '%s' в аргументах; используйте отдельную структуру DTO\",\n\t\t\t\t\t\tpos.Filename, pos.Line, fn.Name.Name, typeStr))\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\n\t\treturn true\n\t})\n\n\treturn issues\n}\n\nfunc main() {\n\tfmt.Println(\"=== Линтер nodomaininapi: Разделение DTO и Domain Entities ===\")\n\tsrc := `package handler\n\nimport \"myproject/domain\"\n\n// Нарушение: доменная сущность передается напрямую в транспортный уровень!\nfunc CreateUserHandler(user domain.UserEntity) {\n\tprintln(\"handling\")\n}\n\n// Корректно: отдельный DTO объект запроса\ntype CreateUserRequestDTO struct {\n\tEmail string\n}\n\nfunc ValidUserHandler(req CreateUserRequestDTO) {\n\tprintln(\"handling dto\")\n}\n`\n\tfset := token.NewFileSet()\n\tfile, _ := parser.ParseFile(fset, \"handler.go\", src, 0)\n\n\tfindings := CheckDomainInAPIHandlers(fset, file)\n\tfor _, f := range findings {\n\t\tfmt.Println(\"🚨\", f)\n\t}\n}\n"
+      }
+    ],
+    "under_the_hood": "Линтер анализирует `types.Named`: если тип объявлен в пакете, чей путь содержит `/domain/` или `/entity/`, фиксируется утечка сущности в транспортный слой.",
+    "pitfalls": [
+      "Ложные срабатывания на методах доменных сервисов (проверка должна работать строго в транспортных пакетах API).",
+      "Пропуск структур, вложенных в дженерики `Response[domain.User]`.",
+      "Игнорирование анонимных интерфейсов."
+    ],
+    "bigtech_interview": "Почему попытка решить проблему скрытия полей тегом `json:\"-\"` на доменной сущности считается антипаттерном? Ответ: Потому что сущность домена не должна знать о существовании протокола JSON и веб-сериализации. Кроме того, одному клиенту (админ-панель) это поле может требоваться, а другому (мобильное приложение) — нет. Только отдельные DTO для каждого контракта гарантируют чистоту и безопасность."
+  },
+  {
+    "num": 30,
+    "title": "Корпоративный мета-линтер Enterprise Linter Suite на Go",
+    "task": "Объедините все разработанные специализированные анализаторы в единый законченный корпоративный продукт Enterprise Linter Suite: правила Clean Architecture, контроль контекстов, валидация закрытия ресурсов, защита от SQL-инъекций, детекция утечек горутин, автоисправление ошибок через SuggestedFixes и документация по интеграции в корпоративный пайплайн CI/CD компании.",
+    "theory": "Создание собственного сьюта статического анализа — вершина инженерной зрелости команды (Staff / Principal Engineer).\n\nВместо бесконечных споров на ревью кода компания получает **программный кодекс стандартов (Living Architecture)**:\n1) Единый монолитный Go-пакет, объединяющий 11 специализированных анализаторов на базе официального `go/analysis`;\n2) Полная совместимость со стандартным `go vet`, `analysistest` и монолитным `golangci-lint custom`;\n3) Встроенная система автоисправлений (`SuggestedFixes`), позволяющая новому сотруднику одной командой `make lint-fix` привести свой код в идеальное соответствие стандартам компании;\n4) Сквозной пайплайн: мгновенный Lefthook хук перед коммитом + жесткий блокирующий гейт в GitHub Actions с подсветкой ошибок в диффе PR.",
+    "step_by_step": [
+      "Спроектировать общую точку входа с регистрацией всех анализаторов в срезе `[]*analysis.Analyzer`.",
+      "Реализовать единый конструктор плагина `New(conf any)` для бесшовного подключения в `golangci-lint`.",
+      "Покрыть сьют комплексными тестами `analysistest` со сценариями ложных и истинных срабатываний.",
+      "Продемонстрировать запуск, генерацию автоисправлений и отчет о соблюдении архитектурных правил."
+    ],
+    "code_blocks": [
+      {
+        "filename": "enterprise_linter_suite.go",
+        "lang": "go",
+        "code": "package main\n\nimport (\n\t\"fmt\"\n)\n\n// EnterpriseLinterSuite объединяет все правила архитектурного контроля компании\ntype EnterpriseLinterSuite struct {\n\tVersion   string\n\tAnalyzers []string\n}\n\nfunc NewEnterpriseSuite() *EnterpriseLinterSuite {\n\treturn &EnterpriseLinterSuite{\n\t\tVersion: \"v2.0.0\",\n\t\tAnalyzers: []string{\n\t\t\t\"nobackground    - запрет context.Background() в бизнес-логике\",\n\t\t\t\"structcontext   - запрет полей context.Context в структурах\",\n\t\t\t\"checkerr        - детекция пропущенных и сброшенных в '_' ошибок\",\n\t\t\t\"cleanarch       - контроль направления импортов слоев Clean Architecture\",\n\t\t\t\"safego          - контроль неконтролируемых горутин (диких go func)\",\n\t\t\t\"noglobalstate   - запрет изменяемых глобальных переменных\",\n\t\t\t\"httpclose       - проверка defer resp.Body.Close() строго после err != nil\",\n\t\t\t\"fieldalign      - оптимизация выравнивания полей структур для экономии RAM\",\n\t\t\t\"safetypeassert  - запрет паникующих приведений типов x.(T)\",\n\t\t\t\"nosqlinjection  - предотвращение конкатенации строк в SQL запросах\",\n\t\t\t\"nodomaininapi   - обязательное разделение API DTO и Domain Entities\",\n\t\t},\n\t}\n}\n\nfunc (s *EnterpriseLinterSuite) PrintManifest() {\n\tfmt.Printf(\"🚀 Корпоративный сьют статического анализа Go (%s)\\n\", s.Version)\n\tfmt.Println(\"Защита монорепозитория и микросервисов от деградации архитектуры:\")\n\tfor i, a := range s.Analyzers {\n\t\tfmt.Printf(\"  %2d. %s\\n\", i+1, a)\n\t}\n\tfmt.Println()\n\tfmt.Println(\"Интеграция:\")\n\tfmt.Println(\"  -> Pre-commit: Lefthook (<500 мс на staged файлы)\")\n\tfmt.Println(\"  -> CI/CD Gate: GitHub Actions с inline-аннотациями в PR\")\n\tfmt.Println(\"  -> Режим автоисправления: golangci-lint run --fix\")\n}\n\nfunc main() {\n\tfmt.Println(\"=== Capstone: Корпоративный мета-линтер Enterprise Linter Suite ===\")\n\tsuite := NewEnterpriseSuite()\n\tsuite.PrintManifest()\n}\n"
+      }
+    ],
+    "under_the_hood": "Корпоративный сьют компилируется в единый бинарник `custom-gcl`. Использование `multichecker.Main` позволяет также запускать его автономно без сторонних утилит: `./enterprise-lint ./...`, получая вывод с производительностью компилятора Go.",
+    "pitfalls": [
+      "Сложность обновления версий в сотнях репозиториев (требуется автоматизация через Renovate/Dependabot).",
+      "Отсутствие четких понятных описаний в текстах ошибок (сообщение должно содержать не только критику, но и ссылку на корпоративную вики с примером правильного решения).",
+      "Попытка включить блокирующий режим сразу на старых проектах без переходного периода `new-from-rev`."
+    ],
+    "bigtech_interview": "Как обосновать бизнесу инвестиции в разработку собственных корпоративных линтеров? Ответ: На цифрах. 1) Экономия времени инженеров: линтер делает проверку за 0.5 секунды, экономя до 30 минут на каждом ревью; 2) Предотвращение аварий (P1 Incidents): блокировка утечек горутин, паник при type assertions и SQL-инъекций на этапе PR предотвращает даунтаймы на миллионы рублей; 3) Мгновенный онбординг: новички обучаются правилам архитектуры автоматически прямо в IDE через подсказки линтера."
+  }
+]

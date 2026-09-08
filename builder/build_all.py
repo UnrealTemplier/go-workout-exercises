@@ -219,6 +219,8 @@ with open('builder/chapter96_data.json', 'r', encoding='utf-8') as f:
     ch96_exercises = json.load(f)
 with open('builder/chapter97_data.json', 'r', encoding='utf-8') as f:
     ch97_exercises = json.load(f)
+with open('builder/chapter98_data.json', 'r', encoding='utf-8') as f:
+    ch98_exercises = json.load(f)
 
 def format_text(txt):
     if not txt:
@@ -458,6 +460,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
             95: ('chapter95.html', f'{len(ch95_exercises)}/{len(ch95_exercises)}'),
             96: ('chapter96.html', f'{len(ch96_exercises)}/{len(ch96_exercises)}'),
             97: ('chapter97.html', f'{len(ch97_exercises)}/{len(ch97_exercises)}'),
+            98: ('chapter98.html', f'{len(ch98_exercises)}/{len(ch98_exercises)}'),
         }
         
         if num in status_map:
@@ -5909,6 +5912,66 @@ def build_chapter97_html(chapters):
     return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'97. Time-Series СУБД, сжатие Gorilla и IoT-телеметрия на Go ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
 
 
+
+def build_chapter98_html(chapters):
+    active_chapter_num = 98
+    current_exercises = ch98_exercises
+    sidebar_html = build_sidebar(chapters, active_chapter_num, current_exercises)
+    
+    content_parts = []
+    content_parts.append('<main class="main-content" id="top">')
+    
+    # Chapter Hero
+    content_parts.append("""
+    <section class="chapter-hero">
+        <div class="hero-badge">Глава 98 • Go Internals, Compilers, Tooling & AI</div>
+        <h1 class="hero-title">Архитектурный контроль: Разработка корпоративных линтеров для golangci-lint</h1>
+        <p class="hero-desc">
+            Инженерное руководство по созданию кастомных статических анализаторов и линтеров корпоративного уровня на Go с интеграцией в golangci-lint. Архитектура go/analysis: драйверы singlechecker/multichecker, pass-контекст analysis.Pass, AST-инспекция через inspector.Inspector и ast.Inspect. Семантический анализ типов: go/types, TypeInfo (Types, Defs, Uses, Implicits), валидация имплементации интерфейсов (types.Implements) и разрешение сигнатур функций. Автоматизированное тестирование анализаторов: analysistest.Run, тестовые фикстуры и директивы // want. Проектирование правил Clean Architecture: контроль графа зависимостей и запрет импортов доменного слоя в инфраструктуру. Валидация выравнивания структур и обнаружение struct padding для минимизации памяти. Безопасность и надежность: детектирование необработанных горутин и утечек defer, предотвращение небезопасной конкатенации SQL-запросов и выявление теневого копирования sync.Mutex. Автоматическое исправление кода (Quick Fixes): analysis.SuggestedFix, TextEdit и флаг -fix. Упаковка анализатора в плагины golangci-lint (.so и Module Plugin System), локальный запуск через Lefthook pre-commit хуки и CI/CD GitHub Actions/GitLab CI. Разработка Enterprise Linter Suite — комплексного анализатора кодовой базы.
+        </p>
+    </section>
+    """)
+    
+    sections = [
+        (1, "Раздел 1: go/analysis, AST, семантика типов go/types и первые линтеры (Упражнения 1–10)"),
+        (11, "Раздел 2: Слои Clean Architecture, горутины, выравнивание структур и автоисправления (Упражнения 11–20)"),
+        (21, "Раздел 3: Плагины golangci-lint, SQL-инъекции, Lefthook, CI/CD и Enterprise Linter Suite (Упражнения 21–30)")
+    ]
+    
+    current_sec_idx = 0
+    for ex in current_exercises:
+        num = ex['num']
+        if current_sec_idx < len(sections):
+            s_start, s_title = sections[current_sec_idx]
+            if num >= s_start:
+                content_parts.append(f"""
+                <div class="section-header" style="margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #00add8;">
+                    <h2>{s_title}</h2>
+                </div>
+                """)
+                current_sec_idx += 1
+        
+        content_parts.append(build_exercise_card(ex))
+        
+    # Chapter Footer
+    content_parts.append(f"""
+    <section class="chapter-footer" style="margin-top: 48px; padding: 36px; background: linear-gradient(135deg, #131d33 0%, #0f2744 100%); border: 2px solid #0284c7; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);">
+        <div style="display: inline-block; padding: 8px 16px; background: #0284c7; color: white; border-radius: 20px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;">Глава 98 завершена!</div>
+        <h3 style="color: #38bdf8; font-size: 26px; margin-bottom: 16px; font-weight: 800;">Поздравляем с освоением разработки корпоративных линтеров на Go!</h3>
+        <p style="color: #cbd5e1; font-size: 16px; max-width: 720px; margin: 0 auto 28px auto; line-height: 1.7;">
+            Вы освоили разработку продвинутых статических анализаторов на базе go/analysis и go/types: от низкоуровневой инспекции AST и проверки архитектурных инвариантов до создания плагинов для golangci-lint, автоматических SuggestedFixes и построения корпоративного пайплайна контроля качества кода.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a href="chapter97.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #f8fafc; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #334155; transition: background 0.2s;">← Глава 97 Time-Series СУБД, сжатие Gorilla и IoT-телеметрия на Go</a>
+            <a href="chapter99.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0284c7; color: #ffffff; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">Глава 99 Интеграция с ИИ, LLM-оркестрация и векторный поиск на Go →</a>
+            <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; color: #38bdf8; font-weight: 600; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: 1px solid #0284c7;">🏠 Главная портала (Треки)</a>
+        </div>
+    </section>
+    """)
+    content_parts.append('</main>')
+    return HTML_HEAD.replace('01. Пакеты и модули (91/91)', f'98. Архитектурный контроль: Разработка корпоративных линтеров для golangci-lint ({len(current_exercises)}/{len(current_exercises)})') + chr(10) + sidebar_html + chr(10) + chr(10).join(content_parts) + chr(10) + HTML_FOOTER
+
+
 # All 100 chapters metadata
 all_100_chapters = [
     (1, "Пакеты и модули", "chapter1.html", 91, True, "Модули, go.mod, SemVer, Cobra CLI, internal, vendor"),
@@ -6010,7 +6073,7 @@ all_100_chapters = [
     (95, "Распределенная координация и хранилище метаданных etcd v3", "chapter95.html", len(ch95_exercises), True, "clientv3 Watchers, Leases с автопродлением, атомарные транзакции Txn, Service Discovery"),
     (96, "Zero-Downtime миграции баз данных и паттерн Expand-Contract на Go", "chapter96.html", len(ch96_exercises), True, "Expand/Migrate/Contract, Shadow Writing, Backfill воркеры, защита от AccessExclusiveLock"),
     (97, "Time-Series СУБД, сжатие Gorilla и IoT-телеметрия на Go", "chapter97.html", len(ch97_exercises), True, "Прием сотен тысяч метрик/сек, Gorilla Delta-of-Delta и XOR компрессия, TimescaleDB"),
-    (98, "Архитектурный контроль: Разработка корпоративных линтеров для golangci-lint", "chapter98.html", 30, False, "go/analysis фреймворк, семантика типов go/types, AST-инспекция, Suggested Fixes"),
+    (98, "Архитектурный контроль: Разработка корпоративных линтеров для golangci-lint", "chapter98.html", len(ch98_exercises), True, "go/analysis фреймворк, семантика типов go/types, AST-инспекция, Suggested Fixes"),
     (99, "Интеграция с ИИ, LLM-оркестрация и векторный поиск на Go", "chapter99.html", 30, False, "Ollama, OpenAI SDK, SSE токены, Function Calling, pgvector, Qdrant, RAG конвейер"),
     (100, "Архитектурный Capstone: Проектирование и сквозной запуск отказоустойчивой HighLoad-платформы", "chapter100.html", 35, False, "Финальный проект: gRPC-Gateway, DDD, Event Sourcing, Temporal, L1/L2 кэш, OTel, Seccomp, AI")
 ]
@@ -6440,6 +6503,7 @@ if __name__ == '__main__':
         ('chapter95.html', build_chapter95_html),
         ('chapter96.html', build_chapter96_html),
         ('chapter97.html', build_chapter97_html),
+        ('chapter98.html', build_chapter98_html),
     ]
     
     for filename, builder_fn in pages:
