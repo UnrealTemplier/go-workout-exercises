@@ -156,13 +156,12 @@ HTML_HEAD = """<!DOCTYPE html>
         }
 
         .go-logo-icon {
-            background: #00ADD8;
-            color: #000;
-            font-weight: 900;
-            font-size: 0.8rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            letter-spacing: 0.5px;
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
         }
 
         .sidebar-search {

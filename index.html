@@ -154,13 +154,12 @@
         }
 
         .go-logo-icon {
-            background: #00ADD8;
-            color: #000;
-            font-weight: 900;
-            font-size: 0.8rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            letter-spacing: 0.5px;
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
         }
 
         .sidebar-search {
@@ -654,7 +653,7 @@
 <aside class="sidebar">
   <div class="sidebar-header">
     <a href="index.html" class="logo-badge" title="Главная страница и треки">
-      <span class="go-logo-icon">GO</span>
+      <img src="favicon.svg" alt="Go" class="go-logo-icon">
       <span>Backend Workout</span>
     </a>
     <div class="sidebar-search">
@@ -1308,18 +1307,9 @@
     
 
     <section id="curriculum" style="margin-bottom: 60px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
-            <div>
-                <h2 style="font-size: 1.8rem; font-weight: 800; color: #f8fafc;">Полный каталог курса (100 модулей)</h2>
-                <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 4px;">Интерактивная матрица всех глав от синтаксиса до Staff Capstone</p>
-            </div>
-            
-            <!-- Quick Filter Tabs -->
-            <div style="display: flex; gap: 8px; background: #0f172a; padding: 4px; border-radius: 10px; border: 1px solid #1e293b;">
-                <button class="filter-btn active" data-filter="all" style="background: #1e293b; color: #38bdf8; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Все (100)</button>
-                <button class="filter-btn" data-filter="done" style="background: transparent; color: #94a3b8; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">✅ Готово (83)</button>
-                <button class="filter-btn" data-filter="plan" style="background: transparent; color: #94a3b8; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">📋 В плане (17)</button>
-            </div>
+        <div style="margin-bottom: 24px;">
+            <h2 style="font-size: 1.8rem; font-weight: 800; color: #f8fafc;">Полный каталог курса (100 модулей)</h2>
+            <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 4px;">Интерактивная матрица всех глав от синтаксиса до Staff Capstone</p>
         </div>
         
         <!-- Live Search Bar -->
@@ -3137,13 +3127,10 @@
     
 
     <script>
-        // curriculum-toggle-filter-client-script
+        // curriculum-search-client-script
         document.addEventListener('DOMContentLoaded', () => {
             const searchInput = document.getElementById('curriculum-search');
-            const filterBtns = document.querySelectorAll('.filter-btn');
             const cards = document.querySelectorAll('.curriculum-card');
-            
-            let activeFilter = 'all';
             
             function applyFilters() {
                 const query = (searchInput ? searchInput.value.toLowerCase().trim() : '');
@@ -3151,12 +3138,9 @@
                 cards.forEach(card => {
                     const title = card.getAttribute('data-title') || '';
                     const num = card.getAttribute('data-num') || '';
-                    const status = card.getAttribute('data-status') || '';
                     
                     const matchesSearch = !query || title.includes(query) || num.includes(query);
-                    const matchesFilter = (activeFilter === 'all') || (activeFilter === status);
-                    
-                    if (matchesSearch && matchesFilter) {
+                    if (matchesSearch) {
                         card.style.display = 'block';
                     } else {
                         card.style.display = 'none';
@@ -3167,22 +3151,6 @@
             if (searchInput) {
                 searchInput.addEventListener('input', applyFilters);
             }
-            
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    filterBtns.forEach(b => {
-                        b.style.background = 'transparent';
-                        b.style.color = '#94a3b8';
-                        b.style.fontWeight = '600';
-                    });
-                    btn.style.background = '#1e293b';
-                    btn.style.color = '#38bdf8';
-                    btn.style.fontWeight = '700';
-                    
-                    activeFilter = btn.getAttribute('data-filter');
-                    applyFilters();
-                });
-            });
         });
     </script>
     

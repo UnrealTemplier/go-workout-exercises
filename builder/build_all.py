@@ -341,7 +341,7 @@ def build_sidebar(chapters, active_chapter_num, current_exercises):
     sb.append('<aside class="sidebar">')
     sb.append('  <div class="sidebar-header">')
     sb.append('    <a href="index.html" class="logo-badge" title="Главная страница и треки">')
-    sb.append('      <span class="go-logo-icon">GO</span>')
+    sb.append('      <img src="favicon.svg" alt="Go" class="go-logo-icon">')
     sb.append('      <span>Backend Workout</span>')
     sb.append('    </a>')
     sb.append('    <div class="sidebar-search">')
@@ -6402,18 +6402,9 @@ def build_portal_html(chapters):
     # 3. Section: 100 Chapters Interactive Curriculum
     p.append("""
     <section id="curriculum" style="margin-bottom: 60px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
-            <div>
-                <h2 style="font-size: 1.8rem; font-weight: 800; color: #f8fafc;">Полный каталог курса (100 модулей)</h2>
-                <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 4px;">Интерактивная матрица всех глав от синтаксиса до Staff Capstone</p>
-            </div>
-            
-            <!-- Quick Filter Tabs -->
-            <div style="display: flex; gap: 8px; background: #0f172a; padding: 4px; border-radius: 10px; border: 1px solid #1e293b;">
-                <button class="filter-btn active" data-filter="all" style="background: #1e293b; color: #38bdf8; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Все (100)</button>
-                <button class="filter-btn" data-filter="done" style="background: transparent; color: #94a3b8; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">✅ Готово (83)</button>
-                <button class="filter-btn" data-filter="plan" style="background: transparent; color: #94a3b8; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">📋 В плане (17)</button>
-            </div>
+        <div style="margin-bottom: 24px;">
+            <h2 style="font-size: 1.8rem; font-weight: 800; color: #f8fafc;">Полный каталог курса (100 модулей)</h2>
+            <p style="color: #94a3b8; font-size: 0.95rem; margin-top: 4px;">Интерактивная матрица всех глав от синтаксиса до Staff Capstone</p>
         </div>
         
         <!-- Live Search Bar -->
@@ -6467,16 +6458,13 @@ def build_portal_html(chapters):
     </section>
     """)
 
-    # 4. Filter and Search Client-Side Script
+    # 4. Search Client-Side Script
     p.append("""
     <script>
-        // curriculum-toggle-filter-client-script
+        // curriculum-search-client-script
         document.addEventListener('DOMContentLoaded', () => {
             const searchInput = document.getElementById('curriculum-search');
-            const filterBtns = document.querySelectorAll('.filter-btn');
             const cards = document.querySelectorAll('.curriculum-card');
-            
-            let activeFilter = 'all';
             
             function applyFilters() {
                 const query = (searchInput ? searchInput.value.toLowerCase().trim() : '');
@@ -6484,12 +6472,9 @@ def build_portal_html(chapters):
                 cards.forEach(card => {
                     const title = card.getAttribute('data-title') || '';
                     const num = card.getAttribute('data-num') || '';
-                    const status = card.getAttribute('data-status') || '';
                     
                     const matchesSearch = !query || title.includes(query) || num.includes(query);
-                    const matchesFilter = (activeFilter === 'all') || (activeFilter === status);
-                    
-                    if (matchesSearch && matchesFilter) {
+                    if (matchesSearch) {
                         card.style.display = 'block';
                     } else {
                         card.style.display = 'none';
@@ -6500,22 +6485,6 @@ def build_portal_html(chapters):
             if (searchInput) {
                 searchInput.addEventListener('input', applyFilters);
             }
-            
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    filterBtns.forEach(b => {
-                        b.style.background = 'transparent';
-                        b.style.color = '#94a3b8';
-                        b.style.fontWeight = '600';
-                    });
-                    btn.style.background = '#1e293b';
-                    btn.style.color = '#38bdf8';
-                    btn.style.fontWeight = '700';
-                    
-                    activeFilter = btn.getAttribute('data-filter');
-                    applyFilters();
-                });
-            });
         });
     </script>
     """)

@@ -154,13 +154,12 @@
         }
 
         .go-logo-icon {
-            background: #00ADD8;
-            color: #000;
-            font-weight: 900;
-            font-size: 0.8rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            letter-spacing: 0.5px;
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
         }
 
         .sidebar-search {
@@ -654,7 +653,7 @@
 <aside class="sidebar">
   <div class="sidebar-header">
     <a href="index.html" class="logo-badge" title="Главная страница и треки">
-      <span class="go-logo-icon">GO</span>
+      <img src="favicon.svg" alt="Go" class="go-logo-icon">
       <span>Backend Workout</span>
     </a>
     <div class="sidebar-search">
